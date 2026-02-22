@@ -315,15 +315,14 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                         <div className="absolute inset-0"
                             style={{ opacity: 0.04, backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
 
-                        <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'flex-end', gap: '20px', padding: '20px 28px 16px' }}>
+                        <div className="relative z-10 flex items-end gap-3 sm:gap-5 px-4 sm:px-7 pt-5 pb-4">
                             {/* Sprite */}
-                            <div style={{ position: 'relative', width: '112px', height: '112px', flexShrink: 0, borderRadius: '16px', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.15)', overflow: 'hidden' }}>
+                            <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 rounded-2xl bg-white/10 border-2 border-white/15 overflow-hidden">
                                 <Image
                                     src={getPokemonSpriteUrl(pokemon)}
                                     alt={pokemon.name}
                                     fill
-                                    className="object-contain drop-shadow-lg"
-                                    style={{ padding: '6px' }}
+                                    className="object-contain drop-shadow-lg p-1 sm:p-1.5"
                                     unoptimized
                                 />
                             </div>
@@ -364,8 +363,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                     </div>
 
                     {/* BODY */}
-                    <div style={{ flex: 1, overflowY: 'auto', maxHeight: 'calc(90vh - 140px)', background: '#fafafa' }}>
-                        <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: '5fr 7fr', gap: '24px' }}>
+                    <div className="flex-1 overflow-y-auto bg-zinc-50" style={{ maxHeight: 'calc(90vh - 140px)' }}>
+                        <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6">
 
                             {/* LEFT: Info + Stats */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -472,8 +471,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                             </div>
 
                             {/* RIGHT COLUMN */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <div className="flex flex-col gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {pokemon.moves && pokemon.moves.map((rawMove: any, index: number) => {
                                         // Hydrate move data if it's a string
                                         let move = rawMove;
@@ -541,7 +540,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 </div>
 
                                 {/* Synergies & Threats */}
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Best Teammates */}
                                     <div style={{ padding: '16px', borderRadius: '14px', border: '1px solid #d1fae5', background: '#f0fdf4' }}>
                                         <h4 style={{ fontSize: '12px', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>{t("details.bestTeammates")}</h4>
