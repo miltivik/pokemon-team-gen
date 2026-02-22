@@ -23,6 +23,7 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
     const { format } = useTeam();
     const { theme } = useTheme();
     const [guidesOpen, setGuidesOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const guidesRef = useRef<HTMLDivElement>(null);
 
@@ -79,52 +80,52 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
                         </Link>
 
                         {/* Main Navigation */}
-                        <button
-                            onClick={() => onTabChange?.("home")}
-                            className={`relative px-4 py-2 text-sm font-semibold rounded-lg transition-colors transition-shadow duration-200 ${activeTab === "home" || pathname === "/"
-                                ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50"
-                                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                                }`}
-                        >
-                            <span className="flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                    <polyline points="9 22 9 12 15 12 15 22" />
-                                </svg>
-                                {t("nav.home")}
-                            </span>
-                            {(activeTab === "home" || pathname === "/") && (
-                                <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
-                            )}
-                        </button>
+                        <div className="hidden md:flex items-center gap-1">
+                            <Link
+                                href="/"
+                                className={`relative px-4 py-2 text-sm font-semibold rounded-lg transition-colors transition-shadow duration-200 ${activeTab === "home" || pathname === "/"
+                                    ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50"
+                                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                                    }`}
+                            >
+                                <span className="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                        <polyline points="9 22 9 12 15 12 15 22" />
+                                    </svg>
+                                    {t("nav.home")}
+                                </span>
+                                {(activeTab === "home" || pathname === "/") && (
+                                    <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
+                                )}
+                            </Link>
 
-                        <button
-                            onClick={() => hasTeam && onTabChange?.("analysis")}
-                            disabled={!hasTeam}
-                            className={`relative px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${activeTab === "analysis" || pathname === "/analisis"
-                                ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50"
-                                : hasTeam
-                                    ? "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                                    : "text-zinc-300 dark:text-zinc-700 cursor-not-allowed"
-                                }`}
-                        >
-                            <span className="flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                    <polyline points="7.5 4.21 12 6.81 16.5 4.21" />
-                                    <polyline points="7.5 19.79 7.5 14.6 3 12" />
-                                    <polyline points="21 12 16.5 14.6 16.5 19.79" />
-                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                                    <line x1="12" y1="22.08" x2="12" y2="12" />
-                                </svg>
-                                {t("nav.analysis")}
-                            </span>
-                            {(activeTab === "analysis" || pathname === "/analisis") && (
-                                <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-emerald-600 dark:bg-emerald-400 rounded-full" />
-                            )}
-                        </button>
+                            <Link
+                                href={hasTeam ? "/analisis" : "#"}
+                                className={`relative px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${activeTab === "analysis" || pathname === "/analisis"
+                                    ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50"
+                                    : hasTeam
+                                        ? "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                                        : "text-zinc-300 dark:text-zinc-700 cursor-not-allowed pointer-events-none"
+                                    }`}
+                            >
+                                <span className="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                        <polyline points="7.5 4.21 12 6.81 16.5 4.21" />
+                                        <polyline points="7.5 19.79 7.5 14.6 3 12" />
+                                        <polyline points="21 12 16.5 14.6 16.5 19.79" />
+                                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                        <line x1="12" y1="22.08" x2="12" y2="12" />
+                                    </svg>
+                                    {t("nav.analysis")}
+                                </span>
+                                {(activeTab === "analysis" || pathname === "/analisis") && (
+                                    <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-emerald-600 dark:bg-emerald-400 rounded-full" />
+                                )}
+                            </Link>
 
-                        {/* Guides Dropdown */}
+                            {/* Guides Dropdown */}
                         <div className="relative" ref={guidesRef}>
                             <button
                                 onClick={() => { setGuidesOpen(!guidesOpen); }}
@@ -210,6 +211,7 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
                                 <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-cyan-600 dark:bg-cyan-400 rounded-full" />
                             )}
                         </Link>
+                        </div>
 
                         {/* Spacer */}
                         <div className="flex-1" />
@@ -244,6 +246,42 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
 
             {/* Floating Quick Navigation Bar - Mobile friendly */}
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 md:hidden" aria-label="Mobile navigation">
+                {mobileMenuOpen && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-2xl py-2 flex flex-col">
+                        <div className="px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                            {t("nav.guides")}
+                        </div>
+                        <Link
+                            href="/guides/gen9-ou"
+                            className="block px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <span aria-hidden="true" className="mr-2">📚</span> {t("guides.ouTitle")}
+                        </Link>
+                        <Link
+                            href="/guides/vgc"
+                            className="block px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <span aria-hidden="true" className="mr-2">🎮</span> {t("guides.vgcTitle")}
+                        </Link>
+                        <Link
+                            href="/tier-list"
+                            className="block px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <span aria-hidden="true" className="mr-2">📊</span> {t("guides.tierList")}
+                        </Link>
+                        <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
+                        <Link
+                            href="/about"
+                            className="block px-4 py-3 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <span aria-hidden="true" className="mr-2">ℹ️</span> {t("nav.about")}
+                        </Link>
+                    </div>
+                )}
                 <div className="flex items-center gap-1 px-2 py-2 bg-zinc-900/95 dark:bg-zinc-900/95 backdrop-blur-lg rounded-full shadow-2xl border border-zinc-700">
                     <Link
                         href="/"
@@ -273,6 +311,17 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
                             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
                         </svg>
                     </Link>
+                    <button
+                        aria-label="Menu"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        className={`p-2 rounded-full focus-visible:ring-2 focus-visible:ring-white ${mobileMenuOpen ? "bg-orange-600 text-white" : "text-zinc-400 hover:text-white"}`}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </>

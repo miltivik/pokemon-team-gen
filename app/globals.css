@@ -188,3 +188,10 @@ html {
     scroll-behavior: auto;
   }
 }
+
+/* Hide unfilled AdSense slots */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+}

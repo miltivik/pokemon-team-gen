@@ -54,7 +54,7 @@ export default function Home() {
             {t("app.aiPowered")}
           </div>
           <div className="flex items-center justify-center">
-            <h1 className="text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 bg-clip-text text-transparent bg-gradient-to-b from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400 leading-tight pb-1">
               {t("app.titleNew")}
             </h1>
           </div>
@@ -234,7 +234,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" role="list">
             <Link href="/configurar?template=bulkyoffense&format=gen9ou" className="block text-left group" role="listitem">
-              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 transition-all hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 h-full flex flex-col">
+              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-3 md:p-5 transition-all hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 h-full flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-bold text-zinc-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Bulky Offense</h3>
@@ -244,7 +244,7 @@ export default function Home() {
                 </div>
                 <div className="flex mt-auto pt-2">
                   {["Great Tusk", "Kingambit", "Gholdengo", "Rillaboom", "Dragapult", "Gliscor"].map((pokemon, i) => (
-                    <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-3 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
+                    <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
                     </div>
@@ -254,7 +254,7 @@ export default function Home() {
             </Link>
 
             <Link href="/configurar?template=offense&format=gen9ou" className="block text-left group" role="listitem">
-              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 transition-all hover:border-amber-500 hover:shadow-lg hover:shadow-amber-500/10 h-full flex flex-col">
+              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-3 md:p-5 transition-all hover:border-amber-500 hover:shadow-lg hover:shadow-amber-500/10 h-full flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-bold text-zinc-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Hyper Offense</h3>
@@ -264,7 +264,7 @@ export default function Home() {
                 </div>
                 <div className="flex mt-auto pt-2">
                   {["Glimmora", "Roaring Moon", "Iron Valiant", "Iron Boulder", "Gouging Fire", "Kingambit"].map((pokemon, i) => (
-                    <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-3 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
+                    <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
                     </div>
@@ -274,7 +274,7 @@ export default function Home() {
             </Link>
 
             <Link href="/configurar?template=rain&format=gen9ou" className="block text-left group" role="listitem">
-              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 transition-all hover:border-cyan-500 hover:shadow-lg hover:shadow-cyan-500/10 h-full flex flex-col">
+              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-3 md:p-5 transition-all hover:border-cyan-500 hover:shadow-lg hover:shadow-cyan-500/10 h-full flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-bold text-zinc-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{t("team.rainTeam")}</h3>
@@ -284,7 +284,7 @@ export default function Home() {
                 </div>
                 <div className="flex mt-auto pt-2">
                   {["Pelipper", "Barraskewda", "Archaludon", "Swampert", "Tornadus-Therian", "Raging Bolt"].map((pokemon, i) => (
-                    <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-3 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
+                    <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
                     </div>
@@ -294,7 +294,7 @@ export default function Home() {
             </Link>
 
             <Link href="/configurar?template=weatheroffense&format=gen9vgc2026f" className="block text-left group" role="listitem">
-              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 transition-all hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/10 h-full flex flex-col">
+              <div className="bg-white dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-3 md:p-5 transition-all hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/10 h-full flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="font-bold text-zinc-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">VGC Weather</h3>
@@ -304,7 +304,7 @@ export default function Home() {
                 </div>
                 <div className="flex mt-auto pt-2">
                   {["Torkoal", "Flutter Mane", "Incineroar", "Chi-Yu", "Venusaur", "Raging Bolt"].map((pokemon, i) => (
-                    <div key={i} className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-3 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
+                    <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
                     </div>

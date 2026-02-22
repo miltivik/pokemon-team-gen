@@ -84,7 +84,7 @@ export function AdBanner() {
   }
 
   if (!mounted) {
-    return <div className="w-full h-[90px]" />;
+    return <div className="w-full h-[90px] bg-zinc-200 dark:bg-zinc-800/50 animate-pulse rounded-lg" />;
   }
 
   return (
@@ -131,7 +131,7 @@ export function AdRectangle() {
   }
 
   if (!mounted) {
-    return <div className="w-[300px] h-[250px]" />;
+    return <div className="w-[300px] h-[250px] bg-zinc-200 dark:bg-zinc-800/50 animate-pulse rounded-lg" />;
   }
 
   return (
@@ -176,7 +176,7 @@ export function AdResponsive() {
   }
 
   if (!mounted) {
-    return <div className="w-full min-h-[250px]" />;
+    return <div className="w-full min-h-[250px] bg-zinc-200 dark:bg-zinc-800/50 animate-pulse rounded-lg" />;
   }
 
   return (
@@ -215,14 +215,21 @@ export function KoFiButton() {
       href={`https://ko-fi.com/${CONFIG.kofi.kofiId}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-4 left-4 z-50 transition-transform hover:scale-105"
+      className="fixed bottom-6 left-4 z-50 transition-transform hover:scale-105 group"
       title="Apóyanos en Ko-Fi"
     >
+      {/* Botón completo para Desktop */}
       <img
         src="/icons/support_me_on_kofi_dark.png"
         alt="Support me on Ko-Fi"
+        className="hidden md:block drop-shadow-lg"
         style={{ height: '36px', width: 'auto' }}
       />
+
+      {/* Ícono circular para Móvil (SVG) */}
+      <div className="md:hidden flex items-center justify-center w-10 h-10 bg-[#13C3FF] text-white rounded-full shadow-lg border border-black/10 dark:border-white/10 group-hover:bg-[#00b0ec] transition-colors">
+        <img src="/icons/kofi_logo.svg" alt="Ko-fi" className="w-6 h-6 object-contain" />
+      </div>
     </a>
   );
 }
