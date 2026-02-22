@@ -1,0 +1,402 @@
+[
+    {
+        "name": "Great Tusk",
+        "usage": 26.208
+    },
+    {
+        "name": "Gholdengo",
+        "usage": 17.956
+    },
+    {
+        "name": "Kingambit",
+        "usage": 17.707
+    },
+    {
+        "name": "Dragapult",
+        "usage": 15.352
+    },
+    {
+        "name": "Dragonite",
+        "usage": 14.509
+    },
+    {
+        "name": "Ogerpon-Wellspring",
+        "usage": 13.42
+    },
+    {
+        "name": "Slowking-Galar",
+        "usage": 12.715
+    },
+    {
+        "name": "Iron Valiant",
+        "usage": 12.701
+    },
+    {
+        "name": "Corviknight",
+        "usage": 12.242
+    },
+    {
+        "name": "Zamazenta",
+        "usage": 11.966
+    },
+    {
+        "name": "Hatterene",
+        "usage": 11.394
+    },
+    {
+        "name": "Gliscor",
+        "usage": 11.281
+    },
+    {
+        "name": "Raging Bolt",
+        "usage": 10.476
+    },
+    {
+        "name": "Landorus-Therian",
+        "usage": 9.949
+    },
+    {
+        "name": "Cinderace",
+        "usage": 9.474
+    },
+    {
+        "name": "Glimmora",
+        "usage": 9.361
+    },
+    {
+        "name": "Samurott-Hisui",
+        "usage": 9.012
+    },
+    {
+        "name": "Alomomola",
+        "usage": 8.91
+    },
+    {
+        "name": "Ceruledge",
+        "usage": 8.885
+    },
+    {
+        "name": "Kyurem",
+        "usage": 8.623
+    },
+    {
+        "name": "Iron Treads",
+        "usage": 8.617
+    },
+    {
+        "name": "Darkrai",
+        "usage": 8.157
+    },
+    {
+        "name": "Scizor",
+        "usage": 7.812
+    },
+    {
+        "name": "Ting-Lu",
+        "usage": 7.796
+    },
+    {
+        "name": "Rillaboom",
+        "usage": 7.652
+    },
+    {
+        "name": "Iron Moth",
+        "usage": 7.652
+    },
+    {
+        "name": "Garganacl",
+        "usage": 7.529
+    },
+    {
+        "name": "Zapdos",
+        "usage": 7.325
+    },
+    {
+        "name": "Pecharunt",
+        "usage": 7.095
+    },
+    {
+        "name": "Walking Wake",
+        "usage": 6.36
+    },
+    {
+        "name": "Garchomp",
+        "usage": 6.144
+    },
+    {
+        "name": "Heatran",
+        "usage": 6.127
+    },
+    {
+        "name": "Primarina",
+        "usage": 5.79
+    },
+    {
+        "name": "Clefable",
+        "usage": 5.739
+    },
+    {
+        "name": "Tyranitar",
+        "usage": 5.553
+    },
+    {
+        "name": "Deoxys-Speed",
+        "usage": 5.107
+    },
+    {
+        "name": "Enamorus",
+        "usage": 4.996
+    },
+    {
+        "name": "Meowscarada",
+        "usage": 4.902
+    },
+    {
+        "name": "Moltres",
+        "usage": 4.758
+    },
+    {
+        "name": "Weezing-Galar",
+        "usage": 4.341
+    },
+    {
+        "name": "Dondozo",
+        "usage": 4.258
+    },
+    {
+        "name": "Excadrill",
+        "usage": 4.079
+    },
+    {
+        "name": "Ursaluna",
+        "usage": 3.883
+    },
+    {
+        "name": "Tornadus-Therian",
+        "usage": 3.712
+    },
+    {
+        "name": "Pelipper",
+        "usage": 3.678
+    },
+    {
+        "name": "Toxapex",
+        "usage": 3.674
+    },
+    {
+        "name": "Iron Crown",
+        "usage": 3.647
+    },
+    {
+        "name": "Hydrapple",
+        "usage": 3.578
+    },
+    {
+        "name": "Clodsire",
+        "usage": 3.505
+    },
+    {
+        "name": "Torkoal",
+        "usage": 3.328
+    },
+    {
+        "name": "Ninetales-Alola",
+        "usage": 3.272
+    },
+    {
+        "name": "Blaziken",
+        "usage": 3.115
+    },
+    {
+        "name": "Blissey",
+        "usage": 3.104
+    },
+    {
+        "name": "Serperior",
+        "usage": 3.09
+    },
+    {
+        "name": "Greninja",
+        "usage": 2.87
+    },
+    {
+        "name": "Iron Hands",
+        "usage": 2.802
+    },
+    {
+        "name": "Volcanion",
+        "usage": 2.752
+    },
+    {
+        "name": "Araquanid",
+        "usage": 2.727
+    },
+    {
+        "name": "Hoopa-Unbound",
+        "usage": 2.668
+    },
+    {
+        "name": "Weavile",
+        "usage": 2.66
+    },
+    {
+        "name": "Ninetales",
+        "usage": 2.66
+    },
+    {
+        "name": "Rotom-Wash",
+        "usage": 2.572
+    },
+    {
+        "name": "Lokix",
+        "usage": 2.473
+    },
+    {
+        "name": "Skeledirge",
+        "usage": 2.451
+    },
+    {
+        "name": "Quaquaval",
+        "usage": 2.226
+    },
+    {
+        "name": "Sinistcha",
+        "usage": 2.087
+    },
+    {
+        "name": "Venusaur",
+        "usage": 2.081
+    },
+    {
+        "name": "Latios",
+        "usage": 2.071
+    },
+    {
+        "name": "Cresselia",
+        "usage": 2.044
+    },
+    {
+        "name": "Grimmsnarl",
+        "usage": 1.931
+    },
+    {
+        "name": "Tinkaton",
+        "usage": 1.92
+    },
+    {
+        "name": "Porygon2",
+        "usage": 1.881
+    },
+    {
+        "name": "Ribombee",
+        "usage": 1.869
+    },
+    {
+        "name": "Skarmory",
+        "usage": 1.782
+    },
+    {
+        "name": "Goodra-Hisui",
+        "usage": 1.651
+    },
+    {
+        "name": "Moltres-Galar",
+        "usage": 1.632
+    },
+    {
+        "name": "Gengar",
+        "usage": 1.58
+    },
+    {
+        "name": "Barraskewda",
+        "usage": 1.579
+    },
+    {
+        "name": "Ogerpon-Cornerstone",
+        "usage": 1.563
+    },
+    {
+        "name": "Ogerpon",
+        "usage": 1.513
+    },
+    {
+        "name": "Zoroark-Hisui",
+        "usage": 1.499
+    },
+    {
+        "name": "Arcanine-Hisui",
+        "usage": 1.498
+    },
+    {
+        "name": "Slither Wing",
+        "usage": 1.444
+    },
+    {
+        "name": "Hawlucha",
+        "usage": 1.374
+    },
+    {
+        "name": "Keldeo",
+        "usage": 1.372
+    },
+    {
+        "name": "Polteageist",
+        "usage": 1.367
+    },
+    {
+        "name": "Mimikyu",
+        "usage": 1.357
+    },
+    {
+        "name": "Metagross",
+        "usage": 1.339
+    },
+    {
+        "name": "Maushold",
+        "usage": 1.333
+    },
+    {
+        "name": "Incineroar",
+        "usage": 1.304
+    },
+    {
+        "name": "Umbreon",
+        "usage": 1.271
+    },
+    {
+        "name": "Indeedee",
+        "usage": 1.232
+    },
+    {
+        "name": "Gyarados",
+        "usage": 1.158
+    },
+    {
+        "name": "Thundurus-Therian",
+        "usage": 1.139
+    },
+    {
+        "name": "Azumarill",
+        "usage": 1.109
+    },
+    {
+        "name": "Latias",
+        "usage": 1.073
+    },
+    {
+        "name": "Cloyster",
+        "usage": 1.062
+    },
+    {
+        "name": "Iron Boulder",
+        "usage": 1.055
+    },
+    {
+        "name": "Hydreigon",
+        "usage": 1.039
+    },
+    {
+        "name": "Kommo-o",
+        "usage": 1.025
+    }
+]

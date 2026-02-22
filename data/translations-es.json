@@ -1,0 +1,4983 @@
+{
+  "_generated": "2026-02-17T16:44:08.729Z",
+  "_source": "PokeAPI (https://pokeapi.co)",
+  "moves": {
+    "10,000,000 Volt Thunderbolt": {
+      "name": "Gigarrayo Fulminante",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Absorb": {
+      "name": "Absorber",
+      "desc": "Un ataque que absorbe nutrientes. Quien lo usa recupera la mitad de los PS del daño que produce."
+    },
+    "Accelerock": {
+      "name": "Roca Veloz",
+      "desc": "El usuario se lanza contra el objetivo a gran velocidad. Este movimiento tiene prioridad alta."
+    },
+    "Acid": {
+      "name": "Ácido",
+      "desc": "Rocía a los enemigos con un ácido corrosivo.  Puede bajar la Defensa Especial."
+    },
+    "Acid Armor": {
+      "name": "Armadura Ácida",
+      "desc": "Transforma la estructura celular para hacerse líquido y aumenta mucho la Defensa."
+    },
+    "Acid Downpour": {
+      "name": "Diluvio Corrosivo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Acid Spray": {
+      "name": "Bomba Ácida",
+      "desc": "Ataca con un líquido corrosivo que reduce mucho la Defensa Especial del objetivo."
+    },
+    "Acrobatics": {
+      "name": "Acróbata",
+      "desc": "Golpea ágilmente. Si el usuario no porta ningún objeto, el objetivo resulta seriamente dañado."
+    },
+    "Acupressure": {
+      "name": "Acupresión",
+      "desc": "Aplica presión en puntos clave del cuerpo para potenciar mucho una de sus características."
+    },
+    "Aerial Ace": {
+      "name": "Golpe Aéreo",
+      "desc": "El usuario lanza un ataque muy rápido e ineludible."
+    },
+    "Aeroblast": {
+      "name": "Aerochorro",
+      "desc": "Lanza un chorro de aire que suele asestar un golpe crítico."
+    },
+    "After You": {
+      "name": "Cede Paso",
+      "desc": "Si el usuario es el más rápido, permite al objetivo usar un movimiento justo tras él, adelantándose a Pokémon más rápidos."
+    },
+    "Agility": {
+      "name": "Agilidad",
+      "desc": "Relaja el cuerpo para ganar mucha Velocidad."
+    },
+    "Air Cutter": {
+      "name": "Aire Afilado",
+      "desc": "Viento cortante que azota. Suele ser un golpe crítico."
+    },
+    "Air Slash": {
+      "name": "Tajo Aéreo",
+      "desc": "Ataca con un viento afilado que incluso corta el aire. También puede amedrentar al objetivo."
+    },
+    "All-Out Pummeling": {
+      "name": "Ráfaga Demoledora",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Alluring Voice": {
+      "name": "Canto Encantador"
+    },
+    "Ally Switch": {
+      "name": "Cambio de Banda",
+      "desc": "Extraño poder que intercambia la posición del usuario con la de un aliado sobre el terreno de combate."
+    },
+    "Amnesia": {
+      "name": "Amnesia",
+      "desc": "El usuario olvida sus preocupaciones y aumenta mucho la Defensa Especial."
+    },
+    "Anchor Shot": {
+      "name": "Anclaje",
+      "desc": "Ataca lanzando un ancla al oponente, que queda atrapado y no puede huir."
+    },
+    "Ancient Power": {
+      "name": "Poder Pasado",
+      "desc": "Ataque prehistórico que puede subir todas las  características."
+    },
+    "Apple Acid": {
+      "name": "Ácido Málico",
+      "desc": "Ataca al objetivo con el fluido corrosivo que desprende una manzana ácida, lo que también disminuye la Defensa Especial de este."
+    },
+    "Aqua Jet": {
+      "name": "Acua Jet",
+      "desc": "Ataque de una rapidez espeluznante. Este movimiento tiene prioridad alta."
+    },
+    "Aqua Ring": {
+      "name": "Acua Aro",
+      "desc": "Un manto de agua cubre al Pokémon que lo usa.  Recupera algunos PS en cada turno."
+    },
+    "Aqua Tail": {
+      "name": "Acua Cola",
+      "desc": "Ataca agitando la cola como si fuera una ola rabiosa en una tormenta devastadora."
+    },
+    "Arm Thrust": {
+      "name": "Empujón",
+      "desc": "Fuertes empujones que golpean de dos a cinco veces seguidas."
+    },
+    "Aromatherapy": {
+      "name": "Aromaterapia",
+      "desc": "Cura todos los problemas de estado del equipo con un suave aroma."
+    },
+    "Aromatic Mist": {
+      "name": "Niebla Aromática",
+      "desc": "Consigue aumentar la Defensa Especial de un Pokémon de su equipo con una fragancia misteriosa."
+    },
+    "Assist": {
+      "name": "Ayuda",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Assurance": {
+      "name": "Buena Baza",
+      "desc": "Si el objetivo ya ha sufrido daño en ese turno, la fuerza del ataque se duplica."
+    },
+    "Astonish": {
+      "name": "Impresionar",
+      "desc": "Lanza un grito tan tremendo que impresiona y puede amedrentar al objetivo."
+    },
+    "Astral Barrage": {
+      "name": "Orbes Espectro",
+      "desc": "El usuario ataca al objetivo lanzándole una ingente cantidad de pequeños fantasmas."
+    },
+    "Attack Order": {
+      "name": "Al Ataque",
+      "desc": "El usuario llama a sus súbditos para que ataquen al objetivo. Suele ser crítico."
+    },
+    "Attract": {
+      "name": "Atracción",
+      "desc": "Si el objetivo es del sexo opuesto, se enamorará y  bajará la posibilidad de que ataque."
+    },
+    "Aura Sphere": {
+      "name": "Esfera Aural",
+      "desc": "Libera, desde su interior, una inmensa descarga de aura. Es infalible."
+    },
+    "Aura Wheel": {
+      "name": "Rueda Aural",
+      "desc": "La energía que acumula en las mejillas le sirve para atacar y aumentar su Velocidad. Este movimiento cambia de tipo según la forma que adopte Morpeko."
+    },
+    "Aurora Beam": {
+      "name": "Rayo Aurora",
+      "desc": "Rayo multicolor que puede reducir el Ataque."
+    },
+    "Aurora Veil": {
+      "name": "Velo Aurora",
+      "desc": "Reduce el daño de los ataques físicos y especiales que ejecuta el rival durante cinco turnos. Solo puede usarse cuando está granizando."
+    },
+    "Autotomize": {
+      "name": "Aligerar",
+      "desc": "El usuario se desprende de partes prescindibles de su cuerpo para hacerse más ligero y aumentar mucho su Velocidad."
+    },
+    "Avalanche": {
+      "name": "Alud",
+      "desc": "Este ataque inflige el doble de daño a un objetivo que haya golpeado al usuario en ese mismo turno."
+    },
+    "Baby-Doll Eyes": {
+      "name": "Ojitos Tiernos",
+      "desc": "Lanza una mirada al objetivo con ojos acaramelados, con lo que logra que su Ataque se reduzca. Este movimiento tiene prioridad alta."
+    },
+    "Baddy Bad": {
+      "name": "Umbreozona",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Baneful Bunker": {
+      "name": "Búnker",
+      "desc": "Protege de los ataques y, al mismo tiempo, envenena al Pokémon que use un movimiento de contacto contra el usuario."
+    },
+    "Barrage": {
+      "name": "Bombardeo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Barrier": {
+      "name": "Barrera",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Baton Pass": {
+      "name": "Relevo",
+      "desc": "Cambia el puesto con otro miembro del equipo y le pasa los cambios de características."
+    },
+    "Beak Blast": {
+      "name": "Pico Cañón",
+      "desc": "Primero aumenta la temperatura de su pico y luego ejecuta un ataque. Quema al rival si este le propina un ataque físico mientras está calentando el pico."
+    },
+    "Beat Up": {
+      "name": "Paliza",
+      "desc": "Ataque de todo el equipo Pokémon. Cuantos más haya, más veces se atacará."
+    },
+    "Behemoth Bash": {
+      "name": "Embate Supremo",
+      "desc": "El usuario se convierte en un escudo gigante para golpear al objetivo. Si este ha alcanzado el estado Dinamax, se duplica el daño infligido."
+    },
+    "Behemoth Blade": {
+      "name": "Tajo Supremo",
+      "desc": "El usuario se convierte en una espada gigante para rebanar al objetivo. Si este ha alcanzado el estado Dinamax, se duplica el daño infligido."
+    },
+    "Belch": {
+      "name": "Eructo",
+      "desc": "El Pokémon causa daño a su oponente lanzándole  un eructo. Para poder utilizar este movimiento tiene  que llevar una baya y comérsela."
+    },
+    "Belly Drum": {
+      "name": "Tambor",
+      "desc": "Reduce la mitad de los PS máximos para mejorar al máximo el Ataque."
+    },
+    "Bestow": {
+      "name": "Ofrenda",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Bide": {
+      "name": "Venganza",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Bind": {
+      "name": "Atadura",
+      "desc": "Ata y oprime de cuatro a cinco turnos."
+    },
+    "Bite": {
+      "name": "Mordisco",
+      "desc": "Un voraz bocado que puede amedrentar al objetivo."
+    },
+    "Black Hole Eclipse": {
+      "name": "Agujero Negro Aniquilador",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Blast Burn": {
+      "name": "Anillo Ígneo",
+      "desc": "Explosión de fuego. El atacante debe descansar el  siguiente turno."
+    },
+    "Blaze Kick": {
+      "name": "Patada Ígnea",
+      "desc": "Patada que suele ser un golpe crítico y puede causar quemaduras."
+    },
+    "Blizzard": {
+      "name": "Ventisca",
+      "desc": "Tormenta de hielo que puede llegar a congelar."
+    },
+    "Block": {
+      "name": "Bloqueo",
+      "desc": "Le corta el paso al objetivo para que no pueda escapar."
+    },
+    "Bloom Doom": {
+      "name": "Megatón Floral",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Blue Flare": {
+      "name": "Llama Azul",
+      "desc": "Ataca con una bella pero potente llama azul que rodea al objetivo. Puede quemarlo."
+    },
+    "Body Press": {
+      "name": "Plancha Corporal",
+      "desc": "El usuario usa el cuerpo para lanzar su ataque e infligir un daño directamente proporcional a su Defensa."
+    },
+    "Body Slam": {
+      "name": "Golpe Cuerpo",
+      "desc": "Salta sobre el objetivo con todo su peso y puede llegar a paralizarlo."
+    },
+    "Bolt Beak": {
+      "name": "Electropico",
+      "desc": "El usuario ensarta al objetivo con su pico cargado de electricidad. Si ataca en primer lugar, la potencia del movimiento se duplica."
+    },
+    "Bolt Strike": {
+      "name": "Ataque Fulgor",
+      "desc": "Ataca envolviéndose de una gran carga eléctrica y  embistiendo al objetivo con ella. Puede paralizar."
+    },
+    "Bone Club": {
+      "name": "Hueso Palo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Bonemerang": {
+      "name": "Huesomerang",
+      "desc": "Lanza un hueso a modo de bumerán que golpea dos  veces."
+    },
+    "Bone Rush": {
+      "name": "Ataque Óseo",
+      "desc": "Hueso en ristre, aporrea al objetivo de dos a cinco  veces."
+    },
+    "Boomburst": {
+      "name": "Estruendo",
+      "desc": "Ataca a todos los Pokémon a su alrededor con una  potentísima onda sonora."
+    },
+    "Bounce": {
+      "name": "Bote",
+      "desc": "El usuario bota en el primer turno y golpea al objetivo en el segundo y puede llegar a paralizarlo."
+    },
+    "Bouncy Bubble": {
+      "name": "Vapodrenaje",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Branch Poke": {
+      "name": "Punzada Rama",
+      "desc": "Ataca pinchando al objetivo con una rama afilada."
+    },
+    "Brave Bird": {
+      "name": "Pájaro Osado",
+      "desc": "Pliega sus alas y ataca con un vuelo rasante. El  Pokémon que lo usa también resulta seriamente  dañado."
+    },
+    "Breaking Swipe": {
+      "name": "Vasto Impacto",
+      "desc": "El usuario sacude violentamente su enorme cola para golpear a todos los rivales y reducir su Ataque a la par."
+    },
+    "Breakneck Blitz": {
+      "name": "Carrera Arrolladora",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Brick Break": {
+      "name": "Demolición",
+      "desc": "Potente ataque que también es capaz de destruir  barreras como Pantalla de Luz y Reflejo."
+    },
+    "Brine": {
+      "name": "Salmuera",
+      "desc": "Si al objetivo le queda la mitad o menos de sus PS, el ataque será el doble de fuerte."
+    },
+    "Brutal Swing": {
+      "name": "Giro Vil",
+      "desc": "Hace pivotar su cuerpo para causar daño a su alrededor."
+    },
+    "Bubble": {
+      "name": "Burbuja",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Bubble Beam": {
+      "name": "Rayo Burbuja",
+      "desc": "Diluvio de burbujas que puede bajar la Velocidad."
+    },
+    "Bug Bite": {
+      "name": "Picadura",
+      "desc": "Pica al objetivo. Si el objetivo lleva una baya, el usuario se la come y se beneficia de su efecto."
+    },
+    "Bug Buzz": {
+      "name": "Zumbido",
+      "desc": "El usuario crea una onda sónica dañina moviendo su cuerpo que también puede disminuir la Defensa Especial del objetivo."
+    },
+    "Bulk Up": {
+      "name": "Corpulencia",
+      "desc": "Robustece el cuerpo para subir el Ataque y la Defensa."
+    },
+    "Bulldoze": {
+      "name": "Terratemblor",
+      "desc": "Sacudida sísmica que afecta a los demás Pokémon  adyacentes y también reduce su Velocidad."
+    },
+    "Bullet Punch": {
+      "name": "Puño Bala",
+      "desc": "Ataca con fuertes puñetazos tan rápidos como proyectiles. Este movimiento tiene prioridad alta."
+    },
+    "Bullet Seed": {
+      "name": "Semilladora",
+      "desc": "Dispara rápido de dos a cinco ráfagas de semillas de manera consecutiva."
+    },
+    "Burning Bulwark": {
+      "name": "Llama Protectora"
+    },
+    "Burning Jealousy": {
+      "name": "Envidia Ardiente",
+      "desc": "Ataca al objetivo con la energía generada por la envidia y causa quemaduras a los Pokémon cuyas características hayan aumentado en ese turno."
+    },
+    "Burn Up": {
+      "name": "Llama Final",
+      "desc": "Utiliza hasta el último resquicio de llamas de su cuerpo para infligir un grave daño al oponente. Tras el ataque, el usuario deja de ser de tipo Fuego."
+    },
+    "Buzzy Buzz": {
+      "name": "Joltioparálisis",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Calm Mind": {
+      "name": "Paz Mental",
+      "desc": "Aumenta la concentración y calma el espíritu para  subir el Ataque Especial y la Defensa Especial."
+    },
+    "Camouflage": {
+      "name": "Camuflaje",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Captivate": {
+      "name": "Seducción",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Catastropika": {
+      "name": "Pikavoltio Letal",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Celebrate": {
+      "name": "Celebración",
+      "desc": "El Pokémon te felicita en un día muy especial para ti."
+    },
+    "Charge": {
+      "name": "Carga",
+      "desc": "Recarga energía para potenciar el siguiente movimiento de tipo Eléctrico. También sube la Defensa Especial."
+    },
+    "Charge Beam": {
+      "name": "Rayo Carga",
+      "desc": "Lanza un rayo eléctrico contra el objetivo. Puede subir el Ataque Especial de quien lo usa."
+    },
+    "Charm": {
+      "name": "Encanto",
+      "desc": "Engatusa al objetivo y reduce mucho su Ataque."
+    },
+    "Chatter": {
+      "name": "Cháchara",
+      "desc": "Ataca con una onda de sonido muy ruidosa compuesta por palabras y confunde al objetivo."
+    },
+    "Chip Away": {
+      "name": "Guardia Baja",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Circle Throw": {
+      "name": "Llave Giro",
+      "desc": "Lanza por los aires al objetivo y hace que salga otro  Pokémon. Si es uno salvaje, acaba el combate."
+    },
+    "Clamp": {
+      "name": "Tenaza",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Clanging Scales": {
+      "name": "Fragor Escamas",
+      "desc": "Frota todas las escamas de su cuerpo para crear un fuerte sonido con el que ataca. Cuando el ataque termina, su Defensa se ve reducida."
+    },
+    "Clangorous Soul": {
+      "name": "Estruendo Escama",
+      "desc": "Utiliza parte de los PS propios para subir sus características."
+    },
+    "Clangorous Soulblaze": {
+      "name": "Estruendo Implacable",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Clear Smog": {
+      "name": "Niebla Clara",
+      "desc": "Ataca al objetivo con una singular bola de lodo que elimina cualquier cambio en sus características."
+    },
+    "Close Combat": {
+      "name": "A Bocajarro",
+      "desc": "Lucha abiertamente contra el objetivo sin protegerse. También reduce la Defensa y la Defensa Especial del usuario."
+    },
+    "Coaching": {
+      "name": "Motivación",
+      "desc": "El usuario imparte indicaciones precisas a sus aliados, que ven aumentados su Ataque y su Defensa."
+    },
+    "Coil": {
+      "name": "Enrosque",
+      "desc": "El usuario se concentra, lo que le permite aumentar  su Ataque, Defensa y Precisión."
+    },
+    "Comet Punch": {
+      "name": "Puño Cometa",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Confide": {
+      "name": "Confidencia",
+      "desc": "Hace que el objetivo pierda la concentración  contándole un secreto. Disminuye el Ataque Especial del oponente."
+    },
+    "Confuse Ray": {
+      "name": "Rayo Confuso",
+      "desc": "Rayo siniestro que confunde al objetivo."
+    },
+    "Confusion": {
+      "name": "Confusión",
+      "desc": "Débil ataque telequinético que puede causar confusión."
+    },
+    "Constrict": {
+      "name": "Restricción",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Continental Crush": {
+      "name": "Aplastamiento Gigalítico",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Conversion": {
+      "name": "Conversión",
+      "desc": "Cambia el tipo del usuario por el del primero de sus  movimientos."
+    },
+    "Conversion 2": {
+      "name": "Conversión2",
+      "desc": "El usuario cambia de tipo para hacerse resistente al último tipo de movimiento usado por el objetivo."
+    },
+    "Copycat": {
+      "name": "Copión",
+      "desc": "Imita el movimiento usado justo antes. El movimiento falla si no se ha usado aún ninguno."
+    },
+    "Core Enforcer": {
+      "name": "Núcleo Castigo",
+      "desc": "Inflige daño al rival, y si este ya ha hecho uso de algún movimiento, pierde su habilidad."
+    },
+    "Corkscrew Crash": {
+      "name": "Hélice Trepanadora",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Corrosive Gas": {
+      "name": "Gas Corrosivo",
+      "desc": "El usuario libera un gas cáustico que envuelve a todos los que se encuentren alrededor y derrite por completo los objetos que lleven equipados."
+    },
+    "Cosmic Power": {
+      "name": "Masa Cósmica",
+      "desc": "Sube la Defensa y la Defensa Especial propias con  energía mística."
+    },
+    "Cotton Guard": {
+      "name": "Rizo Algodón",
+      "desc": "Cubre al Pokémon con una madeja protectora. Aumenta muchísimo la Defensa."
+    },
+    "Cotton Spore": {
+      "name": "Esporagodón",
+      "desc": "Adhiere esporas a los rivales para reducir mucho su  Velocidad."
+    },
+    "Counter": {
+      "name": "Contraataque",
+      "desc": "Devuelve un golpe físico por duplicado."
+    },
+    "Court Change": {
+      "name": "Cambio de Cancha",
+      "desc": "Extraño poder que intercambia los efectos en el terreno de combate de ambos bandos."
+    },
+    "Covet": {
+      "name": "Antojo",
+      "desc": "Se acerca con ternura al objetivo, pero le ataca y le roba el objeto que lleve."
+    },
+    "Crabhammer": {
+      "name": "Martillazo",
+      "desc": "Golpea con fuerza con una pinza enorme. Suele asestar un golpe crítico."
+    },
+    "Crafty Shield": {
+      "name": "Truco Defensa",
+      "desc": "Usa unos misteriosos poderes para protegerse a sí  mismo y a sus aliados de movimientos de estado, pero no de otro tipo de ataques."
+    },
+    "Cross Chop": {
+      "name": "Tajo Cruzado",
+      "desc": "Corte doble que suele propinar un golpe crítico."
+    },
+    "Cross Poison": {
+      "name": "Veneno X",
+      "desc": "Tajo que puede envenenar al objetivo. Suele ser crítico."
+    },
+    "Crunch": {
+      "name": "Triturar",
+      "desc": "Tritura con afilados colmillos y puede bajar la Defensa del objetivo."
+    },
+    "Crush Claw": {
+      "name": "Garra Brutal",
+      "desc": "Hace trizas al objetivo con garras afiladas y puede bajar su Defensa."
+    },
+    "Crush Grip": {
+      "name": "Agarrón",
+      "desc": "Estruja al objetivo con gran fuerza. Cuantos más PS le queden al objetivo, más fuerte será el ataque."
+    },
+    "Curse": {
+      "name": "Maldición",
+      "desc": "Un movimiento que tiene efectos distintos si el usuario es de tipo Fantasma o no."
+    },
+    "Cut": {
+      "name": "Corte",
+      "desc": "Corta al adversario con garras, guadañas, etc."
+    },
+    "Darkest Lariat": {
+      "name": "Lariat Oscuro",
+      "desc": "Gira sobre sí mismo y golpea al oponente con ambos brazos. Ignora los cambios en las características del objetivo."
+    },
+    "Dark Pulse": {
+      "name": "Pulso Umbrío",
+      "desc": "Libera una horrible aura llena de malos pensamientos que puede amedrentar al objetivo."
+    },
+    "Dark Void": {
+      "name": "Brecha Negra",
+      "desc": "El objetivo es enviado a un mundo de tinieblas que lo hace dormir."
+    },
+    "Dazzling Gleam": {
+      "name": "Brillo Mágico",
+      "desc": "Inflige daño a los oponentes con una potente luz."
+    },
+    "Decorate": {
+      "name": "Decoración",
+      "desc": "Aumenta mucho el Ataque y el Ataque Especial del objetivo al decorarlo."
+    },
+    "Defend Order": {
+      "name": "A Defender",
+      "desc": "El usuario llama a sus súbditos para que formen un escudo viviente. Sube la Defensa y la Defensa Especial."
+    },
+    "Defense Curl": {
+      "name": "Rizo Defensa",
+      "desc": "Se enrosca para ocultar sus puntos débiles y aumentar la Defensa."
+    },
+    "Defog": {
+      "name": "Despejar",
+      "desc": "Potente viento que barre el reflejo o la pantalla de luz creada por el objetivo. También puede reducir su Evasión."
+    },
+    "Destiny Bond": {
+      "name": "Mismo Destino",
+      "desc": "Si el usuario se debilita por un ataque rival antes de usar otro movimiento, el Pokémon rival se debilitará también. Puede fallar si se usa repetidamente."
+    },
+    "Detect": {
+      "name": "Detección",
+      "desc": "Frena todos los ataques, pero puede fallar si se usa  repetidamente."
+    },
+    "Devastating Drake": {
+      "name": "Dracoaliento Devastador",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Diamond Storm": {
+      "name": "Torm. Diamantes",
+      "desc": "Desata un devastador vendaval de diamantes para  dañar a los oponentes. Puede aumentar mucho la Defensa del usuario."
+    },
+    "Dig": {
+      "name": "Excavar",
+      "desc": "El usuario cava durante el primer turno y ataca en el segundo."
+    },
+    "Disable": {
+      "name": "Anulación",
+      "desc": "Desactiva el último movimiento del objetivo durante  cuatro turnos."
+    },
+    "Disarming Voice": {
+      "name": "Voz Cautivadora",
+      "desc": "Obnubila a los oponentes con su fascinante voz y les provoca daños emocionales. Siempre acierta al objetivo."
+    },
+    "Discharge": {
+      "name": "Chispazo",
+      "desc": "Una deslumbradora onda eléctrica afecta a los Pokémon que hay combatiendo alrededor. Puede paralizar."
+    },
+    "Dive": {
+      "name": "Buceo",
+      "desc": "El usuario se sumerge en el primer turno y ataca en el segundo."
+    },
+    "Dizzy Punch": {
+      "name": "Puño Mareo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Doom Desire": {
+      "name": "Deseo Oculto",
+      "desc": "Concentra un haz de luz y ataca dos turnos después."
+    },
+    "Double-Edge": {
+      "name": "Doble Filo",
+      "desc": "Ataque arriesgado que también hiere al agresor."
+    },
+    "Double Hit": {
+      "name": "Doble Golpe",
+      "desc": "Golpea al objetivo dos veces seguidas con la cola u otras partes de su cuerpo."
+    },
+    "Double Iron Bash": {
+      "name": "Ferropuño Doble",
+      "desc": "Usando la tuerca del pecho como eje, gira sobre sí mismo y golpea con los brazos dos veces seguidas. Puede amedrentar al rival."
+    },
+    "Double Kick": {
+      "name": "Doble Patada",
+      "desc": "Una patada doble. Golpea dos veces."
+    },
+    "Double Slap": {
+      "name": "Doble Bofetón",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Double Team": {
+      "name": "Doble Equipo",
+      "desc": "Crea copias de sí mismo para mejorar la Evasión."
+    },
+    "Draco Meteor": {
+      "name": "Cometa Draco",
+      "desc": "Hace que grandes cometas caigan del cielo sobre el objetivo. Baja mucho el Ataque Especial del que lo usa."
+    },
+    "Dragon Ascent": {
+      "name": "Ascenso Draco",
+      "desc": "El usuario se precipita desde el cielo a una velocidad de vértigo para atacar al objetivo, pero hace que bajen la Defensa y la Defensa Especial del usuario."
+    },
+    "Dragon Breath": {
+      "name": "Dragoaliento",
+      "desc": "Poderosa ráfaga de aliento que golpea al objetivo y  puede paralizarlo."
+    },
+    "Dragon Cheer": {
+      "name": "Bramido Dragón"
+    },
+    "Dragon Claw": {
+      "name": "Garra Dragón",
+      "desc": "Araña al objetivo con garras afiladas."
+    },
+    "Dragon Dance": {
+      "name": "Danza Dragón",
+      "desc": "Danza mística que sube el Ataque y la Velocidad."
+    },
+    "Dragon Darts": {
+      "name": "Dracoflechas",
+      "desc": "El usuario ataca propulsando a ambos Dreepy. En caso de haber dos adversarios, cada Dreepy golpea a su propio objetivo por separado."
+    },
+    "Dragon Energy": {
+      "name": "Dracoenergía",
+      "desc": "El usuario convierte su fuerza vital en una energía con la que ataca al objetivo. Cuantos menos PS tenga el usuario, menor será la potencia del movimiento."
+    },
+    "Dragon Hammer": {
+      "name": "Martillo Dragón",
+      "desc": "Usa el cuerpo como un martillo para abalanzarse sobre su rival y causarle daño."
+    },
+    "Dragon Pulse": {
+      "name": "Pulso Dragón",
+      "desc": "Abre mucho la boca y libera una onda de choque que ataca al objetivo."
+    },
+    "Dragon Rage": {
+      "name": "Furia Dragón",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Dragon Rush": {
+      "name": "Carga Dragón",
+      "desc": "Ataca de forma brutal mientras intimida al objetivo. También puede amedrentarlo."
+    },
+    "Dragon Tail": {
+      "name": "Cola Dragón",
+      "desc": "Ataca al objetivo y lo obliga a cambiarse por otro  Pokémon. Si es uno salvaje, acaba el combate."
+    },
+    "Draining Kiss": {
+      "name": "Beso Drenaje",
+      "desc": "El usuario absorbe PS del objetivo con un beso y restaura su propia energía en una cantidad igual o superior a la mitad del daño infligido."
+    },
+    "Drain Punch": {
+      "name": "Puño Drenaje",
+      "desc": "Un golpe que drena energía. El Pokémon recupera la mitad de los PS arrebatados al objetivo."
+    },
+    "Dream Eater": {
+      "name": "Comesueños",
+      "desc": "Restaura al usuario la mitad del daño causado a un  objetivo dormido."
+    },
+    "Drill Peck": {
+      "name": "Pico Taladro",
+      "desc": "Picotazo giratorio y perforador muy potente."
+    },
+    "Drill Run": {
+      "name": "Taladradora",
+      "desc": "El usuario golpea usando su cuerpo como un taladro.  Suele ser crítico."
+    },
+    "Drum Beating": {
+      "name": "Batería Asalto",
+      "desc": "El usuario controla un tocón mediante la percusión y al atacar reduce la Velocidad del objetivo."
+    },
+    "Dual Chop": {
+      "name": "Golpe Bis",
+      "desc": "Golpea dos veces seguidas con las partes más recias de su cuerpo."
+    },
+    "Dual Wingbeat": {
+      "name": "Ala Bis",
+      "desc": "Ataca al adversario golpeándolo dos veces con las alas."
+    },
+    "Dynamax Cannon": {
+      "name": "Cañón Dinamax",
+      "desc": "El usuario ataca emitiendo un rayo desde su núcleo. El daño infligido se duplica si el objetivo ha alcanzado el estado Dinamax."
+    },
+    "Dynamic Punch": {
+      "name": "Puño Dinámico",
+      "desc": "Puñetazo con toda la fuerza concentrada. Causa  confusión si atina."
+    },
+    "Earth Power": {
+      "name": "Tierra Viva",
+      "desc": "La tierra a los pies del objetivo erupciona violentamente. Puede disminuir la Defensa Especial  del objetivo."
+    },
+    "Earthquake": {
+      "name": "Terremoto",
+      "desc": "Un terremoto que afecta a todos los Pokémon que estén a su alrededor."
+    },
+    "Echoed Voice": {
+      "name": "Eco Voz",
+      "desc": "Un susurro que aumenta de potencia conforme el  usuario y otros Pokémon lo van utilizando."
+    },
+    "Eerie Impulse": {
+      "name": "Onda Anómala",
+      "desc": "El usuario irradia unas raras ondas que, al alcanzar a un oponente, hacen que disminuya mucho su Ataque Especial."
+    },
+    "Eerie Spell": {
+      "name": "Conjuro Funesto",
+      "desc": "El usuario ataca con un poder psíquico de inmensa potencia y elimina 3 PP del último movimiento que haya usado el objetivo."
+    },
+    "Egg Bomb": {
+      "name": "Bomba Huevo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Electric Terrain": {
+      "name": "Campo Eléctrico",
+      "desc": "Durante cinco turnos, se potencian los movimientos de tipo Eléctrico y los Pokémon que están en contacto con el suelo no pueden quedarse dormidos."
+    },
+    "Electrify": {
+      "name": "Electrificación",
+      "desc": "Si el objetivo queda electrificado antes de usar un movimiento, este será de tipo Eléctrico."
+    },
+    "Electro Ball": {
+      "name": "Bola Voltio",
+      "desc": "Lanza una bola eléctrica. Cuanto mayor sea la Velocidad del usuario en comparación con la del  objetivo, mayor será el daño causado."
+    },
+    "Electro Shot": {
+      "name": "Electrorrayo"
+    },
+    "Electroweb": {
+      "name": "Electrotela",
+      "desc": "Atrapa y ataca a los objetivos con una telaraña  eléctrica. También reduce su Velocidad."
+    },
+    "Embargo": {
+      "name": "Embargo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Ember": {
+      "name": "Ascuas",
+      "desc": "Ataca con llamas pequeñas que pueden causar  quemaduras."
+    },
+    "Encore": {
+      "name": "Otra Vez",
+      "desc": "El objetivo repite su último movimiento durante tres  turnos."
+    },
+    "Endeavor": {
+      "name": "Esfuerzo",
+      "desc": "Reduce los PS del objetivo para que igualen a los del atacante."
+    },
+    "Endure": {
+      "name": "Aguante",
+      "desc": "Resiste cualquier ataque y deja al menos 1 PS.  Puede fallar si se usa repetidamente."
+    },
+    "Energy Ball": {
+      "name": "Energibola",
+      "desc": "Aúna fuerzas de la naturaleza y libera su ataque.  Puede disminuir la Defensa Especial del objetivo."
+    },
+    "Entrainment": {
+      "name": "Danza Amiga",
+      "desc": "Una extraña danza que hace que el usuario y el objetivo tengan la misma habilidad."
+    },
+    "Eruption": {
+      "name": "Estallido",
+      "desc": "Furia explosiva. Cuanto menor sea el número de PS del usuario, menos daño hará el ataque."
+    },
+    "Eternabeam": {
+      "name": "Rayo Infinito",
+      "desc": "Este es el mayor ataque de Eternatus una vez adquirida su forma original. No puede moverse en el turno siguiente."
+    },
+    "Expanding Force": {
+      "name": "Vasta Fuerza",
+      "desc": "El usuario ataca al objetivo con sus poderes psíquicos. Cuando se usa en conjunción con un campo psíquico, aumenta su potencia e inflige daño a todos los rivales."
+    },
+    "Explosion": {
+      "name": "Explosión",
+      "desc": "El atacante causa una grandísima explosión y hiere  a todos a su alrededor. El usuario se debilita de  inmediato."
+    },
+    "Extrasensory": {
+      "name": "Paranormal",
+      "desc": "Emite una energía muy extraña que puede amedrentar al objetivo."
+    },
+    "Extreme Evoboost": {
+      "name": "Novena Potencia",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Extreme Speed": {
+      "name": "Veloc. Extrema",
+      "desc": "Ataque de una velocidad extrema. Este movimiento tiene prioridad alta."
+    },
+    "Facade": {
+      "name": "Imagen",
+      "desc": "Si el usuario está quemado, paralizado o envenenado, ataca con el doble de potencia."
+    },
+    "Fairy Lock": {
+      "name": "Cerrojo Feérico",
+      "desc": "Consigue que ningún Pokémon pueda huir en el  siguiente turno echando un cerrojo."
+    },
+    "Fairy Wind": {
+      "name": "Viento Feérico",
+      "desc": "El Pokémon que lo usa desata un vendaval feérico que arremete contra el objetivo."
+    },
+    "Fake Out": {
+      "name": "Sorpresa",
+      "desc": "Amedrenta al objetivo con este movimiento de prioridad alta. Solo sirve en el primer turno."
+    },
+    "Fake Tears": {
+      "name": "Llanto Falso",
+      "desc": "Lágrimas de cocodrilo que bajan mucho la Defensa Especial del objetivo."
+    },
+    "False Surrender": {
+      "name": "Irreverencia",
+      "desc": "El usuario finge hacer una reverencia y aprovecha la ocasión para ensartar al objetivo con su cabello alborotado. Siempre acierta."
+    },
+    "False Swipe": {
+      "name": "Falso Tortazo",
+      "desc": "Ataque moderado que no debilita al objetivo y le deja al menos 1 PS."
+    },
+    "Feather Dance": {
+      "name": "Danza Pluma",
+      "desc": "Envuelve al objetivo con un manto de plumas para  reducir mucho su Ataque."
+    },
+    "Feint": {
+      "name": "Amago",
+      "desc": "Permite golpear a objetivos que han utilizado movimientos como Protección o Detección y anula sus efectos."
+    },
+    "Feint Attack": {
+      "name": "Finta",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Fell Stinger": {
+      "name": "Aguijón Letal",
+      "desc": "Si se derrota al objetivo utilizando este movimiento, aumenta muchísimo el Ataque del usuario."
+    },
+    "Fickle Beam": {
+      "name": "Láser Veleidoso"
+    },
+    "Fiery Dance": {
+      "name": "Danza Llama",
+      "desc": "Envuelve en llamas y daña al objetivo. Puede aumentar el Ataque Especial de quien lo usa."
+    },
+    "Fiery Wrath": {
+      "name": "Furia Candente",
+      "desc": "El usuario convierte su ira en un aura flamígera para lanzar su ataque. Puede amedrentar al objetivo."
+    },
+    "Final Gambit": {
+      "name": "Sacrificio",
+      "desc": "El usuario se sacrifica causándole un daño al objetivo equivalente a sus propios PS perdidos."
+    },
+    "Fire Blast": {
+      "name": "Llamarada",
+      "desc": "Llama intensa que chamusca y puede causar  quemaduras."
+    },
+    "Fire Fang": {
+      "name": "Colmillo Ígneo",
+      "desc": "El usuario muerde al objetivo con colmillos en llamas y puede hacer que se amedrente o sufra quemaduras."
+    },
+    "Fire Lash": {
+      "name": "Látigo Ígneo",
+      "desc": "Golpea al oponente con un látigo incandescente y reduce su Defensa."
+    },
+    "Fire Pledge": {
+      "name": "Voto Fuego",
+      "desc": "Ataca con columnas de fuego. Combinado con Voto Planta, crea un mar de llamas y aumenta su  potencia."
+    },
+    "Fire Punch": {
+      "name": "Puño Fuego",
+      "desc": "Puñetazo ardiente que puede causar quemaduras."
+    },
+    "Fire Spin": {
+      "name": "Giro Fuego",
+      "desc": "Un aro de fuego que atrapa al objetivo de cuatro a  cinco turnos."
+    },
+    "First Impression": {
+      "name": "Escaramuza",
+      "desc": "Movimiento de gran potencia que solo puede usarse en el turno en que el usuario sale al combate."
+    },
+    "Fishious Rend": {
+      "name": "Branquibocado",
+      "desc": "El usuario agarra al objetivo con sus duras branquias. En caso de atacar antes que este último, la potencia del movimiento se duplica."
+    },
+    "Fissure": {
+      "name": "Fisura",
+      "desc": "Abre una grieta en el suelo y mete al objetivo en ella.  Fulmina en un golpe."
+    },
+    "Flail": {
+      "name": "Azote",
+      "desc": "Ataque frenético. Cuantos menos PS tenga el usuario, más daño producirá."
+    },
+    "Flame Burst": {
+      "name": "Pirotecnia",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Flame Charge": {
+      "name": "Nitrocarga",
+      "desc": "Llamas que golpean al objetivo y aumentan la  Velocidad del atacante."
+    },
+    "Flamethrower": {
+      "name": "Lanzallamas",
+      "desc": "Ataca con una gran ráfaga de fuego que puede causar quemaduras."
+    },
+    "Flame Wheel": {
+      "name": "Rueda Fuego",
+      "desc": "Ataca envuelto en fuego. Puede causar quemaduras."
+    },
+    "Flare Blitz": {
+      "name": "Envite Ígneo",
+      "desc": "El Pokémon se cubre de llamas y carga contra el objetivo, aunque él también recibe daño. Puede quemar."
+    },
+    "Flash": {
+      "name": "Destello",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Flash Cannon": {
+      "name": "Foco Resplandor",
+      "desc": "El usuario concentra toda la luz del cuerpo y la libera. Puede bajar la Defensa Especial del objetivo."
+    },
+    "Flatter": {
+      "name": "Camelo",
+      "desc": "Halaga al objetivo y lo confunde, pero también sube su Ataque Especial."
+    },
+    "Fleur Cannon": {
+      "name": "Cañón Floral",
+      "desc": "El usuario emite un potente rayo, pero su Ataque Especial se reduce mucho."
+    },
+    "Fling": {
+      "name": "Lanzamiento",
+      "desc": "El usuario lanza contra el objetivo el objeto que lleva. La fuerza del ataque y su efecto varían según el objeto."
+    },
+    "Flip Turn": {
+      "name": "Viraje",
+      "desc": "Tras atacar, el usuario da paso a toda prisa a otro Pokémon del equipo."
+    },
+    "Floaty Fall": {
+      "name": "Pikapicado",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Floral Healing": {
+      "name": "Cura Floral",
+      "desc": "Restaura la mitad de los PS máximos del objetivo. Es más efectivo cuando se usa en conjunción con Campo de Hierba."
+    },
+    "Flower Shield": {
+      "name": "Defensa Floral",
+      "desc": "Aumenta la Defensa de todos los Pokémon de tipo Planta que hay en el combate usando unos misteriosos poderes."
+    },
+    "Fly": {
+      "name": "Vuelo",
+      "desc": "El usuario vuela en el primer turno y ataca en el segundo."
+    },
+    "Flying Press": {
+      "name": "Plancha Voladora",
+      "desc": "El Pokémon que lo usa se lanza sobre su oponente.  Este movimiento es de tipo Lucha y tipo Volador al  mismo tiempo."
+    },
+    "Focus Blast": {
+      "name": "Onda Certera",
+      "desc": "Agudiza la concentración mental y libera su poder.  Puede disminuir la Defensa Especial del objetivo."
+    },
+    "Focus Energy": {
+      "name": "Foco Energía",
+      "desc": "Concentra energía para aumentar las posibilidades de asestar un golpe crítico."
+    },
+    "Focus Punch": {
+      "name": "Puño Certero",
+      "desc": "Se concentra para dar un puñetazo. Falla si se sufre un golpe antes de su uso."
+    },
+    "Follow Me": {
+      "name": "Señuelo",
+      "desc": "Llama la atención para concentrar todos los ataques de todos los del equipo rival hacia sí mismo."
+    },
+    "Force Palm": {
+      "name": "Palmeo",
+      "desc": "Ataca al objetivo con una onda de choque y puede  llegar a paralizarlo."
+    },
+    "Foresight": {
+      "name": "Profecía",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Forest's Curse": {
+      "name": "Condena Silvana",
+      "desc": "El objetivo es presa de la maldición del bosque, por lo que pasa a ser un Pokémon de tipo Planta, además de conservar sus tipos habituales."
+    },
+    "Foul Play": {
+      "name": "Juego Sucio",
+      "desc": "El usuario emplea la fuerza del objetivo para atacarlo. Cuanto mayor es el Ataque del objetivo, más daño provoca."
+    },
+    "Freeze-Dry": {
+      "name": "Liofilización",
+      "desc": "Enfría súbitamente al objetivo e incluso puede congelarlo. Es supereficaz contra Pokémon de tipo Agua."
+    },
+    "Freeze Shock": {
+      "name": "Rayo Gélido",
+      "desc": "El usuario carga un bloque de hielo con electricidad en el primer turno y ataca con él en el segundo. Puede paralizar."
+    },
+    "Freezing Glare": {
+      "name": "Mirada Heladora",
+      "desc": "A través de sus ojos emite poderes psíquicos con los que ataca al objetivo, al que puede llegar a congelar."
+    },
+    "Freezy Frost": {
+      "name": "Glaceoprisma",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Frenzy Plant": {
+      "name": "Planta Feroz",
+      "desc": "Golpea con una enorme planta. Quien lo usa no puede moverse en el siguiente turno."
+    },
+    "Frost Breath": {
+      "name": "Vaho Gélido",
+      "desc": "Quien lo usa ataca lanzando un aliento gélido. Siempre asesta un golpe crítico."
+    },
+    "Frustration": {
+      "name": "Frustración",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Fury Attack": {
+      "name": "Ataque Furia",
+      "desc": "Cornea al objetivo de dos a cinco veces."
+    },
+    "Fury Cutter": {
+      "name": "Corte Furia",
+      "desc": "Ataque con garras o guadaña que crece en intensidad si se usa repetidas veces."
+    },
+    "Fury Swipes": {
+      "name": "Golpes Furia",
+      "desc": "Araña rápidamente de dos a cinco veces."
+    },
+    "Fusion Bolt": {
+      "name": "Rayo Fusión",
+      "desc": "Ataca con una enorme descarga eléctrica. Aumenta  su potencia si es influenciada por una gigantesca  llamarada."
+    },
+    "Fusion Flare": {
+      "name": "Llama Fusión",
+      "desc": "Ataca con una llamarada gigantesca. Aumenta su  potencia si es influenciada por una gran energía eléctrica."
+    },
+    "Future Sight": {
+      "name": "Premonición",
+      "desc": "Concentra energía psíquica para golpear al objetivo dos turnos después."
+    },
+    "Gastro Acid": {
+      "name": "Bilis",
+      "desc": "El usuario arroja sus jugos biliares al objetivo, lo que anula el efecto de la habilidad en uso."
+    },
+    "Gear Grind": {
+      "name": "Rueda Doble",
+      "desc": "Rota dos engranajes de hierro sobre el objetivo. Golpea dos veces."
+    },
+    "Gear Up": {
+      "name": "Piñón Auxiliar",
+      "desc": "Cambia de marcha y logra aumentar el Ataque y el Ataque Especial de los Pokémon aliados que cuenten con las habilidades Más y Menos."
+    },
+    "Genesis Supernova": {
+      "name": "Supernova Original",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Geomancy": {
+      "name": "Geocontrol",
+      "desc": "Concentra energía durante el primer turno, de forma que su Velocidad, Ataque Especial y Defensa Especial aumenten mucho en el segundo."
+    },
+    "Giga Drain": {
+      "name": "Gigadrenado",
+      "desc": "Un ataque que absorbe nutrientes. Quien lo usa  recupera la mitad de los PS del daño que produce."
+    },
+    "Giga Impact": {
+      "name": "Gigaimpacto",
+      "desc": "El usuario carga contra el objetivo con toda la fuerza que tiene y descansa durante el siguiente turno."
+    },
+    "Gigavolt Havoc": {
+      "name": "Gigavoltio Destructor",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Glacial Lance": {
+      "name": "Lanza Glacial",
+      "desc": "El usuario ataca al objetivo lanzándole un carámbano de hielo envuelto en una ventisca."
+    },
+    "Glaciate": {
+      "name": "Mundo Gélido",
+      "desc": "Ataque con aire helado que baja la Velocidad del  objetivo."
+    },
+    "Glare": {
+      "name": "Deslumbrar",
+      "desc": "Intimida y asusta al objetivo con la mirada para dejarlo paralizado."
+    },
+    "Glitzy Glow": {
+      "name": "Espeaura",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Grass Knot": {
+      "name": "Hierba Lazo",
+      "desc": "Enreda al objetivo con hierba y lo derriba. Cuanto más pesado es el objetivo, más daño inflige."
+    },
+    "Grass Pledge": {
+      "name": "Voto Planta",
+      "desc": "Ataca con columnas de hojas. Combinado con Voto Agua, crea un pantano y aumenta su potencia."
+    },
+    "Grass Whistle": {
+      "name": "Silbato",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Grassy Glide": {
+      "name": "Fitoimpulso",
+      "desc": "Ataca al objetivo deslizándose sobre el terreno de combate. Este movimiento tiene prioridad alta cuando el terreno está cubierto por un campo de hierba."
+    },
+    "Grassy Terrain": {
+      "name": "Campo de Hierba",
+      "desc": "Durante cinco turnos, se potencian los movimientos de tipo Planta y los Pokémon que están en contacto con el suelo recuperan PS en cada turno."
+    },
+    "Grav Apple": {
+      "name": "Fuerza G",
+      "desc": "El usuario ataca haciendo caer una manzana desde gran altura. Disminuye la Defensa del objetivo."
+    },
+    "Gravity": {
+      "name": "Gravedad",
+      "desc": "Durante cinco turnos, se anulan los movimientos que alzan el vuelo y los Pokémon de tipo Volador o que levitan son vulnerables a movimientos de tipo Tierra."
+    },
+    "Growl": {
+      "name": "Gruñido",
+      "desc": "Dulce gruñido que reduce el Ataque del equipo rival."
+    },
+    "Growth": {
+      "name": "Desarrollo",
+      "desc": "Hace que su cuerpo crezca a marchas forzadas con lo que aumenta su Ataque y Ataque Especial."
+    },
+    "Grudge": {
+      "name": "Rabia",
+      "desc": "Si el usuario se debilita al recibir un ataque, todos los PP de este último ataque serán eliminados."
+    },
+    "Guardian of Alola": {
+      "name": "Cólera del Guardián",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Guard Split": {
+      "name": "Isoguardia",
+      "desc": "El usuario emplea sus poderes para hacer la media de su Defensa y Defensa Especial con las de su objetivo y compartirlas."
+    },
+    "Guard Swap": {
+      "name": "Cambiadefensa",
+      "desc": "El usuario emplea su poder mental para intercambiar los cambios en la Defensa y Defensa Especial con el objetivo."
+    },
+    "Guillotine": {
+      "name": "Guillotina",
+      "desc": "Ataque cortante que debilita al oponente de un golpe si acierta."
+    },
+    "Gunk Shot": {
+      "name": "Lanzamugre",
+      "desc": "Lanza contra el objetivo basura asquerosa y puede envenenarlo."
+    },
+    "Gust": {
+      "name": "Tornado",
+      "desc": "Crea un tornado con las alas y lo lanza contra el objetivo."
+    },
+    "Gyro Ball": {
+      "name": "Giro Bola",
+      "desc": "Embiste al objetivo con un potente ataque giratorio.  Cuanto más lento es el usuario, más daño causa."
+    },
+    "Hail": {
+      "name": "Granizo",
+      "desc": "Tormenta de granizo que dura cinco turnos. Hiere a todos los Pokémon excepto a los de tipo Hielo."
+    },
+    "Hammer Arm": {
+      "name": "Machada",
+      "desc": "Gira con fuerza el puño y da un gran golpe. No obstante, baja la Velocidad."
+    },
+    "Happy Hour": {
+      "name": "Paga Extra",
+      "desc": "Al usar este movimiento se consigue duplicar la  recompensa recibida tras el combate."
+    },
+    "Harden": {
+      "name": "Fortaleza",
+      "desc": "Tensa la musculatura del usuario para aumentar la  Defensa."
+    },
+    "Hard Press": {
+      "name": "Prensa Metálica"
+    },
+    "Haze": {
+      "name": "Niebla",
+      "desc": "Neblina que elimina los cambios de características de todos los Pokémon en combate."
+    },
+    "Headbutt": {
+      "name": "Golpe Cabeza",
+      "desc": "Potente cabezazo que puede amedrentar al objetivo."
+    },
+    "Head Charge": {
+      "name": "Ariete",
+      "desc": "Propina un tremendo cabezazo. También daña al  usuario un poco."
+    },
+    "Head Smash": {
+      "name": "Testarazo",
+      "desc": "El usuario arriesga su vida y lanza un cabezazo con toda su fuerza. El agresor resulta seriamente dañado."
+    },
+    "Heal Bell": {
+      "name": "Campana Cura",
+      "desc": "Tañido que cura los problemas de estado de todos los Pokémon del equipo."
+    },
+    "Heal Block": {
+      "name": "Anticura",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Healing Wish": {
+      "name": "Deseo Cura",
+      "desc": "El Pokémon cae debilitado, pero su sustituto recupera su estado y los PS."
+    },
+    "Heal Order": {
+      "name": "Auxilio",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Heal Pulse": {
+      "name": "Pulso Cura",
+      "desc": "Una onda curativa restaura la mitad de los PS máximos del objetivo."
+    },
+    "Heart Stamp": {
+      "name": "Arrumaco",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Heart Swap": {
+      "name": "Cambia Almas",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Heat Crash": {
+      "name": "Golpe Calor",
+      "desc": "El usuario ataca con su cuerpo ardiente. Cuanto mayor sea su peso comparado con el del objetivo, más daño causará."
+    },
+    "Heat Wave": {
+      "name": "Onda Ígnea",
+      "desc": "Provoca un viento abrasador que puede quemar al  objetivo."
+    },
+    "Heavy Slam": {
+      "name": "Cuerpo Pesado",
+      "desc": "El usuario golpea con todo su cuerpo. Cuanto mayor sea su peso comparado con el del objetivo, más daño causará."
+    },
+    "Helping Hand": {
+      "name": "Refuerzo",
+      "desc": "El usuario ayuda a un aliado reforzando la potencia de su ataque."
+    },
+    "Hex": {
+      "name": "Infortunio",
+      "desc": "Ataque que causa un gran daño a los objetivos que sufren problemas de estado."
+    },
+    "Hidden Power": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Bug": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Dark": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Dragon": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Electric": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Fighting": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Fire": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Flying": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Ghost": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Grass": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Ground": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Ice": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Poison": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Psychic": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Rock": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Steel": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hidden Power Water": {
+      "name": "Poder Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "High Horsepower": {
+      "name": "Fuerza Equina",
+      "desc": "Asesta un golpe devastador usando todo su cuerpo."
+    },
+    "High Jump Kick": {
+      "name": "Pat. Salto Alta",
+      "desc": "El usuario salta muy alto y da un rodillazo. Si falla, se hará daño."
+    },
+    "Hold Back": {
+      "name": "Clemencia",
+      "desc": "El usuario se contiene a la hora de atacar y deja al objetivo con al menos 1 PS."
+    },
+    "Hold Hands": {
+      "name": "Manos Juntas",
+      "desc": "El Pokémon le da la mano a un aliado y ambos se  sienten muy felices."
+    },
+    "Hone Claws": {
+      "name": "Afilagarras",
+      "desc": "El usuario se afila las garras para aumentar su Ataque y Precisión."
+    },
+    "Horn Attack": {
+      "name": "Cornada",
+      "desc": "Ataca al objetivo con una cornada."
+    },
+    "Horn Drill": {
+      "name": "Perforador",
+      "desc": "Ataque con un cuerno giratorio que fulmina de un solo golpe al objetivo si lo alcanza."
+    },
+    "Horn Leech": {
+      "name": "Asta Drenaje",
+      "desc": "Un golpe que drena energía. El Pokémon recupera la mitad de los PS arrebatados al objetivo."
+    },
+    "Howl": {
+      "name": "Aullido",
+      "desc": "Aullido que sube el ánimo y aumenta el Ataque del equipo."
+    },
+    "Hurricane": {
+      "name": "Vendaval",
+      "desc": "Golpea al objetivo con un fuerte torbellino que envuelve al rival y puede confundirlo."
+    },
+    "Hydro Cannon": {
+      "name": "Hidrocañón",
+      "desc": "Disparo de agua. El atacante debe descansar el  siguiente turno."
+    },
+    "Hydro Pump": {
+      "name": "Hidrobomba",
+      "desc": "Lanza una gran masa de agua a presión para atacar."
+    },
+    "Hydro Steam": {
+      "name": "Hidrovapor"
+    },
+    "Hydro Vortex": {
+      "name": "Hidrovórtice Abisal",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Hyper Beam": {
+      "name": "Hiperrayo",
+      "desc": "Es eficaz, pero el atacante deberá descansar en el  siguiente turno."
+    },
+    "Hyper Fang": {
+      "name": "Hipercolmillo",
+      "desc": "Ataca con agudos colmillos. Puede amedrentar al objetivo."
+    },
+    "Hyperspace Fury": {
+      "name": "Cerco Dimensión",
+      "desc": "Ataca al objetivo con una ráfaga de golpes que pasan por alto los efectos de movimientos como Protección o Detección. Baja la Defensa del usuario."
+    },
+    "Hyperspace Hole": {
+      "name": "Paso Dimensional",
+      "desc": "El usuario aparece junto al rival usando un agujero dimensional y le asesta un golpe que movimientos como Protección o Detección no pueden evitar."
+    },
+    "Hyper Voice": {
+      "name": "Vozarrón",
+      "desc": "Grito desgarrador que inflige daño al objetivo."
+    },
+    "Hypnosis": {
+      "name": "Hipnosis",
+      "desc": "Ataque hipnótico que hace dormir profundamente al objetivo."
+    },
+    "Ice Ball": {
+      "name": "Bola Hielo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Ice Beam": {
+      "name": "Rayo Hielo",
+      "desc": "Rayo de hielo que puede llegar a congelar."
+    },
+    "Ice Burn": {
+      "name": "Llama Gélida",
+      "desc": "Ataca al objetivo en el segundo turno rodeándolo de un aire gélido. Puede causar quemaduras."
+    },
+    "Ice Fang": {
+      "name": "Colmillo Hielo",
+      "desc": "El usuario muerde al objetivo con colmillos helados y puede hacer que se amedrente o se congele."
+    },
+    "Ice Hammer": {
+      "name": "Martillo Hielo",
+      "desc": "Un terrible puño golpea al contrincante, pero la Velocidad del usuario se ve reducida."
+    },
+    "Ice Punch": {
+      "name": "Puño Hielo",
+      "desc": "Puñetazo helado que puede llegar a congelar."
+    },
+    "Ice Shard": {
+      "name": "Canto Helado",
+      "desc": "Crea bolas de hielo y las lanza a gran velocidad.  Este movimiento tiene prioridad alta."
+    },
+    "Icicle Crash": {
+      "name": "Chuzos",
+      "desc": "Lanza grandes carámbanos. Puede amedrentar al objetivo."
+    },
+    "Icicle Spear": {
+      "name": "Carámbano",
+      "desc": "Ataca lanzando de dos a cinco ráfagas consecutivas de carámbanos."
+    },
+    "Icy Wind": {
+      "name": "Viento Hielo",
+      "desc": "Ataque con aire helado que baja la Velocidad de los  rivales."
+    },
+    "Imprison": {
+      "name": "Sellar",
+      "desc": "Impide a los contrincantes usar ataques conocidos por el usuario durante el combate."
+    },
+    "Incinerate": {
+      "name": "Calcinación",
+      "desc": "Llamas que golpean a los objetivos adyacentes. Si estos llevan bayas o ciertos objetos, se quemarán y ya no se podrán usar."
+    },
+    "Inferno": {
+      "name": "Infierno",
+      "desc": "Ataca con una gran ráfaga de fuego que causa  quemaduras."
+    },
+    "Inferno Overdrive": {
+      "name": "Hecatombe Pírica",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Infestation": {
+      "name": "Acoso",
+      "desc": "Hostiga al objetivo durante cuatro o cinco turnos e impide que pueda huir mientras tanto."
+    },
+    "Ingrain": {
+      "name": "Arraigo",
+      "desc": "Echa raíces para recuperar PS en cada turno, pero  impide el relevo."
+    },
+    "Instruct": {
+      "name": "Mandato",
+      "desc": "Fuerza al objetivo a repetir inmediatamente su último movimiento."
+    },
+    "Ion Deluge": {
+      "name": "Cortina Plasma",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Iron Defense": {
+      "name": "Defensa Férrea",
+      "desc": "Fortalece el cuerpo como si fuera de hierro y sube  mucho la Defensa."
+    },
+    "Iron Head": {
+      "name": "Cabeza de Hierro",
+      "desc": "Ataca con su dura cabeza de hierro. Puede hacer que el objetivo se amedrente."
+    },
+    "Iron Tail": {
+      "name": "Cola Férrea",
+      "desc": "Ataca con una cola férrea y puede bajar la Defensa  del objetivo."
+    },
+    "Jaw Lock": {
+      "name": "Presa Maxilar",
+      "desc": "Impide que tanto el atacante como el defensor puedan ser intercambiados hasta que uno de ellos se debilite o abandone el terreno de combate."
+    },
+    "Judgment": {
+      "name": "Sentencia",
+      "desc": "Emite incontables haces de luz. El tipo del movimiento  varía según la tabla que lleve el usuario."
+    },
+    "Jump Kick": {
+      "name": "Patada Salto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Jungle Healing": {
+      "name": "Cura Selvática",
+      "desc": "Al entrar en plena armonía con la selva, el usuario cura problemas de estado y restaura PS no solo de sí mismo, sino también de los aliados presentes en el terreno."
+    },
+    "Karate Chop": {
+      "name": "Golpe Kárate",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Kinesis": {
+      "name": "Kinético",
+      "desc": "Dobla una cuchara para distraer al objetivo y bajar su nivel de Precisión."
+    },
+    "King's Shield": {
+      "name": "Escudo Real",
+      "desc": "El usuario adopta una postura defensiva y se protege de cualquier daño. Reduce el Ataque de cualquier Pokémon con el que entre en contacto."
+    },
+    "Knock Off": {
+      "name": "Desarme",
+      "desc": "Impide al objetivo usar el objeto que lleva durante el combate. La potencia del movimiento se multiplica si el objetivo lleva un objeto."
+    },
+    "Land's Wrath": {
+      "name": "Fuerza Telúrica",
+      "desc": "Acumula energía de la corteza terrestre y la concentra contra los oponentes, dañándolos."
+    },
+    "Laser Focus": {
+      "name": "Aguzar",
+      "desc": "El usuario se concentra para que el siguiente ataque propine un golpe crítico."
+    },
+    "Lash Out": {
+      "name": "Desahogo",
+      "desc": "Ataca al rival presa de la rabia. Si el usuario ha sufrido una reducción de características en ese turno, la potencia del movimiento se duplica."
+    },
+    "Last Resort": {
+      "name": "Última Baza",
+      "desc": "Este movimiento solo puede utilizarse tras haber usado al menos una vez todos los demás conocidos por el Pokémon."
+    },
+    "Lava Plume": {
+      "name": "Humareda",
+      "desc": "Un infierno de llamas daña a los Pokémon adyacentes en combate. Puede quemar."
+    },
+    "Leafage": {
+      "name": "Follaje",
+      "desc": "Ataca al oponente lanzando hojas."
+    },
+    "Leaf Blade": {
+      "name": "Hoja Aguda",
+      "desc": "Acuchilla con una hoja fina. Suele dar un golpe crítico."
+    },
+    "Leaf Storm": {
+      "name": "Lluevehojas",
+      "desc": "Envuelve al objetivo con una lluvia de hojas afiladas, pero reduce mucho su Ataque Especial."
+    },
+    "Leaf Tornado": {
+      "name": "Ciclón de Hojas",
+      "desc": "Tritura con afiladas hojas y puede bajar la Precisión del objetivo."
+    },
+    "Leech Life": {
+      "name": "Chupavidas",
+      "desc": "Restaura al usuario la mitad del daño causado al  objetivo."
+    },
+    "Leech Seed": {
+      "name": "Drenadoras",
+      "desc": "Planta semillas que absorben PS del objetivo en cada turno y que le sirven para recuperarse."
+    },
+    "Leer": {
+      "name": "Malicioso",
+      "desc": "Intimida a los rivales para bajar su Defensa."
+    },
+    "Let's Snuggle Forever": {
+      "name": "Somanta Amistosa",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Lick": {
+      "name": "Lengüetazo",
+      "desc": "Una lengua ataca al objetivo. Puede causar parálisis."
+    },
+    "Life Dew": {
+      "name": "Gota Vital",
+      "desc": "Vierte un agua misteriosa y balsámica que restaura tanto sus propios PS como los de aquellos aliados presentes en el terreno de combate."
+    },
+    "Light of Ruin": {
+      "name": "Luz Aniquiladora",
+      "desc": "El usuario emplea el poder de la Flor Eterna para lanzar un potente rayo de luz, pero sufre bastante daño al hacerlo."
+    },
+    "Light Screen": {
+      "name": "Pantalla de Luz",
+      "desc": "Pared de luz que reduce durante cinco turnos el daño producido por los ataques especiales."
+    },
+    "Light That Burns the Sky": {
+      "name": "Fotodestrucción Apocalíptica",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Liquidation": {
+      "name": "Hidroariete",
+      "desc": "Ataca golpeando gracias a la fuerza del agua. También puede reducir la Defensa del objetivo."
+    },
+    "Lock-On": {
+      "name": "Fijar Blanco",
+      "desc": "Fija el blanco para que el siguiente ataque no falle."
+    },
+    "Lovely Kiss": {
+      "name": "Beso Amoroso",
+      "desc": "Intimida al objetivo con una cara que asusta y le da un beso que lo deja dormido."
+    },
+    "Low Kick": {
+      "name": "Patada Baja",
+      "desc": "Patada baja que derriba al oponente. Cuanto más pesa el objetivo, más daño le causa."
+    },
+    "Low Sweep": {
+      "name": "Puntapié",
+      "desc": "Ataque rápido dirigido a los pies del objetivo que le hace perder Velocidad."
+    },
+    "Lucky Chant": {
+      "name": "Conjuro",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Lunar Dance": {
+      "name": "Danza Lunar",
+      "desc": "El usuario se debilita, pero el Pokémon que lo sustituye recupera su estado, los PS y los PP."
+    },
+    "Lunge": {
+      "name": "Plancha",
+      "desc": "Ataca al oponente abalanzándose sobre él con todas sus fuerzas y reduce su Ataque."
+    },
+    "Luster Purge": {
+      "name": "Resplandor",
+      "desc": "Fogonazo de luz que puede bajar la Defensa Especial del objetivo."
+    },
+    "Mach Punch": {
+      "name": "Ultrapuño",
+      "desc": "Puñetazo de velocidad fulminante. Este movimiento tiene prioridad alta."
+    },
+    "Magical Leaf": {
+      "name": "Hoja Mágica",
+      "desc": "Esparce extrañas hojas que persiguen al objetivo.  No se puede esquivar."
+    },
+    "Magic Coat": {
+      "name": "Capa Mágica",
+      "desc": "Barrera capaz de devolver al agresor movimientos  como Drenadoras y otros que alteran el estado o  las características."
+    },
+    "Magic Powder": {
+      "name": "Polvo Mágico",
+      "desc": "Cubre al objetivo con unos polvos mágicos que le hacen adquirir el tipo Psíquico."
+    },
+    "Magic Room": {
+      "name": "Zona Mágica",
+      "desc": "Crea un espacio misterioso que inutiliza todos los  objetos de los Pokémon durante cinco turnos."
+    },
+    "Magma Storm": {
+      "name": "Lluvia Ígnea",
+      "desc": "El objetivo queda atrapado en una tormenta de fuego que dura de cuatro a cinco turnos."
+    },
+    "Magnet Bomb": {
+      "name": "Bomba Imán",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Magnetic Flux": {
+      "name": "Aura Magnética",
+      "desc": "Manipula el campo magnético y logra aumentar la Defensa y la Defensa Especial de los Pokémon aliados que cuenten con las habilidades Más y Menos."
+    },
+    "Magnet Rise": {
+      "name": "Levitón",
+      "desc": "Levita gracias a un campo magnético generado por  electricidad durante cinco turnos."
+    },
+    "Magnitude": {
+      "name": "Magnitud",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Malicious Moonsault": {
+      "name": "Hiperplancha Oscura",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Malignant Chain": {
+      "name": "Cadena Virulenta"
+    },
+    "Mat Block": {
+      "name": "Escudo Tatami",
+      "desc": "El usuario usa un tatami para escudarse de los ataques enemigos. Protege también a los aliados. No funciona contra movimientos de estado."
+    },
+    "Max Airstream": {
+      "name": "Maxiciclón",
+      "desc": "Ataque de tipo Volador ejecutado por un Pokémon Dinamax. Aumenta la Velocidad de tu bando."
+    },
+    "Max Darkness": {
+      "name": "Maxisombra",
+      "desc": "Ataque de tipo Siniestro ejecutado por un Pokémon Dinamax. Reduce la Defensa Especial del objetivo."
+    },
+    "Max Flare": {
+      "name": "Maxignición",
+      "desc": "Ataque de tipo Fuego ejecutado por un Pokémon Dinamax. Hace que se intensifique el efecto del sol durante cinco turnos."
+    },
+    "Max Flutterby": {
+      "name": "Maxinsecto",
+      "desc": "Ataque de tipo Bicho ejecutado por un Pokémon Dinamax. Reduce el Ataque Especial del objetivo."
+    },
+    "Max Geyser": {
+      "name": "Maxichorro",
+      "desc": "Ataque de tipo Agua ejecutado por un Pokémon Dinamax. Desata un aguacero que dura cinco turnos."
+    },
+    "Max Guard": {
+      "name": "Maxibarrera",
+      "desc": "Frena todos los ataques, pero puede fallar si se usa repetidamente."
+    },
+    "Max Hailstorm": {
+      "name": "Maxihelada",
+      "desc": "Ataque de tipo Hielo ejecutado por un Pokémon Dinamax. Crea una tormenta de granizo que dura cinco turnos."
+    },
+    "Max Knuckle": {
+      "name": "Maxipuño",
+      "desc": "Ataque de tipo Lucha ejecutado por un Pokémon Dinamax. Aumenta el Ataque de tu bando."
+    },
+    "Max Lightning": {
+      "name": "Maxitormenta",
+      "desc": "Ataque de tipo Eléctrico ejecutado por un Pokémon Dinamax. Crea un campo eléctrico durante cinco turnos."
+    },
+    "Max Mindstorm": {
+      "name": "Maxionda",
+      "desc": "Ataque de tipo Psíquico ejecutado por un Pokémon Dinamax. Crea un campo psíquico durante cinco turnos."
+    },
+    "Max Ooze": {
+      "name": "Maxiácido",
+      "desc": "Ataque de tipo Veneno ejecutado por un Pokémon Dinamax. Aumenta el Ataque Especial de tu bando."
+    },
+    "Max Overgrowth": {
+      "name": "Maxiflora",
+      "desc": "Ataque de tipo Planta ejecutado por un Pokémon Dinamax. Crea un campo de hierba durante cinco turnos."
+    },
+    "Max Phantasm": {
+      "name": "Maxiespectro",
+      "desc": "Ataque de tipo Fantasma ejecutado por un Pokémon Dinamax. Reduce la Defensa de los rivales."
+    },
+    "Max Quake": {
+      "name": "Maxitemblor",
+      "desc": "Ataque de tipo Tierra ejecutado por un Pokémon Dinamax. Aumenta la Defensa Especial de tu bando."
+    },
+    "Max Rockfall": {
+      "name": "Maxilito",
+      "desc": "Ataque de tipo Roca ejecutado por un Pokémon Dinamax. Levanta una tormenta de arena que dura cinco turnos."
+    },
+    "Max Starfall": {
+      "name": "Maxiestela",
+      "desc": "Ataque de tipo Hada ejecutado por un Pokémon Dinamax. Crea un campo de niebla durante cinco turnos."
+    },
+    "Max Steelspike": {
+      "name": "Maximetal",
+      "desc": "Ataque de tipo Acero ejecutado por un Pokémon Dinamax. Aumenta la Defensa de tu bando."
+    },
+    "Max Strike": {
+      "name": "Maxiataque",
+      "desc": "Ataque de tipo Normal ejecutado por un Pokémon Dinamax. Reduce la Velocidad del objetivo."
+    },
+    "Max Wyrmwind": {
+      "name": "Maxidraco",
+      "desc": "Ataque de tipo Dragón ejecutado por un Pokémon Dinamax. Reduce el Ataque del objetivo."
+    },
+    "Mean Look": {
+      "name": "Mal de Ojo",
+      "desc": "Mal de ojo que impide al objetivo huir del combate."
+    },
+    "Meditate": {
+      "name": "Meditación",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Me First": {
+      "name": "Yo Primero",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Mega Drain": {
+      "name": "Megaagotar",
+      "desc": "Un ataque que absorbe nutrientes. Quien lo usa recupera la mitad de los PS del daño que produce."
+    },
+    "Megahorn": {
+      "name": "Megacuerno",
+      "desc": "Violenta embestida con cuernos imponentes."
+    },
+    "Mega Kick": {
+      "name": "Megapatada",
+      "desc": "Patada de extrema fuerza."
+    },
+    "Mega Punch": {
+      "name": "Megapuño",
+      "desc": "Un puñetazo de gran potencia."
+    },
+    "Memento": {
+      "name": "Legado",
+      "desc": "El usuario se debilita, pero baja mucho tanto el  Ataque como el Ataque Especial del objetivo."
+    },
+    "Menacing Moonraze Maelstrom": {
+      "name": "Deflagración Lunar",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Metal Burst": {
+      "name": "Represión Metal",
+      "desc": "Devuelve al rival el último ataque recibido, pero con  mucha más fuerza."
+    },
+    "Metal Claw": {
+      "name": "Garra Metal",
+      "desc": "Ataque con garras de acero que puede aumentar el  Ataque del usuario."
+    },
+    "Metal Sound": {
+      "name": "Eco Metálico",
+      "desc": "Horrible chirrido metálico que baja mucho la Defensa Especial del objetivo."
+    },
+    "Meteor Assault": {
+      "name": "Asalto Estelar",
+      "desc": "El usuario agita violentamente su grueso puerro para atacar, pero el mareo que le provocan las sacudidas le impide moverse en el turno siguiente."
+    },
+    "Meteor Beam": {
+      "name": "Rayo Meteórico",
+      "desc": "El usuario dedica el primer turno a aumentar su Ataque Especial acumulando energía cósmica y lanza su ofensiva contra el objetivo en el segundo."
+    },
+    "Meteor Mash": {
+      "name": "Puño Meteoro",
+      "desc": "Puñetazo que impacta como un meteorito y puede subir el Ataque del agresor."
+    },
+    "Metronome": {
+      "name": "Metrónomo",
+      "desc": "Mueve un dedo y estimula su cerebro para usar al azar casi cualquier movimiento."
+    },
+    "Mighty Cleave": {
+      "name": "Filo Potente"
+    },
+    "Milk Drink": {
+      "name": "Batido",
+      "desc": "Restaura la mitad de los PS máximos del usuario."
+    },
+    "Mimic": {
+      "name": "Mimético",
+      "desc": "Copia el último movimiento usado por el objetivo, y  puede utilizarlo mientras esté en el combate."
+    },
+    "Mind Blown": {
+      "name": "Cabeza Sorpresa",
+      "desc": "El usuario hace explotar su cabeza para atacar a todos los Pokémon que se hallan a su alrededor, aunque también se hiere a sí mismo."
+    },
+    "Mind Reader": {
+      "name": "Telépata",
+      "desc": "El usuario adivina los movimientos del objetivo para  hacer que su siguiente ataque no falle."
+    },
+    "Minimize": {
+      "name": "Reducción",
+      "desc": "El usuario mengua para aumentar mucho la Evasión."
+    },
+    "Miracle Eye": {
+      "name": "Gran Ojo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Mirror Coat": {
+      "name": "Manto Espejo",
+      "desc": "Responde a un ataque especial ocasionando el doble  del daño recibido."
+    },
+    "Mirror Move": {
+      "name": "Espejo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Mirror Shot": {
+      "name": "Disparo Espejo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Mist": {
+      "name": "Neblina",
+      "desc": "Rodea de fina niebla al usuario y protege las  características de su equipo durante cinco turnos."
+    },
+    "Mist Ball": {
+      "name": "Bola Neblina",
+      "desc": "Banco de niebla que puede bajar el Ataque Especial del objetivo."
+    },
+    "Misty Explosion": {
+      "name": "Bruma Explosiva",
+      "desc": "El usuario ataca a todos a su alrededor, pero se debilita de inmediato. La potencia del movimiento aumenta si el terreno está cubierto por un campo de niebla."
+    },
+    "Misty Terrain": {
+      "name": "Campo de Niebla",
+      "desc": "Durante cinco turnos, los Pokémon que están en el suelo no sufren problemas de estado y se reduce a la mitad el daño de los movimientos de tipo Dragón."
+    },
+    "Moonblast": {
+      "name": "Fuerza Lunar",
+      "desc": "Invoca el poder de la luna para atacar al objetivo.  Puede disminuir el Ataque Especial del objetivo."
+    },
+    "Moongeist Beam": {
+      "name": "Rayo Umbrío",
+      "desc": "Ataca con un rayo misterioso que ignora la habilidad del objetivo."
+    },
+    "Moonlight": {
+      "name": "Luz Lunar",
+      "desc": "Restaura PS del usuario. La cantidad varía según  el tiempo que haga."
+    },
+    "Morning Sun": {
+      "name": "Sol Matinal",
+      "desc": "Restaura PS del usuario. La cantidad varía según  el tiempo que haga."
+    },
+    "Mud Bomb": {
+      "name": "Bomba Fango",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Muddy Water": {
+      "name": "Agua Lodosa",
+      "desc": "Ataque con agua lodosa que puede bajar la Precisión del equipo rival."
+    },
+    "Mud Shot": {
+      "name": "Disparo Lodo",
+      "desc": "El usuario lanza lodo al objetivo y reduce su Velocidad."
+    },
+    "Mud-Slap": {
+      "name": "Bofetón Lodo",
+      "desc": "Echa lodo en la cara para bajar la Precisión."
+    },
+    "Mud Sport": {
+      "name": "Chapoteo Lodo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Multi-Attack": {
+      "name": "Multiataque",
+      "desc": "El Pokémon se rodea de una potente energía con la que golpea al rival. El tipo del movimiento depende del disco que lleva el usuario."
+    },
+    "Mystical Fire": {
+      "name": "Llama Embrujada",
+      "desc": "El usuario lanza por la boca una singular llama a gran temperatura con la que ataca a su oponente y baja su Ataque Especial."
+    },
+    "Nasty Plot": {
+      "name": "Maquinación",
+      "desc": "Estimula su cerebro pensando en cosas malas. Aumenta mucho el Ataque Especial."
+    },
+    "Natural Gift": {
+      "name": "Don Natural",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Nature Power": {
+      "name": "Adaptación",
+      "desc": "Usa el poder de la naturaleza para atacar. Su efecto varía según el entorno de combate."
+    },
+    "Nature's Madness": {
+      "name": "Furia Natural",
+      "desc": "Golpea al objetivo con la furia de la naturaleza y reduce sus PS a la mitad."
+    },
+    "Needle Arm": {
+      "name": "Brazo Pincho",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Never-Ending Nightmare": {
+      "name": "Presa Espectral",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Night Daze": {
+      "name": "Pulso Noche",
+      "desc": "Ataca al objetivo con una onda siniestra. Puede bajar su Precisión."
+    },
+    "Nightmare": {
+      "name": "Pesadilla",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Night Shade": {
+      "name": "Tinieblas",
+      "desc": "Produce un espejismo ante el objetivo, que pierde tantos PS como nivel tenga el usuario."
+    },
+    "Night Slash": {
+      "name": "Tajo Umbrío",
+      "desc": "Ataca al objetivo a la primera oportunidad. Suele ser crítico."
+    },
+    "Noble Roar": {
+      "name": "Rugido de Guerra",
+      "desc": "Intimida a su oponente con un rugido de guerra, lo que hace que disminuyan tanto su Ataque como su Ataque Especial."
+    },
+    "No Retreat": {
+      "name": "Bastión Final",
+      "desc": "El usuario aumenta todas sus características, pero ya no puede huir ni ser cambiado por otro."
+    },
+    "Nuzzle": {
+      "name": "Moflete Estático",
+      "desc": "Quien lo usa frota sus mofletes cargados de electricidad contra el objetivo y consigue paralizarlo."
+    },
+    "Oblivion Wing": {
+      "name": "Ala Mortífera",
+      "desc": "El usuario absorbe energía del objetivo y aumenta sus PS en una cantidad igual o superior a la mitad del daño infligido."
+    },
+    "Obstruct": {
+      "name": "Obstrucción",
+      "desc": "Frena todos los ataques, pero puede fallar si se usa repetidamente. Reduce mucho la Defensa de quien ejecute un movimiento de contacto contra el usuario."
+    },
+    "Oceanic Operetta": {
+      "name": "Sinfonía de la Diva Marina",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Octazooka": {
+      "name": "Pulpocañón",
+      "desc": "Dispara tinta a la cara. Puede bajar la Precisión."
+    },
+    "Octolock": {
+      "name": "Octopresa",
+      "desc": "Retiene al objetivo para impedir su huida, a la vez que reduce su Defensa y Defensa Especial cada turno."
+    },
+    "Odor Sleuth": {
+      "name": "Rastreo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Ominous Wind": {
+      "name": "Viento Aciago",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Origin Pulse": {
+      "name": "Pulso Primigenio",
+      "desc": "Ataca al objetivo con una infinidad de rayos de luz  azulada."
+    },
+    "Outrage": {
+      "name": "Enfado",
+      "desc": "Ataca de dos a tres turnos y acaba confundiendo al  agresor."
+    },
+    "Overdrive": {
+      "name": "Amplificador",
+      "desc": "El usuario rasguea la guitarra o el bajo para generar enormes vibraciones de intensa reverberación con las que ataca al objetivo."
+    },
+    "Overheat": {
+      "name": "Sofoco",
+      "desc": "Ataque en toda regla que baja mucho el Ataque  Especial de quien lo usa."
+    },
+    "Pain Split": {
+      "name": "Divide Dolor",
+      "desc": "Suma los PS del usuario a los del objetivo y los reparte a partes iguales."
+    },
+    "Parabolic Charge": {
+      "name": "Carga Parábola",
+      "desc": "Inflige daño a todos los Pokémon a su alrededor. El usuario absorbe la mitad del daño producido para restaurar sus propios PS."
+    },
+    "Parting Shot": {
+      "name": "Última Palabra",
+      "desc": "El usuario se cambia por otro Pokémon de su equipo, pero antes amedrenta a su oponente y hace que disminuyan su Ataque y Ataque Especial."
+    },
+    "Payback": {
+      "name": "Vendetta",
+      "desc": "El usuario contraataca con el doble de fuerza si el  objetivo usa un movimiento antes."
+    },
+    "Pay Day": {
+      "name": "Día de Pago",
+      "desc": "Arroja monedas al objetivo y las recupera al final del combate."
+    },
+    "Peck": {
+      "name": "Picotazo",
+      "desc": "Ensarta al objetivo con un cuerno o pico punzante."
+    },
+    "Perish Song": {
+      "name": "Canto Mortal",
+      "desc": "Si un Pokémon escucha este canto y no es cambiado por otro en tres turnos, acaba debilitándose."
+    },
+    "Petal Blizzard": {
+      "name": "Tormenta Floral",
+      "desc": "El usuario desata un intenso vendaval de pétalos que daña a los Pokémon a su alrededor."
+    },
+    "Petal Dance": {
+      "name": "Danza Pétalo",
+      "desc": "Lanza pétalos de dos a tres turnos y acaba  confundiendo al atacante."
+    },
+    "Phantom Force": {
+      "name": "Golpe Fantasma",
+      "desc": "El usuario desaparece en el primer turno y ataca a su objetivo en el segundo. Permite acertar aunque el objetivo esté protegiéndose."
+    },
+    "Photon Geyser": {
+      "name": "Géiser Fotónico",
+      "desc": "El usuario ataca con una gran columna de luz. Compara sus valores de Ataque y Ataque Especial para infligir daño con el más alto de los dos."
+    },
+    "Pika Papow": {
+      "name": "Pikatormenta",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Pin Missile": {
+      "name": "Pin Misil",
+      "desc": "Lanza finas púas que hieren de dos a cinco veces."
+    },
+    "Plasma Fists": {
+      "name": "Puños Plasma",
+      "desc": "El usuario ataca con puños cargados de electricidad. Convierte los movimientos de tipo Normal en movimientos de tipo Eléctrico."
+    },
+    "Play Nice": {
+      "name": "Camaradería",
+      "desc": "Se hace amigo de su oponente y consigue que a este se le quiten las ganas de combatir. Además, reduce su Ataque."
+    },
+    "Play Rough": {
+      "name": "Carantoña",
+      "desc": "El Pokémon que lo usa le hace cucamonas al objetivo y lo ataca. Puede disminuir el Ataque del objetivo."
+    },
+    "Pluck": {
+      "name": "Picoteo",
+      "desc": "Picotea al objetivo. Si este sostiene una baya, la picotea también y obtiene sus efectos."
+    },
+    "Poison Fang": {
+      "name": "Colmillo Veneno",
+      "desc": "Colmillos tóxicos que pueden envenenar gravemente al objetivo."
+    },
+    "Poison Gas": {
+      "name": "Gas Venenoso",
+      "desc": "Lanza una nube de gas tóxico al objetivo. Produce envenenamiento."
+    },
+    "Poison Jab": {
+      "name": "Puya Nociva",
+      "desc": "Pincha al objetivo con un tentáculo o brazo envenenado. Puede llegar a envenenar al objetivo."
+    },
+    "Poison Powder": {
+      "name": "Polvo Veneno",
+      "desc": "Polvo tóxico que envenena al objetivo."
+    },
+    "Poison Sting": {
+      "name": "Picotazo Veneno",
+      "desc": "Lanza un aguijón tóxico que puede envenenar al  objetivo."
+    },
+    "Poison Tail": {
+      "name": "Cola Veneno",
+      "desc": "Puede envenenar y dar un golpe crítico."
+    },
+    "Pollen Puff": {
+      "name": "Bola de Polen",
+      "desc": "Ataca al oponente con una bola explosiva. Si esta alcanza a un aliado, le hará recuperar PS."
+    },
+    "Poltergeist": {
+      "name": "Poltergeist",
+      "desc": "El usuario ataca utilizando el objeto que lleva el rival. Si no tiene ninguno equipado, el movimiento falla."
+    },
+    "Pound": {
+      "name": "Destructor",
+      "desc": "Golpea con las patas o la cola."
+    },
+    "Powder": {
+      "name": "Polvo Explosivo",
+      "desc": "Esparce un polvo sobre el objetivo. Si este usa un movimiento de tipo Fuego en el mismo turno, el polvo explota y le inflige daño."
+    },
+    "Powder Snow": {
+      "name": "Nieve Polvo",
+      "desc": "Lanza nieve que puede llegar a congelar."
+    },
+    "Power Gem": {
+      "name": "Joya de Luz",
+      "desc": "Ataca con un rayo de luz que centellea como si lo  formaran miles de joyas."
+    },
+    "Power Split": {
+      "name": "Isofuerza",
+      "desc": "El usuario emplea sus poderes para hacer la media de su Ataque y Ataque Especial con los de su objetivo y compartirlos."
+    },
+    "Power Swap": {
+      "name": "Cambiafuerza",
+      "desc": "El usuario emplea su poder mental para intercambiar los cambios en el Ataque y Ataque Especial con el objetivo."
+    },
+    "Power Trick": {
+      "name": "Truco Fuerza",
+      "desc": "Usa sus poderes mentales para intercambiar sus  características de Ataque y Defensa."
+    },
+    "Power Trip": {
+      "name": "Chulería",
+      "desc": "Ataca al oponente presumiendo de su fuerza. Cuanto más hayan subido las características del usuario, mayor será el daño."
+    },
+    "Power-Up Punch": {
+      "name": "Puño Incremento",
+      "desc": "Cada vez que golpea a un oponente se endurecen sus puños. Si acierta al objetivo, el Ataque del usuario aumenta."
+    },
+    "Power Whip": {
+      "name": "Latigazo",
+      "desc": "El usuario agita violentamente sus lianas o tentáculos  para golpear al objetivo."
+    },
+    "Precipice Blades": {
+      "name": "Filo del Abismo",
+      "desc": "Hace que el poder latente de la tierra se manifieste en forma de hojas afiladas y ataca al objetivo con ellas."
+    },
+    "Present": {
+      "name": "Presente",
+      "desc": "Quien lo usa ataca al objetivo dándole un regalo con una bomba trampa. Sin embargo, a veces restaura sus PS."
+    },
+    "Prismatic Laser": {
+      "name": "Láser Prisma",
+      "desc": "El usuario utiliza un prisma para emitir un rayo de gran potencia, pero no puede moverse en el turno siguiente."
+    },
+    "Protect": {
+      "name": "Protección",
+      "desc": "Frena todos los ataques, pero puede fallar si se usa  repetidamente."
+    },
+    "Psybeam": {
+      "name": "Psicorrayo",
+      "desc": "Extraño rayo que puede causar confusión."
+    },
+    "Psyblade": {
+      "name": "Psicohojas"
+    },
+    "Psychic": {
+      "name": "Psíquico",
+      "desc": "Fuerte ataque telequinético que puede bajar la Defensa Especial del objetivo."
+    },
+    "Psychic Fangs": {
+      "name": "Psicocolmillo",
+      "desc": "Ataca a sus rivales con poderes psíquicos que además destruyen barreras como Pantalla de Luz y Reflejo."
+    },
+    "Psychic Noise": {
+      "name": "Psicorruido"
+    },
+    "Psychic Terrain": {
+      "name": "Campo Psíquico",
+      "desc": "Durante cinco turnos, se potencian los movimientos de tipo Psíquico y los Pokémon que están en el suelo quedan protegidos contra movimientos con prioridad."
+    },
+    "Psycho Boost": {
+      "name": "Psicoataque",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Psycho Cut": {
+      "name": "Psicocorte",
+      "desc": "Ataca al objetivo con cuchillas formadas por energía  psíquica. Suele ser crítico."
+    },
+    "Psycho Shift": {
+      "name": "Psicocambio",
+      "desc": "Usa su poder mental para transferir al objetivo sus  problemas de estado."
+    },
+    "Psych Up": {
+      "name": "Más Psique",
+      "desc": "Quien lo usa se sume en un trance y copia cualquier cambio que haya en las características de su objetivo."
+    },
+    "Psyshock": {
+      "name": "Psicocarga",
+      "desc": "Crea una onda psíquica que causa daño físico al  objetivo."
+    },
+    "Psystrike": {
+      "name": "Onda Mental",
+      "desc": "Crea una onda psíquica que causa daño físico al  objetivo."
+    },
+    "Psywave": {
+      "name": "Psicoonda",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Pulverizing Pancake": {
+      "name": "Arrojo Intempestivo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Punishment": {
+      "name": "Castigo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Purify": {
+      "name": "Purificación",
+      "desc": "Cura los problemas de estado del Pokémon rival y a cambio recupera PS propios."
+    },
+    "Pursuit": {
+      "name": "Persecución",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Pyro Ball": {
+      "name": "Balón Ígneo",
+      "desc": "El usuario prende una pequeña piedra para crear una bola de fuego con la que ataca al rival. Puede causar quemaduras."
+    },
+    "Quash": {
+      "name": "Último Lugar",
+      "desc": "Consigue que el objetivo sea el último en moverse."
+    },
+    "Quick Attack": {
+      "name": "Ataque Rápido",
+      "desc": "Ataca al objetivo a gran velocidad. Este movimiento tiene prioridad alta."
+    },
+    "Quick Guard": {
+      "name": "Anticipo",
+      "desc": "Se protege a sí mismo y a sus aliados de movimientos con prioridad."
+    },
+    "Quiver Dance": {
+      "name": "Danza Aleteo",
+      "desc": "Danza mística que sube el Ataque Especial, la Defensa Especial y la Velocidad."
+    },
+    "Rage": {
+      "name": "Furia",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Rage Powder": {
+      "name": "Polvo Ira",
+      "desc": "Usa un polvo que irrita y centra en el usuario la  atención y los ataques de los rivales."
+    },
+    "Rain Dance": {
+      "name": "Danza Lluvia",
+      "desc": "Genera una fuerte lluvia que refuerza los movimientos de tipo Agua durante cinco turnos y debilita los de tipo Fuego."
+    },
+    "Rapid Spin": {
+      "name": "Giro Rápido",
+      "desc": "Ataque giratorio que puede eliminar movimientos como Atadura, Constricción y Drenadoras. También aumenta la Velocidad del usuario."
+    },
+    "Razor Leaf": {
+      "name": "Hoja Afilada",
+      "desc": "Corta con hojas afiladas. Un ataque que suele ser crítico."
+    },
+    "Razor Shell": {
+      "name": "Concha Filo",
+      "desc": "Una afilada vieira ataca al objetivo. También puede  hacer disminuir su Defensa."
+    },
+    "Razor Wind": {
+      "name": "Viento Cortante",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Recover": {
+      "name": "Recuperación",
+      "desc": "Restaura hasta la mitad de los PS máximos."
+    },
+    "Recycle": {
+      "name": "Reciclaje",
+      "desc": "Recicla y así recupera un objeto equipado de un solo uso que ya haya sido empleado durante el combate."
+    },
+    "Reflect": {
+      "name": "Reflejo",
+      "desc": "Pared de luz que reduce durante cinco turnos el daño producido por los ataques físicos."
+    },
+    "Reflect Type": {
+      "name": "Clonatipo",
+      "desc": "Cambia el tipo del Pokémon al mismo tipo que el del objetivo."
+    },
+    "Refresh": {
+      "name": "Alivio",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Relic Song": {
+      "name": "Canto Arcaico",
+      "desc": "Ataca conmoviendo a los rivales de alrededor con un antiguo canto. Puede dormirlos."
+    },
+    "Rest": {
+      "name": "Descanso",
+      "desc": "Restaura todos los PS y cura todos los problemas de estado del usuario, que se duerme los dos turnos siguientes."
+    },
+    "Retaliate": {
+      "name": "Represalia",
+      "desc": "Venga a los amigos caídos. Si en el turno anterior han derrotado a alguno, la potencia del ataque aumentará."
+    },
+    "Return": {
+      "name": "Retribución",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Revelation Dance": {
+      "name": "Danza Despertar",
+      "desc": "Ataque que consiste en un baile muy enérgico. El tipo de este ataque se corresponde con el del Pokémon que lo ejecuta."
+    },
+    "Revenge": {
+      "name": "Desquite",
+      "desc": "Ataque que produce el doble de daño si el usuario resulta herido en el mismo turno."
+    },
+    "Reversal": {
+      "name": "Inversión",
+      "desc": "Ataque desesperado que causa más daño cuantos menos PS tenga el usuario."
+    },
+    "Rising Voltage": {
+      "name": "Alto Voltaje",
+      "desc": "Ataca con una descarga eléctrica que surge del terreno de combate. La potencia del movimiento se duplica si el rival se ve afectado por un campo eléctrico."
+    },
+    "Roar": {
+      "name": "Rugido",
+      "desc": "Se lleva al objetivo, que es cambiado por otro  Pokémon. Si es un Pokémon salvaje, acaba el  combate."
+    },
+    "Roar of Time": {
+      "name": "Distorsión",
+      "desc": "Ataca al objetivo usando tal energía que el tiempo se distorsiona. El usuario descansa el siguiente turno."
+    },
+    "Rock Blast": {
+      "name": "Pedrada",
+      "desc": "Lanza pedruscos al objetivo de dos a cinco veces  consecutivas."
+    },
+    "Rock Climb": {
+      "name": "Treparrocas",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Rock Polish": {
+      "name": "Pulimento",
+      "desc": "Reduce la resistencia puliendo su cuerpo. Aumenta mucho la Velocidad."
+    },
+    "Rock Slide": {
+      "name": "Avalancha",
+      "desc": "Lanza grandes pedruscos. Puede hacer retroceder a  los rivales."
+    },
+    "Rock Smash": {
+      "name": "Golpe Roca",
+      "desc": "Ataque con los puños. Puede bajar la Defensa del objetivo."
+    },
+    "Rock Throw": {
+      "name": "Lanzarrocas",
+      "desc": "Tira una pequeña roca al objetivo."
+    },
+    "Rock Tomb": {
+      "name": "Tumba Rocas",
+      "desc": "Tira rocas que detienen al objetivo y bajan su Velocidad."
+    },
+    "Rock Wrecker": {
+      "name": "Romperrocas",
+      "desc": "Lanza una piedra enorme contra el objetivo, pero tiene que descansar el siguiente turno."
+    },
+    "Role Play": {
+      "name": "Imitación",
+      "desc": "Imita al objetivo por completo y copia su habilidad."
+    },
+    "Rolling Kick": {
+      "name": "Patada Giro",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Rollout": {
+      "name": "Rodar",
+      "desc": "El atacante rueda contra el objetivo durante cinco  turnos, cada vez con mayor fuerza."
+    },
+    "Roost": {
+      "name": "Respiro",
+      "desc": "Aterriza sobre la superficie para descansar. Recupera hasta la mitad del total de sus PS."
+    },
+    "Rototiller": {
+      "name": "Fertilizante",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Round": {
+      "name": "Canon",
+      "desc": "Un canto que ataca al objetivo. Cuantos más Pokémon lo usan, más aumenta de potencia."
+    },
+    "Sacred Fire": {
+      "name": "Fuego Sagrado",
+      "desc": "Fuego místico de gran intensidad que puede causar  quemaduras."
+    },
+    "Sacred Sword": {
+      "name": "Espada Santa",
+      "desc": "El usuario ataca con una espada, ignorando cualquier  cambio en las características del objetivo."
+    },
+    "Safeguard": {
+      "name": "Velo Sagrado",
+      "desc": "Un escudo que protege de problemas de estado, como el sueño o la parálisis, durante cinco turnos."
+    },
+    "Sand Attack": {
+      "name": "Ataque Arena",
+      "desc": "Arroja arena a la cara y baja la Precisión."
+    },
+    "Sandstorm": {
+      "name": "Tormenta Arena",
+      "desc": "Tormenta de arena que dura cinco turnos y hiere a  todos, excepto a los de tipo Roca, Tierra y Acero, y aumenta la Defensa Especial de los de tipo Roca."
+    },
+    "Sand Tomb": {
+      "name": "Bucle Arena",
+      "desc": "Enreda al objetivo en un remolino de arena de cuatro a cinco turnos."
+    },
+    "Sappy Seed": {
+      "name": "Leafitobombas",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Savage Spin-Out": {
+      "name": "Guadaña Sedosa",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Scald": {
+      "name": "Escaldar",
+      "desc": "Ataca arrojando agua hirviendo al objetivo. Puede causar quemaduras."
+    },
+    "Scale Shot": {
+      "name": "Ráfaga Escamas",
+      "desc": "Lanza escamas al objetivo de dos a cinco veces seguidas. Aumenta la Velocidad del usuario, pero reduce su Defensa."
+    },
+    "Scary Face": {
+      "name": "Cara Susto",
+      "desc": "Asusta al objetivo para reducir mucho su Velocidad."
+    },
+    "Scorching Sands": {
+      "name": "Arenas Ardientes",
+      "desc": "Ataca al objetivo arrojándole arena a temperaturas muy elevadas. Puede causar quemaduras."
+    },
+    "Scratch": {
+      "name": "Arañazo",
+      "desc": "Araña con afiladas garras."
+    },
+    "Screech": {
+      "name": "Chirrido",
+      "desc": "Alarido agudo que reduce mucho la Defensa del  objetivo."
+    },
+    "Searing Shot": {
+      "name": "Bomba Ígnea",
+      "desc": "Un infierno de llamas daña a los Pokémon adyacentes en combate. Puede quemar."
+    },
+    "Searing Sunraze Smash": {
+      "name": "Embestida Solar",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Secret Power": {
+      "name": "Daño Secreto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Secret Sword": {
+      "name": "Sable Místico",
+      "desc": "Ensarta al objetivo con un largo cuerno dotado de un poder místico que provoca daño físico."
+    },
+    "Seed Bomb": {
+      "name": "Bomba Germen",
+      "desc": "Lanza al objetivo una descarga de semillas explosivas desde arriba."
+    },
+    "Seed Flare": {
+      "name": "Fogonazo",
+      "desc": "Una onda de choque se libera del cuerpo. Puede bajar mucho la Defensa Especial del objetivo."
+    },
+    "Seismic Toss": {
+      "name": "Sísmico",
+      "desc": "Aprovecha la gravedad para derribar al objetivo. Le resta tantos PS como nivel tenga el usuario."
+    },
+    "Self-Destruct": {
+      "name": "Autodestrucción",
+      "desc": "El atacante explota y hiere a todos a su alrededor.  El usuario se debilita de inmediato."
+    },
+    "Shadow Ball": {
+      "name": "Bola Sombra",
+      "desc": "Lanza una bola oscura que puede bajar la Defensa  Especial del objetivo."
+    },
+    "Shadow Bone": {
+      "name": "Hueso Sombrío",
+      "desc": "Ataca al oponente golpeándole con un hueso poseído por un espíritu. Puede reducir la Defensa del objetivo."
+    },
+    "Shadow Claw": {
+      "name": "Garra Umbría",
+      "desc": "Ataca con una garra afilada hecha de sombras. Suele ser crítico."
+    },
+    "Shadow Force": {
+      "name": "Golpe Umbrío",
+      "desc": "En el primer turno, desaparece. En el segundo, golpea al objetivo aunque se esté protegiendo."
+    },
+    "Shadow Punch": {
+      "name": "Puño Sombra",
+      "desc": "Puñetazo ineludible procedente de las sombras."
+    },
+    "Shadow Sneak": {
+      "name": "Sombra Vil",
+      "desc": "Extiende su sombra y ataca al objetivo por la espalda. Este movimiento tiene prioridad alta."
+    },
+    "Sharpen": {
+      "name": "Afilar",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Shattered Psyche": {
+      "name": "Disruptor Psíquico",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Sheer Cold": {
+      "name": "Frío Polar",
+      "desc": "Debilita al objetivo de un solo golpe. Si lo usa un Pokémon que no sea de tipo Hielo, es difícil que acierte."
+    },
+    "Shell Side Arm": {
+      "name": "Moluscañón",
+      "desc": "El usuario lanza un ataque físico o especial en función de cuál inflija más daño. Puede envenenar al objetivo."
+    },
+    "Shell Smash": {
+      "name": "Rompecoraza",
+      "desc": "El usuario rompe su coraza y baja su Defensa y Defensa Especial, pero aumenta mucho su Ataque,  Ataque Especial y Velocidad."
+    },
+    "Shell Trap": {
+      "name": "Coraza Trampa",
+      "desc": "El caparazón del Pokémon se convierte en una trampa. Si le alcanza un ataque físico, la trampa estalla y los oponentes sufren daño."
+    },
+    "Shift Gear": {
+      "name": "Cambio de Marcha",
+      "desc": "Al hacer girar los engranajes, el usuario mejora su Ataque y aumenta mucho su Velocidad."
+    },
+    "Shock Wave": {
+      "name": "Onda Voltio",
+      "desc": "Ataque eléctrico muy rápido e ineludible."
+    },
+    "Shore Up": {
+      "name": "Recogearena",
+      "desc": "Restaura la mitad de los PS máximos del usuario. Durante las tormentas de arena, restaura aún más PS."
+    },
+    "Signal Beam": {
+      "name": "Doble Rayo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Silver Wind": {
+      "name": "Viento Plata",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Simple Beam": {
+      "name": "Onda Simple",
+      "desc": "Lanza una onda psíquica que hace que la habilidad del objetivo pase a ser Simple."
+    },
+    "Sing": {
+      "name": "Canto",
+      "desc": "Cancioncilla que hace dormir profundamente al  objetivo."
+    },
+    "Sinister Arrow Raid": {
+      "name": "Aluvión de Flechas Sombrías",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Sizzly Slide": {
+      "name": "Flarembestida",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Sketch": {
+      "name": "Esquema",
+      "desc": "Aprende de forma permanente el último movimiento  utilizado por el objetivo. Es de un solo uso."
+    },
+    "Skill Swap": {
+      "name": "Intercambio",
+      "desc": "Usa el poder psíquico para intercambiar habilidades con el objetivo."
+    },
+    "Skitter Smack": {
+      "name": "Golpe Rastrero",
+      "desc": "Ataca al objetivo por la espalda de forma subrepticia y además reduce su Ataque Especial."
+    },
+    "Skull Bash": {
+      "name": "Cabezazo",
+      "desc": "El usuario se prepara y sube su Defensa en el primer turno y en el segundo arremete con un cabezazo."
+    },
+    "Sky Attack": {
+      "name": "Ataque Aéreo",
+      "desc": "Ataca durante dos turnos y suele asestar un golpe crítico. También puede amedrentar al objetivo."
+    },
+    "Sky Drop": {
+      "name": "Caída Libre",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Sky Uppercut": {
+      "name": "Gancho Alto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Slack Off": {
+      "name": "Relajo",
+      "desc": "El usuario se relaja y restaura la mitad de sus PS  máximos."
+    },
+    "Slam": {
+      "name": "Atizar",
+      "desc": "Golpea con la cola o con lianas, por ejemplo, para causar daño al objetivo."
+    },
+    "Slash": {
+      "name": "Cuchillada",
+      "desc": "Ataca con cuchillas o con pinzas. Suele asestar un golpe crítico."
+    },
+    "Sleep Powder": {
+      "name": "Somnífero",
+      "desc": "Esparce polvo que duerme al objetivo."
+    },
+    "Sleep Talk": {
+      "name": "Sonámbulo",
+      "desc": "Mientras duerme, usa uno de sus movimientos elegido al azar."
+    },
+    "Sludge": {
+      "name": "Residuos",
+      "desc": "Arroja residuos al objetivo. Puede llegar a envenenar."
+    },
+    "Sludge Bomb": {
+      "name": "Bomba Lodo",
+      "desc": "Arroja residuos al objetivo. Puede llegar a envenenar."
+    },
+    "Sludge Wave": {
+      "name": "Onda Tóxica",
+      "desc": "Una onda tóxica que daña a los Pokémon de alrededor. Puede envenenar."
+    },
+    "Smack Down": {
+      "name": "Antiaéreo",
+      "desc": "Ataca lanzando una piedra o un proyectil. Si el objetivo está en el aire, lo estrella contra el suelo."
+    },
+    "Smart Strike": {
+      "name": "Cuerno Certero",
+      "desc": "El usuario ensarta al adversario con su afilada cornamenta. Este movimiento acierta siempre."
+    },
+    "Smelling Salts": {
+      "name": "Estímulo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Smog": {
+      "name": "Polución",
+      "desc": "Lanza un ataque con gases tóxicos que pueden llegar a envenenar."
+    },
+    "Smokescreen": {
+      "name": "Pantalla de Humo",
+      "desc": "Baja la Precisión del objetivo con una nube de humo  o tinta."
+    },
+    "Snap Trap": {
+      "name": "Cepo",
+      "desc": "Cepo que atrapa al objetivo durante cuatro o cinco turnos y le causa daño mientras se encuentra preso."
+    },
+    "Snarl": {
+      "name": "Alarido",
+      "desc": "Chillido desagradable que baja el Ataque Especial del rival."
+    },
+    "Snatch": {
+      "name": "Robo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Snipe Shot": {
+      "name": "Disparo Certero",
+      "desc": "Permite atacar al objetivo seleccionado ignorando las habilidades o movimientos que permiten a un rival centrar la atención sobre sí."
+    },
+    "Snore": {
+      "name": "Ronquido",
+      "desc": "Fuerte ronquido que solo puede usarse dormido. Puede amedrentar al objetivo."
+    },
+    "Soak": {
+      "name": "Anegar",
+      "desc": "Potente lluvia que transforma al objetivo en un  Pokémon de tipo Agua."
+    },
+    "Soft-Boiled": {
+      "name": "Amortiguador",
+      "desc": "Restaura la mitad de los PS máximos del usuario."
+    },
+    "Solar Beam": {
+      "name": "Rayo Solar",
+      "desc": "El usuario absorbe luz en el primer turno y en el segundo lanza un potente rayo de energía."
+    },
+    "Solar Blade": {
+      "name": "Cuchilla Solar",
+      "desc": "El usuario dedica un turno a absorber energía lumínica y concentrarla en forma de cuchilla con la que ataca al rival en el siguiente turno."
+    },
+    "Sonic Boom": {
+      "name": "Bomba Sónica",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Soul-Stealing 7-Star Strike": {
+      "name": "Constelación Robaalmas",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Spacial Rend": {
+      "name": "Corte Vacío",
+      "desc": "Desgarra al objetivo y el espacio a su alrededor.  Suele ser crítico."
+    },
+    "Spark": {
+      "name": "Chispa",
+      "desc": "Ataque eléctrico que puede llegar a paralizar."
+    },
+    "Sparkling Aria": {
+      "name": "Aria Burbuja",
+      "desc": "Libera burbujas al cantar. Este movimiento cura las quemaduras de los Pokémon que reciban daño."
+    },
+    "Sparkly Swirl": {
+      "name": "Sylveotornado",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Spectral Thief": {
+      "name": "Robasombra",
+      "desc": "El usuario se esconde en la sombra del objetivo y lo ataca tras robarle las mejoras en sus características."
+    },
+    "Speed Swap": {
+      "name": "Cambiavelocidad",
+      "desc": "Intercambia su Velocidad por la del oponente."
+    },
+    "Spider Web": {
+      "name": "Telaraña",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Spike Cannon": {
+      "name": "Clavo Cañón",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Spikes": {
+      "name": "Púas",
+      "desc": "Esparce púas alrededor del equipo rival que hieren  a los Pokémon rivales que entran en combate."
+    },
+    "Spiky Shield": {
+      "name": "Barrera Espinosa",
+      "desc": "Protege al usuario de ataques, e inflige daño a quien se los lance si entra en contacto con él."
+    },
+    "Spirit Break": {
+      "name": "Choque Anímico",
+      "desc": "El usuario ataca al objetivo con tal ímpetu que acaba minando su moral y, en consecuencia, reduce su Ataque Especial."
+    },
+    "Spirit Shackle": {
+      "name": "Puntada Sombría",
+      "desc": "Ataca al oponente y, al mismo tiempo, fija su sombra al terreno para impedir su huida."
+    },
+    "Spite": {
+      "name": "Rencor",
+      "desc": "Da rienda suelta a su rencor para reducir cuatro PP  del último movimiento usado por el objetivo."
+    },
+    "Spit Up": {
+      "name": "Escupir",
+      "desc": "Libera de una vez la energía acumulada con Reserva. La potencia del ataque será proporcional a la cantidad de energía acumulada."
+    },
+    "Splash": {
+      "name": "Salpicadura",
+      "desc": "No tiene ningún efecto. Solo salpica."
+    },
+    "Splintered Stormshards": {
+      "name": "Tempestad Rocosa",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Splishy Splash": {
+      "name": "Salpikasurf",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Spore": {
+      "name": "Espora",
+      "desc": "Esparce esporas que inducen al sueño."
+    },
+    "Spotlight": {
+      "name": "Foco",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Stealth Rock": {
+      "name": "Trampa Rocas",
+      "desc": "Una trampa de rocas que flota en el aire y daña a los objetivos que entran en combate."
+    },
+    "Steam Eruption": {
+      "name": "Chorro de Vapor",
+      "desc": "Envuelve al Pokémon oponente con vapor extremadamente caliente que puede llegar a quemarlo."
+    },
+    "Steamroller": {
+      "name": "Rodillo de Púas",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Steel Beam": {
+      "name": "Metaláser",
+      "desc": "Utiliza el acero de su cuerpo para disparar un potente rayo. También hiere al agresor."
+    },
+    "Steel Roller": {
+      "name": "Allanador Férreo",
+      "desc": "El usuario lanza su ataque y destruye el campo activo en el terreno de combate, y falla si no hay ninguno en ese momento."
+    },
+    "Steel Wing": {
+      "name": "Ala de Acero",
+      "desc": "Alas macizas que golpean al objetivo y pueden subir  la Defensa del usuario."
+    },
+    "Sticky Web": {
+      "name": "Red Viscosa",
+      "desc": "Coloca una red pegajosa alrededor del equipo rival que baja la Velocidad de cualquier adversario que entre a combatir."
+    },
+    "Stockpile": {
+      "name": "Reserva",
+      "desc": "Acumula energía y sube la Defensa y la Defensa  Especial. Puede utilizarse hasta tres veces."
+    },
+    "Stoked Sparksurfer": {
+      "name": "Surfeo Galvánico",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Stomp": {
+      "name": "Pisotón",
+      "desc": "Tremendo pisotón que puede hacer que el objetivo se amedrente."
+    },
+    "Stomping Tantrum": {
+      "name": "Pataleta",
+      "desc": "Usa la frustración como revulsivo para atacar. La potencia de Pataleta se duplica si el usuario ha fallado el último movimiento usado."
+    },
+    "Stone Edge": {
+      "name": "Roca Afilada",
+      "desc": "Clava piedras muy afiladas al objetivo. Suele ser crítico."
+    },
+    "Stored Power": {
+      "name": "Poder Reserva",
+      "desc": "Acumula poder para golpear. Cuanto más suban las características del usuario, mayor será el daño."
+    },
+    "Storm Throw": {
+      "name": "Llave Corsé",
+      "desc": "Lanza un golpe devastador. Siempre asesta un golpe crítico."
+    },
+    "Strange Steam": {
+      "name": "Cautivapor",
+      "desc": "Desprende un humo con el que ataca al objetivo, que puede acabar confundido."
+    },
+    "Strength": {
+      "name": "Fuerza",
+      "desc": "Propina un potente puñetazo con todas sus fuerzas."
+    },
+    "Strength Sap": {
+      "name": "Absorbefuerza",
+      "desc": "Restaura una cantidad de PS equivalente al valor de Ataque del rival, que además verá reducida esta característica."
+    },
+    "String Shot": {
+      "name": "Disparo Demora",
+      "desc": "Lanza seda a los rivales y reduce mucho su Velocidad."
+    },
+    "Struggle": {
+      "name": "Forcejeo",
+      "desc": "Solo se usa como último recurso al acabarse los PP.  Hiere un poco al agresor."
+    },
+    "Struggle Bug": {
+      "name": "Estoicismo",
+      "desc": "El usuario opone resistencia y ataca a los oponentes.  También reduce su Ataque Especial."
+    },
+    "Stuff Cheeks": {
+      "name": "Atiborramiento",
+      "desc": "El usuario ingiere la baya que lleva equipada para aumentar mucho su Defensa."
+    },
+    "Stun Spore": {
+      "name": "Paralizador",
+      "desc": "Esparce polvo que paraliza al objetivo."
+    },
+    "Submission": {
+      "name": "Sumisión",
+      "desc": "El usuario se lanza al suelo con el oponente en brazos y también se hace un poco de daño."
+    },
+    "Substitute": {
+      "name": "Sustituto",
+      "desc": "Utiliza parte de los PS propios para crear un sustituto que actúa como señuelo."
+    },
+    "Subzero Slammer": {
+      "name": "Crioaliento Despiadado",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Sucker Punch": {
+      "name": "Golpe Bajo",
+      "desc": "Permite atacar con prioridad. Falla si el objetivo no está preparando ningún ataque."
+    },
+    "Sunny Day": {
+      "name": "Día Soleado",
+      "desc": "Hace que se intensifique el efecto del sol durante cinco turnos, lo que potencia los movimientos de tipo Fuego y debilita los de tipo Agua."
+    },
+    "Sunsteel Strike": {
+      "name": "Meteoimpacto",
+      "desc": "Ataca al objetivo con la potencia de un meteoro, ignorando su habilidad."
+    },
+    "Supercell Slam": {
+      "name": "Plancha Voltaica"
+    },
+    "Super Fang": {
+      "name": "Superdiente",
+      "desc": "Finos colmillos que reducen a la mitad los PS del objetivo."
+    },
+    "Superpower": {
+      "name": "Fuerza Bruta",
+      "desc": "Ataque de gran potencia, pero que reduce el Ataque y la Defensa del agresor."
+    },
+    "Supersonic": {
+      "name": "Supersónico",
+      "desc": "Raras ondas sónicas que confunden al objetivo."
+    },
+    "Supersonic Skystrike": {
+      "name": "Picado Supersónico",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Surf": {
+      "name": "Surf",
+      "desc": "Inunda el terreno de combate con una ola gigante."
+    },
+    "Surging Strikes": {
+      "name": "Azote Torrencial",
+      "desc": "El usuario, dominador absoluto del líquido elemento, golpea hasta tres veces con movimientos fluidos. Siempre asesta un golpe crítico."
+    },
+    "Swagger": {
+      "name": "Contoneo",
+      "desc": "Provoca confusión en el objetivo, pero también sube  mucho su Ataque."
+    },
+    "Swallow": {
+      "name": "Tragar",
+      "desc": "Absorbe la energía acumulada con Reserva para recobrar salud. Cuanta más se haya acumulado, mayor será el número de PS que se recuperen."
+    },
+    "Sweet Kiss": {
+      "name": "Beso Dulce",
+      "desc": "Da un beso con tal dulzura que causa confusión."
+    },
+    "Sweet Scent": {
+      "name": "Dulce Aroma",
+      "desc": "Un dulce aroma engatusa al objetivo, por lo que se reduce mucho su Evasión."
+    },
+    "Swift": {
+      "name": "Rapidez",
+      "desc": "Lanza rayos en forma de estrella que no fallan nunca."
+    },
+    "Switcheroo": {
+      "name": "Trapicheo",
+      "desc": "Intercambia con el objetivo los objetos que llevan tan rápido que es imposible verlo a simple vista."
+    },
+    "Swords Dance": {
+      "name": "Danza Espada",
+      "desc": "Baile frenético que aumenta mucho el Ataque."
+    },
+    "Synchronoise": {
+      "name": "Sincrorruido",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Synthesis": {
+      "name": "Síntesis",
+      "desc": "Restaura PS del usuario. La cantidad varía según  el tiempo que haga."
+    },
+    "Tachyon Cutter": {
+      "name": "Tajo Taquión"
+    },
+    "Tackle": {
+      "name": "Placaje",
+      "desc": "Embestida con todo el cuerpo."
+    },
+    "Tail Glow": {
+      "name": "Ráfaga",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Tail Slap": {
+      "name": "Plumerazo",
+      "desc": "Golpea con la cola de dos a cinco veces seguidas."
+    },
+    "Tail Whip": {
+      "name": "Látigo",
+      "desc": "Agita la cola para bajar la Defensa del equipo rival."
+    },
+    "Tailwind": {
+      "name": "Viento Afín",
+      "desc": "Crea un fuerte remolino que aumenta la Velocidad de los Pokémon de tu equipo durante cuatro turnos."
+    },
+    "Take Down": {
+      "name": "Derribo",
+      "desc": "Carga desmedida que también hiere al agresor."
+    },
+    "Tar Shot": {
+      "name": "Alquitranazo",
+      "desc": "Cubre al objetivo de un alquitrán pegajoso que reduce su Velocidad y lo vuelve débil contra el fuego."
+    },
+    "Taunt": {
+      "name": "Mofa",
+      "desc": "Enfurece al objetivo para que solo use movimientos de ataque durante tres turnos."
+    },
+    "Tearful Look": {
+      "name": "Ojos Llorosos",
+      "desc": "Mira al objetivo con ojos llorosos para hacerle perder su espíritu combativo y reduce su Ataque y Ataque Especial."
+    },
+    "Teatime": {
+      "name": "Hora del Té",
+      "desc": "El usuario invita a tomar el té a todos los presentes en el terreno de combate, lo que hace que ingieran las bayas que lleven equipadas."
+    },
+    "Techno Blast": {
+      "name": "Tecno Shock",
+      "desc": "Ataca al objetivo con un gran láser. El tipo del ataque lo determina el cartucho que porta el usuario."
+    },
+    "Tectonic Rage": {
+      "name": "Barrena Telúrica",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Teeter Dance": {
+      "name": "Danza Caos",
+      "desc": "Danza histérica que confunde a los Pokémon que están alrededor del usuario."
+    },
+    "Telekinesis": {
+      "name": "Telequinesis",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Teleport": {
+      "name": "Teletransporte",
+      "desc": "Permite al usuario cambiarse por otro Pokémon del equipo, si es posible. Si un Pokémon salvaje usa este movimiento, huye del combate."
+    },
+    "Temper Flare": {
+      "name": "Cólera Ardiente"
+    },
+    "Tera Starstorm": {
+      "name": "Teraclúster"
+    },
+    "Terrain Pulse": {
+      "name": "Pulso de Campo",
+      "desc": "El usuario ataca aprovechando la energía del campo activo, que determina tanto el tipo como la potencia del movimiento."
+    },
+    "Thief": {
+      "name": "Ladrón",
+      "desc": "El agresor ataca y le quita el objeto al objetivo siempre y cuando no lleve ninguno."
+    },
+    "Thousand Arrows": {
+      "name": "Mil Flechas",
+      "desc": "Acierta incluso a Pokémon que estén en el aire y los hace caer al suelo."
+    },
+    "Thousand Waves": {
+      "name": "Mil Temblores",
+      "desc": "El usuario genera ondas sísmicas que se propagan por el suelo y sacuden a los oponentes. Los Pokémon alcanzados no podrán huir del combate."
+    },
+    "Thrash": {
+      "name": "Golpe",
+      "desc": "Ataque de dos a tres turnos que acaba confundiendo al agresor."
+    },
+    "Throat Chop": {
+      "name": "Golpe Mordaza",
+      "desc": "Inflige al rival un dolor tan abrumador que le impide utilizar durante dos turnos ataques que se sirven del sonido."
+    },
+    "Thunder": {
+      "name": "Trueno",
+      "desc": "Un poderoso rayo que daña al objetivo y puede  paralizarlo."
+    },
+    "Thunderbolt": {
+      "name": "Rayo",
+      "desc": "Potente ataque eléctrico que puede paralizar al  objetivo."
+    },
+    "Thunder Cage": {
+      "name": "Electrojaula",
+      "desc": "El objetivo queda atrapado en una jaula electrificada que permanece en el terreno de cuatro a cinco turnos."
+    },
+    "Thunderclap": {
+      "name": "Relámpago Súbito"
+    },
+    "Thunder Fang": {
+      "name": "Colmillo Rayo",
+      "desc": "El usuario muerde al objetivo con colmillos electrificados y puede hacer que se amedrente o se paralice."
+    },
+    "Thunderous Kick": {
+      "name": "Patada Relámpago",
+      "desc": "El usuario desconcierta al rival con movimientos centelleantes y le propina una patada. Baja la Defensa del objetivo."
+    },
+    "Thunder Punch": {
+      "name": "Puño Trueno",
+      "desc": "Puñetazo eléctrico que puede paralizar al adversario."
+    },
+    "Thunder Shock": {
+      "name": "Impactrueno",
+      "desc": "Ataque eléctrico que puede paralizar al objetivo."
+    },
+    "Thunder Wave": {
+      "name": "Onda Trueno",
+      "desc": "Una ligera descarga que paraliza al objetivo si lo  alcanza."
+    },
+    "Tickle": {
+      "name": "Cosquillas",
+      "desc": "Hace reír al objetivo para bajar su Ataque y Defensa."
+    },
+    "Topsy-Turvy": {
+      "name": "Reversión",
+      "desc": "Invierte por completo los cambios en las características del objetivo."
+    },
+    "Torment": {
+      "name": "Tormento",
+      "desc": "Atormenta y enfurece al objetivo, que no puede usar dos veces seguidas el mismo movimiento."
+    },
+    "Toxic": {
+      "name": "Tóxico",
+      "desc": "Envenena gravemente al objetivo y causa un daño  mayor en cada turno."
+    },
+    "Toxic Spikes": {
+      "name": "Púas Tóxicas",
+      "desc": "Lanza una trampa de púas tóxicas a los pies del objetivo. El veneno afecta a los Pokémon oponentes que entran en combate."
+    },
+    "Toxic Thread": {
+      "name": "Hilo Venenoso",
+      "desc": "Ataca al oponente con hilillos venenosos que reducen su Velocidad y lo envenenan."
+    },
+    "Transform": {
+      "name": "Transformación",
+      "desc": "El usuario se transforma en una copia del objetivo, con los mismos movimientos."
+    },
+    "Tri Attack": {
+      "name": "Triataque",
+      "desc": "Ataque triple que puede paralizar, quemar o congelar al objetivo."
+    },
+    "Trick": {
+      "name": "Truco",
+      "desc": "Engaña al objetivo desprevenido e intercambia objetos."
+    },
+    "Trick-or-Treat": {
+      "name": "Halloween",
+      "desc": "Invita al objetivo a celebrar Halloween, lo que añade  el tipo Fantasma a los tipos de este."
+    },
+    "Trick Room": {
+      "name": "Espacio Raro",
+      "desc": "Crea un espacio extraño en el que los Pokémon lentos se mueven primero durante cinco turnos."
+    },
+    "Triple Axel": {
+      "name": "Triple Axel",
+      "desc": "Patea hasta tres veces seguidas y cada vez más fuerte."
+    },
+    "Triple Kick": {
+      "name": "Triple Patada",
+      "desc": "Patea hasta tres veces seguidas y cada vez más fuerte."
+    },
+    "Trop Kick": {
+      "name": "Patada Tropical",
+      "desc": "Lanza una patada con la fuerza del trópico que golpea al rival y reduce su Ataque."
+    },
+    "Trump Card": {
+      "name": "As Oculto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Twineedle": {
+      "name": "Doble Ataque",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Twinkle Tackle": {
+      "name": "Arrumaco Sideral",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Twister": {
+      "name": "Ciclón",
+      "desc": "Crea un violento tornado para hacer trizas al objetivo. Puede amedrentarlo."
+    },
+    "Upper Hand": {
+      "name": "Palma Rauda"
+    },
+    "Uproar": {
+      "name": "Alboroto",
+      "desc": "Ataca de forma alborotada durante tres turnos.  Mantiene despiertos a todos."
+    },
+    "U-turn": {
+      "name": "Ida y Vuelta",
+      "desc": "Tras atacar, el usuario vuelve a toda prisa para dar paso a otro Pokémon del equipo."
+    },
+    "Vacuum Wave": {
+      "name": "Onda Vacío",
+      "desc": "Gira los puños y libera una onda de vacío contra el objetivo. Este movimiento tiene prioridad alta."
+    },
+    "V-create": {
+      "name": "V de Fuego",
+      "desc": "Golpea con una V de llamas al objetivo. Baja la  Defensa, la Defensa Especial y la Velocidad de  quien lo usa."
+    },
+    "Veevee Volley": {
+      "name": "Eevimpacto",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Venom Drench": {
+      "name": "Trampa Venenosa",
+      "desc": "Impregna a su objetivo con un líquido venenoso que disminuye el Ataque, el Ataque Especial y la Velocidad. Solo afecta a Pokémon ya envenenados."
+    },
+    "Venoshock": {
+      "name": "Carga Tóxica",
+      "desc": "Cubre al objetivo con un líquido venenoso. El daño será doble si este ya está envenenado."
+    },
+    "Vine Whip": {
+      "name": "Látigo Cepa",
+      "desc": "Azota al objetivo con ramas finas."
+    },
+    "Vise Grip": {
+      "name": "Agarre",
+      "desc": "Atrapa y atenaza al objetivo."
+    },
+    "Vital Throw": {
+      "name": "Tiro Vital",
+      "desc": "El usuario ataca el último, pero no falla."
+    },
+    "Volt Switch": {
+      "name": "Voltiocambio",
+      "desc": "Tras atacar, el usuario vuelve a toda prisa para dar paso a otro Pokémon del equipo."
+    },
+    "Volt Tackle": {
+      "name": "Placaje Eléc",
+      "desc": "Quien lo usa electrifica su cuerpo para luego atacar.  Se hiere mucho a sí mismo, pero puede paralizar al  objetivo."
+    },
+    "Wake-Up Slap": {
+      "name": "Espabila",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Waterfall": {
+      "name": "Cascada",
+      "desc": "Embiste con un gran impulso que puede llegar a amedrentar."
+    },
+    "Water Gun": {
+      "name": "Pistola Agua",
+      "desc": "Ataca disparando agua con gran potencia."
+    },
+    "Water Pledge": {
+      "name": "Voto Agua",
+      "desc": "Ataca con columnas de agua. Combinado con Voto Fuego, crea un arcoíris y aumenta su potencia."
+    },
+    "Water Pulse": {
+      "name": "Hidropulso",
+      "desc": "Ataca con un potente chorro de agua. Puede confundir al objetivo."
+    },
+    "Water Shuriken": {
+      "name": "Shuriken de Agua",
+      "desc": "Golpea al oponente de dos a cinco veces con estrellas arrojadizas hechas de mucosidad. Este movimiento tiene prioridad alta."
+    },
+    "Water Sport": {
+      "name": "Hidrochorro",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "Water Spout": {
+      "name": "Salpicar",
+      "desc": "Chorro de agua. Cuantos menos PS tenga el usuario, menos dañino será."
+    },
+    "Weather Ball": {
+      "name": "Meteorobola",
+      "desc": "El tipo y fuerza del ataque varían según el tiempo que haga."
+    },
+    "Whirlpool": {
+      "name": "Torbellino",
+      "desc": "Una tromba de agua atrapa al objetivo durante cuatro o cinco turnos."
+    },
+    "Whirlwind": {
+      "name": "Remolino",
+      "desc": "Se lleva al objetivo, que es cambiado por otro Pokémon. Si es un Pokémon salvaje, acaba el combate."
+    },
+    "Wicked Blow": {
+      "name": "Golpe Oscuro",
+      "desc": "Golpe devastador que requiere un absoluto dominio de las artes siniestras. Siempre asesta un golpe crítico."
+    },
+    "Wide Guard": {
+      "name": "Vastaguardia",
+      "desc": "Bloquea los ataques de objetivo múltiple lanzados  contra tu equipo durante un turno."
+    },
+    "Wild Charge": {
+      "name": "Voltio Cruel",
+      "desc": "Carga eléctrica muy potente que también hiere  ligeramente a quien la usa."
+    },
+    "Will-O-Wisp": {
+      "name": "Fuego Fatuo",
+      "desc": "Siniestra llama morada que produce quemaduras."
+    },
+    "Wing Attack": {
+      "name": "Ataque Ala",
+      "desc": "Golpea al objetivo con unas grandes alas."
+    },
+    "Wish": {
+      "name": "Deseo",
+      "desc": "Restaura en el siguiente turno la mitad de los PS máximos del usuario o se los pasa al Pokémon que lo sustituye."
+    },
+    "Withdraw": {
+      "name": "Refugio",
+      "desc": "El usuario se resguarda en su coraza, por lo que le sube la Defensa."
+    },
+    "Wonder Room": {
+      "name": "Zona Extraña",
+      "desc": "Crea una zona misteriosa donde se intercambian la Defensa y la Defensa Especial de todos los Pokémon durante cinco turnos."
+    },
+    "Wood Hammer": {
+      "name": "Mazazo",
+      "desc": "Arremete contra el objetivo con su robusto cuerpo.  El agresor también sufre bastante daño."
+    },
+    "Work Up": {
+      "name": "Avivar",
+      "desc": "Quien lo usa se concentra y potencia su Ataque y  su Ataque Especial."
+    },
+    "Worry Seed": {
+      "name": "Abatidoras",
+      "desc": "Planta una semilla en el objetivo que le causa pesar. Sustituye la habilidad del objetivo por Insomnio y le impide dormirse."
+    },
+    "Wrap": {
+      "name": "Constricción",
+      "desc": "Oprime al objetivo de cuatro a cinco turnos con ramas o con su cuerpo."
+    },
+    "Wring Out": {
+      "name": "Estrujón",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    },
+    "X-Scissor": {
+      "name": "Tijera X",
+      "desc": "Cruza las guadañas o las garras para atacar al objetivo como si fueran unas tijeras."
+    },
+    "Yawn": {
+      "name": "Bostezo",
+      "desc": "Gran bostezo que induce al sueño al objetivo en el siguiente turno."
+    },
+    "Zap Cannon": {
+      "name": "Electrocañón",
+      "desc": "Dispara una descarga eléctrica que causa daño y  parálisis."
+    },
+    "Zen Headbutt": {
+      "name": "Cabezazo Zen",
+      "desc": "Concentra su energía psíquica en la cabeza para golpear. Puede hacer que el objetivo se amedrente."
+    },
+    "Zing Zap": {
+      "name": "Electropunzada",
+      "desc": "Se lanza contra el objetivo y le suelta una potente descarga eléctrica que puede hacer que se amedrente."
+    },
+    "Zippy Zap": {
+      "name": "Pikaturbo",
+      "desc": "Este movimiento no se puede usar, por lo que sería mejor olvidarlo, aunque eso implique que no se pueda recordar posteriormente."
+    }
+  },
+  "abilities": {
+    "Adaptability": {
+      "name": "Adaptable",
+      "desc": "Potencia aún más los movimientos cuyo tipo coincida con el suyo."
+    },
+    "Aerilate": {
+      "name": "Piel Celeste",
+      "desc": "Convierte los movimientos de tipo Normal en tipo Volador y aumenta ligeramente su potencia."
+    },
+    "Aftermath": {
+      "name": "Detonación",
+      "desc": "Daña al agresor que le ha dado el golpe de gracia con un movimiento de contacto."
+    },
+    "Air Lock": {
+      "name": "Bucle Aire",
+      "desc": "Neutraliza todos los efectos del tiempo atmosférico."
+    },
+    "Analytic": {
+      "name": "Cálculo Final",
+      "desc": "Aumenta la potencia de su movimiento si es el último en atacar."
+    },
+    "Anger Point": {
+      "name": "Irascible",
+      "desc": "Si recibe un golpe crítico, monta en cólera y sube su Ataque hasta el máximo."
+    },
+    "Anger Shell": {
+      "name": "Coraza Ira"
+    },
+    "Anticipation": {
+      "name": "Anticipación",
+      "desc": "Prevé los movimientos peligrosos del rival."
+    },
+    "Arena Trap": {
+      "name": "Trampa Arena",
+      "desc": "Evita que el rival huya."
+    },
+    "Armor Tail": {
+      "name": "Cola Armadura"
+    },
+    "Aroma Veil": {
+      "name": "Velo Aroma",
+      "desc": "Se protege a sí mismo y a sus aliados de ataques que impiden elegir movimientos."
+    },
+    "As One (Glastrier)": {
+      "name": "Unidad Ecuestre",
+      "desc": "El Pokémon tiene dos habilidades: Relincho Blanco de Glastrier y Nerviosismo de Calyrex."
+    },
+    "As One (Spectrier)": {
+      "name": "Unidad Ecuestre",
+      "desc": "El Pokémon tiene dos habilidades: Relincho Negro de Spectrier y Nerviosismo de Calyrex."
+    },
+    "Aura Break": {
+      "name": "Rompeaura",
+      "desc": "Invierte los efectos de las auras, por lo que baja la potencia de ciertos movimientos en vez de subirla."
+    },
+    "Bad Dreams": {
+      "name": "Mal Sueño",
+      "desc": "Inflige daño a cualquier rival que esté dormido."
+    },
+    "Ball Fetch": {
+      "name": "Recogebolas",
+      "desc": "Si no lleva equipado ningún objeto, recupera la Poké Ball del primer intento de captura fallido."
+    },
+    "Battery": {
+      "name": "Batería",
+      "desc": "Potencia los ataques especiales de los aliados."
+    },
+    "Battle Armor": {
+      "name": "Armadura Batalla",
+      "desc": "La robusta coraza que lo protege bloquea los golpes críticos."
+    },
+    "Battle Bond": {
+      "name": "Fuerte Afecto",
+      "desc": "Al derrotar a un rival, los vínculos con su Entrenador se refuerzan y se convierte en Greninja Ash. Su Shuriken de Agua también se ve potenciado."
+    },
+    "Beads of Ruin": {
+      "name": "Abalorio Debacle"
+    },
+    "Beast Boost": {
+      "name": "Ultraimpulso",
+      "desc": "Si derrota a un rival en ese turno, aumenta su característica más fuerte."
+    },
+    "Berserk": {
+      "name": "Cólera",
+      "desc": "Aumenta su Ataque Especial si sus PS se ven reducidos a la mitad debido a algún ataque."
+    },
+    "Big Pecks": {
+      "name": "Sacapecho",
+      "desc": "Impide que el rival le baje la Defensa."
+    },
+    "Blaze": {
+      "name": "Mar Llamas",
+      "desc": "Potencia sus movimientos de tipo Fuego cuando le quedan pocos PS."
+    },
+    "Bulletproof": {
+      "name": "Antibalas",
+      "desc": "No le afectan las bombas ni algunos proyectiles."
+    },
+    "Cheek Pouch": {
+      "name": "Carrillo",
+      "desc": "Recupera PS al comer cualquier baya."
+    },
+    "Chilling Neigh": {
+      "name": "Relincho Blanco",
+      "desc": "Al derrotar a un objetivo, emite un relincho gélido y aumenta su Ataque."
+    },
+    "Chlorophyll": {
+      "name": "Clorofila",
+      "desc": "Sube su Velocidad cuando hace sol."
+    },
+    "Clear Body": {
+      "name": "Cuerpo Puro",
+      "desc": "Evita que bajen sus características a causa de movimientos o habilidades de otros Pokémon."
+    },
+    "Cloud Nine": {
+      "name": "Aclimatación",
+      "desc": "Anula todos los efectos del tiempo atmosférico."
+    },
+    "Color Change": {
+      "name": "Cambio Color",
+      "desc": "Adopta el tipo del último movimiento del que es blanco."
+    },
+    "Comatose": {
+      "name": "Letargo Perenne",
+      "desc": "No despierta jamás de su profundo letargo e incluso ataca dormido."
+    },
+    "Commander": {
+      "name": "Comandar"
+    },
+    "Competitive": {
+      "name": "Tenacidad",
+      "desc": "Aumenta mucho su Ataque Especial cuando el rival le baja cualquiera de sus características."
+    },
+    "Compound Eyes": {
+      "name": "Ojo Compuesto",
+      "desc": "Aumenta la precisión de sus movimientos."
+    },
+    "Contrary": {
+      "name": "Respondón",
+      "desc": "Invierte los cambios en las características: bajan cuando les toca subir y suben cuando les toca bajar."
+    },
+    "Corrosion": {
+      "name": "Corrosión",
+      "desc": "Puede envenenar incluso a rivales de tipo Acero o Veneno."
+    },
+    "Costar": {
+      "name": "Unísono"
+    },
+    "Cotton Down": {
+      "name": "Pelusa",
+      "desc": "Al ser alcanzado por un ataque, suelta una pelusa de algodón que reduce la Velocidad de todos los demás Pokémon."
+    },
+    "Cud Chew": {
+      "name": "Rumia"
+    },
+    "Curious Medicine": {
+      "name": "Medicina Extraña",
+      "desc": "Al entrar en combate, rezuma una substancia medicinal por la caracola que revierte los cambios en las características de los aliados."
+    },
+    "Cursed Body": {
+      "name": "Cuerpo Maldito",
+      "desc": "Puede anular el movimiento usado en su contra."
+    },
+    "Cute Charm": {
+      "name": "Gran Encanto",
+      "desc": "Puede causar enamoramiento al rival que lo toque."
+    },
+    "Damp": {
+      "name": "Humedad",
+      "desc": "Aumenta la humedad del entorno y evita que se puedan utilizar movimientos explosivos, tales como Autodestrucción."
+    },
+    "Dancer": {
+      "name": "Pareja de Baile",
+      "desc": "Puede copiar inmediatamente cualquier movimiento de baile que haya usado otro Pokémon presente en el combate."
+    },
+    "Dark Aura": {
+      "name": "Aura Oscura",
+      "desc": "Aumenta la potencia de todos los movimientos de tipo Siniestro."
+    },
+    "Dauntless Shield": {
+      "name": "Escudo Recio",
+      "desc": "Aumenta su Defensa al entrar en combate."
+    },
+    "Dazzling": {
+      "name": "Cuerpo Vívido",
+      "desc": "Desconcierta al rival y le impide utilizar movimientos con prioridad en su contra."
+    },
+    "Defeatist": {
+      "name": "Flaqueza",
+      "desc": "Se debilita tanto cuando sus PS se ven reducidos a la mitad que su Ataque y su Ataque Especial bajan."
+    },
+    "Defiant": {
+      "name": "Competitivo",
+      "desc": "Sube mucho su Ataque cuando el rival le baja las características."
+    },
+    "Delta Stream": {
+      "name": "Ráfaga Delta",
+      "desc": "Altera el clima para anular las vulnerabilidades del tipo Volador."
+    },
+    "Desolate Land": {
+      "name": "Tierra del Ocaso",
+      "desc": "Altera el clima para anular los ataques de tipo Agua."
+    },
+    "Disguise": {
+      "name": "Disfraz",
+      "desc": "Puede eludir un ataque valiéndose de la tela que le cubre el cuerpo una vez por combate."
+    },
+    "Download": {
+      "name": "Descarga",
+      "desc": "Compara la Defensa y la Defensa Especial del rival para ver cuál es inferior y aumenta su propio Ataque o Ataque Especial según sea lo más eficaz."
+    },
+    "Dragon's Maw": {
+      "name": "Mandíbula Dragón",
+      "desc": "Potencia los movimientos de tipo Dragón."
+    },
+    "Drizzle": {
+      "name": "Llovizna",
+      "desc": "Hace que llueva al entrar en combate."
+    },
+    "Drought": {
+      "name": "Sequía",
+      "desc": "Cuando entra en combate, el tiempo pasa a ser soleado."
+    },
+    "Dry Skin": {
+      "name": "Piel Seca",
+      "desc": "Pierde PS si hace sol y los recupera si llueve o recibe un movimiento de tipo Agua. Los movimientos de tipo Fuego, por su parte, le hacen más daño de lo normal."
+    },
+    "Early Bird": {
+      "name": "Madrugar",
+      "desc": "Si se duerme, tardará la mitad de tiempo en despertarse."
+    },
+    "Earth Eater": {
+      "name": "Geofagia"
+    },
+    "Effect Spore": {
+      "name": "Efecto Espora",
+      "desc": "Puede dormir, envenenar o paralizar al Pokémon con el que entre en contacto al recibir un ataque."
+    },
+    "Electric Surge": {
+      "name": "Electrogénesis",
+      "desc": "Crea un campo eléctrico al entrar en combate."
+    },
+    "Electromorphosis": {
+      "name": "Dinamo"
+    },
+    "Emergency Exit": {
+      "name": "Retirada",
+      "desc": "Abandona el terreno de combate cuando sus PS se ven reducidos a la mitad para evitar males mayores."
+    },
+    "Fairy Aura": {
+      "name": "Aura Feérica",
+      "desc": "Aumenta la potencia de todos los movimientos de tipo Hada."
+    },
+    "Filter": {
+      "name": "Filtro",
+      "desc": "Mitiga el daño que le infligen los movimientos supereficaces."
+    },
+    "Flame Body": {
+      "name": "Cuerpo Llama",
+      "desc": "Puede quemar al mínimo contacto."
+    },
+    "Flare Boost": {
+      "name": "Ímpetu Ardiente",
+      "desc": "Aumenta la potencia de sus ataques especiales cuando sufre quemaduras."
+    },
+    "Flash Fire": {
+      "name": "Absorbe Fuego",
+      "desc": "Si le alcanza algún movimiento de tipo Fuego, potencia sus propios movimientos de dicho tipo."
+    },
+    "Flower Gift": {
+      "name": "Don Floral",
+      "desc": "Si hace sol, aumenta su Ataque y su Defensa Especial, así como los de sus aliados."
+    },
+    "Flower Veil": {
+      "name": "Velo Flor",
+      "desc": "Evita que los Pokémon de tipo Planta aliados sufran problemas de estado o que les bajen sus características."
+    },
+    "Fluffy": {
+      "name": "Peluche",
+      "desc": "Reduce a la mitad el daño provocado por los movimientos de contacto, pero duplica el infligido por los de tipo Fuego."
+    },
+    "Forecast": {
+      "name": "Predicción",
+      "desc": "Cambia a tipo Agua, Fuego o Hielo en función del tiempo atmosférico."
+    },
+    "Forewarn": {
+      "name": "Alerta",
+      "desc": "Indica el movimiento más potente del rival al entrar en combate."
+    },
+    "Friend Guard": {
+      "name": "Compiescolta",
+      "desc": "Reduce el daño que sufren los aliados."
+    },
+    "Frisk": {
+      "name": "Cacheo",
+      "desc": "Puede ver el objeto que lleva el rival al entrar en combate."
+    },
+    "Full Metal Body": {
+      "name": "Guardia Metálica",
+      "desc": "Evita que bajen sus características a causa de movimientos o habilidades de otros Pokémon."
+    },
+    "Fur Coat": {
+      "name": "Pelaje Recio",
+      "desc": "Reduce a la mitad el daño que recibe de ataques físicos del rival."
+    },
+    "Gale Wings": {
+      "name": "Alas Vendaval",
+      "desc": "Da prioridad a los movimientos de tipo Volador si sus PS están al máximo."
+    },
+    "Galvanize": {
+      "name": "Piel Eléctrica",
+      "desc": "Convierte los movimientos de tipo Normal en tipo Eléctrico y aumenta ligeramente su potencia."
+    },
+    "Gluttony": {
+      "name": "Gula",
+      "desc": "Cuando sus PS se ven reducidos a la mitad, engulle la baya que normalmente solo se comería cuando le quedasen pocos PS."
+    },
+    "Good as Gold": {
+      "name": "Cuerpo Áureo"
+    },
+    "Gooey": {
+      "name": "Baba",
+      "desc": "Baja la Velocidad del rival cuando este le ataca con un movimiento de contacto."
+    },
+    "Gorilla Tactics": {
+      "name": "Monotema",
+      "desc": "Potencia su Ataque, pero solo puede usar el primer movimiento escogido."
+    },
+    "Grass Pelt": {
+      "name": "Manto Frondoso",
+      "desc": "Aumenta su Defensa si hay un campo de hierba en el terreno de combate."
+    },
+    "Grassy Surge": {
+      "name": "Herbogénesis",
+      "desc": "Crea un campo de hierba al entrar en combate."
+    },
+    "Grim Neigh": {
+      "name": "Relincho Negro",
+      "desc": "Al derrotar a un objetivo, emite un relincho aterrador y aumenta su Ataque Especial."
+    },
+    "Guard Dog": {
+      "name": "Perro Guardián"
+    },
+    "Gulp Missile": {
+      "name": "Tragamisil",
+      "desc": "Tras usar Surf o Buceo, emerge con una presa en la boca. Al recibir daño, ataca escupiéndola al rival."
+    },
+    "Guts": {
+      "name": "Agallas",
+      "desc": "Si sufre un problema de estado, se viene arriba y aumenta su Ataque."
+    },
+    "Hadron Engine": {
+      "name": "Motor Hadrónico"
+    },
+    "Harvest": {
+      "name": "Cosecha",
+      "desc": "Puede reutilizar varias veces una misma baya."
+    },
+    "Healer": {
+      "name": "Alma Cura",
+      "desc": "A veces cura los problemas de estado de un aliado."
+    },
+    "Heatproof": {
+      "name": "Ignífugo",
+      "desc": "Su cuerpo, resistente al calor, reduce a la mitad el daño recibido por movimientos de tipo Fuego."
+    },
+    "Heavy Metal": {
+      "name": "Metal Pesado",
+      "desc": "Duplica su peso."
+    },
+    "Honey Gather": {
+      "name": "Recogemiel",
+      "desc": "Puede que encuentre Miel una vez concluido el combate."
+    },
+    "Hospitality": {
+      "name": "Hospitalidad"
+    },
+    "Huge Power": {
+      "name": "Potencia",
+      "desc": "Duplica la potencia de sus ataques físicos."
+    },
+    "Hunger Switch": {
+      "name": "Mutapetito",
+      "desc": "Alterna entre su Forma Saciada y Forma Voraz al final de cada turno."
+    },
+    "Hustle": {
+      "name": "Entusiasmo",
+      "desc": "Aumenta su Ataque, pero reduce su Precisión."
+    },
+    "Hydration": {
+      "name": "Hidratación",
+      "desc": "Cura los problemas de estado si está lloviendo."
+    },
+    "Hyper Cutter": {
+      "name": "Corte Fuerte",
+      "desc": "Evita que el rival le baje el Ataque."
+    },
+    "Ice Body": {
+      "name": "Gélido",
+      "desc": "Recupera PS de forma gradual cuando hay tormentas de granizo."
+    },
+    "Ice Face": {
+      "name": "Cara de Hielo",
+      "desc": "Absorbe el daño de un ataque físico con el hielo de la cabeza, tras lo cual cambia de forma. El hielo se regenerará la próxima vez que granice."
+    },
+    "Ice Scales": {
+      "name": "Escama de Hielo",
+      "desc": "Las gélidas escamas que protegen su cuerpo reducen a la mitad el daño que le infligen los ataques especiales."
+    },
+    "Illuminate": {
+      "name": "Iluminación",
+      "desc": "Aumenta la probabilidad de encontrar Pokémon al iluminar el entorno."
+    },
+    "Illusion": {
+      "name": "Ilusión",
+      "desc": "Adopta el aspecto del último Pokémon del equipo al entrar en combate para desconcertar al rival."
+    },
+    "Immunity": {
+      "name": "Inmunidad",
+      "desc": "Su sistema inmunitario evita el envenenamiento."
+    },
+    "Imposter": {
+      "name": "Impostor",
+      "desc": "Se transforma en el Pokémon que tiene enfrente."
+    },
+    "Infiltrator": {
+      "name": "Allanamiento",
+      "desc": "Ataca sorteando la barrera o el sustituto del rival."
+    },
+    "Innards Out": {
+      "name": "Revés",
+      "desc": "Al caer debilitado, inflige al rival un daño equivalente a los PS que le quedaran."
+    },
+    "Inner Focus": {
+      "name": "Foco Interno",
+      "desc": "Gracias a su profunda concentración, no se amedrenta ante los ataques del rival."
+    },
+    "Insomnia": {
+      "name": "Insomnio",
+      "desc": "Su resistencia al sueño le impide quedarse dormido."
+    },
+    "Intimidate": {
+      "name": "Intimidación",
+      "desc": "Al entrar en combate amilana al rival de tal manera que su Ataque disminuye."
+    },
+    "Intrepid Sword": {
+      "name": "Espada Indómita",
+      "desc": "Aumenta su Ataque al entrar en combate."
+    },
+    "Iron Barbs": {
+      "name": "Punta Acero",
+      "desc": "Inflige daño al rival si este le golpea con un movimiento de contacto."
+    },
+    "Iron Fist": {
+      "name": "Puño Férreo",
+      "desc": "Aumenta la potencia de los puñetazos."
+    },
+    "Justified": {
+      "name": "Justiciero",
+      "desc": "Si le alcanza un movimiento de tipo Siniestro, aumenta el Ataque debido a su integridad."
+    },
+    "Keen Eye": {
+      "name": "Vista Lince",
+      "desc": "Su aguda vista evita que le disminuya la Precisión."
+    },
+    "Klutz": {
+      "name": "Zoquete",
+      "desc": "No puede usar objetos equipados."
+    },
+    "Leaf Guard": {
+      "name": "Defensa Hoja",
+      "desc": "Evita los problemas de estado si hace sol."
+    },
+    "Levitate": {
+      "name": "Levitación",
+      "desc": "Su capacidad de flotar sobre el suelo le proporciona inmunidad frente a los movimientos de tipo Tierra."
+    },
+    "Libero": {
+      "name": "Líbero",
+      "desc": "Cambia su tipo al del movimiento que va a usar."
+    },
+    "Light Metal": {
+      "name": "Metal Liviano",
+      "desc": "Reduce a la mitad su peso."
+    },
+    "Lightning Rod": {
+      "name": "Pararrayos",
+      "desc": "Atrae y neutraliza los movimientos de tipo Eléctrico, que además le suben el Ataque Especial."
+    },
+    "Limber": {
+      "name": "Flexibilidad",
+      "desc": "Evita ser paralizado gracias a la flexibilidad de su cuerpo."
+    },
+    "Lingering Aroma": {
+      "name": "Olor Persistente"
+    },
+    "Liquid Ooze": {
+      "name": "Lodo Líquido",
+      "desc": "Exuda una sustancia tóxica de intenso hedor que hiere a quienes intentan drenarle PS."
+    },
+    "Liquid Voice": {
+      "name": "Voz Fluida",
+      "desc": "Hace que todos sus movimientos que usan sonido pasen a ser de tipo Agua."
+    },
+    "Long Reach": {
+      "name": "Remoto",
+      "desc": "Puede usar cualquier movimiento sin entrar en contacto con el rival."
+    },
+    "Magic Bounce": {
+      "name": "Espejo Mágico",
+      "desc": "Puede devolver los movimientos de estado lanzados por el rival, sin verse afectado por ellos."
+    },
+    "Magic Guard": {
+      "name": "Muro Mágico",
+      "desc": "Solo recibe daño de ataques."
+    },
+    "Magician": {
+      "name": "Prestidigitador",
+      "desc": "Roba el objeto del Pokémon al que alcance con un movimiento."
+    },
+    "Magma Armor": {
+      "name": "Escudo Magma",
+      "desc": "Gracias al magma candente que lo envuelve, no puede ser congelado."
+    },
+    "Magnet Pull": {
+      "name": "Imán",
+      "desc": "Su magnetismo atrae a los Pokémon de tipo Acero y les impide huir."
+    },
+    "Marvel Scale": {
+      "name": "Escama Especial",
+      "desc": "Sube su Defensa si sufre un problema de estado."
+    },
+    "Mega Launcher": {
+      "name": "Megadisparador",
+      "desc": "Aumenta la potencia de algunos movimientos de pulsos y auras."
+    },
+    "Merciless": {
+      "name": "Ensañamiento",
+      "desc": "Hace que sus movimientos asesten siempre un golpe crítico si el rival está envenenado."
+    },
+    "Mimicry": {
+      "name": "Mimetismo",
+      "desc": "Cambia su tipo según el campo que haya en el terreno de combate."
+    },
+    "Mind's Eye": {
+      "name": "Ojo Mental "
+    },
+    "Minus": {
+      "name": "Menos",
+      "desc": "Potencia su Ataque Especial si un Pokémon aliado tiene la habilidad Más o Menos."
+    },
+    "Mirror Armor": {
+      "name": "Coraza Reflejo",
+      "desc": "Refleja los efectos que reducen las características."
+    },
+    "Misty Surge": {
+      "name": "Nebulogénesis",
+      "desc": "Crea un campo de niebla al entrar en combate."
+    },
+    "Mold Breaker": {
+      "name": "Rompemoldes",
+      "desc": "Las habilidades del objetivo no afectan a los movimientos que emplea."
+    },
+    "Moody": {
+      "name": "Veleta",
+      "desc": "Una característica le sube mucho en cada turno, pero le baja otra."
+    },
+    "Motor Drive": {
+      "name": "Electromotor",
+      "desc": "Si le alcanza un movimiento de tipo Eléctrico, le sube la Velocidad en vez de sufrir daño."
+    },
+    "Moxie": {
+      "name": "Autoestima",
+      "desc": "Al debilitar a un objetivo, su confianza se refuerza de tal manera que aumenta su Ataque."
+    },
+    "Multiscale": {
+      "name": "Multiescamas",
+      "desc": "Reduce el daño que sufre si sus PS están al máximo."
+    },
+    "Multitype": {
+      "name": "Multitipo",
+      "desc": "Cambia su tipo al de la tabla o al del Cristal Z que lleve."
+    },
+    "Mummy": {
+      "name": "Momia",
+      "desc": "Contagia la habilidad Momia al rival que entre en contacto con él."
+    },
+    "Mycelium Might": {
+      "name": "Poder Fúngico"
+    },
+    "Natural Cure": {
+      "name": "Cura Natural",
+      "desc": "Cura sus problemas de estado al cambiarse con otro Pokémon."
+    },
+    "Neuroforce": {
+      "name": "Fuerza Cerebral",
+      "desc": "Potencia los ataques supereficaces."
+    },
+    "Neutralizing Gas": {
+      "name": "Gas Reactivo",
+      "desc": "Anula los efectos de las habilidades de los demás Pokémon presentes mientras esté en el terreno de combate."
+    },
+    "No Guard": {
+      "name": "Indefenso",
+      "desc": "Al quedar ambos expuestos, tanto sus movimientos como los del rival acertarán siempre."
+    },
+    "Normalize": {
+      "name": "Normalidad",
+      "desc": "Hace que todos sus movimientos se vuelvan de tipo Normal y aumenten ligeramente su potencia."
+    },
+    "Oblivious": {
+      "name": "Despiste",
+      "desc": "Su indiferencia evita que sea provocado o caiga presa del enamoramiento."
+    },
+    "Opportunist": {
+      "name": "Oportunista"
+    },
+    "Orichalcum Pulse": {
+      "name": "Latido Oricalco"
+    },
+    "Overcoat": {
+      "name": "Funda",
+      "desc": "No le afectan las tormentas de arena, el granizo y los movimientos con polvos."
+    },
+    "Overgrow": {
+      "name": "Espesura",
+      "desc": "Potencia sus movimientos de tipo Planta cuando le quedan pocos PS."
+    },
+    "Own Tempo": {
+      "name": "Ritmo Propio",
+      "desc": "Como le gusta hacer las cosas a su manera, los rivales no logran confundirlo."
+    },
+    "Parental Bond": {
+      "name": "Amor Filial",
+      "desc": "Une fuerzas con su cría y ataca dos veces."
+    },
+    "Pastel Veil": {
+      "name": "Velo Pastel",
+      "desc": "Se protege a sí mismo y a sus aliados del envenenamiento."
+    },
+    "Perish Body": {
+      "name": "Cuerpo Mortal",
+      "desc": "Si le alcanza un movimiento de contacto, se debilitará al cabo de 3 turnos, así como su agresor, a menos que abandonen el terreno de combate."
+    },
+    "Pickpocket": {
+      "name": "Hurto",
+      "desc": "Si el rival usa un movimiento de contacto al atacar, le roba el objeto."
+    },
+    "Pickup": {
+      "name": "Recogida",
+      "desc": "Puede recoger objetos que el rival haya usado, o bien otros que encuentre en plena aventura."
+    },
+    "Pixilate": {
+      "name": "Piel Feérica",
+      "desc": "Convierte los movimientos de tipo Normal en tipo Hada y aumenta ligeramente su potencia."
+    },
+    "Plus": {
+      "name": "Más",
+      "desc": "Potencia su Ataque Especial si un Pokémon aliado tiene la habilidad Más o Menos."
+    },
+    "Poison Heal": {
+      "name": "Antídoto",
+      "desc": "Si resulta envenenado, recupera PS en vez de perderlos."
+    },
+    "Poison Point": {
+      "name": "Punto Tóxico",
+      "desc": "Puede envenenar al mínimo contacto."
+    },
+    "Poison Puppeteer": {
+      "name": "Títere Tóxico"
+    },
+    "Poison Touch": {
+      "name": "Toque Tóxico",
+      "desc": "Puede envenenar al objetivo con solo tocarlo."
+    },
+    "Power Construct": {
+      "name": "Agrupamiento",
+      "desc": "Cuando sus PS se ven reducidos a la mitad, las células se reagrupan y adopta su Forma Completa."
+    },
+    "Power of Alchemy": {
+      "name": "Reacción Química",
+      "desc": "Reacciona copiando la habilidad de un aliado debilitado."
+    },
+    "Power Spot": {
+      "name": "Fuente Energía",
+      "desc": "Potencia los movimientos de los Pokémon adyacentes."
+    },
+    "Prankster": {
+      "name": "Bromista",
+      "desc": "Sus movimientos de estado tienen prioridad alta."
+    },
+    "Pressure": {
+      "name": "Presión",
+      "desc": "Presiona al rival para que sus PP se acaben antes."
+    },
+    "Primordial Sea": {
+      "name": "Mar del Albor",
+      "desc": "Altera el clima para anular los ataques de tipo Fuego."
+    },
+    "Prism Armor": {
+      "name": "Armadura Prisma",
+      "desc": "Mitiga el daño que le infligen los movimientos supereficaces."
+    },
+    "Propeller Tail": {
+      "name": "Hélice Caudal",
+      "desc": "Impide que el rival pueda atraer ataques hacia sí mismo por efecto de su habilidad o sus movimientos."
+    },
+    "Protean": {
+      "name": "Mutatipo",
+      "desc": "Cambia su tipo al del movimiento que va a usar."
+    },
+    "Protosynthesis": {
+      "name": "Paleosíntesis"
+    },
+    "Psychic Surge": {
+      "name": "Psicogénesis",
+      "desc": "Crea un campo psíquico al entrar en combate."
+    },
+    "Punk Rock": {
+      "name": "Punk Rock",
+      "desc": "Potencia los movimientos que usan sonido y reduce a la mitad el daño que le infligen dichos movimientos."
+    },
+    "Pure Power": {
+      "name": "Energía Pura",
+      "desc": "Duplica la potencia de sus ataques físicos gracias al yoga."
+    },
+    "Purifying Salt": {
+      "name": "Sal Purificadora"
+    },
+    "Quark Drive": {
+      "name": "Carga Cuark"
+    },
+    "Queenly Majesty": {
+      "name": "Regia Presencia",
+      "desc": "Intimida al objetivo y le impide usar movimientos con prioridad."
+    },
+    "Quick Draw": {
+      "name": "Mano Rápida",
+      "desc": "A veces, puede atacar el primero."
+    },
+    "Quick Feet": {
+      "name": "Pies Rápidos",
+      "desc": "Aumenta la Velocidad si sufre problemas de estado."
+    },
+    "Rain Dish": {
+      "name": "Cura Lluvia",
+      "desc": "Recupera PS de forma gradual cuando llueve."
+    },
+    "Rattled": {
+      "name": "Cobardía",
+      "desc": "Si le alcanza un movimiento de tipo Siniestro, Bicho o Fantasma, el miedo hace que le suba la Velocidad."
+    },
+    "Receiver": {
+      "name": "Receptor",
+      "desc": "Adquiere la habilidad de un aliado debilitado."
+    },
+    "Reckless": {
+      "name": "Audaz",
+      "desc": "Potencia los movimientos que también dañan al usuario."
+    },
+    "Refrigerate": {
+      "name": "Piel Helada",
+      "desc": "Convierte los movimientos de tipo Normal en tipo Hielo y aumenta ligeramente su potencia."
+    },
+    "Regenerator": {
+      "name": "Regeneración",
+      "desc": "Recupera unos pocos PS al ser cambiado por otro Pokémon."
+    },
+    "Ripen": {
+      "name": "Maduración",
+      "desc": "Hace madurar las bayas, por lo que duplica sus efectos."
+    },
+    "Rivalry": {
+      "name": "Rivalidad",
+      "desc": "Si el objetivo es del mismo sexo, su competitividad le lleva a infligir más daño. Si es del sexo contrario, en cambio, el daño será menor."
+    },
+    "RKS System": {
+      "name": "Sistema Alfa",
+      "desc": "Cambia su tipo según el disco que lleve instalado."
+    },
+    "Rock Head": {
+      "name": "Cabeza Roca",
+      "desc": "No puede dañarse con sus propios movimientos."
+    },
+    "Rocky Payload": {
+      "name": "Transportarrocas"
+    },
+    "Rough Skin": {
+      "name": "Piel Tosca",
+      "desc": "Hiere con su piel áspera al rival que lo ataque con un movimiento de contacto."
+    },
+    "Run Away": {
+      "name": "Fuga",
+      "desc": "Puede escaparse de todos los Pokémon salvajes."
+    },
+    "Sand Force": {
+      "name": "Poder Arena",
+      "desc": "Potencia los movimientos de tipo Tierra, Acero y Roca durante las tormentas de arena."
+    },
+    "Sand Rush": {
+      "name": "Ímpetu Arena",
+      "desc": "Aumenta su Velocidad durante las tormentas de arena."
+    },
+    "Sand Spit": {
+      "name": "Expulsarena",
+      "desc": "Provoca una tormenta de arena al recibir un ataque."
+    },
+    "Sand Stream": {
+      "name": "Chorro Arena",
+      "desc": "Crea una tormenta de arena al entrar en combate."
+    },
+    "Sand Veil": {
+      "name": "Velo Arena",
+      "desc": "Aumenta su Evasión durante las tormentas de arena."
+    },
+    "Sap Sipper": {
+      "name": "Herbívoro",
+      "desc": "Neutraliza los movimientos de tipo Planta y sube su Ataque."
+    },
+    "Schooling": {
+      "name": "Banco",
+      "desc": "Forma bancos con sus congéneres cuando tiene muchos PS, lo cual le otorga más fuerza. Cuando le quedan pocos PS, el banco se dispersa."
+    },
+    "Scrappy": {
+      "name": "Intrépido",
+      "desc": "Puede alcanzar a Pokémon de tipo Fantasma con movimientos de tipo Normal o Lucha."
+    },
+    "Screen Cleaner": {
+      "name": "Antibarrera",
+      "desc": "Anula los efectos de Pantalla de Luz, Reflejo y Velo Aurora tanto de rivales como de aliados al entrar en combate."
+    },
+    "Seed Sower": {
+      "name": "Disemillar"
+    },
+    "Serene Grace": {
+      "name": "Dicha",
+      "desc": "Aumenta la probabilidad de que los movimientos causen efectos secundarios."
+    },
+    "Shadow Shield": {
+      "name": "Guardia Espectro",
+      "desc": "Reduce el daño que sufre si sus PS están al máximo."
+    },
+    "Shadow Tag": {
+      "name": "Sombra Trampa",
+      "desc": "Impide que el enemigo huya o sea cambiado por otro."
+    },
+    "Sharpness": {
+      "name": "Cortante"
+    },
+    "Shed Skin": {
+      "name": "Mudar",
+      "desc": "Puede curar sus problemas de estado al mudar la piel."
+    },
+    "Sheer Force": {
+      "name": "Potencia Bruta",
+      "desc": "Sube la potencia de sus movimientos en detrimento de los efectos secundarios, que se ven anulados."
+    },
+    "Shell Armor": {
+      "name": "Caparazón",
+      "desc": "La robusta coraza que lo protege bloquea los golpes críticos."
+    },
+    "Shield Dust": {
+      "name": "Polvo Escudo",
+      "desc": "El polvo de escamas que lo envuelve lo protege de los efectos secundarios de los ataques recibidos."
+    },
+    "Shields Down": {
+      "name": "Escudo Limitado",
+      "desc": "Rompe su coraza cuando sus PS se ven reducidos a la mitad y adopta una forma ofensiva."
+    },
+    "Simple": {
+      "name": "Simple",
+      "desc": "Duplica los cambios en las características."
+    },
+    "Skill Link": {
+      "name": "Encadenado",
+      "desc": "Ejecuta siempre los movimientos múltiples con el número máximo de golpes."
+    },
+    "Slow Start": {
+      "name": "Inicio Lento",
+      "desc": "Baja a la mitad su Ataque y su Velocidad durante cinco turnos."
+    },
+    "Slush Rush": {
+      "name": "Quitanieves",
+      "desc": "Aumenta su Velocidad si está granizando."
+    },
+    "Sniper": {
+      "name": "Francotirador",
+      "desc": "Potencia los golpes críticos que asesta aún más de lo normal."
+    },
+    "Snow Cloak": {
+      "name": "Manto Níveo",
+      "desc": "Sube la Evasión cuando graniza."
+    },
+    "Snow Warning": {
+      "name": "Nevada",
+      "desc": "Invoca una tormenta de granizo al entrar en combate."
+    },
+    "Solar Power": {
+      "name": "Poder Solar",
+      "desc": "Si hace sol, aumenta su Ataque Especial, pero pierde PS en cada turno."
+    },
+    "Solid Rock": {
+      "name": "Roca Sólida",
+      "desc": "Mitiga el daño que le infligen los movimientos supereficaces."
+    },
+    "Soul-Heart": {
+      "name": "Coránima",
+      "desc": "Aumenta su Ataque Especial cada vez que un Pokémon cae debilitado."
+    },
+    "Soundproof": {
+      "name": "Insonorizar",
+      "desc": "Su aislamiento acústico lo protege de movimientos que usan sonido."
+    },
+    "Speed Boost": {
+      "name": "Impulso",
+      "desc": "Aumenta su Velocidad en cada turno."
+    },
+    "Stakeout": {
+      "name": "Vigilante",
+      "desc": "Si el objetivo de su ataque es sustituido por otro, duplica el daño que infligirá."
+    },
+    "Stall": {
+      "name": "Rezagado",
+      "desc": "Ejecuta su movimiento tras todos los demás."
+    },
+    "Stalwart": {
+      "name": "Acérrimo",
+      "desc": "Impide que el rival pueda atraer ataques hacia sí mismo por efecto de su habilidad o sus movimientos."
+    },
+    "Stamina": {
+      "name": "Firmeza",
+      "desc": "Aumenta su Defensa al recibir un ataque."
+    },
+    "Stance Change": {
+      "name": "Cambio Táctico",
+      "desc": "Adopta la Forma Filo al lanzar un ataque, o bien la Forma Escudo si usa el movimiento Escudo Real."
+    },
+    "Static": {
+      "name": "Elec. Estática",
+      "desc": "La electricidad estática que lo envuelve puede paralizar al mínimo contacto."
+    },
+    "Steadfast": {
+      "name": "Impasible",
+      "desc": "Cada vez que se amedrenta sube su Velocidad, debido a su voluntad inquebrantable."
+    },
+    "Steam Engine": {
+      "name": "Combustible",
+      "desc": "Si le alcanza un movimiento de tipo Fuego o Agua, le sube muchísimo la Velocidad."
+    },
+    "Steelworker": {
+      "name": "Acero Templado",
+      "desc": "Potencia los movimientos de tipo Acero."
+    },
+    "Steely Spirit": {
+      "name": "Alma Acerada",
+      "desc": "Potencia los movimientos de tipo Acero de los aliados."
+    },
+    "Stench": {
+      "name": "Hedor",
+      "desc": "Puede amedrentar al rival al atacarlo debido al mal olor que emana."
+    },
+    "Sticky Hold": {
+      "name": "Viscosidad",
+      "desc": "Los objetos se quedan pegados a su cuerpo, por lo que no pueden robárselos."
+    },
+    "Storm Drain": {
+      "name": "Colector",
+      "desc": "Atrae y neutraliza los movimientos de tipo Agua, que además le suben el Ataque Especial."
+    },
+    "Strong Jaw": {
+      "name": "Mandíbula Fuerte",
+      "desc": "Su robusta mandíbula le confiere una mordedura potente."
+    },
+    "Sturdy": {
+      "name": "Robustez",
+      "desc": "Evita que el rival pueda debilitarlo de un solo golpe cuando tiene los PS al máximo. También evita los movimientos fulminantes."
+    },
+    "Suction Cups": {
+      "name": "Ventosas",
+      "desc": "Sus ventosas se aferran al suelo, con lo cual anula movimientos y objetos que fuerzan el relevo."
+    },
+    "Super Luck": {
+      "name": "Afortunado",
+      "desc": "Su buena suerte aumenta la probabilidad de asestar golpes críticos."
+    },
+    "Supersweet Syrup": {
+      "name": "Néctar Dulce"
+    },
+    "Supreme Overlord": {
+      "name": "General Supremo"
+    },
+    "Surge Surfer": {
+      "name": "Cola Surf",
+      "desc": "Duplica su Velocidad si hay un campo eléctrico en el terreno de combate."
+    },
+    "Swarm": {
+      "name": "Enjambre",
+      "desc": "Potencia sus movimientos de tipo Bicho cuando le quedan pocos PS."
+    },
+    "Sweet Veil": {
+      "name": "Velo Dulce",
+      "desc": "No cae dormido y evita también que sus aliados se duerman."
+    },
+    "Swift Swim": {
+      "name": "Nado Rápido",
+      "desc": "Sube su Velocidad cuando llueve."
+    },
+    "Sword of Ruin": {
+      "name": "Espada Debacle"
+    },
+    "Symbiosis": {
+      "name": "Simbiosis",
+      "desc": "Pasa su objeto a un aliado que ya haya utilizado el suyo."
+    },
+    "Synchronize": {
+      "name": "Sincronía",
+      "desc": "Contagia el envenenamiento, las quemaduras o la parálisis al Pokémon que le cause ese estado."
+    },
+    "Tablets of Ruin": {
+      "name": "Tablilla Debacle"
+    },
+    "Tangled Feet": {
+      "name": "Tumbos",
+      "desc": "Sube su Evasión si está confuso."
+    },
+    "Tangling Hair": {
+      "name": "Rizos Rebeldes",
+      "desc": "Baja la Velocidad del rival cuando este le ataca con un movimiento de contacto."
+    },
+    "Technician": {
+      "name": "Experto",
+      "desc": "Potencia sus movimientos más débiles."
+    },
+    "Telepathy": {
+      "name": "Telepatía",
+      "desc": "Elude los ataques de los aliados durante el combate."
+    },
+    "Teraform Zero": {
+      "name": "Teraformación 0"
+    },
+    "Tera Shell": {
+      "name": "Teracaparazón"
+    },
+    "Tera Shift": {
+      "name": "Teracambio"
+    },
+    "Teravolt": {
+      "name": "Terravoltaje",
+      "desc": "Las habilidades del objetivo no afectan a los movimientos que emplea."
+    },
+    "Thermal Exchange": {
+      "name": "Termoscambio"
+    },
+    "Thick Fat": {
+      "name": "Sebo",
+      "desc": "Gracias a la gruesa capa de grasa que lo protege, reduce a la mitad el daño que recibe de ataques de tipo Fuego o Hielo."
+    },
+    "Tinted Lens": {
+      "name": "Cromolente",
+      "desc": "Potencia los movimientos que no son muy eficaces, que infligen ahora un daño normal."
+    },
+    "Torrent": {
+      "name": "Torrente",
+      "desc": "Potencia sus movimientos de tipo Agua cuando le quedan pocos PS."
+    },
+    "Tough Claws": {
+      "name": "Garra Dura",
+      "desc": "Aumenta la potencia de los movimientos de contacto."
+    },
+    "Toxic Boost": {
+      "name": "Ímpetu Tóxico",
+      "desc": "Aumenta la potencia de sus ataques físicos cuando está envenenado."
+    },
+    "Toxic Chain": {
+      "name": "Cadena Tóxica"
+    },
+    "Toxic Debris": {
+      "name": "Capa Tóxica"
+    },
+    "Trace": {
+      "name": "Rastro",
+      "desc": "Al entrar en combate copia la habilidad del rival."
+    },
+    "Transistor": {
+      "name": "Transistor",
+      "desc": "Potencia los movimientos de tipo Eléctrico."
+    },
+    "Triage": {
+      "name": "Primer Auxilio",
+      "desc": "Da prioridad a los movimientos que restauran PS."
+    },
+    "Truant": {
+      "name": "Ausente",
+      "desc": "Al ejecutar un movimiento, descansará en el turno siguiente."
+    },
+    "Turboblaze": {
+      "name": "Turbollama",
+      "desc": "Las habilidades del objetivo no afectan a los movimientos que emplea."
+    },
+    "Unaware": {
+      "name": "Ignorante",
+      "desc": "Pasa por alto las mejoras en las características del rival al atacar."
+    },
+    "Unburden": {
+      "name": "Liviano",
+      "desc": "Sube su Velocidad si usa o pierde el objeto que lleva."
+    },
+    "Unnerve": {
+      "name": "Nerviosismo",
+      "desc": "Pone nervioso al rival y le impide usar bayas."
+    },
+    "Unseen Fist": {
+      "name": "Puño Invisible",
+      "desc": "Si usa un movimiento de contacto, puede infligir daño al objetivo aunque este se proteja."
+    },
+    "Vessel of Ruin": {
+      "name": "Caldero Debacle"
+    },
+    "Victory Star": {
+      "name": "Tinovictoria",
+      "desc": "Sube su Precisión y la de sus aliados."
+    },
+    "Vital Spirit": {
+      "name": "Espíritu Vital",
+      "desc": "Su determinación le impide quedarse dormido."
+    },
+    "Volt Absorb": {
+      "name": "Absorbe Elec",
+      "desc": "Si le alcanza un movimiento de tipo Eléctrico, recupera PS en vez de sufrir daño."
+    },
+    "Wandering Spirit": {
+      "name": "Alma Errante",
+      "desc": "Si le alcanza un movimiento de contacto, intercambia su habilidad con la del agresor."
+    },
+    "Water Absorb": {
+      "name": "Absorbe Agua",
+      "desc": "Si le alcanza un movimiento de tipo Agua, recupera PS en vez de sufrir daño."
+    },
+    "Water Bubble": {
+      "name": "Pompa",
+      "desc": "Reduce el daño que le provocan los movimientos de tipo Fuego y es inmune a las quemaduras."
+    },
+    "Water Compaction": {
+      "name": "Hidrorrefuerzo",
+      "desc": "Aumenta mucho su Defensa si le alcanza un movimiento de tipo Agua."
+    },
+    "Water Veil": {
+      "name": "Velo Agua",
+      "desc": "Evita las quemaduras gracias a la capa de agua que lo envuelve."
+    },
+    "Weak Armor": {
+      "name": "Armadura Frágil",
+      "desc": "Al recibir daño de un ataque físico, le baja la Defensa, pero le sube mucho la Velocidad."
+    },
+    "Well-Baked Body": {
+      "name": "Cuerpo Horneado"
+    },
+    "White Smoke": {
+      "name": "Humo Blanco",
+      "desc": "El humo blanco que lo protege evita que otros Pokémon le bajen las características."
+    },
+    "Wimp Out": {
+      "name": "Huida",
+      "desc": "Se asusta y abandona el terreno de combate cuando sus PS se ven reducidos a la mitad."
+    },
+    "Wind Power": {
+      "name": "Energía Eólica"
+    },
+    "Wind Rider": {
+      "name": "Surcavientos"
+    },
+    "Wonder Guard": {
+      "name": "Superguarda",
+      "desc": "Gracias a un poder misterioso, solo le hacen daño los movimientos supereficaces."
+    },
+    "Wonder Skin": {
+      "name": "Piel Milagro",
+      "desc": "Presenta una mayor resistencia ante los movimientos de estado."
+    },
+    "Zen Mode": {
+      "name": "Modo Daruma",
+      "desc": "Cambia de forma si sus PS se ven reducidos a la mitad."
+    },
+    "Zero to Hero": {
+      "name": "Cambio Heroico"
+    }
+  },
+  "items": {
+    "Eviolite": {
+      "name": "Mineral Evol"
+    },
+    "Leftovers": {
+      "name": "Restos"
+    },
+    "Heavy-Duty Boots": {
+      "name": "Botas Gruesas"
+    },
+    "Life Orb": {
+      "name": "Vidasfera"
+    },
+    "Venusaurite": {
+      "name": "Venusaurita"
+    },
+    "Custap Berry": {
+      "name": "Baya Chiri"
+    },
+    "Choice Scarf": {
+      "name": "Pañuelo Elección"
+    },
+    "Choice Specs": {
+      "name": "Gafas Elección"
+    },
+    "Charizardite X": {
+      "name": "Charizardita X"
+    },
+    "Charizardite Y": {
+      "name": "Charizardita Y"
+    },
+    "Sitrus Berry": {
+      "name": "Baya Zidra"
+    },
+    "White Herb": {
+      "name": "Hierba Blanca"
+    },
+    "Beedrillite": {
+      "name": "Beedrillita"
+    },
+    "Pidgeotite": {
+      "name": "Pidgeotita"
+    },
+    "Light Ball": {
+      "name": "Bola Luminosa"
+    },
+    "Rocky Helmet": {
+      "name": "Casco Dentado"
+    },
+    "Black Sludge": {
+      "name": "Lodo Negro"
+    },
+    "Sticky Barb": {
+      "name": "Toxiestrella"
+    },
+    "Safety Goggles": {
+      "name": "Gafa Protectora"
+    },
+    "Mental Herb": {
+      "name": "Hierba Mental"
+    },
+    "Heat Rock": {
+      "name": "Roca Calor"
+    },
+    "Icy Rock": {
+      "name": "Roca Helada"
+    },
+    "Focus Sash": {
+      "name": "Banda Focus"
+    },
+    "Never-Melt Ice": {
+      "name": "Antiderretir"
+    },
+    "Light Clay": {
+      "name": "Refleluz"
+    },
+    "Choice Band": {
+      "name": "Cinta Elección"
+    },
+    "Assault Vest": {
+      "name": "Chaleco Asalto"
+    },
+    "Altarianite": {
+      "name": "Altarianita"
+    },
+    "Pinsirite": {
+      "name": "Pinsirita"
+    },
+    "Colbur Berry": {
+      "name": "Baya Dillo"
+    },
+    "Slowbronite": {
+      "name": "Slowbronita"
+    },
+    "Eject Button": {
+      "name": "Botón Escape"
+    },
+    "Sky Plate": {
+      "name": "Tabla Cielo"
+    },
+    "Grassy Seed": {
+      "name": "Semilla Hierba"
+    },
+    "Iapapa Berry": {
+      "name": "Baya Pabaya"
+    },
+    "King's Rock": {
+      "name": "Roca del Rey"
+    },
+    "Air Balloon": {
+      "name": "Globo Helio"
+    },
+    "Spell Tag": {
+      "name": "Hechizo"
+    },
+    "Eject Pack": {
+      "name": "Mochila Escape"
+    },
+    "Psychic Seed": {
+      "name": "Semilla Psique"
+    },
+    "Electric Seed": {
+      "name": "Semilla Electro"
+    },
+    "Kangaskhanite": {
+      "name": "Kangaskhanita"
+    },
+    "Lum Berry": {
+      "name": "Baya Ziuela"
+    },
+    "Figy Berry": {
+      "name": "Baya Higog"
+    },
+    "Gyaradosite": {
+      "name": "Gyaradosita"
+    },
+    "Aerodactylite": {
+      "name": "Aerodactylita"
+    },
+    "Chesto Berry": {
+      "name": "Baya Atania"
+    },
+    "Weakness Policy": {
+      "name": "Seguro Debilidad"
+    },
+    "Metronome": {
+      "name": "Metrónomo"
+    },
+    "Protective Pads": {
+      "name": "Paracontacto"
+    },
+    "Black Glasses": {
+      "name": "Gafas de Sol"
+    },
+    "Silk Scarf": {
+      "name": "Pañuelo de Seda"
+    },
+    "Sharp Beak": {
+      "name": "Pico Afilado"
+    },
+    "Salamencite": {
+      "name": "Salamencita"
+    },
+    "Mewtwonite Y": {
+      "name": "Mewtwoita Y"
+    },
+    "Red Card": {
+      "name": "Tarjeta Roja"
+    },
+    "Kebia Berry": {
+      "name": "Baya Kebia"
+    },
+    "Damp Rock": {
+      "name": "Roca Lluvia"
+    },
+    "Kasib Berry": {
+      "name": "Baya Drasi"
+    },
+    "Shuca Berry": {
+      "name": "Baya Acardo"
+    },
+    "Latiasite": {
+      "name": "Latiasita"
+    },
+    "Steelixite": {
+      "name": "Steelixita"
+    },
+    "Scizorite": {
+      "name": "Scizorita"
+    },
+    "Metal Coat": {
+      "name": "Revest. Metálico"
+    },
+    "Flame Orb": {
+      "name": "Llamasfera"
+    },
+    "Heracronite": {
+      "name": "Heracrossita"
+    },
+    "Shed Shell": {
+      "name": "Muda Concha"
+    },
+    "Houndoominite": {
+      "name": "Houndoomita"
+    },
+    "Scope Lens": {
+      "name": "Periscopio"
+    },
+    "Poison Barb": {
+      "name": "Flecha Venenosa"
+    },
+    "Expert Belt": {
+      "name": "Cinta Experto"
+    },
+    "Smooth Rock": {
+      "name": "Roca Suave"
+    },
+    "Tyranitarite": {
+      "name": "Tyranitarita"
+    },
+    "Chople Berry": {
+      "name": "Baya Pomaro"
+    },
+    "Sceptilite": {
+      "name": "Sceptilita"
+    },
+    "Swampertite": {
+      "name": "Swampertita"
+    },
+    "Gardevoirite": {
+      "name": "Gardevoirita"
+    },
+    "Toxic Orb": {
+      "name": "Toxisfera"
+    },
+    "Oran Berry": {
+      "name": "Baya Aranja"
+    },
+    "Sablenite": {
+      "name": "Sableynita"
+    },
+    "Mawilite": {
+      "name": "Mawilita"
+    },
+    "Aggronite": {
+      "name": "Aggronita"
+    },
+    "Medichamite": {
+      "name": "Medichamita"
+    },
+    "Manectite": {
+      "name": "Manectricita"
+    },
+    "Sharpedonite": {
+      "name": "Sharpedonita"
+    },
+    "Cameruptite": {
+      "name": "Cameruptita"
+    },
+    "Charcoal": {
+      "name": "Carbón"
+    },
+    "Insect Plate": {
+      "name": "Tabla Bicho"
+    },
+    "Audinite": {
+      "name": "Audinita"
+    },
+    "Absolite": {
+      "name": "Absolita"
+    },
+    "Kee Berry": {
+      "name": "Baya Biglia"
+    },
+    "Soul Dew": {
+      "name": "Rocío Bondad"
+    },
+    "Latiosite": {
+      "name": "Latiosita"
+    },
+    "Mystic Water": {
+      "name": "Agua Mística"
+    },
+    "Blue Orb": {
+      "name": "Prisma Azul"
+    },
+    "Red Orb": {
+      "name": "Prisma Rojo"
+    },
+    "Power Herb": {
+      "name": "Hierba Única"
+    },
+    "Soft Sand": {
+      "name": "Arena Fina"
+    },
+    "Lopunnite": {
+      "name": "Lopunnita"
+    },
+    "Garchompite": {
+      "name": "Garchompita"
+    },
+    "Haban Berry": {
+      "name": "Baya Anjiro"
+    },
+    "Throat Spray": {
+      "name": "Espray Bucal"
+    },
+    "Galladite": {
+      "name": "Galladita"
+    },
+    "Dread Plate": {
+      "name": "Tabla Oscura"
+    },
+    "Draco Plate": {
+      "name": "Tabla Draco"
+    },
+    "Zap Plate": {
+      "name": "Tabla Trueno"
+    },
+    "Pixie Plate": {
+      "name": "Tabla Duende"
+    },
+    "Fist Plate": {
+      "name": "Tabla Fuerte"
+    },
+    "Flame Plate": {
+      "name": "Tabla Llama"
+    },
+    "Spooky Plate": {
+      "name": "Tabla Terror"
+    },
+    "Meadow Plate": {
+      "name": "Tabla Pradal"
+    },
+    "Earth Plate": {
+      "name": "Tabla Terrax"
+    },
+    "Icicle Plate": {
+      "name": "Tabla Helada"
+    },
+    "Toxic Plate": {
+      "name": "Tabla Tóxica"
+    },
+    "Mind Plate": {
+      "name": "Tabla Mental"
+    },
+    "Stone Plate": {
+      "name": "Tabla Pétrea"
+    },
+    "Iron Plate": {
+      "name": "Tabla Acero"
+    },
+    "Splash Plate": {
+      "name": "Tabla Linfa"
+    },
+    "Metagrossite": {
+      "name": "Metagrossita"
+    },
+    "Babiri Berry": {
+      "name": "Baya Baribá"
+    },
+    "Occa Berry": {
+      "name": "Baya Caoca"
+    },
+    "Wide Lens": {
+      "name": "Lupa"
+    },
+    "Roseli Berry": {
+      "name": "Baya Hibis"
+    },
+    "Passho Berry": {
+      "name": "Baya Pasio"
+    },
+    "Diancite": {
+      "name": "Diancita"
+    },
+    "Hard Stone": {
+      "name": "Piedra Dura"
+    },
+    "Room Service": {
+      "name": "Servicio Raro"
+    },
+    "Bright Powder": {
+      "name": "Polvo Brillo"
+    },
+    "Terrain Extender": {
+      "name": "Cubresuelos"
+    },
+    "Misty Seed": {
+      "name": "Semilla Bruma"
+    },
+    "Miracle Seed": {
+      "name": "Semilla Milagro"
+    },
+    "Maranga Berry": {
+      "name": "Baya Maranga"
+    },
+    "Twisted Spoon": {
+      "name": "Cuchara Torcida"
+    },
+    "Dragon Fang": {
+      "name": "Colmillo Dragón"
+    },
+    "Rusted Sword": {
+      "name": "Espada Oxidada"
+    },
+    "Rusted Shield": {
+      "name": "Escudo Oxidado"
+    },
+    "Magnet": {
+      "name": "Imán"
+    },
+    "Liechi Berry": {
+      "name": "Baya Lichi"
+    },
+    "Normal Gem": {
+      "name": "Gema Normal"
+    },
+    "Blunder Policy": {
+      "name": "Seguro Fallo"
+    },
+    "Silver Powder": {
+      "name": "Polvo Plata"
+    },
+    "Leppa Berry": {
+      "name": "Baya Zanama"
+    },
+    "Lucarionite": {
+      "name": "Lucarita"
+    },
+    "Glalitite": {
+      "name": "Glalita"
+    },
+    "Utility Umbrella": {
+      "name": "Parasol Multiuso"
+    },
+    "Jaboca Berry": {
+      "name": "Baya Jaboca"
+    },
+    "Yache Berry": {
+      "name": "Baya Rimoya"
+    }
+  }
+}
