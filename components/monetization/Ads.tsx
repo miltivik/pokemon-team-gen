@@ -8,15 +8,8 @@ import Script from "next/script";
  */
 const CONFIG = {
   adsense: {
-    // Tu ID de publisher - asegurar que tenga el prefijo correcto
-    publisherId: (() => {
-      const id = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || "";
-      if (!id) return "";
-      // Asegurarse de que el prefijo sea ca-pub-
-      if (id.startsWith("ca-pub-")) return id;
-      if (id.startsWith("pub-")) return `ca-${id}`;
-      return `ca-pub-${id}`;
-    })(),
+    // ID de publisher fijo según lo proporcionado
+    publisherId: "ca-pub-7981415143867065",
   },
   ezoic: {
     ezoicId: process.env.NEXT_PUBLIC_EZOIC_ID || "",
