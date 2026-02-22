@@ -28,7 +28,7 @@ export default function ExportarPage() {
                     <p className="text-zinc-500 dark:text-zinc-400">{t("app.generateFirst")}</p>
                 </div>
                 <Link href="/configurar">
-                    <Button className="bg-blue-600 hover:bg-blue-700">{t("nav.configurar")}</Button>
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">{t("nav.configurar")}</Button>
                 </Link>
             </div>
         );
@@ -96,7 +96,7 @@ export default function ExportarPage() {
                             </pre>
                         </div>
                         <div className="mt-4 flex gap-3">
-                            <Button onClick={handleCopyShowdown} className="bg-blue-600 hover:bg-blue-700">
+                            <Button onClick={handleCopyShowdown} className="bg-blue-600 hover:bg-blue-700 text-white">
                                 📋 {t("app.copyShowdown")}
                             </Button>
                         </div>
@@ -129,7 +129,7 @@ export default function ExportarPage() {
                         </Button>
                     </Link>
                     <Link href="/configurar">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                             🔄 {t("app.generateAnother")}
                         </Button>
                     </Link>

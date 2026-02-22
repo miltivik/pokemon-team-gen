@@ -14,7 +14,7 @@ export default function NotFound() {
                 </div>
                 <div className="flex gap-4 justify-center">
                     <Link href="/">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                             Volver al generador
                         </Button>
                     </Link>

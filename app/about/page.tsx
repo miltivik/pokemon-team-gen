@@ -36,7 +36,7 @@ export default function AboutPage() {
                 {/* CTA */}
                 <div className="flex gap-4">
                     <Link href="/configurar">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                             🚀 {t("about.startGenerating")}
                         </Button>
                     </Link>

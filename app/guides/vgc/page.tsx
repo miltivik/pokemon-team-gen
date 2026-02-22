@@ -42,7 +42,7 @@ export default function VGCGuidePage() {
                 {/* Generate CTA */}
                 <div className="flex gap-4">
                     <Link href={`/configurar?format=${CURRENT_VGC_FORMAT}`}>
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                             🚀 {t("guides.generateTeam")}
                         </Button>
                     </Link>
@@ -77,7 +77,7 @@ export default function VGCGuidePage() {
                                             </p>
                                             {style.templateId && (
                                                 <Link href={`/configurar?template=${style.templateId}&format=${CURRENT_VGC_FORMAT}`}>
-                                                    <Button size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700">
+                                                    <Button size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700 text-white">
                                                         {t("guides.tryIt")}
                                                     </Button>
                                                 </Link>

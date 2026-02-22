@@ -50,7 +50,7 @@ export function SimilarTeams({ format, teamTypes }: SimilarTeamsProps) {
             {/* Generate another button */}
             <div className="text-center">
                 <Link href="/configurar">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                         🎲 {t("similarTeams.generateAnother")}
                     </Button>
                 </Link>

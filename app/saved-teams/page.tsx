@@ -123,7 +123,7 @@ export default function SavedTeamsPage() {
                 {/* Generate New Button */}
                 <div className="flex gap-4">
                     <Link href="/configurar">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                             🚀 {t("nav.generate")}
                         </Button>
                     </Link>
@@ -193,7 +193,7 @@ export default function SavedTeamsPage() {
                                             🗑️
                                         </Button>
                                         <Button
-                                            className="bg-blue-600 hover:bg-blue-700"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white"
                                             size="sm"
                                             onClick={() => handleLoadTeam(team)}
                                         >
@@ -237,7 +237,7 @@ export default function SavedTeamsPage() {
                             {t("savedTeams.noTeamsDesc")}
                         </p>
                         <Link href="/configurar">
-                            <Button className="bg-blue-600 hover:bg-blue-700">
+                            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                                 {t("app.startGenerating")}
                             </Button>
                         </Link>

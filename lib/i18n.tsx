@@ -7,8 +7,11 @@ export type Lang = "en" | "es";
 const translations: Record<Lang, Record<string, string>> = {
     en: {
         // Page
+        "app.aiPowered": "📊 Data-driven generation",
         "app.title": "Pokémon Team Generator",
         "app.subtitle": "Build your dream team with a click.",
+        "app.titleNew": "Your Next Winning Team, Built with Meta Data",
+        "app.subtitleNew": "We analyze the current Smogon and VGC meta to generate synergistic, balanced teams ready to export to Pokémon Showdown.",
         "app.yourTeam": "Your Team",
         "app.format": "Format",
         "app.exportShowdown": "Export to Showdown",
@@ -17,6 +20,8 @@ const translations: Record<Lang, Record<string, string>> = {
         "app.saveTeam": "Save Team",
         "app.emptyState": "Generate a team to see it here!",
         "app.startGenerating": "Start Generating",
+        "app.startGeneratingNew": "Generate My First Team",
+        "app.freeNoReg": "It's free. No registration required.",
         "app.viewPreviousTeam": "View Previous Team",
         "app.noTeam": "No Team Generated",
         "app.generateFirst": "Generate a team first to continue.",
@@ -86,6 +91,12 @@ const translations: Record<Lang, Record<string, string>> = {
         "features.strategyDesc": "Detailed gameplans for every match",
         "features.export": "Export",
         "features.exportDesc": "Ready for Pokémon Showdown",
+        "features.benefit1Title": "Real-Time Meta Analysis",
+        "features.benefit1Desc": "We integrate data from Smogon and Pikalytics to ensure your team can handle the most popular threats.",
+        "features.benefit2Title": "Perfect Synergy Guaranteed",
+        "features.benefit2Desc": "Our algorithm calculates weaknesses, resistances, and type combinations to avoid critical vulnerabilities.",
+        "features.benefit3Title": "Ready for Battle",
+        "features.benefit3Desc": "Get the exact format to copy and paste directly into Pokémon Showdown or your console in one click.",
         "features.supportedFormats": "Supported Formats",
 
         // Home page
@@ -99,6 +110,12 @@ const translations: Record<Lang, Record<string, string>> = {
         "home.explore.about": "About",
         "home.explore.aboutDesc": "How it works",
         "home.trending": "Trending Teams",
+        "home.trendingSubtitle": "Battle-ready teams based on the most successful archetypes.",
+        "home.bottomCtaTitle": "Ready to dominate the ladder?",
+        "home.bottomCtaDesc": "Join thousands of players who are already creating unbeatable teams in seconds.",
+        "home.demoTitle": "Live Demo",
+        "home.demoDesc": "See the kind of meta-defining teams you can generate in one click",
+        "team.rainTeam": "Rain Team",
 
         // Export Page
         "nav.export": "Export",
@@ -200,6 +217,7 @@ const translations: Record<Lang, Record<string, string>> = {
         "about.feature4Desc": "Available in English and Spanish",
         "about.supportedFormats": "Supported Formats",
         "about.howItWorks": "How It Works",
+        "about.howItWorksSubtitle": "Three simple steps to get a battle-ready competitive team.",
         "about.step1Title": "Choose Your Format",
         "about.step1Desc": "Select Gen 9 OU, VGC, UU, or any other supported format",
         "about.step2Title": "Pick Your Style",
@@ -444,8 +462,11 @@ const translations: Record<Lang, Record<string, string>> = {
     },
     es: {
         // Página
+        "app.aiPowered": "📊 Generación basada en datos",
         "app.title": "Generador de Equipos Pokémon",
         "app.subtitle": "Construye tu equipo ideal con un clic.",
+        "app.titleNew": "Tu Siguiente Equipo Ganador, Generado con Datos del Meta",
+        "app.subtitleNew": "Analizamos el meta actual de Smogon y VGC para generar equipos sinérgicos, equilibrados y listos para exportar a Pokémon Showdown.",
         "app.yourTeam": "Tu Equipo",
         "app.format": "Formato",
         "app.exportShowdown": "Exportar a Showdown",
@@ -523,6 +544,12 @@ const translations: Record<Lang, Record<string, string>> = {
         "features.strategyDesc": "Planes de juego detallados",
         "features.export": "Exportar",
         "features.exportDesc": "Listo para Pokémon Showdown",
+        "features.benefit1Title": "Análisis del Meta en Tiempo Real",
+        "features.benefit1Desc": "Integramos datos de Smogon y Pikalytics para asegurar que tu equipo tenga respuesta a las amenazas más populares.",
+        "features.benefit2Title": "Sinergia Perfecta Garantizada",
+        "features.benefit2Desc": "Calculamos debilidades, resistencias y combinaciones de tipos para evitar vulnerabilidades críticas en tu equipo.",
+        "features.benefit3Title": "Listo para la Batalla",
+        "features.benefit3Desc": "Obtén el formato exacto para copiar y pegar directamente en Pokémon Showdown o armarlo en tu consola en un solo clic.",
         "features.supportedFormats": "Formatos Soportados",
 
         // Home page
@@ -536,6 +563,12 @@ const translations: Record<Lang, Record<string, string>> = {
         "home.explore.about": "Acerca de",
         "home.explore.aboutDesc": "Cómo funciona",
         "home.trending": "Equipos Populares",
+        "home.trendingSubtitle": "Equipos listos para la batalla basados en los arquetipos más exitosos.",
+        "home.bottomCtaTitle": "¿Listo para dominar el ladder?",
+        "home.bottomCtaDesc": "Únete a miles de jugadores que ya están creando equipos imbatibles en segundos.",
+        "home.demoTitle": "Demostración",
+        "home.demoDesc": "Mira la clase de equipos meta que puedes generar en un clic",
+        "team.rainTeam": "Equipo de Lluvia",
 
         // Export Page
         "nav.export": "Exportar",
@@ -637,6 +670,7 @@ const translations: Record<Lang, Record<string, string>> = {
         "about.feature4Desc": "Disponible en Inglés y Español",
         "about.supportedFormats": "Formatos Soportados",
         "about.howItWorks": "Cómo Funciona",
+        "about.howItWorksSubtitle": "Tres simples pasos para obtener un equipo competitivo listo para la batalla.",
         "about.step1Title": "Elige tu Formato",
         "about.step1Desc": "Selecciona Gen 9 OU, VGC, UU, o cualquier otro formato soportado",
         "about.step2Title": "Elige tu Estilo",

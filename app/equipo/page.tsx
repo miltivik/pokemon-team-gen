@@ -72,7 +72,7 @@ export default function EquipoPage() {
                     <p className="text-zinc-500 dark:text-zinc-400">{t("app.generateFirst")}</p>
                 </div>
                 <Link href="/configurar">
-                    <Button className="bg-blue-600 hover:bg-blue-700">{t("nav.configurar")}</Button>
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">{t("nav.configurar")}</Button>
                 </Link>
             </div>
         );
@@ -98,14 +98,14 @@ export default function EquipoPage() {
 
                 {/* Action buttons */}
                 <div className="flex items-center justify-center gap-3 flex-wrap">
-                    <Button onClick={handleExport} className="bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={handleExport} className="bg-blue-600 hover:bg-blue-700 text-white">
                         📋 {t("app.exportShowdown")}
                     </Button>
                     <Button onClick={handleSaveTeam} variant="outline">
                         💾 {t("app.saveTeam")}
                     </Button>
                     <Link href="/analisis">
-                        <Button className="bg-emerald-600 hover:bg-emerald-700">
+                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
                             📊 {t("nav.analysis")}
                         </Button>
                     </Link>

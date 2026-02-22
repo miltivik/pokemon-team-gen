@@ -36,7 +36,7 @@ export default function Gen9OUGuidePage() {
                 {/* Generate CTA */}
                 <div className="flex gap-4">
                     <Link href="/configurar?format=gen9ou">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                             🚀 {t("guides.generateTeam")}
                         </Button>
                     </Link>
