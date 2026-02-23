@@ -65,11 +65,11 @@ export default function ConfigurarPage() {
         analytics.viewConfigurar();
     }, []);
 
-    const handleGenerate = (data: { team: any[]; gameplan?: any; gameplanI18n?: any, templateId?: string }) => {
+    const handleGenerate = (data: { team: any[]; gameplan?: any; gameplanI18n?: any, templateId?: string, options?: any }) => {
         // Track team generation
         analytics.generateTeam(format, data.templateId || "balanced");
         // Add team to context
-        addTeam(data.team, data.gameplan, data.gameplanI18n);
+        addTeam(data.team, data.gameplan, data.gameplanI18n, data.options);
         // Navigate to team page
         router.push("/equipo");
     };

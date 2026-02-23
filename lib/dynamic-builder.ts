@@ -105,8 +105,21 @@ export async function generateDynamicTeam(options: DynamicTeamOptions = {}): Pro
         const suggestions = engine.suggestMembers(teamSpecies, 5);
         if (suggestions.length === 0) break; // Should not happen with robust fallback
 
-        // Pick top suggestion (can add randomness here later)
-        const best = suggestions[0];
+        // Pick from top suggestions with weighted randomness to add variety
+        const weights = suggestions.map((s, i) => s.score * Math.pow(0.6, i));
+        const totalWeight = weights.reduce((a, b) => a + b, 0);
+        let random = Math.random() * totalWeight;
+        let selectedIndex = 0;
+
+        for (let i = 0; i < weights.length; i++) {
+            random -= weights[i];
+            if (random <= 0) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        const best = suggestions[selectedIndex];
 
         // Optimize Set contextually
         const set = optimizer.optimize(best.species, teamSpecies, { template, teamMoves, teamAbilities });

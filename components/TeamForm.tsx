@@ -20,7 +20,7 @@ import { PokemonCombobox } from "./PokemonCombobox";
 import { useTranslation } from "@/lib/i18n";
 
 interface TeamFormProps {
-    onGenerate: (data: any) => void;
+    onGenerate: (data: { team: any[]; gameplan?: any; gameplanI18n?: any; templateId?: string; options?: any }) => void;
     format: FormatId;
     onFormatChange: (format: FormatId) => void;
     isLoading?: boolean;
@@ -79,27 +79,26 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
 
         setLocalLoading(true);
         try {
+            const requestBody = {
+                format,
+                tipo: type === 'all' ? null : (type || null),
+                fijo: pokemonName.trim() || null,
+                excludeLegendaries,
+                templateId,
+                lang
+            };
+
             const response = await fetch('/api/generate-dynamic-team', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    format,
-                    tipo: type === 'all' ? null : (type || null),
-                    fijo: pokemonName.trim() || null,
-                    excludeLegendaries,
-                    templateId,
-                    lang
-                }),
+                body: JSON.stringify(requestBody),
             });
 
             if (!response.ok) throw new Error('Generation failed');
 
             const data = await response.json();
-            // API returns { team, gameplan }
-            // Legacy onGenerate expected team array. We need to pass both.
-            // But TeamForm props says onGenerate(team: any[]). 
-            // We should change the prop type or pass an object if parent handles it.
-            // Let's assume parent will change to accept formatted data.
+            // Pass the options so we can regenerate the team later
+            data.options = requestBody;
             onGenerate(data);
         } catch (error) {
             console.error(error);

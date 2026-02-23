@@ -11,13 +11,14 @@ import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads"
 import { useTranslation } from "@/lib/i18n";
 import { getExportText, getPokemonData } from "@/lib/showdown-data";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { analytics } from "@/lib/analytics";
 
 export default function EquipoPage() {
     const router = useRouter();
-    const { team, setTeam, gameplan, format } = useTeam();
+    const { team, setTeam, gameplan, format, addTeam, generationOptions } = useTeam();
     const { t } = useTranslation();
+    const [isRegenerating, setIsRegenerating] = useState(false);
 
     // Track page view
     useEffect(() => {
@@ -32,6 +33,39 @@ export default function EquipoPage() {
         .filter(Boolean)
         .flatMap(p => p!.types)
         .filter((v, i, a) => a.indexOf(v) === i);
+
+    const handleRegenerate = async () => {
+        if (!generationOptions) {
+            toast.error(t("form.error"));
+            return;
+        }
+
+        setIsRegenerating(true);
+        try {
+            const response = await fetch('/api/generate-dynamic-team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(generationOptions),
+            });
+
+            if (!response.ok) throw new Error('Generation failed');
+
+            const data = await response.json();
+
+            analytics.generateTeam(generationOptions.format, generationOptions.templateId || "balanced");
+            addTeam(data.team, data.gameplan, data.gameplanI18n, generationOptions);
+
+            toast.success(t("app.generateAnother"));
+        } catch (error) {
+            console.error(error);
+            toast.error(t("form.error"), {
+                description: t("form.errorDesc"),
+                duration: 5000,
+            });
+        } finally {
+            setIsRegenerating(false);
+        }
+    };
 
     const handleExport = () => {
         if (team.length === 0) return;
@@ -98,6 +132,11 @@ export default function EquipoPage() {
 
                 {/* Action buttons */}
                 <div className="flex items-center justify-center gap-3 flex-wrap">
+                    {generationOptions && (
+                        <Button onClick={handleRegenerate} disabled={isRegenerating} className="bg-orange-500 hover:bg-orange-600 text-white">
+                            {isRegenerating ? "🔄..." : "🔄 " + t("app.generateAnother")}
+                        </Button>
+                    )}
                     <Button onClick={handleExport} className="bg-blue-600 hover:bg-blue-700 text-white">
                         📋 {t("app.exportShowdown")}
                     </Button>
