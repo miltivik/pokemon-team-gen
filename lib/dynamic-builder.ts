@@ -154,9 +154,12 @@ export async function generateDynamicTeam(options: DynamicTeamOptions = {}): Pro
 }
 
 function convertToTeamMember(species: PokemonSpecies, set: OptimizedSet): TeamMember {
+    const statMap: Record<string, string> = {
+        hp: 'HP', atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe'
+    };
     const evsStr = Object.entries(set.evs)
         .filter(([_, val]) => val > 0)
-        .map(([stat, val]) => `${val} ${stat.toUpperCase()}`)
+        .map(([stat, val]) => `${val} ${statMap[stat.toLowerCase()] || stat.toUpperCase()}`)
         .join(' / ');
 
     return {

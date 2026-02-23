@@ -59,7 +59,7 @@ interface PokemonDetailsDialogProps {
     };
     item?: string;
     format?: string;
-    onUpdate?: (newMon: any) => void;
+    onUpdate?: (newMon: PokedexEntry & { moves?: MoveData[] | string[]; analysis?: PokemonAnalysis; item?: string; nature?: string; evs?: string }) => void;
     children: React.ReactNode;
 }
 
@@ -221,7 +221,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
     const { t, lang } = useTranslation();
     const stats = pokemon.baseStats || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
     const bst = Object.values(stats).reduce((a, b) => (a as number) + (b as number), 0);
-    const analysis = (pokemon.analysis || {}) as any;
+    const analysis = (pokemon.analysis || {}) as Partial<PokemonAnalysis>;
 
     const availableRoles = useMemo(() => {
         if (!format) return [];
@@ -244,6 +244,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                 moves: set.moves,
                 item: set.item,
                 nature: set.nature,
+                evs: evsString,
                 analysis: {
                     ...pokemon.analysis,
                     role: roleName,
@@ -251,7 +252,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                     evs: evsString,
                 }
             };
-            onUpdate(updated);
+            onUpdate(updated as unknown as Parameters<NonNullable<typeof onUpdate>>[0]);
         }
     };
 
@@ -473,7 +474,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                             {/* RIGHT COLUMN */}
                             <div className="flex flex-col gap-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {pokemon.moves && pokemon.moves.map((rawMove: any, index: number) => {
+                                    {pokemon.moves && pokemon.moves.map((rawMove: MoveData | string, index: number) => {
                                         // Hydrate move data if it's a string
                                         let move = rawMove;
                                         if (typeof rawMove === 'string') {
@@ -484,13 +485,15 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                         }
 
                                         const isDetailed = typeof move !== 'string';
-                                        const rawName = isDetailed ? move.name : move;
+                                        const moveObj = isDetailed ? (move as MoveData) : null;
+                                        const moveStr = !isDetailed ? (move as string) : null;
+                                        const rawName = isDetailed ? moveObj!.name : moveStr!;
 
                                         if (rawName === 'Ghost' || rawName === 'Fantasma') return null;
 
                                         const moveName = getTranslatedMoveName(rawName, lang);
-                                        const moveType = isDetailed ? move.type : 'Normal';
-                                        const moveCategory = isDetailed ? move.category : null;
+                                        const moveType = isDetailed ? moveObj!.type : 'Normal';
+                                        const moveCategory = isDetailed ? moveObj!.category : null;
 
                                         return (
                                             <div key={index}
@@ -512,23 +515,23 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                                                 <CategoryIcon category={moveCategory} />
                                                             )}
                                                             <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af' }}>
-                                                                {translateCategory(moveCategory, t)}
+                                                                {translateCategory(moveCategory as string, t)}
                                                             </span>
                                                             <div style={{ width: '1px', height: '10px', background: '#e5e7eb' }} />
                                                             <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: '#9ca3af' }}>
-                                                                PWR <span style={{ color: '#4b5563' }}>{move.basePower || '\u2014'}</span>
+                                                                PWR <span style={{ color: '#4b5563' }}>{moveObj!.basePower || '\u2014'}</span>
                                                             </span>
                                                             <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: '#9ca3af' }}>
-                                                                ACC <span style={{ color: '#4b5563' }}>{move.accuracy === true ? '\u2014' : move.accuracy + '%'}</span>
+                                                                ACC <span style={{ color: '#4b5563' }}>{moveObj!.accuracy === true ? '\u2014' : moveObj!.accuracy + '%'}</span>
                                                             </span>
                                                             <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: '#9ca3af' }}>
-                                                                PP <span style={{ color: '#4b5563' }}>{move.pp || '\u2014'}</span>
+                                                                PP <span style={{ color: '#4b5563' }}>{moveObj!.pp || '\u2014'}</span>
                                                             </span>
                                                         </div>
 
                                                         {/* Description */}
                                                         <p style={{ fontSize: '12px', lineHeight: 1.5, color: '#6b7280' }}>
-                                                            {getTranslatedMoveDesc(move.name, lang) || move.shortDesc || move.desc || t("details.noDesc")}
+                                                            {getTranslatedMoveDesc(moveObj!.name, lang) || moveObj!.shortDesc || moveObj!.desc || t("details.noDesc")}
                                                         </p>
                                                     </>
                                                 ) : (
