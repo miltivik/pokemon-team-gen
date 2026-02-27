@@ -45,13 +45,13 @@ interface DynamicTeamOptions {
     format?: string;
     type?: string | null;
     excludeLegendaries?: boolean;
-    fixedMember?: string | null;
+    fixedMembers?: string[] | null;
     templateId?: TemplateId;
     lang?: 'en' | 'es';
 }
 
 export async function generateDynamicTeam(options: DynamicTeamOptions = {}): Promise<DynamicTeamResponse> {
-    const { format = 'gen9ou', type = null, excludeLegendaries = false, templateId = 'balanced', lang = 'en', fixedMember } = options;
+    const { format = 'gen9ou', type = null, excludeLegendaries = false, templateId = 'balanced', lang = 'en', fixedMembers } = options;
 
     // 1. Initialize Context
     const gen = getGenFromFormat(format as FormatId) || 9;
@@ -87,23 +87,35 @@ export async function generateDynamicTeam(options: DynamicTeamOptions = {}): Pro
 
     const optimizer = new SetOptimizer(finalData);
 
-    // 2. Add Fixed Member
-    if (fixedMember) {
-        const species = DexProvider.getSpeciesForGen(fixedMember, gen);
-        if (species) {
-            const set = optimizer.optimize(species, teamSpecies, { template, teamMoves, teamAbilities });
-            const member = convertToTeamMember(species, set);
-            team.push(member);
-            teamSpecies.push(species);
-            set.moves.forEach(m => teamMoves.add(toID(m)));
-            teamAbilities.add(toID(set.ability));
+    // 2. Add Fixed Members
+    if (fixedMembers && fixedMembers.length > 0) {
+        for (const fixed of fixedMembers) {
+            if (team.length >= 6) break;
+            const species = DexProvider.getSpeciesForGen(fixed, gen);
+            if (species) {
+                const set = optimizer.optimize(species, teamSpecies, { template, teamMoves, teamAbilities });
+                const member = convertToTeamMember(species, set);
+                team.push(member);
+                teamSpecies.push(species);
+                set.moves.forEach(m => teamMoves.add(toID(m)));
+                teamAbilities.add(toID(set.ability));
+            }
         }
     }
 
     // 3. Build Team Loop
     while (team.length < 6) {
-        const suggestions = engine.suggestMembers(teamSpecies, 5);
+        let suggestions = engine.suggestMembers(teamSpecies, 25);
         if (suggestions.length === 0) break; // Should not happen with robust fallback
+
+        const targetRole = template?.roles?.[team.length];
+        if (targetRole) {
+            const roleSuggestions = suggestions.filter(s => {
+                const set = optimizer.optimize(s.species, teamSpecies, { template, teamMoves, teamAbilities });
+                return detectRole(set.moves, set.evs) === targetRole;
+            });
+            if (roleSuggestions.length > 0) suggestions = roleSuggestions;
+        }
 
         // Pick from top suggestions with weighted randomness to add variety
         const weights = suggestions.map((s, i) => s.score * Math.pow(0.6, i));

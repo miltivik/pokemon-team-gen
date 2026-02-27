@@ -37,6 +37,7 @@ const TYPE_KEYS = [
 
 export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parentLoading, initialFormat, initialTemplate, initialType }: TeamFormProps) {
     const [type, setType] = useState("all");
+    const [fixedPokemon, setFixedPokemon] = useState<string[]>([]);
     const [pokemonName, setPokemonName] = useState("");
     const [templateId, setTemplateId] = useState<TemplateId>("balanced");
     const [excludeLegendaries, setExcludeLegendaries] = useState(false);
@@ -82,7 +83,7 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
             const requestBody = {
                 format,
                 tipo: type === 'all' ? null : (type || null),
-                fijo: pokemonName.trim() || null,
+                fijos: fixedPokemon.length > 0 ? fixedPokemon : null,
                 excludeLegendaries,
                 templateId,
                 lang
@@ -193,9 +194,30 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
                             <Label htmlFor="pokemon">{t("form.fixedMember")}</Label>
                             <PokemonCombobox
                                 value={pokemonName}
-                                onChange={setPokemonName}
+                                onChange={(name) => {
+                                    if (name && !fixedPokemon.includes(name) && fixedPokemon.length < 6) {
+                                        setFixedPokemon([...fixedPokemon, name]);
+                                    }
+                                    setPokemonName("");
+                                }}
                                 placeholder={t("form.fixedPlaceholder")}
                             />
+                            {fixedPokemon.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {fixedPokemon.map(name => (
+                                        <div key={name} className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 text-sm px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-700">
+                                            <span>{name}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setFixedPokemon(fixedPokemon.filter(p => p !== name))}
+                                                className="text-muted-foreground hover:text-foreground hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-full p-0.5"
+                                            >
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -1,4 +1,4 @@
-import { NormalizedSmogonData, NormalizedMonData } from '../data-sources/smogon';
+  import { NormalizedSmogonData, NormalizedMonData } from '../data-sources/smogon';
 import { DexProvider, PokemonSpecies } from '../data-sources/dex';
 import { getEffectiveness } from '../type-chart';
 import { toID } from '../utils';
@@ -17,11 +17,11 @@ interface ScoredCandidate {
 }
 
 interface ScoringOptions {
-    excludeLegendaries?: boolean;
-    requiredType?: string | null;
-    template?: Template;
-    getTeamMoves?: () => Set<string>;
-    getTeamAbilities?: () => Set<string>;
+  excludeLegendaries?: boolean;
+  requiredType?: string | null;
+  template?: Template;
+  getTeamMoves?: () => Set<string>;
+  getTeamAbilities?: () => Set<string>;
 }
 
 export class WeightedScoringEngine {
@@ -40,7 +40,7 @@ export class WeightedScoringEngine {
 
   public suggestMembers(currentTeam: PokemonSpecies[], limit: number = 10): ScoredCandidate[] {
     const candidates = this.getCandidates(currentTeam);
-const scored: ScoredCandidate[] = [];
+    const scored: ScoredCandidate[] = [];
 
     // Analyze current team state
     const teamWeaknesses = this.analyzeTeamWeaknesses(currentTeam);
@@ -70,7 +70,7 @@ const scored: ScoredCandidate[] = [];
 
       if (this.options.excludeLegendaries) {
         const isLegendary = species.tags?.some(t => t.includes('Legendary') || t.includes('Mythical')) ||
-                            ['Uber', 'AG'].includes(species.tier || '');
+          ['Uber', 'AG'].includes(species.tier || '');
         if (isLegendary) continue;
       }
 
@@ -94,11 +94,16 @@ const scored: ScoredCandidate[] = [];
   ): ScoredCandidate {
 
     // Weights
-    const W_USAGE = 0.3;
-    const W_SYNERGY = 0.45; // High weight on real data
+    let W_USAGE = 0.3;
+    let W_SYNERGY = 0.45; // High weight on real data
     const W_COVERAGE = 0.2;
     const W_CONSISTENCY = 0.05;
-    const W_TEMPLATE = 0.5; // Significant boost for template requirements
+    let W_TEMPLATE = 0.5;
+
+    if (this.options.template?.label.includes('Stall')) {
+      W_USAGE = 0.1; // Stall relies less on standard usage staples
+      W_TEMPLATE = 3.5; // Heavily prioritize defensive moves/abilities
+    }
 
     // 1. Usage Score (0 to 1)
     // Logarithmic scaling to avoid over-centralizing on top 1
@@ -151,49 +156,53 @@ const scored: ScoredCandidate[] = [];
     // 5. Template Synergy Score
     let templateScore = 0;
     if (this.options.template) {
-        const t = this.options.template;
-        const currentMoves = this.options.getTeamMoves ? this.options.getTeamMoves() : new Set<string>();
-        const currentAbilities = this.options.getTeamAbilities ? this.options.getTeamAbilities() : new Set<string>();
+      const t = this.options.template;
+      const currentMoves = this.options.getTeamMoves ? this.options.getTeamMoves() : new Set<string>();
+      const currentAbilities = this.options.getTeamAbilities ? this.options.getTeamAbilities() : new Set<string>();
 
-        let moveSynergy = 0;
+      let moveSynergy = 0;
 
-        if (t.requiredMoves) {
-            for (const move of t.requiredMoves) {
-                const moveId = toID(move);
-                // If team doesn't have it yet, highly value a pokemon that learns it
-                if (!currentMoves.has(moveId) && stats.moves[moveId]) {
-                    // stats.moves[moveId] represents the frequency.
-                    // Even if low frequency, if they learn it, we give a massive boost
-                    moveSynergy += 2.0;
-                }
-            }
+      if (t.requiredMoves) {
+        for (const move of t.requiredMoves) {
+          const moveId = toID(move);
+          // If team doesn't have it yet, highly value a pokemon that learns it
+          if (!currentMoves.has(moveId) && stats.moves[moveId]) {
+            // stats.moves[moveId] represents the frequency.
+            // Even if low frequency, if they learn it, we give a massive boost
+            moveSynergy += 2.0;
+          }
         }
-        if (t.preferredMoves) {
-            for (const move of t.preferredMoves) {
-                const moveId = toID(move);
-                if (stats.moves[moveId]) {
-                    moveSynergy += (stats.moves[moveId] * 1.5);
-                }
-            }
+      }
+      if (t.preferredMoves) {
+        for (const move of t.preferredMoves) {
+          const moveId = toID(move);
+          if (stats.moves[moveId]) {
+            moveSynergy += (stats.moves[moveId] * 1.5);
+          }
         }
-        if (t.requiredAbilities) {
-            for (const ability of t.requiredAbilities) {
-                const abilityId = toID(ability);
-                if (!currentAbilities.has(abilityId) && stats.abilities[abilityId]) {
-                    moveSynergy += 2.0;
-                }
-            }
+      }
+      if (t.requiredAbilities) {
+        for (const ability of t.requiredAbilities) {
+          const abilityId = toID(ability);
+          if (!currentAbilities.has(abilityId) && stats.abilities[abilityId]) {
+            moveSynergy += 2.0;
+          }
         }
-        if (t.preferredAbilities) {
-            for (const ability of t.preferredAbilities) {
-                const abilityId = toID(ability);
-                if (stats.abilities[abilityId]) {
-                    moveSynergy += (stats.abilities[abilityId] * 1.5);
-                }
-            }
+      }
+      if (t.preferredAbilities) {
+        for (const ability of t.preferredAbilities) {
+          const abilityId = toID(ability);
+          if (stats.abilities[abilityId]) {
+            moveSynergy += (stats.abilities[abilityId] * 1.5);
+          }
         }
+      }
 
+      if (t.label.includes('Stall')) {
+        templateScore = Math.min(4, moveSynergy);
+      } else {
         templateScore = Math.min(1, moveSynergy);
+      }
     }
 
     // Final Calculation
@@ -224,21 +233,21 @@ const scored: ScoredCandidate[] = [];
     if (team.length === 0) return {};
 
     for (const type of types) {
-        let netWeakness = 0;
-        for (const mon of team) {
-            const eff = getEffectiveness(type, mon.types);
-            if (eff > 1) netWeakness++;
-            if (eff < 1) netWeakness--;
-        }
-        if (netWeakness > 0) {
-            weaknesses[type] = netWeakness;
-        }
+      let netWeakness = 0;
+      for (const mon of team) {
+        const eff = getEffectiveness(type, mon.types);
+        if (eff > 1) netWeakness++;
+        if (eff < 1) netWeakness--;
+      }
+      if (netWeakness > 0) {
+        weaknesses[type] = netWeakness;
+      }
     }
     return weaknesses;
   }
 
   private analyzeTeamResistances(team: PokemonSpecies[]) {
-      // Helper for future expansion
-      return {};
+    // Helper for future expansion
+    return {};
   }
 }

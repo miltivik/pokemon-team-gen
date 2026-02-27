@@ -74,11 +74,15 @@ export const TEMPLATES: Record<TemplateId, Template> = {
     },
     semistall: {
         label: "Semi-Stall",
-        roles: ['Wall', 'Wall', 'Wall', 'Tank', 'Support', 'Sweeper']
+        roles: ['Wall', 'Wall', 'Wall', 'Tank', 'Support', 'Sweeper'],
+        preferredMoves: ['Recover', 'Roost', 'Soft-Boiled', 'Slack Off', 'Stealth Rock', 'Toxic', 'Defog', 'Wish', 'Protect'],
+        preferredAbilities: ['Regenerator', 'Unaware', 'Magic Bounce', 'Natural Cure']
     },
     stall: {
         label: "Stall",
-        roles: ['Wall', 'Wall', 'Wall', 'Wall', 'Support', 'Support']
+        roles: ['Wall', 'Wall', 'Wall', 'Wall', 'Support', 'Support'],
+        preferredMoves: ['Recover', 'Roost', 'Soft-Boiled', 'Slack Off', 'Stealth Rock', 'Spikes', 'Toxic', 'Defog', 'Wish', 'Protect', 'Heal Bell', 'Aromatherapy'],
+        preferredAbilities: ['Unaware', 'Regenerator', 'Magic Bounce', 'Natural Cure', 'Purifying Salt']
     },
     random: {
         label: "Random",
