@@ -8,6 +8,8 @@ export type FormatId =
     | 'gen9lc'
     | 'gen9monotype'
     | 'gen9doublesou'
+    | 'gen9nationaldex'
+    | 'gen9nationaldexubers'
     | 'gen9vgc2026f'
     // Gen 8
     | 'gen8ou'
@@ -60,6 +62,8 @@ export const FORMATS: Record<FormatId, {
     gen9lc: { label: '[Gen 9] LC', maxTeamSize: 6, gameType: 'singles' },
     gen9monotype: { label: '[Gen 9] Monotype', maxTeamSize: 6, gameType: 'singles' },
     gen9doublesou: { label: '[Gen 9] Doubles OU', maxTeamSize: 6, gameType: 'doubles' },
+    gen9nationaldex: { label: '[Gen 9] National Dex', maxTeamSize: 6, gameType: 'singles' },
+    gen9nationaldexubers: { label: '[Gen 9] National Dex Ubers', maxTeamSize: 6, gameType: 'singles' },
     gen9vgc2026f: { label: '[Gen 9] VGC 2026 Reg F', maxTeamSize: 4, gameType: 'doubles' },
 
     // ── Gen 8 ──────────────────────────────────────

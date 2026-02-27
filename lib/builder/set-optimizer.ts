@@ -8,7 +8,7 @@ import { Template } from '@/config/templates';
 
 const Items = itemsData as Record<string, { name: string }>;
 const Abilities = abilitiesData as Record<string, { name: string }>;
-const Moves = movesData as Record<string, { name: string }>;
+const Moves = movesData as Record<string, { name: string, category: string }>;
 
 export interface OptimizedSet {
   species: string;
@@ -67,9 +67,11 @@ export class SetOptimizer {
       ability: this.selectAbility(stats, options),
       item: this.selectItem(stats),
       ...this.selectSpread(stats),
-      moves: this.selectMoves(stats, 4, options),
-      teraType: this.selectTeraType(stats)
+      teraType: this.selectTeraType(stats),
+      moves: [] as string[] // Will be populated next using the set context
     };
+
+    result.moves = this.selectMoves(stats, 4, result, options);
 
     this.cache.set(cacheKey, result);
     return result;
@@ -113,16 +115,47 @@ export class SetOptimizer {
     return types[0][0];
   }
 
-  private selectMoves(stats: NormalizedMonData, count: number, options: OptimizerOptions): string[] {
+  private selectMoves(stats: NormalizedMonData, count: number, currentSet: OptimizedSet, options: OptimizerOptions): string[] {
+    const isChoiceBand = currentSet.item === "Choice Band";
+    const isChoiceSpecs = currentSet.item === "Choice Specs";
+    const isAssaultVest = currentSet.item === "Assault Vest";
+    const isChoiceScarf = currentSet.item === "Choice Scarf";
+    const limitsStatus = isChoiceBand || isChoiceSpecs || isChoiceScarf || isAssaultVest;
+
+    // A small whitelist of "status" moves that are technically acceptable on choice items because of switch mechanics
+    // e.g., Trick, Switcheroo, Sleep Talk
+    const statusWhitelist = ['Trick', 'Switcheroo', 'Sleep Talk', 'Parting Shot', 'Memento', 'Healing Wish'];
+
     const movesEntries = Object.entries(stats.moves).map(([name, usage]) => {
       let score = usage;
+      const moveData = Moves[toID(name)];
+
+      // Set Integrity Validation
+      if (moveData) {
+        // If we are locked into an attacking item (Assault Vest, Choice Band/Specs/Scarf)
+        if (limitsStatus && moveData.category === 'Status' && !statusWhitelist.includes(moveData.name)) {
+          // Severely penalize generic status moves like Will-O-Wisp, Toxic, Stealth Rock on Choice sets
+          score = score * 0.05;
+        }
+
+        // If Banded, penalize Special Attacks (unless it's something hyper niche, but generally we want to avoid it)
+        if (isChoiceBand && moveData.category === 'Special') score = score * 0.1;
+
+        // If Specs, penalize Physical Attacks (except maybe U-turn/Flip Turn, but reducing weight helps)
+        if (isChoiceSpecs && moveData.category === 'Physical') {
+          if (!['U-turn', 'Flip Turn', 'Knock Off'].includes(moveData.name)) {
+            score = score * 0.1;
+          }
+        }
+      }
+
       if (options.template?.requiredMoves && !options.teamMoves?.has(name)) {
         const req = options.template.requiredMoves.map(toID);
-        if (req.includes(name)) score += 2.0; // Force if required
+        if (req.includes(toID(name))) score += 2.0; // Force if required
       }
       if (options.template?.preferredMoves) {
         const pref = options.template.preferredMoves.map(toID);
-        if (pref.includes(name)) score += 0.5; // Boost if preferred
+        if (pref.includes(toID(name))) score += 0.5; // Boost if preferred
       }
       return [name, score] as [string, number];
     });
@@ -171,7 +204,7 @@ export class SetOptimizer {
       item: 'Leftovers',
       nature: 'Serious',
       evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
-      moves: []
+      moves: [] as string[]
     };
   }
 }

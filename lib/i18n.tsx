@@ -140,6 +140,27 @@ const translations: Record<Lang, Record<string, string>> = {
         "nav.teams": "Teams",
         "nav.generate": "Generate",
         "nav.about": "About",
+        "nav.changelog": "Changelog",
+
+        // Changelog
+        "changelog.title": "Changelog",
+        "changelog.subtitle": "Latest updates, improvements, and bug fixes",
+        "changelog.version": "Version",
+        "changelog.date": "Date",
+        "changelog.new": "New",
+        "changelog.improved": "Improved",
+        "changelog.fixed": "Fixed",
+        "changelog.v010.title": "v0.1.0 - The Smart Engine Update",
+        "changelog.v010.date": "February 2026",
+        "changelog.v010.item1": "Dynamic Tera Types: Tera types are no longer hardcoded to 'Stellar'. The engine now calculates optimal competitive Tera types based on real Smogon usage data.",
+        "changelog.v010.item2": "Optimizer Memoization: Added Set Optimizer caching. Team generation iterates much faster under the hood, significantly reducing CPU usage during Hyper-Offense and Stall builds.",
+        "changelog.v010.item3": "Stall Template Accuracy: Fixed a bug where Stall teams would sometimes fail to select true defensive walls. Requirements are now strictly enforced with a rigorous penalty for frail choices.",
+        "changelog.v010.item4": "Multiple Fixed Members: Team Builder now supports locking multiple Pokémon at once, allowing you to build the perfect 6-mon team around any 2-3 core anchors.",
+        "changelog.v010.item5": "Zod Validation: Added strict backend Input Validation preventing invalid configurations from crashing the generation API.",
+        "changelog.v010.item6": "National Dex Formats: Added complete support for gen9nationaldex and gen9nationaldexubers allowing for cross-generational mega evolution strategies.",
+        "changelog.v010.item7": "Smogon External Links: Added quick links to the Smogon competitive Dex directly from the detailed Pokémon interface modal.",
+        "changelog.v010.item8": "Set Integrity Validator: Added a strict validator that heavily penalizes Choice items (Band/Specs/Scarf) from matching with contradictory/status moves.",
+        "changelog.v010.item9": "Weather Synergy: The AI can now correctly prioritize Sun and Rain weather abusers (like Protosynthesis and Swift Swim) overriding purely defensive templates.",
 
         // Guides
         "guides.ouTitle": "OU Guide",
@@ -360,6 +381,7 @@ const translations: Record<Lang, Record<string, string>> = {
         "move.status": "Status",
         "details.fasterThreats": "Faster Threats",
         "details.priority": "Priority",
+        "details.viewOnSmogon": "View on Smogon",
 
         // Roles
         "role.fastSweeper": "Fast Sweeper — High speed allows it to outrun threats and deal heavy damage first.",
@@ -593,6 +615,27 @@ const translations: Record<Lang, Record<string, string>> = {
         "nav.teams": "Equipos",
         "nav.generate": "Generar",
         "nav.about": "Acerca de",
+        "nav.changelog": "Cambios",
+
+        // Changelog
+        "changelog.title": "Historial de Cambios",
+        "changelog.subtitle": "Últimas actualizaciones, mejoras y corrección de errores",
+        "changelog.version": "Versión",
+        "changelog.date": "Fecha",
+        "changelog.new": "Nuevo",
+        "changelog.improved": "Mejorado",
+        "changelog.fixed": "Corregido",
+        "changelog.v010.title": "v0.1.0 - La Actualización del Motor Inteligente",
+        "changelog.v010.date": "Febrero 2026",
+        "changelog.v010.item1": "Tipos Tera Dinámicos: Los tipos Tera ya no están codificados como 'Estelar' por defecto. El motor ahora calcula los tipos Tera competitivos óptimos basados en el uso real de Smogon.",
+        "changelog.v010.item2": "Memoización del Optimizador: Se agregó caché al Optimizador de Sets. La generación de equipos itera mucho más rápido bajo el capó, reduciendo significativamente el uso del CPU.",
+        "changelog.v010.item3": "Precisión del Template Stall: Se corrigió un error donde los equipos Stall fallaban al seleccionar verdaderos muros defensivos.",
+        "changelog.v010.item4": "Múltiples Miembros Fijos: El Constructor de Equipos ahora soporta fijar múltiples Pokémon a la vez.",
+        "changelog.v010.item5": "Validación Zod: Se agregaron validaciones de entrada estrictas en el backend para prevenir crasheos de API.",
+        "changelog.v010.item6": "Formatos National Dex: Se añadió soporte completo para gen9nationaldex y gen9nationaldexubers permitiendo estrategias de mega evolución.",
+        "changelog.v010.item7": "Enlaces Externos a Smogon: Se agregaron enlaces directos a la Dex competitiva de Smogon desde el modal de interfaz detallada del Pokémon.",
+        "changelog.v010.item8": "Validador de Integridad de Sets: Se agregó un validador que penaliza enormemente a los objetos Choice de coincidir con movimientos de estado o contradictorios.",
+        "changelog.v010.item9": "Sinergia de Clima: La IA ahora puede priorizar correctamente a los abusadores de clima Sol y Lluvia (como Paleosíntesis) reemplazando la lógica puramente defensiva.",
 
         // Guides
         "guides.ouTitle": "Guía OU",
@@ -814,6 +857,7 @@ const translations: Record<Lang, Record<string, string>> = {
         "move.status": "Estado",
         "details.fasterThreats": "Amenazas Rápidas",
         "details.priority": "Prioridad",
+        "details.viewOnSmogon": "Ver en Smogon",
 
         // Analysis
         // Dynamic parts will remain in English for now as they are generated algorithmically

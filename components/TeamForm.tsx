@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { PokemonCombobox } from "./PokemonCombobox";
 import { useTranslation } from "@/lib/i18n";
 
@@ -113,11 +113,7 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
     };
 
     return (
-        <Card className="w-full max-w-2xl bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <CardHeader>
-                <CardTitle>{t("form.title")}</CardTitle>
-                <CardDescription>{t("form.description")}</CardDescription>
-            </CardHeader>
+        <Card className="w-full max-w-2xl bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-sm pt-6">
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -31,11 +31,11 @@ export function PokemonStatCard({ data, rank }: { data: CombinedPokemonData, ran
                         <CardTitle className="text-lg font-bold capitalize">{data.name}</CardTitle>
                         <div className="flex gap-2 mt-1">
                             <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-xs px-1.5 py-0">
-                                {data.usage.toFixed(1)}% Uso
+                                {data.usage.toFixed(2)}% Uso
                             </Badge>
                             {data.winRate !== null && (
                                 <Badge variant="secondary" className={`text-xs px-1.5 py-0 ${data.winRate >= 50 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}`}>
-                                    {data.winRate.toFixed(1)}% WR
+                                    {data.winRate.toFixed(2)}% WR
                                 </Badge>
                             )}
                         </div>

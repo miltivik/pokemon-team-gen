@@ -104,7 +104,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                                             {i + 1}. {ability.name}
                                         </span>
                                         <span className="text-purple-600 font-mono flex-shrink-0">
-                                            {(ability.usage * 100).toFixed(1)}%
+                                            {(ability.usage * 100).toFixed(2)}%
                                         </span>
                                     </div>
                                 ))}
@@ -119,7 +119,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                                             {i + 1}. {item.name}
                                         </span>
                                         <span className="text-amber-600 font-mono flex-shrink-0">
-                                            {(item.usage * 100).toFixed(1)}%
+                                            {(item.usage * 100).toFixed(2)}%
                                         </span>
                                     </div>
                                 ))}

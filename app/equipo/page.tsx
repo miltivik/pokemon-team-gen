@@ -133,23 +133,23 @@ export default function EquipoPage() {
                 {/* Action buttons */}
                 <div className="flex items-center justify-center gap-3 flex-wrap">
                     {generationOptions && (
-                        <Button onClick={handleRegenerate} disabled={isRegenerating} className="bg-orange-500 hover:bg-orange-600 text-white">
+                        <Button onClick={handleRegenerate} disabled={isRegenerating} className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-semibold">
                             {isRegenerating ? "🔄..." : "🔄 " + t("app.generateAnother")}
                         </Button>
                     )}
-                    <Button onClick={handleExport} className="bg-blue-600 hover:bg-blue-700 text-white">
-                        📋 {t("app.exportShowdown")}
-                    </Button>
-                    <Button onClick={handleSaveTeam} variant="outline">
-                        💾 {t("app.saveTeam")}
-                    </Button>
                     <Link href="/analisis">
-                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                        <Button variant="secondary" className="bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-semibold shadow-sm">
                             📊 {t("nav.analysis")}
                         </Button>
                     </Link>
+                    <Button onClick={handleExport} variant="outline" className="border-zinc-300 dark:border-zinc-700 font-medium">
+                        📋 {t("app.exportShowdown")}
+                    </Button>
+                    <Button onClick={handleSaveTeam} variant="outline" className="border-zinc-300 dark:border-zinc-700 font-medium">
+                        💾 {t("app.saveTeam")}
+                    </Button>
                     <Link href="/configurar">
-                        <Button variant="outline">
+                        <Button variant="ghost" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium">
                             ✏️ {t("app.editOptions")}
                         </Button>
                     </Link>

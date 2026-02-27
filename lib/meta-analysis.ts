@@ -36,20 +36,27 @@ export async function getMetaAnalysis(format: string): Promise<MetaOverviewData>
     top50.forEach(mon => {
         // Items
         if (mon.items) {
-            Object.entries(mon.items).forEach(([item, rate]) => {
-                // rate es ratio dentro del pokemon (0-1), mon.usage es ratio global (0-1)
-                // Contribución al meta = uso del pokemon * uso del item en ese pokemon
-                const globalImpact = rate * mon.usage;
-                itemUsageMap[item] = (itemUsageMap[item] || 0) + globalImpact;
-            });
+            const totalItemCount = Object.values(mon.items).reduce((sum, count) => sum + count, 0);
+            if (totalItemCount > 0) {
+                Object.entries(mon.items).forEach(([item, count]) => {
+                    // Contribución al meta = uso del pokemon * uso del item en ese pokemon (como ratio 0-1)
+                    const rate = count / totalItemCount;
+                    const globalImpact = rate * mon.usage;
+                    itemUsageMap[item] = (itemUsageMap[item] || 0) + globalImpact;
+                });
+            }
         }
 
         // Abilities
         if (mon.abilities) {
-            Object.entries(mon.abilities).forEach(([ability, rate]) => {
-                const globalImpact = rate * mon.usage;
-                abilityUsageMap[ability] = (abilityUsageMap[ability] || 0) + globalImpact;
-            });
+            const totalAbilityCount = Object.values(mon.abilities).reduce((sum, count) => sum + count, 0);
+            if (totalAbilityCount > 0) {
+                Object.entries(mon.abilities).forEach(([ability, count]) => {
+                    const rate = count / totalAbilityCount;
+                    const globalImpact = rate * mon.usage;
+                    abilityUsageMap[ability] = (abilityUsageMap[ability] || 0) + globalImpact;
+                });
+            }
         }
     });
 

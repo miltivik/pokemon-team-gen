@@ -203,7 +203,9 @@ export class WeightedScoringEngine {
       if (t.label.includes('Stall')) {
         templateScore = Math.min(4, moveSynergy);
       } else {
-        templateScore = Math.min(1, moveSynergy);
+        // High limit allows proper Weather abusers (+Protosynthesis, +Swift Swim) to
+        // confidently overtake generic meta staples (Gholdengo, Great Tusk, etc.)
+        templateScore = Math.min(4, moveSynergy);
       }
     } // Close `if (this.options.template)` here
 

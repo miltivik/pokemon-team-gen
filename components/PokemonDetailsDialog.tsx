@@ -123,37 +123,21 @@ function AbilityBadge({ abilityKey, ability, labels }: { abilityKey: string; abi
 
     return (
         <div
-            style={{
-                position: 'relative',
-                padding: '8px 12px',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                background: 'white',
-                cursor: 'help',
-                transition: 'border-color 0.2s',
-                zIndex: showTooltip ? 30 : 1 // Elevate the badge when hovered
-            }}
+            className="relative px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 cursor-help transition-colors hover:border-zinc-300 dark:hover:border-zinc-700"
+            style={{ zIndex: showTooltip ? 30 : 1 }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.2, color: '#374151' }}>{displayName}</div>
-            <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <div className="text-[13px] font-semibold leading-tight text-zinc-700 dark:text-zinc-200">{displayName}</div>
+            <div className="text-[10px] text-zinc-400 font-medium uppercase tracking-[0.08em] mt-0.5">
                 {abilityKey === 'H' ? labels.hidden : abilityKey === '0' ? labels.primary : labels.secondary}
             </div>
             {description && showTooltip && (
                 <div
-                    style={{
-                        position: 'absolute', bottom: 'calc(100% + 8px)', left: '-4px', // Shift slightly left to look balanced
-                        width: '260px', padding: '12px 14px', borderRadius: '10px',
-                        background: '#1f2937', color: '#e5e7eb', fontSize: '12px', lineHeight: 1.5,
-                        boxShadow: '0 8px 30px rgba(0,0,0,0.3)', zIndex: 100, // Very high z-index
-                        pointerEvents: 'none',
-                    }}>
+                    className="absolute bottom-[calc(100%+8px)] -left-1 w-[260px] p-3.5 rounded-xl bg-zinc-800 dark:bg-zinc-700 text-zinc-200 text-xs leading-relaxed shadow-xl z-[100] pointer-events-none"
+                >
                     {description}
-                    <div style={{
-                        position: 'absolute', bottom: '-5px', left: '24px', // Align arrow with left side of badge
-                        transform: 'rotate(45deg)', width: '10px', height: '10px', background: '#1f2937'
-                    }} />
+                    <div className="absolute -bottom-1.5 left-6 w-2.5 h-2.5 bg-zinc-800 dark:bg-zinc-700 rotate-45" />
                 </div>
             )}
         </div>
@@ -179,37 +163,21 @@ function ItemBadge({ item, label }: { item: string; label: string }) {
 
     return (
         <div
-            style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                cursor: description ? 'help' : 'default',
-                zIndex: showTooltip ? 30 : 1,
-            }}
+            className="relative flex items-center gap-2.5 z-10"
+            style={{ cursor: description ? 'help' : 'default', zIndex: showTooltip ? 30 : 1 }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             <ItemIcon item={item} size={28} />
             <div>
-                <h4 style={{ fontSize: '10px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px' }}>{label}</h4>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#374151' }}>{displayName}</div>
+                <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">{label}</h4>
+                <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{displayName}</div>
             </div>
             {description && showTooltip && (
-                <div
-                    style={{
-                        position: 'absolute', bottom: 'calc(100% + 8px)', left: '-4px',
-                        width: '280px', padding: '12px 14px', borderRadius: '10px',
-                        background: '#1f2937', color: '#e5e7eb', fontSize: '12px', lineHeight: 1.5,
-                        boxShadow: '0 8px 30px rgba(0,0,0,0.3)', zIndex: 100,
-                        pointerEvents: 'none',
-                    }}>
-                    <div style={{ fontWeight: 700, marginBottom: '4px', color: '#fbbf24', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{displayName}</div>
+                <div className="absolute bottom-[calc(100%+8px)] -left-1 w-[280px] p-3.5 rounded-xl bg-zinc-800 dark:bg-zinc-700 text-zinc-200 text-xs leading-relaxed shadow-xl z-[100] pointer-events-none">
+                    <div className="font-bold mb-1 text-amber-400 text-[11px] uppercase tracking-wider">{displayName}</div>
                     {description}
-                    <div style={{
-                        position: 'absolute', bottom: '-5px', left: '24px',
-                        transform: 'rotate(45deg)', width: '10px', height: '10px', background: '#1f2937'
-                    }} />
+                    <div className="absolute -bottom-1.5 left-6 w-2.5 h-2.5 bg-zinc-800 dark:bg-zinc-700 rotate-45" />
                 </div>
             )}
         </div>
@@ -341,7 +309,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 <DialogTitle style={{ fontSize: '28px', fontWeight: 900, color: 'white', letterSpacing: '-0.02em', lineHeight: 1, marginBottom: '8px', textTransform: 'capitalize' }}>
                                     {pokemon.name}
                                 </DialogTitle>
-                                <div style={{ display: 'flex', gap: '6px' }}>
+                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                                     {pokemon.types.map((type) => (
                                         <Badge
                                             key={type}
@@ -352,6 +320,19 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                             {t(`type.${type.toLowerCase()}`)}
                                         </Badge>
                                     ))}
+
+                                    <a
+                                        href={`https://www.smogon.com/dex/sv/pokemon/${pokemon.name.toLowerCase().replace(/[^a-z0-9-]/g, '')}/`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="ml-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] font-bold uppercase tracking-wider transition-colors"
+                                    >
+                                        <span className="w-3.5 h-3.5 flex items-center justify-center bg-white/20 rounded-full">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-2 h-2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" /></svg>
+                                        </span>
+                                        {t("details.viewOnSmogon")}
+                                    </a>
                                 </div>
                             </div>
 
@@ -364,7 +345,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                     </div>
 
                     {/* BODY */}
-                    <div className="flex-1 overflow-y-auto bg-zinc-50" style={{ maxHeight: 'calc(90vh - 140px)' }}>
+                    <div className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-zinc-950" style={{ maxHeight: 'calc(90vh - 140px)' }}>
                         <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6">
 
                             {/* LEFT: Info + Stats */}
@@ -373,10 +354,10 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 {/* Analysis Section */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                     {/* Role & Tactics */}
-                                    <div style={{ position: 'relative', padding: '16px', paddingLeft: '20px', borderRadius: '12px', border: '1px solid #e5e7eb', overflow: 'hidden', background: 'white' }}>
+                                    <div className="relative p-4 pl-5 rounded-xl border border-zinc-200 dark:border-zinc-700/50 overflow-hidden bg-white dark:bg-zinc-800/50 shadow-sm">
                                         <div className={theme.bg} style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', opacity: 0.7 }} />
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                            <h4 style={{ fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t("details.strategicRole")}</h4>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{t("details.strategicRole")}</h4>
                                             {availableRoles.length > 0 && onUpdate ? (
                                                 <div className="relative">
                                                     <Select
@@ -385,45 +366,49 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                                     >
                                                         <SelectTrigger
                                                             aria-label={t("details.strategicRole")}
-                                                            className="h-8 w-auto min-w-[140px] text-xs font-bold border-zinc-300 text-zinc-700 uppercase bg-transparent px-3 shadow-none hover:bg-zinc-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer pointer-events-auto transition-colors"
+                                                            className="h-8 w-auto min-w-[140px] text-xs font-bold border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 uppercase bg-transparent px-3 shadow-none hover:bg-zinc-50 dark:hover:bg-zinc-800/50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 cursor-pointer pointer-events-auto transition-colors"
                                                         >
-                                                            <SelectValue placeholder={pokemon.analysis?.role || getRoleDescription().split("—")[0].trim()}>
-                                                                {availableRoles.includes(pokemon.analysis?.role || "") ? pokemon.analysis?.role : getRoleDescription().split("—")[0].trim()}
+                                                            <SelectValue placeholder={pokemon.analysis?.role ? t(pokemon.analysis.role) : getRoleDescription().split("—")[0].trim()}>
+                                                                {availableRoles.includes(pokemon.analysis?.role || "") ? t(pokemon.analysis!.role!) : getRoleDescription().split("—")[0].trim()}
                                                             </SelectValue>
                                                         </SelectTrigger>
                                                         <SelectContent className="!z-[10001] max-h-[300px] overflow-y-auto bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-xl">
                                                             {availableRoles.map(r => (
                                                                 <SelectItem key={r} value={r} className="text-sm cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700 px-3 py-2 focus:bg-zinc-100 dark:focus:bg-zinc-700">
-                                                                    {r}
+                                                                    {t(r)}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
                                             ) : (
-                                                <Badge variant="outline" className="text-[10px] font-bold border-zinc-200 text-zinc-500 uppercase">
+                                                <Badge variant="outline" className="text-[10px] font-bold border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 uppercase">
                                                     {pokemon.analysis?.role
                                                         ? t(pokemon.analysis.role)
                                                         : getRoleDescription().split("—")[0].trim()}
                                                 </Badge>
                                             )}
                                         </div>
-                                        <p style={{ fontSize: '13px', lineHeight: 1.6, color: '#4b5563', fontWeight: 500 }}>
+                                        <p className="text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-300 font-medium mt-2">
                                             {t(pokemon.analysis?.howToPlay || getRoleDescription()).replace("Synergy Tip:", t("analysis.synergyTip") + ":")}
                                         </p>
                                     </div>
 
                                     {/* EVs & Nature */}
-                                    <div style={{ padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white' }}>
-                                        <h4 style={{ fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>{t("details.recommendedBuild")}</h4>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white dark:bg-zinc-800/50 shadow-sm">
+                                        <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3">
+                                            {t("details.recommendedBuild")}
+                                        </h4>
+                                        <div className="flex flex-col gap-2">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-xs font-semibold text-zinc-400">{t("details.nature")}</span>
-                                                <span className="text-sm font-bold text-zinc-700">{pokemon.analysis?.nature ? t(`nature.${pokemon.analysis.nature.toLowerCase()}`) : t("nature.serious")}</span>
+                                                <span className="text-sm font-bold text-zinc-700 dark:text-zinc-200">
+                                                    {pokemon.analysis?.nature ? t(`nature.${pokemon.analysis.nature.toLowerCase()}`) : t("nature.serious")}
+                                                </span>
                                             </div>
-                                            <div style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
-                                                <div className="text-[10px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">{t("details.evs")}</div>
-                                                <div className="text-xs font-mono font-bold text-indigo-600">
+                                            <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-100 dark:border-zinc-800">
+                                                <div className="text-[10px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">{t("details.evs")}</div>
+                                                <div className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300">
                                                     {pokemon.analysis?.evs || "252 HP / 252 Atk / 4 Def"}
                                                 </div>
                                             </div>
@@ -435,15 +420,15 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
 
                                 {/* Held Item */}
                                 {item && (
-                                    <div style={{ padding: '12px 16px', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white' }}>
+                                    <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
                                         <ItemBadge item={item} label={t("details.heldItem")} />
                                     </div>
                                 )}
 
                                 {/* Abilities */}
-                                <div>
-                                    <h4 style={{ fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>{t("details.abilities")}</h4>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
+                                    <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">{t("details.abilities")}</h4>
+                                    <div className="flex flex-wrap gap-2">
                                         {Object.entries(pokemon.abilities).map(([key, ability]) => (
                                             <AbilityBadge key={key} abilityKey={key} ability={ability as string} labels={{ primary: t("details.primary"), secondary: t("details.secondary"), hidden: t("details.hidden") }} />
                                         ))}
@@ -451,18 +436,18 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 </div>
 
                                 {/* Base Stats */}
-                                <div style={{ padding: '16px', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white' }}>
-                                    <h4 style={{ fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px' }}>{t("details.baseStats")}</h4>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
+                                    <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3.5">{t("details.baseStats")}</h4>
+                                    <div className="flex flex-col gap-2.5">
                                         {Object.entries(stats).map(([key, value]) => (
-                                            <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                <span style={{ width: '52px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0, color: '#6b7280' }}>
+                                            <div key={key} className="flex items-center gap-2">
+                                                <span className="w-[52px] shrink-0 text-[11px] font-bold uppercase tracking-[0.05em] text-zinc-500 dark:text-zinc-400">
                                                     {statLabels[key] || key}
                                                 </span>
-                                                <div style={{ height: '6px', flex: 1, background: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
-                                                    <div style={{ height: '100%', width: `${Math.min((value as number) / 2.55, 100)}%`, background: getStatColor(value as number), borderRadius: '3px' }} />
+                                                <div className="h-1.5 flex-1 bg-zinc-200 dark:bg-zinc-800 rounded-sm overflow-hidden">
+                                                    <div className="h-full rounded-sm" style={{ width: `${Math.min((value as number) / 2.55, 100)}%`, background: getStatColor(value as number) }} />
                                                 </div>
-                                                <span style={{ width: '30px', textAlign: 'right', fontSize: '12px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: '#111827' }}>
+                                                <span className="w-8 text-right text-xs font-bold tabular-nums text-zinc-900 dark:text-zinc-100">
                                                     {value}
                                                 </span>
                                             </div>
@@ -496,13 +481,11 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                         const moveCategory = isDetailed ? moveObj!.category : null;
 
                                         return (
-                                            <div key={index}
-                                                style={{ padding: '14px', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white', transition: 'box-shadow 0.2s' }}
-                                                className="hover:shadow-md">
+                                            <div key={index} className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 transition-shadow hover:shadow-md">
 
                                                 {/* Move name + type dot */}
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                                    <span style={{ fontSize: '15px', fontWeight: 700, lineHeight: 1.2, color: '#1f2937' }}>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-[15px] font-bold leading-tight text-zinc-900 dark:text-zinc-100">
                                                         {moveName}
                                                     </span>
                                                     <TypeIcon type={moveType} size={18} />
@@ -510,32 +493,32 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
 
                                                 {isDetailed ? (
                                                     <>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                                                        <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
                                                             {moveCategory && (
                                                                 <CategoryIcon category={moveCategory} />
                                                             )}
-                                                            <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af' }}>
+                                                            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                                                                 {translateCategory(moveCategory as string, t)}
                                                             </span>
-                                                            <div style={{ width: '1px', height: '10px', background: '#e5e7eb' }} />
-                                                            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: '#9ca3af' }}>
-                                                                PWR <span style={{ color: '#4b5563' }}>{moveObj!.basePower || '\u2014'}</span>
+                                                            <div className="w-px h-2.5 bg-zinc-200 dark:bg-zinc-700 mx-1 hidden sm:block" />
+                                                            <span className="text-[11px] font-bold font-mono text-zinc-400 flex items-center gap-1">
+                                                                PWR <span className="text-zinc-700 dark:text-zinc-300 text-[13px]">{moveObj!.basePower || '\u2014'}</span>
                                                             </span>
-                                                            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: '#9ca3af' }}>
-                                                                ACC <span style={{ color: '#4b5563' }}>{moveObj!.accuracy === true ? '\u2014' : moveObj!.accuracy + '%'}</span>
+                                                            <span className="text-[11px] font-bold font-mono text-zinc-400 flex items-center gap-1 ml-1">
+                                                                ACC <span className="text-zinc-700 dark:text-zinc-300 text-[13px]">{moveObj!.accuracy === true ? '\u2014' : moveObj!.accuracy + '%'}</span>
                                                             </span>
-                                                            <span style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: '#9ca3af' }}>
-                                                                PP <span style={{ color: '#4b5563' }}>{moveObj!.pp || '\u2014'}</span>
+                                                            <span className="text-[11px] font-bold font-mono text-zinc-400 flex items-center gap-1 ml-1">
+                                                                PP <span className="text-zinc-700 dark:text-zinc-300 text-[13px]">{moveObj!.pp || '\u2014'}</span>
                                                             </span>
                                                         </div>
 
                                                         {/* Description */}
-                                                        <p style={{ fontSize: '12px', lineHeight: 1.5, color: '#6b7280' }}>
+                                                        <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
                                                             {getTranslatedMoveDesc(moveObj!.name, lang) || moveObj!.shortDesc || moveObj!.desc || t("details.noDesc")}
                                                         </p>
                                                     </>
                                                 ) : (
-                                                    <p style={{ fontSize: '11px', fontStyle: 'italic', color: '#9ca3af' }}>{t("details.moveUnavailable")}</p>
+                                                    <p className="text-[11px] italic text-zinc-400">{t("details.moveUnavailable")}</p>
                                                 )}
                                             </div>
                                         );
@@ -545,33 +528,33 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 {/* Synergies & Threats */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Best Teammates */}
-                                    <div style={{ padding: '16px', borderRadius: '14px', border: '1px solid #d1fae5', background: '#f0fdf4' }}>
-                                        <h4 style={{ fontSize: '12px', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>{t("details.bestTeammates")}</h4>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div className="p-4 rounded-xl border border-green-200 dark:border-green-900/30 bg-green-50/50 dark:bg-green-900/10">
+                                        <h4 className="text-xs font-extrabold text-green-800 dark:text-green-500 uppercase tracking-wider mb-3">{t("details.bestTeammates")}</h4>
+                                        <div className="flex flex-col gap-2.5">
                                             {(pokemon.analysis?.teammates || []).map(tm => typeof tm === 'string' ? (
-                                                <div key={tm} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#166534' }}>
-                                                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', flexShrink: 0 }} /> {tm}
+                                                <div key={tm} className="flex items-center gap-2 text-[13px] font-semibold text-green-800 dark:text-green-400">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 dark:bg-green-500 shrink-0" /> {tm}
                                                 </div>
                                             ) : (
-                                                <div key={tm.name} style={{ padding: '8px 10px', borderRadius: '8px', background: tm.isActive ? '#eef2ff' : 'white', border: `1px solid ${tm.isActive ? '#c7d2fe' : '#e5e7eb'}` }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                                                            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: tm.isActive ? '#6366f1' : '#34d399', flexShrink: 0 }} />
-                                                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#166534' }}>{tm.name}</span>
+                                                <div key={tm.name} className={`px-2.5 py-2 rounded-lg border ${tm.isActive ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800/50' : 'bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800'}`}>
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div className="flex items-center gap-2 min-w-0">
+                                                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${tm.isActive ? 'bg-indigo-500' : 'bg-green-400 dark:bg-green-500'}`} />
+                                                            <span className={`text-[13px] font-bold ${tm.isActive ? 'text-indigo-700 dark:text-indigo-400' : 'text-green-800 dark:text-green-400'}`}>{tm.name}</span>
                                                         </div>
                                                         {tm.isActive && (
-                                                            <span style={{ fontSize: '9px', background: '#e0e7ff', color: '#4338ca', padding: '2px 6px', borderRadius: '4px', fontWeight: 800, letterSpacing: '0.03em', flexShrink: 0 }}>{t("details.team")}</span>
+                                                            <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded font-extrabold tracking-wider shrink-0">{t("details.team")}</span>
                                                         )}
                                                     </div>
                                                     {tm.isActive && tm.reason && (
-                                                        <div style={{ fontSize: '11px', color: '#6366f1', fontStyle: 'italic', marginTop: '4px', paddingLeft: '15px', lineHeight: 1.4 }}>
+                                                        <div className="text-[11px] text-indigo-500 dark:text-indigo-400 italic mt-1.5 leading-snug">
                                                             {tm.reason.split(';')[0]}
                                                         </div>
                                                     )}
                                                 </div>
                                             ))}
                                             {(!pokemon.analysis?.teammates || pokemon.analysis.teammates.length === 0) && (
-                                                <div style={{ fontSize: '12px', fontStyle: 'italic', color: '#6ee7b7' }}>
+                                                <div className="text-xs italic text-green-500 dark:text-green-600">
                                                     {t("details.noSynergies")}
                                                 </div>
                                             )}
@@ -579,12 +562,12 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                     </div>
 
                                     {/* Checks & Counters */}
-                                    <div style={{ padding: '16px', borderRadius: '14px', border: '1px solid #fecaca', background: '#fef2f2' }}>
-                                        <h4 style={{ fontSize: '12px', fontWeight: 800, color: '#991b1b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>{t("details.threats")}</h4>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div className="p-4 rounded-xl border border-red-200 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10">
+                                        <h4 className="text-xs font-extrabold text-red-800 dark:text-red-500 uppercase tracking-wider mb-3">{t("details.threats")}</h4>
+                                        <div className="flex flex-col gap-2.5">
                                             {(pokemon.analysis?.checks || [t("details.fasterThreats"), t("details.priority")]).map(c => (
-                                                <div key={c} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#991b1b' }}>
-                                                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f87171', flexShrink: 0 }} /> {c}
+                                                <div key={c} className="flex items-center gap-2 text-[13px] font-semibold text-red-800 dark:text-red-400">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 dark:bg-red-500 shrink-0" /> {c}
                                                 </div>
                                             ))}
                                         </div>

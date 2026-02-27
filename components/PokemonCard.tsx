@@ -94,10 +94,9 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
                         <h3 className="text-lg font-bold capitalize text-zinc-900 dark:text-zinc-50 leading-tight">
                             {data.name || name}
                         </h3>
-                        <div className="flex gap-2 justify-center items-center mt-1 text-[10px] text-zinc-500 uppercase font-mono tracking-wider">
-                            <span>BST: {bst}</span>
-                            <span>•</span>
-                            <span>{getRole()}</span>
+                        <div className="flex gap-2 justify-center items-center mt-1.5 text-[9px] font-bold uppercase tracking-widest">
+                            <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-1.5 py-0.5 rounded">BST {bst}</span>
+                            <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded">{getRole()}</span>
                         </div>
                     </div>
 
@@ -115,7 +114,7 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
 
                     {/* Held Item */}
                     {(pokemon as any).item && (
-                        <div className="flex items-center justify-center gap-1.5 text-[10px] text-zinc-600 dark:text-zinc-400 font-medium bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30 rounded-md px-2 py-0.5">
+                        <div className="w-fit mx-auto flex items-center justify-center gap-1.5 text-[10px] text-zinc-600 dark:text-zinc-400 font-medium bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30 rounded-md px-2 py-0.5">
                             <ItemIcon item={(pokemon as any).item} size={16} />
                             <span>{getTranslatedItemName((pokemon as any).item, lang)}</span>
                         </div>

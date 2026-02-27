@@ -46,13 +46,13 @@ export const TEMPLATES: Record<TemplateId, Template> = {
         label: "Rain",
         roles: ['Support', 'Sweeper', 'Sweeper', 'Sweeper', 'Tank', 'Support'],
         requiredAbilities: ['Drizzle'],
-        preferredAbilities: ['Swift Swim', 'Rain Dish']
+        preferredAbilities: ['Swift Swim', 'Rain Dish', 'Dry Skin', 'Hydration', 'Water Absorb', 'Storm Drain']
     },
     sun: {
         label: "Sun",
         roles: ['Support', 'Sweeper', 'Sweeper', 'Sweeper', 'Tank', 'Support'],
-        requiredAbilities: ['Drought'],
-        preferredAbilities: ['Chlorophyll', 'Solar Power', 'Flower Gift']
+        requiredAbilities: ['Drought', 'Orichalcum Pulse'],
+        preferredAbilities: ['Chlorophyll', 'Solar Power', 'Flower Gift', 'Protosynthesis']
     },
     sand: {
         label: "Sand",
@@ -63,8 +63,8 @@ export const TEMPLATES: Record<TemplateId, Template> = {
     weatheroffense: {
         label: "Weather Offense",
         roles: ['Support', 'Sweeper', 'Sweeper', 'Sweeper', 'Tank', 'Sweeper'],
-        requiredAbilities: ['Drizzle', 'Drought', 'Sand Stream', 'Snow Warning'],
-        preferredAbilities: ['Swift Swim', 'Chlorophyll', 'Sand Rush', 'Slush Rush', 'Solar Power', 'Sand Force']
+        requiredAbilities: ['Drizzle', 'Drought', 'Sand Stream', 'Snow Warning', 'Orichalcum Pulse'],
+        preferredAbilities: ['Swift Swim', 'Chlorophyll', 'Sand Rush', 'Slush Rush', 'Solar Power', 'Sand Force', 'Protosynthesis']
     },
     hazardstack: {
         label: "Hazard Stack",

@@ -77,6 +77,7 @@ export const analytics = {
     viewGuides: (guide: string) => trackPageView(`/guides/${guide}`, `Guides ${guide}`),
     viewTierList: () => trackPageView("/tier-list", "Tier List"),
     viewAbout: () => trackPageView("/about", "About"),
+    viewChangelog: () => trackPageView("/changelog", "Changelog"),
 
     // User actions
     startConfig: () => trackEvent("start_config", {
@@ -133,6 +134,7 @@ function getPageTitle(pathname: string): string {
         "/equipo": "Equipo",
         "/analisis": "Análisis",
         "/exportar": "Exportar",
+        "/changelog": "Changelog",
     };
     return titles[pathname] || "Unknown";
 }

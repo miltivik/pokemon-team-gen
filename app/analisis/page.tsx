@@ -34,10 +34,11 @@ export default function AnalisisPage() {
                 </section>
 
                 {/* Back navigation */}
-                <div className="w-full max-w-4xl flex justify-start">
+                <div className="w-full max-w-5xl flex justify-start mb-2">
                     <Link href="/equipo">
-                        <Button variant="ghost" className="text-zinc-600 dark:text-zinc-400">
-                            ← {t("analysis.backToTeam")}
+                        <Button variant="outline" className="gap-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-sm font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                            {t("analysis.backToTeam")}
                         </Button>
                     </Link>
                 </div>
