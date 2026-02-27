@@ -28,17 +28,22 @@ export interface OptimizedSet {
 }
 
 interface OptimizerOptions {
-    template?: Template;
-    teamMoves?: Set<string>;
-    teamAbilities?: Set<string>;
+  template?: Template;
+  teamMoves?: Set<string>;
+  teamAbilities?: Set<string>;
 }
 
 export class SetOptimizer {
 
   private data: NormalizedSmogonData;
+  private cache: Map<string, OptimizedSet> = new Map();
 
   constructor(data: NormalizedSmogonData) {
     this.data = data;
+  }
+
+  public clearCache() {
+    this.cache.clear();
   }
 
   public optimize(pokemon: PokemonSpecies, teamContext: PokemonSpecies[] = [], options: OptimizerOptions = {}): OptimizedSet {
@@ -49,7 +54,15 @@ export class SetOptimizer {
       return this.generateBlankSet(pokemon);
     }
 
-    return {
+    // Cache key based on pokemon and context
+    const contextKey = options.template?.label || 'none';
+    const cacheKey = `${toID(pokemon.name)}-${contextKey}`;
+
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey)!;
+    }
+
+    const result = {
       species: pokemon.name,
       ability: this.selectAbility(stats, options),
       item: this.selectItem(stats),
@@ -57,20 +70,23 @@ export class SetOptimizer {
       moves: this.selectMoves(stats, 4, options),
       teraType: this.selectTeraType(stats)
     };
+
+    this.cache.set(cacheKey, result);
+    return result;
   }
 
   private selectAbility(stats: NormalizedMonData, options: OptimizerOptions): string {
     const abilitiesEntries = Object.entries(stats.abilities).map(([name, usage]) => {
-        let score = usage;
-        if (options.template?.requiredAbilities && !options.teamAbilities?.has(name)) {
-            const req = options.template.requiredAbilities.map(toID);
-            if (req.includes(name)) score += 2.0; // Force if required
-        }
-        if (options.template?.preferredAbilities) {
-            const pref = options.template.preferredAbilities.map(toID);
-            if (pref.includes(name)) score += 0.5; // Boost if preferred
-        }
-        return [name, score] as [string, number];
+      let score = usage;
+      if (options.template?.requiredAbilities && !options.teamAbilities?.has(name)) {
+        const req = options.template.requiredAbilities.map(toID);
+        if (req.includes(name)) score += 2.0; // Force if required
+      }
+      if (options.template?.preferredAbilities) {
+        const pref = options.template.preferredAbilities.map(toID);
+        if (pref.includes(name)) score += 0.5; // Boost if preferred
+      }
+      return [name, score] as [string, number];
     });
 
     abilitiesEntries.sort((a, b) => b[1] - a[1]);
@@ -99,26 +115,26 @@ export class SetOptimizer {
 
   private selectMoves(stats: NormalizedMonData, count: number, options: OptimizerOptions): string[] {
     const movesEntries = Object.entries(stats.moves).map(([name, usage]) => {
-        let score = usage;
-        if (options.template?.requiredMoves && !options.teamMoves?.has(name)) {
-            const req = options.template.requiredMoves.map(toID);
-            if (req.includes(name)) score += 2.0; // Force if required
-        }
-        if (options.template?.preferredMoves) {
-            const pref = options.template.preferredMoves.map(toID);
-            if (pref.includes(name)) score += 0.5; // Boost if preferred
-        }
-        return [name, score] as [string, number];
+      let score = usage;
+      if (options.template?.requiredMoves && !options.teamMoves?.has(name)) {
+        const req = options.template.requiredMoves.map(toID);
+        if (req.includes(name)) score += 2.0; // Force if required
+      }
+      if (options.template?.preferredMoves) {
+        const pref = options.template.preferredMoves.map(toID);
+        if (pref.includes(name)) score += 0.5; // Boost if preferred
+      }
+      return [name, score] as [string, number];
     });
 
     movesEntries.sort((a, b) => b[1] - a[1]);
 
     const moves = movesEntries
-        .map(entry => {
-            const rawMove = entry[0];
-            const moveData = Moves[toID(rawMove)];
-            return moveData ? moveData.name : rawMove;
-        });
+      .map(entry => {
+        const rawMove = entry[0];
+        const moveData = Moves[toID(rawMove)];
+        return moveData ? moveData.name : rawMove;
+      });
 
     // Filter out '' or invalid moves if necessary
     return moves.slice(0, count);

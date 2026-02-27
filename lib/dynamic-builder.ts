@@ -143,6 +143,9 @@ export async function generateDynamicTeam(options: DynamicTeamOptions = {}): Pro
         // Update tracked moves/abilities
         set.moves.forEach(m => teamMoves.add(toID(m)));
         teamAbilities.add(toID(set.ability));
+
+        // Clear optimizer cache for the next loop since team context changed
+        optimizer.clearCache();
     }
 
     // 4. Generate Analysis & Gameplan (Legacy adaptation)
