@@ -24,6 +24,7 @@ export interface OptimizedSet {
     spe: number;
   };
   moves: string[];
+  teraType?: string;
 }
 
 interface OptimizerOptions {
@@ -53,7 +54,8 @@ export class SetOptimizer {
       ability: this.selectAbility(stats, options),
       item: this.selectItem(stats),
       ...this.selectSpread(stats),
-      moves: this.selectMoves(stats, 4, options)
+      moves: this.selectMoves(stats, 4, options),
+      teraType: this.selectTeraType(stats)
     };
   }
 
@@ -86,6 +88,13 @@ export class SetOptimizer {
     const topItem = items[0][0];
     const itemData = Items[toID(topItem)];
     return itemData ? itemData.name : topItem;
+  }
+
+  private selectTeraType(stats: NormalizedMonData): string | undefined {
+    if (!stats.teraTypes) return undefined;
+    const types = Object.entries(stats.teraTypes).sort((a, b) => b[1] - a[1]);
+    if (types.length === 0) return undefined;
+    return types[0][0];
   }
 
   private selectMoves(stats: NormalizedMonData, count: number, options: OptimizerOptions): string[] {

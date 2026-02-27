@@ -1,8 +1,9 @@
-  import { NormalizedSmogonData, NormalizedMonData } from '../data-sources/smogon';
+import { NormalizedSmogonData, NormalizedMonData } from '../data-sources/smogon';
 import { DexProvider, PokemonSpecies } from '../data-sources/dex';
 import { getEffectiveness } from '../type-chart';
 import { toID } from '../utils';
 import { Template } from '@/config/templates';
+import { Role } from '../showdown-data';
 
 interface ScoredCandidate {
   species: PokemonSpecies;
@@ -98,7 +99,8 @@ export class WeightedScoringEngine {
     let W_SYNERGY = 0.45; // High weight on real data
     const W_COVERAGE = 0.2;
     const W_CONSISTENCY = 0.05;
-    let W_TEMPLATE = 0.5;
+    let W_TEMPLATE = 0.5; // Significant boost for template requirements
+    const W_ROLE = 5.0; // Extreme boost for fulfilling needed roles
 
     if (this.options.template?.label.includes('Stall')) {
       W_USAGE = 0.1; // Stall relies less on standard usage staples
@@ -203,6 +205,32 @@ export class WeightedScoringEngine {
       } else {
         templateScore = Math.min(1, moveSynergy);
       }
+    } // Close `if (this.options.template)` here
+
+    // 6. Role Synergy Score
+    let roleScore = 0;
+    if (this.options.template && this.options.template.roles) {
+      const neededRoles = [...this.options.template.roles];
+
+      // Remove roles already fulfilled by the team
+      for (const member of team) {
+        // We use a simplified role detection here based on base stats to match what we do for candidates
+        const memberRole = this.getRoleFromStats(member.baseStats);
+        const index = neededRoles.indexOf(memberRole);
+        if (index !== -1) {
+          neededRoles.splice(index, 1);
+        }
+      }
+
+      // Check if candidate fulfills a needed role
+      const candidateRole = this.getRoleFromStats(candidate.baseStats);
+      if (neededRoles.includes(candidateRole)) {
+        roleScore = 1.0;
+      } else {
+        // Massive penalty if it doesn't fit the remaining roles at all 
+        // We want to force Stall teams to actually pick Walls.
+        roleScore = -5.0;
+      }
     }
 
     // Final Calculation
@@ -211,7 +239,8 @@ export class WeightedScoringEngine {
       (synergyScore * W_SYNERGY) +
       (normCoverage * W_COVERAGE) +
       (consistencyScore * W_CONSISTENCY) +
-      (templateScore * W_TEMPLATE);
+      (templateScore * W_TEMPLATE) +
+      (roleScore * W_ROLE);
 
     return {
       species: candidate,
@@ -249,5 +278,26 @@ export class WeightedScoringEngine {
   private analyzeTeamResistances(team: PokemonSpecies[]) {
     // Helper for future expansion
     return {};
+  }
+
+  private getRoleFromStats(baseStats: { hp: number, atk: number, spa: number, def: number, spd: number, spe: number }): Role {
+    const { atk, spa, spe, def, spd, hp } = baseStats;
+    const bulk = hp + def + spd;
+    const offense = atk + spa + spe;
+
+    // Primarily defensive Pokemon
+    if (bulk >= 270) {
+      if (def >= 110 || spd >= 110) return 'Wall';
+      return 'Tank';
+    }
+
+    // Fast offenses
+    if (spe >= 95 && (atk >= 95 || spa >= 95)) return 'Sweeper';
+
+    // Slow offensive / mixed
+    if (offense > bulk) return 'Sweeper'; // Classify slow breakers as sweepers for this builder's sake
+
+    // Default fallback
+    return 'Support';
   }
 }

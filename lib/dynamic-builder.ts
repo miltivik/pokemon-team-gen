@@ -182,7 +182,7 @@ function convertToTeamMember(species: PokemonSpecies, set: OptimizedSet): TeamMe
         nature: set.nature,
         evs: evsStr,
         role: detectRole(set.moves, set.evs), // Helper below
-        teraType: 'Stellar' // Default for now, need logic
+        teraType: set.teraType || 'Stellar'
     };
 }
 
@@ -215,10 +215,19 @@ function generateMockData(format: string, gen: number): NormalizedSmogonData {
 }
 
 function detectRole(moves: string[], evs: { hp: number, atk: number, spa: number, def: number, spd: number, spe: number }): string {
-    if (moves.some(m => ['Stealth Rock', 'Spikes', 'Toxic Spikes', 'Sticky Web'].includes(m))) return 'Support';
+    const isOffensive = evs.atk > 150 || evs.spa > 150 || evs.spe > 150;
+    const isDefensive = evs.hp > 150 || evs.def > 150 || evs.spd > 150;
+
+    if (moves.some(m => ['Stealth Rock', 'Spikes', 'Toxic Spikes', 'Sticky Web', 'Defog', 'Rapid Spin'].includes(m))) return 'Support';
+
+    if (isDefensive && !isOffensive) return 'Wall';
+    if (isDefensive && isOffensive) return 'Tank';
+
     if (moves.some(m => ['Swords Dance', 'Dragon Dance', 'Nasty Plot', 'Quiver Dance', 'Shell Smash'].includes(m))) return 'Sweeper';
+    if (evs.spe > 200 && (evs.atk > 200 || evs.spa > 200)) return 'Sweeper';
+
     if (evs.atk > 200 || evs.spa > 200) return 'Wallbreaker';
-    if (evs.hp > 200 && (evs.def > 200 || evs.spd > 200)) return 'Wall';
+
     return 'Pivot';
 }
 
