@@ -11,6 +11,9 @@ type EventParams = Record<string, string | number | boolean>;
 // Check if we're in the browser
 const isBrowser = typeof window !== "undefined";
 
+// Read GA4 ID from env — set NEXT_PUBLIC_GA_ID in .env.local
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
 // Track page views
 export function trackPageView(pagePath: string, pageTitle: string) {
     if (!isBrowser) return;
@@ -18,12 +21,13 @@ export function trackPageView(pagePath: string, pageTitle: string) {
     console.log(`[Analytics] Page View: ${pagePath} - ${pageTitle}`);
 
     // Google Analytics 4
-    if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("config", "GA_MEASUREMENT_ID", {
+    if (GA_ID && typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("config", GA_ID, {
             page_path: pagePath,
             page_title: pageTitle,
         });
     }
+
 
     // Custom event for internal tracking
     trackEvent("page_view", {

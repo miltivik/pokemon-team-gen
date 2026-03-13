@@ -7,6 +7,7 @@ import { MonetizationScripts } from "../components/monetization/Ads";
 import { AnalyticsTracker } from "../components/AnalyticsTracker";
 import { KoFiButton } from "../components/monetization/Ads";
 import { Navbar } from "../components/Navbar";
+import { Footer } from "../components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -139,6 +140,8 @@ export default function RootLayout({
     ],
   };
 
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -146,6 +149,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Google AdSense */}
         <Script
           id="adsense"
           async
@@ -153,6 +157,28 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        {/* Google Analytics 4 — only loads when NEXT_PUBLIC_GA_ID is set */}
+        {gaId && (
+          <>
+            <Script
+              id="ga4-script"
+              strategy="afterInteractive"
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            />
+            <Script
+              id="ga4-config"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${gaId}', { page_path: window.location.pathname });
+                `,
+              }}
+            />
+          </>
+        )}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50 dark:bg-black`}
@@ -161,8 +187,9 @@ export default function RootLayout({
         <AnalyticsTracker />
         <KoFiButton />
         <Providers>
-          <Navbar />
-          {children}
+           <Navbar />
+           {children}
+           <Footer />
         </Providers>
       </body>
     </html>

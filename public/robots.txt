@@ -2,14 +2,8 @@
 User-agent: *
 Allow: /
 
-# Sitemaps
-Sitemap: https://pokemon-team-generator.vercel.app/sitemap.xml
-
-# Crawl-delay (optional, for politeness)
-Crawl-delay: 1
-
-# Disallow admin/private areas (if any)
+# Block server-side API endpoints from indexing (not blocking JS assets)
 Disallow: /api/
-Disallow: /_next/
-Disallow: /*.json$
-Disallow: /*.js$
+
+# Sitemap
+Sitemap: https://pokemon-team-generator.vercel.app/sitemap.xml
