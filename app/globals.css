@@ -160,22 +160,32 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Better scrollbar styling */
+/* Minimalist scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-zinc-100 dark:bg-zinc-900;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-300 dark:bg-zinc-700 rounded-full;
+  @apply bg-zinc-300/60 dark:bg-zinc-700/60 rounded-full transition-colors duration-200;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-zinc-400 dark:bg-zinc-600;
+  @apply bg-zinc-400/70 dark:bg-zinc-600/70;
+}
+
+/* Firefox scrollbar support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(163, 163, 163, 0.6) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgba(75, 85, 99, 0.6) transparent;
 }
 
 /* Smooth scrolling with reduced motion support */

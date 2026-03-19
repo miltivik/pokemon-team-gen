@@ -75,36 +75,36 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
 
     return (
         <PokemonDetailsDialog pokemon={displayData} item={(pokemon as any).item} format={format} onUpdate={onUpdate}>
-            <div className="relative group overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:z-10 dark:border-zinc-800 dark:bg-zinc-900 flex flex-col h-full cursor-pointer hover:ring-2 hover:ring-blue-500/50">
-                <div className="aspect-square relative mb-2 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800 shrink-0">
+            <div className="relative group overflow-hidden rounded-lg border border-zinc-200 bg-white p-3 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] hover:z-10 dark:border-zinc-800 dark:bg-zinc-900 flex flex-col h-full cursor-pointer">
+                <div className="aspect-square relative mb-1 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800 shrink-0">
                     <Image
                         src={displayImage}
                         alt={name}
                         fill
-                        className="object-contain p-4 transition-transform group-hover:scale-110"
+                        className="object-contain p-2 transition-transform group-hover:scale-110"
                         unoptimized
                     />
                     <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded font-bold shadow-md">INFO</span>
+                        <span className="bg-blue-600 text-white text-[10px] px-1 py-0.5 rounded font-bold shadow-md">INFO</span>
                     </div>
                 </div>
 
-                <div className="space-y-2 flex-1 flex flex-col">
+                <div className="space-y-1 flex-1 flex flex-col">
                     <div className="text-center">
-                        <h3 className="text-lg font-bold capitalize text-zinc-900 dark:text-zinc-50 leading-tight">
+                        <h3 className="text-base font-bold capitalize text-zinc-900 dark:text-zinc-50 leading-tight">
                             {data.name || name}
                         </h3>
-                        <div className="flex gap-2 justify-center items-center mt-1.5 text-[9px] font-bold uppercase tracking-widest">
-                            <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-1.5 py-0.5 rounded">BST {bst}</span>
-                            <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded">{getRole()}</span>
+                        <div className="flex gap-1 justify-center items-center mt-1 text-[8px] font-bold uppercase tracking-widest">
+                            <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-1 py-0.5 rounded text-[7px]">BST {bst}</span>
+                            <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1 py-0.5 rounded text-[7px]">{getRole()}</span>
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 justify-center mb-1">
+                    <div className="flex flex-wrap gap-1 justify-center">
                         {displayTypes.map((type: string) => (
                             <span
                                 key={type}
-                                className={`px-2 py-0.5 text-[10px] font-bold rounded-full capitalize 
+                                className={`px-1.5 py-0.5 text-[9px] font-bold rounded-full capitalize
                     ${getTypeColor(type.toLowerCase())} text-white shadow-sm`}
                             >
                                 {t(`type.${type.toLowerCase()}`)}
@@ -112,35 +112,35 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
                         ))}
                     </div>
 
-                    {/* Held Item */}
+                    {/* Held Item -->
                     {(pokemon as any).item && (
-                        <div className="w-fit mx-auto flex items-center justify-center gap-1.5 text-[10px] text-zinc-600 dark:text-zinc-400 font-medium bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30 rounded-md px-2 py-0.5">
-                            <ItemIcon item={(pokemon as any).item} size={16} />
-                            <span>{getTranslatedItemName((pokemon as any).item, lang)}</span>
+                        <div className="w-fit mx-auto flex items-center justify-center gap-1 text-[9px] text-zinc-600 dark:text-zinc-400 font-medium bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30 rounded px-1 py-0.5">
+                            <ItemIcon item={(pokemon as any).item} size={12} />
+                            <span className="truncate max-w-[70px]">{getTranslatedItemName((pokemon as any).item, lang)}</span>
                         </div>
                     )}
 
                     {/* Preview Moves (Simple List) */}
-                    <div className="bg-zinc-100 dark:bg-zinc-950 rounded p-2 text-xs">
-                        <p className="text-[10px] uppercase font-bold text-zinc-400 mb-1">Moves</p>
-                        <div className="grid grid-cols-2 gap-1">
+                    <div className="bg-zinc-100 dark:bg-zinc-950 rounded p-1.5 text-xs">
+                        <p className="text-[9px] uppercase font-bold text-zinc-400 mb-0.5">Moves</p>
+                        <div className="grid grid-cols-2 gap-0.5">
                             {moves.slice(0, 4).map((m: any, i: number) => {
                                 const mName = typeof m === 'string' ? m : m.name;
                                 if (mName === 'Ghost' || mName === 'Fantasma') return null;
                                 const displayName = getTranslatedMoveName(mName, lang);
                                 const moveType = typeof m !== 'string' ? m.type : getMoveData(m)?.type;
                                 return (
-                                    <div key={i} className="truncate text-zinc-700 dark:text-zinc-300 capitalize flex items-center gap-1" title={displayName}>
+                                    <div key={i} className="truncate text-zinc-700 dark:text-zinc-300 flex items-center gap-1 min-w-0 text-[10px]" title={displayName}>
                                         {moveType ? (
                                             <span className="flex-shrink-0 rounded-full flex items-center justify-center"
-                                                style={{ width: 20, height: 20, minWidth: 20, backgroundColor: TYPE_BG_COLORS[moveType.toLowerCase()] || '#999' }}>
+                                                style={{ width: 16, height: 16, minWidth: 16, backgroundColor: TYPE_BG_COLORS[moveType.toLowerCase()] || '#999' }}>
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={`/icons/types/${moveType.toLowerCase()}.svg`} alt="" style={{ width: 12, height: 12, objectFit: 'contain' }} />
+                                                <img src={`/icons/types/${moveType.toLowerCase()}.svg`} alt="" style={{ width: 10, height: 10, objectFit: 'contain' }} />
                                             </span>
                                         ) : (
-                                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 flex-shrink-0"></span>
+                                            <span className="w-1 h-1 rounded-full bg-zinc-400 flex-shrink-0"></span>
                                         )}
-                                        {displayName}
+                                        <span className="truncate">{displayName}</span>
                                     </div>
                                 );
                             })}
@@ -148,16 +148,16 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[10px] mt-auto bg-zinc-50 dark:bg-zinc-800/50 p-2 rounded-lg">
-                        <div className="col-span-2 text-center text-zinc-400 text-[9px] mb-0.5 font-mono uppercase tracking-wider">
+                    <div className="grid grid-cols-2 gap-x-1 gap-y-0.5 text-[9px] mt-auto bg-zinc-50 dark:bg-zinc-800/50 p-1.5 rounded">
+                        <div className="col-span-2 text-center text-zinc-400 text-[8px] mb-0.5 font-mono uppercase tracking-wider">
                             Base Stats
                         </div>
                         {Object.entries(stats).map(([key, value]) => (
                             <div key={key} className="flex justify-between items-center">
-                                <span className="font-medium text-zinc-500 dark:text-zinc-400 uppercase">
+                                <span className="font-medium text-zinc-500 dark:text-zinc-400 uppercase text-[8px]">
                                     {getStatLabel(key)}
                                 </span>
-                                <span className="font-bold text-zinc-900 dark:text-zinc-200 tabular-nums">
+                                <span className="font-bold text-zinc-900 dark:text-zinc-200 tabular-nums text-[9px]">
                                     {value as number}
                                 </span>
                             </div>

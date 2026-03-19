@@ -270,91 +270,95 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent
                     modal={false}
-                    className="border-0 shadow-2xl rounded-2xl bg-transparent"
-                    style={{ width: '880px', maxWidth: '95vw', padding: 0, gap: 0, overflow: 'hidden', background: 'none' }}
+                    className="border-0 shadow-2xl rounded-2xl bg-transparent max-w-4xl w-full mx-auto p-0 gap-0"
+                    style={{ overflow: 'hidden', background: 'none' }}
                 >
                     <DialogDescription className="sr-only">Details for {pokemon.name}</DialogDescription>
 
                     {/* HEADER */}
                     <div className="relative w-full"
-                        style={{ minHeight: '140px', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(24, 24, 27, 0.85) 0%, rgba(39, 39, 42, 0.85) 50%, rgba(24, 24, 27, 0.85) 100%)', backdropFilter: 'blur(10px)' }}>
+                        style={{ minHeight: '160px', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(24, 24, 27, 0.85) 0%, rgba(39, 39, 42, 0.85) 50%, rgba(24, 24, 27, 0.85) 100%)', backdropFilter: 'blur(10px)' }}>
                         {/* Type-colored gradient overlays */}
                         <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradientFrom} to-transparent opacity-25`}
                             style={{ mixBlendMode: 'screen' }} />
                         <div className="absolute inset-0"
                             style={{ opacity: 0.04, backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
 
-                        <div className="relative z-10 flex items-end gap-3 sm:gap-5 px-4 sm:px-7 pt-5 pb-4">
-                            {/* Sprite */}
-                            <div className="relative w-20 h-20 sm:w-28 sm:h-28 shrink-0 rounded-2xl bg-white/10 border-2 border-white/15 overflow-hidden">
-                                <Image
-                                    src={getPokemonSpriteUrl(pokemon)}
-                                    alt={pokemon.name}
-                                    fill
-                                    className="object-contain drop-shadow-lg p-1 sm:p-1.5"
-                                    unoptimized
-                                />
-                            </div>
-
-                            {/* Info */}
-                            <div style={{ flex: 1, minWidth: 0, paddingBottom: '4px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                                    <span style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', fontSize: '13px', fontWeight: 'bold', letterSpacing: '0.1em' }}>
-                                        #{pokemon.num.toString().padStart(3, '0')}
-                                    </span>
-                                    <Badge variant="outline" className="border-white/20 text-white bg-white/10" style={{ fontSize: '10px', padding: '0 6px', height: '20px' }}>
-                                        Gen {getPokemonGeneration(pokemon.name)}
-                                    </Badge>
+                        <div className="relative z-10 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 pt-3 pb-2">
+                            {/* LEFT SECTION: Sprite + Info */}
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                {/* Sprite */}
+                                <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-lg bg-white/10 border-2 border-white/15 overflow-hidden">
+                                    <Image
+                                        src={getPokemonSpriteUrl(pokemon)}
+                                        alt={pokemon.name}
+                                        fill
+                                        className="object-contain drop-shadow-lg p-1"
+                                        unoptimized
+                                    />
                                 </div>
-                                <DialogTitle style={{ fontSize: '28px', fontWeight: 900, color: 'white', letterSpacing: '-0.02em', lineHeight: 1, marginBottom: '8px', textTransform: 'capitalize' }}>
-                                    {pokemon.name}
-                                </DialogTitle>
-                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                    {pokemon.types.map((type) => (
-                                        <Badge
-                                            key={type}
-                                            className={`${getTypeColor(type.toLowerCase())} text-white border-0`}
-                                            style={{ padding: '2px 10px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}
-                                        >
-                                            <TypeIcon type={type} size={14} />
-                                            {t(`type.${type.toLowerCase()}`)}
-                                        </Badge>
-                                    ))}
 
-                                    <a
-                                        href={`https://www.smogon.com/dex/sv/pokemon/${pokemon.name.toLowerCase().replace(/[^a-z0-9-]/g, '')}/`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="ml-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] font-bold uppercase tracking-wider transition-colors"
-                                    >
-                                        <span className="w-3.5 h-3.5 flex items-center justify-center bg-white/20 rounded-full">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-2 h-2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" /></svg>
+                                {/* Info */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                                        <span style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.1em' }}>
+                                            #{pokemon.num.toString().padStart(3, '0')}
                                         </span>
-                                        {t("details.viewOnSmogon")}
-                                    </a>
+                                        <Badge variant="outline" className="border-white/20 text-white bg-white/10" style={{ fontSize: '10px', padding: '2px 6px', height: '18px', lineHeight: '14px' }}>
+                                            Gen {getPokemonGeneration(pokemon.name)}
+                                        </Badge>
+                                    </div>
+                                    <DialogTitle style={{ fontSize: '22px', fontWeight: 900, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4px', textTransform: 'capitalize' }} className="sm:text-2xl">
+                                        {pokemon.name}
+                                    </DialogTitle>
+                                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                        {pokemon.types.map((type) => (
+                                            <Badge
+                                                key={type}
+                                                className={`${getTypeColor(type.toLowerCase())} text-white border-0`}
+                                                style={{ padding: '3px 10px', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                            >
+                                                <TypeIcon type={type} size={12} />
+                                                {t(`type.${type.toLowerCase()}`)}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                        <a
+                                            href={`https://www.smogon.com/dex/sv/pokemon/${pokemon.name.toLowerCase().replace(/[^a-z0-9-]/g, '')}/`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors"
+                                        >
+                                            <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center bg-white/20 rounded-full">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-1.5 h-1.5 sm:w-2 sm:h-2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" /></svg>
+                                            </span>
+                                            {t("details.viewOnSmogon")}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* BST */}
-                            <div style={{ textAlign: 'right', flexShrink: 0, paddingBottom: '4px' }}>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '2px' }}>BST</div>
-                                <div style={{ fontSize: '28px', fontWeight: 900, color: 'rgba(255,255,255,0.9)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{bst}</div>
+                            <div style={{ textAlign: 'right', flexShrink: 0, alignSelf: 'center', marginLeft: 'auto', paddingRight: '24px' }}>
+                                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px' }}>BST</div>
+                                <div style={{ fontSize: '32px', fontWeight: 900, color: 'rgba(255,255,255,0.95)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }} className="sm:text-4xl">{bst}</div>
                             </div>
                         </div>
                     </div>
 
                     {/* BODY */}
                     <div className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-zinc-950" style={{ maxHeight: 'calc(90vh - 140px)' }}>
-                        <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6">
+                        <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             {/* LEFT: Info + Stats */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
                                 {/* Analysis Section */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                     {/* Role & Tactics */}
-                                    <div className="relative p-4 pl-5 rounded-xl border border-zinc-200 dark:border-zinc-700/50 overflow-hidden bg-white dark:bg-zinc-800/50 shadow-sm">
+                                    <div className="relative p-3 pl-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 overflow-hidden bg-white dark:bg-zinc-800/50 shadow-sm">
                                         <div className={theme.bg} style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', opacity: 0.7 }} />
                                         <div className="flex justify-between items-center mb-2">
                                             <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{t("details.strategicRole")}</h4>
@@ -395,8 +399,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                     </div>
 
                                     {/* EVs & Nature */}
-                                    <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white dark:bg-zinc-800/50 shadow-sm">
-                                        <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3">
+                                    <div className="p-3 rounded-xl border border-zinc-200 dark:border-zinc-700/50 bg-white dark:bg-zinc-800/50 shadow-sm">
+                                        <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-2">
                                             {t("details.recommendedBuild")}
                                         </h4>
                                         <div className="flex flex-col gap-2">
@@ -426,8 +430,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 )}
 
                                 {/* Abilities */}
-                                <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
-                                    <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">{t("details.abilities")}</h4>
+                                <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
+                                    <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5">{t("details.abilities")}</h4>
                                     <div className="flex flex-wrap gap-2">
                                         {Object.entries(pokemon.abilities).map(([key, ability]) => (
                                             <AbilityBadge key={key} abilityKey={key} ability={ability as string} labels={{ primary: t("details.primary"), secondary: t("details.secondary"), hidden: t("details.hidden") }} />
@@ -436,18 +440,18 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 </div>
 
                                 {/* Base Stats */}
-                                <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
-                                    <h4 className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3.5">{t("details.baseStats")}</h4>
-                                    <div className="flex flex-col gap-2.5">
+                                <div className="p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
+                                    <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">{t("details.baseStats")}</h4>
+                                    <div className="flex flex-col gap-1.5">
                                         {Object.entries(stats).map(([key, value]) => (
-                                            <div key={key} className="flex items-center gap-2">
-                                                <span className="w-[52px] shrink-0 text-[11px] font-bold uppercase tracking-[0.05em] text-zinc-500 dark:text-zinc-400">
+                                            <div key={key} className="flex items-center gap-1.5">
+                                                <span className="w-10 shrink-0 text-[9px] font-bold uppercase tracking-[0.05em] text-zinc-500 dark:text-zinc-400">
                                                     {statLabels[key] || key}
                                                 </span>
                                                 <div className="h-1.5 flex-1 bg-zinc-200 dark:bg-zinc-800 rounded-sm overflow-hidden">
                                                     <div className="h-full rounded-sm" style={{ width: `${Math.min((value as number) / 2.55, 100)}%`, background: getStatColor(value as number) }} />
                                                 </div>
-                                                <span className="w-8 text-right text-xs font-bold tabular-nums text-zinc-900 dark:text-zinc-100">
+                                                <span className="w-7 text-right text-[10px] font-bold tabular-nums text-zinc-900 dark:text-zinc-100">
                                                     {value}
                                                 </span>
                                             </div>
@@ -458,7 +462,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
 
                             {/* RIGHT COLUMN */}
                             <div className="flex flex-col gap-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[calc(90vh-280px)] overflow-y-auto pr-1">
                                     {pokemon.moves && pokemon.moves.map((rawMove: MoveData | string, index: number) => {
                                         // Hydrate move data if it's a string
                                         let move = rawMove;
@@ -484,8 +488,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                             <div key={index} className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 transition-shadow hover:shadow-md">
 
                                                 {/* Move name + type dot */}
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-[15px] font-bold leading-tight text-zinc-900 dark:text-zinc-100">
+                                                <div className="flex items-start justify-between gap-2 mb-2">
+                                                    <span className="text-[15px] font-bold leading-tight text-zinc-900 dark:text-zinc-100 truncate min-w-0">
                                                         {moveName}
                                                     </span>
                                                     <TypeIcon type={moveType} size={18} />
@@ -526,7 +530,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 </div>
 
                                 {/* Synergies & Threats */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="max-h-[calc(90vh-300px)] overflow-y-auto pr-1">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {/* Best Teammates */}
                                     <div className="p-4 rounded-xl border border-green-200 dark:border-green-900/30 bg-green-50/50 dark:bg-green-900/10">
                                         <h4 className="text-xs font-extrabold text-green-800 dark:text-green-500 uppercase tracking-wider mb-3">{t("details.bestTeammates")}</h4>
@@ -574,6 +579,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </DialogContent >
