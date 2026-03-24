@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://pokemon-team-generator.vercel.app'),
   title: {
-    default: 'Pokemon Team Generator - Crea Equipos Competitivos',
+    default: 'Pokemon Team Generator',
     template: '%s | Pokemon Team Generator',
   },
   description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más. Crea tu equipo con movesets óptimos y estrategias de juego.',
@@ -55,8 +55,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'es_ES',
-    alternateLocale: 'en_US',
+    locale: 'en_US',
+    alternateLocale: 'es_ES',
     url: 'https://pokemon-team-generator.vercel.app',
     siteName: 'Pokemon Team Generator',
     title: 'Pokemon Team Generator - Crea Equipos Competitivos',
@@ -79,10 +79,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://pokemon-team-generator.vercel.app',
-    languages: {
-      'es': 'https://pokemon-team-generator.vercel.app',
-      'en': 'https://pokemon-team-generator.vercel.app/en',
-    },
   },
   category: 'gaming',
   classification: 'Gaming Tools',
@@ -143,7 +139,7 @@ export default function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"

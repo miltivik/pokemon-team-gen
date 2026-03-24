@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tier List y Viability Rankings",
-  description: "Explora las Tier Lists actualizadas de Pokemon Competitivo. Consulta estadísticas, rankings de viabilidad, y los Pokémon más jugados en el metajuego actual de Smogon y VGC.",
-  keywords: ["pokemon tier list", "pokemon viability rankings", "gen 9 ou tier list", "vgc tier list", "mejores pokemon competitivos"],
+  title: "Pokemon Tier List and Viability Rankings",
+  description:
+    "Explore Pokemon tier lists, viability rankings, and usage stats for Gen 9 OU, VGC 2026, UU, Ubers, and Monotype based on the current competitive metagame.",
+  keywords: [
+    "pokemon tier list",
+    "pokemon viability rankings",
+    "gen 9 ou tier list",
+    "vgc 2026 tier list",
+    "pokemon usage stats",
+  ],
+  alternates: {
+    canonical: "/tier-list",
+  },
 };
 
 export default function TierListLayout({

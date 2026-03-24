@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CURRENT_VGC_FORMAT, FORMATS, type FormatId } from "@/config/formats";
 
 export async function generateMetadata({
   params,
@@ -7,20 +8,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const rawFormat = resolvedParams.format;
-
-  // Create a nice display name like "Gen 9 OU" or "VGC 2026"
-  let displayFormat = rawFormat
-    .replace("-", " ")
-    .replace("gen9", "Gen 9 ")
-    .toUpperCase();
-
-  if (rawFormat === "gen9-ou") displayFormat = "Gen 9 OU";
-  if (rawFormat === "vgc") displayFormat = "VGC (Regulation F)";
+  const formatDefinition = FORMATS[rawFormat as FormatId];
+  const displayFormat = formatDefinition
+    ? formatDefinition.label.replace(/^\[Gen \d+\]\s*/, "").trim()
+    : rawFormat === "gen9-ou"
+      ? "Gen 9 OU"
+      : rawFormat === "vgc"
+        ? `VGC ${CURRENT_VGC_FORMAT === "gen9vgc2026f" ? "2026 Reg F" : "Guide"}`
+        : rawFormat.replace(/-/g, " ");
+  const isCuratedGuide = rawFormat === "gen9-ou" || rawFormat === "vgc";
 
   return {
-    title: `Guía Competitiva: ${displayFormat}`,
-    description: `Aprende a dominar el metajuego de ${displayFormat}. Mejores Pokémon, cores defensivos y ofensivos, counterplays y estrategias avanzadas recomendadas por expertos de Smogon y Pikalytics.`,
-    keywords: [`guia ${displayFormat}`, `pokemon ${rawFormat}`, `mejores equipos ${displayFormat}`, `estrategias pokemon showdown`, `como jugar ${displayFormat}`],
+    title: `${displayFormat} Guide, Meta Trends and Team Building Tips`,
+    description: `Learn the ${displayFormat} metagame with top threats, sample cores, matchup advice, and practical team building tips inspired by Smogon and Pikalytics data.`,
+    keywords: [
+      `${displayFormat} guide`,
+      `${displayFormat} team building`,
+      `${displayFormat} meta`,
+      `pokemon showdown ${rawFormat}`,
+      `best teams ${displayFormat}`,
+    ],
+    alternates: {
+      canonical: `/guides/${rawFormat}`,
+    },
+    robots: isCuratedGuide ? undefined : {
+      index: false,
+      follow: true,
+    },
   };
 }
 

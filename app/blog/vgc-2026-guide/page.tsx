@@ -1,10 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 
 export default function VGC2026GuideArticle() {
+    const articleJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: "VGC 2026 Meta Guide: Top Strategies and Teams",
+        description: "Master VGC 2026 with a practical guide to top teams, speed control, Trick Room, positioning, and the best doubles strategies.",
+        datePublished: "2026-03-05",
+        dateModified: "2026-03-05",
+        author: {
+            "@type": "Organization",
+            name: "Pokemon Team Generator",
+        },
+        publisher: {
+            "@type": "Organization",
+            name: "Pokemon Team Generator",
+            logo: {
+                "@type": "ImageObject",
+                url: "https://pokemon-team-generator.vercel.app/icons/logo-dark-nobg.png",
+            },
+        },
+        image: "https://pokemon-team-generator.vercel.app/og-image.png",
+        mainEntityOfPage: "https://pokemon-team-generator.vercel.app/blog/vgc-2026-guide",
+    };
+
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
+            <Script
+                id="article-jsonld-vgc-2026-guide"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+            />
             <main className="container mx-auto px-4 py-12 max-w-3xl">
                 <div className="mb-8">
                     <Link href="/blog" className="text-blue-600 dark:text-blue-400 hover:underline text-sm">

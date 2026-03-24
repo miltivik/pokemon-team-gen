@@ -1,10 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 
 export default function BestPokemonGen9OUArticle() {
+    const articleJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: "Top 10 Best Pokemon for Gen 9 OU in 2026",
+        description: "See the best Pokemon for Gen 9 OU in 2026, why they dominate the metagame, and how to build stronger Pokemon Showdown teams around them.",
+        datePublished: "2026-03-10",
+        dateModified: "2026-03-10",
+        author: {
+            "@type": "Organization",
+            name: "Pokemon Team Generator",
+        },
+        publisher: {
+            "@type": "Organization",
+            name: "Pokemon Team Generator",
+            logo: {
+                "@type": "ImageObject",
+                url: "https://pokemon-team-generator.vercel.app/icons/logo-dark-nobg.png",
+            },
+        },
+        image: "https://pokemon-team-generator.vercel.app/og-image.png",
+        mainEntityOfPage: "https://pokemon-team-generator.vercel.app/blog/best-pokemon-gen9-ou",
+    };
+
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
+            <Script
+                id="article-jsonld-best-pokemon-gen9-ou"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+            />
             <main className="container mx-auto px-4 py-12 max-w-3xl">
                 <div className="mb-8">
                     <Link href="/blog" className="text-blue-600 dark:text-blue-400 hover:underline text-sm">
