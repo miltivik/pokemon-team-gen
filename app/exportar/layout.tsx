@@ -1,19 +1,6 @@
-import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { TeamProvider } from "@/lib/team-context";
 
-export const metadata: Metadata = {
-  title: "Export Pokemon Showdown Team",
-  description:
-    "Copy or share your generated Pokemon Showdown team in export format. This page depends on your current generated team and is not indexed.",
-  robots: "noindex, follow",
-  alternates: {
-    canonical: "/exportar",
-  },
-};
-
-export default function ExportarLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+export default function ExportarLayout({ children }: { children: ReactNode }) {
+    return <TeamProvider>{children}</TeamProvider>;
 }

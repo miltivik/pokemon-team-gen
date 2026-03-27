@@ -9,14 +9,14 @@ import { SimilarTeams } from "@/components/SimilarTeams";
 import { Button } from "@/components/ui/button";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
-import { getExportText, getPokemonData } from "@/lib/showdown-data";
+import { getExportText } from "@/lib/export-text";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { analytics } from "@/lib/analytics";
 
 export default function EquipoPage() {
     const router = useRouter();
-    const { team, setTeam, gameplan, format, addTeam, generationOptions } = useTeam();
+    const { team, setTeam, gameplan, format, addTeam, generationOptions, isHydrated } = useTeam();
     const { t } = useTranslation();
     const [isRegenerating, setIsRegenerating] = useState(false);
 
@@ -29,9 +29,7 @@ export default function EquipoPage() {
 
     // Get team types for the new components
     const teamTypes = team
-        .map(p => getPokemonData(p.name))
-        .filter(Boolean)
-        .flatMap(p => p!.types)
+        .flatMap((pokemon) => pokemon.types || [])
         .filter((v, i, a) => a.indexOf(v) === i);
 
     const handleRegenerate = async () => {
@@ -97,7 +95,14 @@ export default function EquipoPage() {
         toast.success(t("app.teamSaved"));
     };
 
-    // Redirect to configure if no team
+    if (!isHydrated) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
     if (team.length === 0) {
         return (
             <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex flex-col items-center justify-center gap-4">

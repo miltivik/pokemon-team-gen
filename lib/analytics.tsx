@@ -8,29 +8,25 @@ import { usePathname } from "next/navigation";
 
 type EventParams = Record<string, string | number | boolean>;
 
-// Check if we're in the browser
-const isBrowser = typeof window !== "undefined";
-
 // Read GA4 ID from env — set NEXT_PUBLIC_GA_ID in .env.local
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
-// Track page views
-export function trackPageView(pagePath: string, pageTitle: string) {
-    if (!isBrowser) return;
-
-    console.log(`[Analytics] Page View: ${pagePath} - ${pageTitle}`);
-
-    // Google Analytics 4
-    if (GA_ID && typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("config", GA_ID, {
-            page_path: pagePath,
-            page_title: pageTitle,
-        });
+function getGtag() {
+    if (typeof window === "undefined") {
+        return null;
     }
 
+    return (window as any).gtag ?? null;
+}
 
-    // Custom event for internal tracking
-    trackEvent("page_view", {
+// Track page views
+export function trackPageView(pagePath: string, pageTitle: string) {
+    const gtag = getGtag();
+    if (!GA_ID || !gtag) {
+        return;
+    }
+
+    gtag("config", GA_ID, {
         page_path: pagePath,
         page_title: pageTitle,
     });
@@ -38,35 +34,12 @@ export function trackPageView(pagePath: string, pageTitle: string) {
 
 // Track custom events
 export function trackEvent(eventName: string, params?: EventParams) {
-    if (!isBrowser) return;
-
-    console.log(`[Analytics] Event: ${eventName}`, params);
-
-    // Google Analytics 4 event
-    if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", eventName, params);
+    const gtag = getGtag();
+    if (!gtag) {
+        return;
     }
 
-    // Store event for batch sending (optional)
-    const events = getStoredEvents();
-    events.push({
-        name: eventName,
-        params,
-        timestamp: new Date().toISOString(),
-    });
-    localStorage.setItem("analytics_events", JSON.stringify(events));
-}
-
-// Get stored events for batch processing
-function getStoredEvents(): Array<{ name: string; params?: EventParams; timestamp: string }> {
-    if (!isBrowser) return [];
-
-    try {
-        const stored = localStorage.getItem("analytics_events");
-        return stored ? JSON.parse(stored) : [];
-    } catch {
-        return [];
-    }
+    gtag("event", eventName, params);
 }
 
 // Predefined event trackers for the app
@@ -161,7 +134,7 @@ export function useAnalytics() {
 // Scroll depth tracker hook
 export function useScrollTracker(pageName: string) {
     const trackScroll = useCallback(() => {
-        if (!isBrowser) return;
+        if (typeof window === "undefined") return;
 
         const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollTop = window.scrollY;
@@ -185,7 +158,7 @@ export function useScrollTracker(pageName: string) {
     }, [pageName]);
 
     useEffect(() => {
-        if (!isBrowser) return;
+        if (typeof window === "undefined") return;
 
         window.addEventListener("scroll", trackScroll);
         return () => window.removeEventListener("scroll", trackScroll);

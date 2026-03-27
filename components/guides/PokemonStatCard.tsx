@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getPokemonSpriteUrl } from "@/lib/showdown-data";
+import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { CombinedPokemonData } from "@/lib/pikalytics";
 import Image from "next/image";
 import { ShieldAlert, Sparkles, Sword } from "lucide-react";

@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { analytics } from "@/lib/analytics";
 
 export default function AnalisisPage() {
-    const { team, gameplan, gameplanI18n, format } = useTeam();
+    const { team, gameplan, gameplanI18n, format, isHydrated } = useTeam();
     const { t, lang } = useTranslation();
 
     // Track page view
@@ -24,6 +24,28 @@ export default function AnalisisPage() {
     const handleGoHome = () => {
         // This won't be used since we have navigation
     };
+
+    if (!isHydrated) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    if (team.length === 0) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex flex-col items-center justify-center gap-4">
+                <div className="text-center space-y-4">
+                    <h1 className="text-2xl font-bold dark:text-white">{t("app.noTeam")}</h1>
+                    <p className="text-zinc-500 dark:text-zinc-400">{t("app.generateFirst")}</p>
+                </div>
+                <Link href="/configurar">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">{t("nav.configurar")}</Button>
+                </Link>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">

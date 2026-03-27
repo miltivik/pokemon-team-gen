@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/i18n";
-import { useTeam } from "@/lib/team-context";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -20,7 +19,6 @@ interface NavbarProps {
 export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: NavbarProps) {
     const { t, lang, setLang } = useTranslation();
     const pathname = usePathname();
-    const { format } = useTeam();
     const { theme } = useTheme();
     const [guidesOpen, setGuidesOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -65,6 +63,7 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
                                 alt="Logo"
                                 width={32}
                                 height={32}
+                                sizes="32px"
                                 className="w-8 h-8 flex-shrink-0 dark:hidden"
                             />
                             <Image
@@ -72,6 +71,7 @@ export function Navbar({ activeTab = "home", onTabChange, hasTeam = false }: Nav
                                 alt="Logo"
                                 width={32}
                                 height={32}
+                                sizes="32px"
                                 className="w-8 h-8 flex-shrink-0 hidden dark:block"
                             />
                             <span className="font-bold text-zinc-900 dark:text-zinc-100 hidden lg:inline whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">

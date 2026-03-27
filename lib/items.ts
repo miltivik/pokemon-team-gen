@@ -2,6 +2,24 @@
  * Utility functions for Pokémon items and sprites.
  * Handles ID normalization and URL generation for sprites.
  */
+import itemsRaw from "../data/items.json";
+
+const items = itemsRaw as Record<string, { name: string; desc?: string; shortDesc?: string }>;
+
+/**
+ * Normalizes text for resilient item lookups.
+ * Unlike `toID`, this strips diacritics first so translated names like
+ * "Energía Potenciadora" can still be matched against aliases.
+ */
+function normalizeLookupText(text: string): string {
+    if (typeof text !== "string") return "";
+
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+}
 
 /**
  * Converts a name string to an ID string.
@@ -37,77 +55,107 @@ export function getItemSpriteUrl(itemName: string): string {
 }
 
 /**
- * Common item name mappings to handle differences between data sources.
- * Maps showdown names to pokeapi names when they differ.
+ * Input aliases that should resolve to the canonical item name used by the
+ * Showdown/PokeAPI sprite sources.
  */
-const ITEM_NAME_MAPPING: Record<string, string> = {
-    'heavy-duty boots': 'heavy-duty-boots',
-    'choice specs': 'choice-specs',
-    'choice scarf': 'choice-scarf',
-    'choice band': 'choice-band',
-    'assault vest': 'assault-vest',
-    'life orb': 'life-orb',
-    'lefties': 'leftovers',
-    'leftovers': 'leftovers',
-    'lucky punch': 'lucky-punch',
-    'light ball': 'light-ball',
-    'thick club': 'thick-club',
-    'focus sash': 'focus-sash',
-    'focus band': 'focus-band',
-    'zoom lens': 'zoom-lens',
-    'wide lens': 'wide-lens',
-    'scope lens': 'scope-lens',
-    'muscle band': 'muscle-band',
-    'wise glasses': 'wise-glasses',
-    'lagging tail': 'lagging-tail',
-    'full incense': 'full-incense',
-    'lax incense': 'lax-incense',
-    'sea incense': 'sea-incense',
-    'rose incense': 'rose-incense',
-    'wave incense': 'wave-incense',
-    'rock incense': 'rock-incense',
-    'odd incense': 'odd-incense',
-    'pure incense': 'pure-incense',
-    '_protector': 'protector',
-    _electirizer: 'electirizer',
-    _magmarizer: 'magmarizer',
-    _deepseascale: 'deep-sea-scale',
-    _deepseatooth: 'deep-sea-tooth',
-    _thunderstone: 'thunder-stone',
-    _waterstone: 'water-stone',
-    _firestone: 'fire-stone',
-    _leafstone: 'leaf-stone',
-    _moonstone: 'moon-stone',
-    _sunstone: 'sun-stone',
-    _shinystone: 'shiny-stone',
-    _duskstone: 'dusk-stone',
-    _dawnstone: 'dawn-stone',
-    _ovalstone: 'oval-stone',
-    _happinycharm: 'happiny-charm',
-    _ovalcharm: 'oval-charm',
-    _catchcharm: 'catch-charm',
-    _racegloves: 'race-gloves',
-    _poweranklet: 'power-anklet',
-    _powerband: 'power-band',
-    _powerbelt: 'power-belt',
-    _powerbracer: 'power-bracer',
-    _powerlens: 'power-lens',
-    _powerweight: 'power-weight',
+const ITEM_NAME_ALIAS_MAPPING: Record<string, string> = {
+    energyboost: "Booster Energy",
+    energiapotenciadora: "Booster Energy",
 };
+
+/**
+ * Canonical sprite IDs for items whose remote filenames differ from the
+ * straightforward kebab/showdown normalization.
+ *
+ * Keys use `toID(itemName)` so aliases like "Lefties" can be normalized too.
+ */
+const ITEM_SPRITE_ID_MAPPING: Record<string, string[]> = {
+    lefties: ['leftovers'],
+    leftovers: ['leftovers'],
+    energyboost: ['booster-energy', 'boosterenergy'],
+    energiapotenciadora: ['booster-energy', 'boosterenergy'],
+    boosterenergy: ['booster-energy', 'boosterenergy'],
+    deepseascale: ['deep-sea-scale', 'deepseascale'],
+    deepseatooth: ['deep-sea-tooth', 'deepseatooth'],
+    thickclub: ['thick-club', 'thickclub'],
+    lightball: ['light-ball', 'lightball'],
+    luckypunch: ['lucky-punch', 'luckypunch'],
+    focussash: ['focus-sash', 'focussash'],
+    focusband: ['focus-band', 'focusband'],
+    choicespecs: ['choice-specs', 'choicespecs'],
+    choicescarf: ['choice-scarf', 'choicescarf'],
+    choiceband: ['choice-band', 'choiceband'],
+    assaultvest: ['assault-vest', 'assaultvest'],
+    lifeorb: ['life-orb', 'lifeorb'],
+    heavydutyboots: ['heavy-duty-boots', 'heavydutyboots'],
+    widelens: ['wide-lens', 'widelens'],
+    zoomlens: ['zoom-lens', 'zoomlens'],
+    scopelens: ['scope-lens', 'scopelens'],
+    muscleband: ['muscle-band', 'muscleband'],
+    wiseglasses: ['wise-glasses', 'wiseglasses'],
+    laggingtail: ['lagging-tail', 'laggingtail'],
+    fullincense: ['full-incense', 'fullincense'],
+    laxincense: ['lax-incense', 'laxincense'],
+    seaincense: ['sea-incense', 'seaincense'],
+    roseincense: ['rose-incense', 'roseincense'],
+    waveincense: ['wave-incense', 'waveincense'],
+    rockincense: ['rock-incense', 'rockincense'],
+    oddincense: ['odd-incense', 'oddincense'],
+    pureincense: ['pure-incense', 'pureincense'],
+    thunderstone: ['thunder-stone', 'thunderstone'],
+    waterstone: ['water-stone', 'waterstone'],
+    firestone: ['fire-stone', 'firestone'],
+    leafstone: ['leaf-stone', 'leafstone'],
+    moonstone: ['moon-stone', 'moonstone'],
+    sunstone: ['sun-stone', 'sunstone'],
+    shinystone: ['shiny-stone', 'shinystone'],
+    duskstone: ['dusk-stone', 'duskstone'],
+    dawnstone: ['dawn-stone', 'dawnstone'],
+    ovalstone: ['oval-stone', 'ovalstone'],
+    happinycharm: ['happiny-charm', 'happinycharm'],
+    ovalcharm: ['oval-charm', 'ovalcharm'],
+    catchcharm: ['catch-charm', 'catchcharm'],
+    racegloves: ['race-gloves', 'racegloves'],
+    poweranklet: ['power-anklet', 'poweranklet'],
+    powerband: ['power-band', 'powerband'],
+    powerbelt: ['power-belt', 'powerbelt'],
+    powerbracer: ['power-bracer', 'powerbracer'],
+    powerlens: ['power-lens', 'powerlens'],
+    powerweight: ['power-weight', 'powerweight'],
+    protector: ['protector'],
+    electirizer: ['electirizer'],
+    magmarizer: ['magmarizer'],
+};
+
+/**
+ * Resolves a display label, translated label, or alias to the canonical item
+ * name stored in our local dataset.
+ */
+function getCanonicalItemName(itemName: string): string {
+    if (!itemName) return "";
+
+    const normalized = normalizeLookupText(itemName);
+    const aliasedName = ITEM_NAME_ALIAS_MAPPING[normalized];
+    if (aliasedName) return aliasedName;
+
+    return items[normalized]?.name || itemName;
+}
 
 /**
  * Converts item name to PokeAPI item ID format.
  * Handles special cases where names differ between sources.
  */
-function toPokeAPIItemId(itemName: string): string {
-    const kebabId = toKebabCase(itemName);
+function getSpriteIdCandidates(itemName: string): string[] {
+    const canonicalName = getCanonicalItemName(itemName);
+    const showdownId = toID(canonicalName);
+    const kebabId = toKebabCase(canonicalName);
+    const rawLookupId = normalizeLookupText(itemName);
+    const mapped = [
+        ...(ITEM_SPRITE_ID_MAPPING[showdownId] || []),
+        ...(ITEM_SPRITE_ID_MAPPING[rawLookupId] || []),
+    ];
 
-    // Check if we have a mapping
-    if (ITEM_NAME_MAPPING[kebabId]) {
-        return ITEM_NAME_MAPPING[kebabId];
-    }
-
-    return kebabId;
+    return [...new Set([kebabId, showdownId, ...mapped].filter(Boolean))];
 }
 
 /**
@@ -119,18 +167,11 @@ function toPokeAPIItemId(itemName: string): string {
  */
 export function getItemSpriteUrls(itemName: string): string[] {
     if (!itemName) return [];
-    const showdownId = toID(itemName);
-    const kebabId = toKebabCase(itemName);
-    const pokeapiId = toPokeAPIItemId(itemName);
+    const spriteIds = getSpriteIdCandidates(itemName);
 
     return [
-        // Showdown CDN (primary source - kebab case)
-        `https://play.pokemonshowdown.com/sprites/itemicons/${kebabId}.png`,
-        // Showdown CDN (fallback - no spaces/hyphens)
-        `https://play.pokemonshowdown.com/sprites/itemicons/${showdownId}.png`,
-        // PokéSprite GitHub (secondary source)
-        `https://raw.githubusercontent.com/msikma/pokesprite/master/items/hold-item/${kebabId}.png`,
-        // PokeAPI GitHub (tertiary source)
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${pokeapiId}.png`,
+        ...spriteIds.map((spriteId) => `https://play.pokemonshowdown.com/sprites/itemicons/${spriteId}.png`),
+        ...spriteIds.map((spriteId) => `https://raw.githubusercontent.com/msikma/pokesprite/master/items/hold-item/${spriteId}.png`),
+        ...spriteIds.map((spriteId) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${spriteId}.png`),
     ];
 }

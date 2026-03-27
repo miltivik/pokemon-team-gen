@@ -5,6 +5,7 @@ import movesRaw from '../data/moves.json';
 import abilitiesRaw from '../data/abilities.json';
 import itemsRaw from '../data/items.json';
 import translationsEsRaw from '../data/translations-es.json';
+export { getPokemonSpriteUrl } from './pokemon-sprites';
 
 export interface PokedexEntry {
     num: number;
@@ -576,103 +577,4 @@ export function getPokemonRole(name: string): Role {
     if (hp > 90 && (def > 80 || spd > 80)) return 'Tank';
 
     return 'Support';
-}
-
-/**
- * PokeAPI form IDs for regional variants and special forms.
- * Maps Showdown-style names to their PokeAPI numeric IDs for official artwork.
- */
-const VARIANT_POKEAPI_IDS: Record<string, number> = {
-    // Alolan forms
-    'Rattata-Alola': 10091, 'Raticate-Alola': 10092, 'Raichu-Alola': 10100,
-    'Sandshrew-Alola': 10101, 'Sandslash-Alola': 10102, 'Vulpix-Alola': 10103,
-    'Ninetales-Alola': 10104, 'Diglett-Alola': 10105, 'Dugtrio-Alola': 10106,
-    'Meowth-Alola': 10107, 'Persian-Alola': 10108, 'Geodude-Alola': 10109,
-    'Graveler-Alola': 10110, 'Golem-Alola': 10111, 'Grimer-Alola': 10112,
-    'Muk-Alola': 10113, 'Exeggutor-Alola': 10114, 'Marowak-Alola': 10115,
-    // Galarian forms
-    'Meowth-Galar': 10161, 'Ponyta-Galar': 10162, 'Rapidash-Galar': 10163,
-    'Slowpoke-Galar': 10164, 'Slowbro-Galar': 10165, "Farfetch'd-Galar": 10166,
-    'Weezing-Galar': 10167, 'Articuno-Galar': 10169, 'Zapdos-Galar': 10170,
-    'Moltres-Galar': 10171, 'Slowking-Galar': 10172, 'Corsola-Galar': 10173,
-    'Zigzagoon-Galar': 10174, 'Linoone-Galar': 10175, 'Darumaka-Galar': 10176,
-    'Darmanitan-Galar': 10177, 'Darmanitan-Galar-Zen': 10178, 'Yamask-Galar': 10179,
-    'Stunfisk-Galar': 10180, "Mr. Mime-Galar": 10168,
-    // Hisuian forms
-    'Growlithe-Hisui': 10229, 'Arcanine-Hisui': 10230, 'Voltorb-Hisui': 10231,
-    'Electrode-Hisui': 10232, 'Typhlosion-Hisui': 10233, 'Qwilfish-Hisui': 10234,
-    'Sneasel-Hisui': 10235, 'Samurott-Hisui': 10236, 'Lilligant-Hisui': 10237,
-    'Zorua-Hisui': 10238, 'Zoroark-Hisui': 10239, 'Braviary-Hisui': 10240,
-    'Sliggoo-Hisui': 10241, 'Goodra-Hisui': 10242, 'Avalugg-Hisui': 10243,
-    'Decidueye-Hisui': 10244,
-    // Paldean forms
-    'Wooper-Paldea': 10253, 'Tauros-Paldea-Combat': 10250,
-    'Tauros-Paldea-Blaze': 10251, 'Tauros-Paldea-Aqua': 10252,
-    // Origin / Primal forms
-    'Dialga-Origin': 10245, 'Palkia-Origin': 10246, 'Giratina-Origin': 10007,
-    'Kyogre-Primal': 10077, 'Groudon-Primal': 10078,
-    // Therian forms
-    'Tornadus-Therian': 10019, 'Thundurus-Therian': 10020,
-    'Landorus-Therian': 10021, 'Enamorus-Therian': 10249,
-    // Special forms
-    'Magearna-Original': 10147,
-    // Gmax forms
-    'Venusaur-Gmax': 10195, 'Charizard-Gmax': 10196, 'Blastoise-Gmax': 10197,
-    'Butterfree-Gmax': 10198, 'Pikachu-Gmax': 10199, 'Meowth-Gmax': 10200,
-    'Machamp-Gmax': 10201, 'Gengar-Gmax': 10202, 'Kingler-Gmax': 10203,
-    'Lapras-Gmax': 10204, 'Eevee-Gmax': 10205, 'Snorlax-Gmax': 10206,
-    'Garbodor-Gmax': 10207, 'Melmetal-Gmax': 10208, 'Rillaboom-Gmax': 10209,
-    'Cinderace-Gmax': 10210, 'Inteleon-Gmax': 10211, 'Corviknight-Gmax': 10212,
-    'Orbeetle-Gmax': 10213, 'Drednaw-Gmax': 10214, 'Coalossal-Gmax': 10215,
-    'Flapple-Gmax': 10216, 'Appletun-Gmax': 10217, 'Sandaconda-Gmax': 10218,
-    'Centiskorch-Gmax': 10220, 'Hatterene-Gmax': 10221, 'Grimmsnarl-Gmax': 10222,
-    'Alcremie-Gmax': 10223, 'Copperajah-Gmax': 10224, 'Duraludon-Gmax': 10225,
-    'Urshifu-Rapid-Strike-Gmax': 10227, 'Toxtricity-Low-Key-Gmax': 10228,
-};
-
-/**
- * Generates a sprite URL for a Pokémon.
- * Uses PokeAPI Official Artwork for all forms (high quality).
- * For regional variants, uses a pre-built map of PokeAPI form IDs.
- * Falls back to PokemonDB artwork for unmapped variants.
- */
-export function getPokemonSpriteUrl(pokemon: any): string {
-    // Handle both cases: passing the full object or just the string name
-    const name: string = typeof pokemon === 'string' ? pokemon : (pokemon?.name || '');
-    let num: number = pokemon?.num || 0;
-
-    if (!name) return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png';
-
-    if (!num) {
-        const pData = getPokemonData(name);
-        if (pData) num = pData.num;
-    }
-
-    // Check the variant map first (covers Alolan, Galarian, Hisuian, Paldean, Origin, Primal, Therian, Gmax)
-    const variantId = VARIANT_POKEAPI_IDS[name];
-    if (variantId) {
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${variantId}.png`;
-    }
-
-    // Check if it's a variant not in our map (e.g., fan-made Megas)
-    const isVariant = name.includes('-') &&
-        (name.includes('-Alola') || name.includes('-Galar') ||
-            name.includes('-Hisui') || name.includes('-Paldea') ||
-            name.includes('-Mega') || name.includes('-Primal') ||
-            name.includes('-Origin') || name.includes('-Gmax') ||
-            name.includes('-Therian'));
-
-    if (!isVariant) {
-        // High quality official artwork for base forms
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${num}.png`;
-    }
-
-    // Fallback for unmapped variants: PokeDB artwork
-    let slug = name.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    if (slug.endsWith('-alola')) slug = slug.replace('-alola', '-alolan');
-    else if (slug.endsWith('-galar')) slug = slug.replace('-galar', '-galarian');
-    else if (slug.endsWith('-hisui')) slug = slug.replace('-hisui', '-hisuian');
-    else if (slug.endsWith('-paldea')) slug = slug.replace('-paldea', '-paldean');
-
-    return `https://img.pokemondb.net/artwork/large/${slug}.jpg`;
 }

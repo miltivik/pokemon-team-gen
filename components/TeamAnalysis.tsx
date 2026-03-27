@@ -1,11 +1,13 @@
 "use client";
 
 import { useTranslation } from "@/lib/i18n";
-import { type PokedexEntry, getPokemonData, getPokemonSpriteUrl } from "@/lib/showdown-data";
+import type { PokedexEntry } from "@/lib/showdown-data";
 import { type GamePhase } from "@/lib/dynamic-builder";
 import { getWeaknesses } from "@/lib/type-chart";
 import { FormatId, FORMATS } from "@/config/formats";
 import { AdResponsive, AdInline, AdBanner } from "@/components/monetization/Ads";
+import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
+import { getPokemonSummary } from "@/lib/pokemon-summary";
 
 interface TeamAnalysisProps {
     team: PokedexEntry[];
@@ -40,9 +42,8 @@ export function TeamAnalysis({ team, gameplan, format, onGoHome }: TeamAnalysisP
     // Calculate team weaknesses
     const weaknessCounts: Record<string, number> = {};
     for (const mon of team) {
-        const data = getPokemonData(mon.name);
-        if (!data) continue;
-        for (const w of getWeaknesses(data.types)) {
+        const types = mon.types ?? getPokemonSummary(mon.name)?.types ?? [];
+        for (const w of getWeaknesses(types)) {
             weaknessCounts[w] = (weaknessCounts[w] || 0) + 1;
         }
     }
@@ -72,28 +73,25 @@ export function TeamAnalysis({ team, gameplan, format, onGoHome }: TeamAnalysisP
                     {t("analysis.teamRoles")}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {team.map((mon, i) => {
-                        const data = getPokemonData(mon.name);
-                        return (
-                            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={getPokemonSpriteUrl(data || { name: mon.name, num: 0 })}
-                                    alt={mon.name}
-                                    className="w-12 h-12 object-contain"
-                                />
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-sm dark:text-white truncate">{mon.name}</p>
-                                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-                                        {(mon as any).role || t("analysis.pokemonRole")}
-                                    </p>
-                                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
-                                        {((mon as any).moves || []).slice(0, 2).join(" / ")}
-                                    </p>
-                                </div>
+                    {team.map((mon, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={getPokemonSpriteUrl(mon)}
+                                alt={mon.name}
+                                className="w-12 h-12 object-contain"
+                            />
+                            <div className="flex-1 min-w-0">
+                                <p className="font-bold text-sm dark:text-white truncate">{mon.name}</p>
+                                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
+                                    {(mon as any).role || t("analysis.pokemonRole")}
+                                </p>
+                                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
+                                    {((mon as any).moves || []).slice(0, 2).join(" / ")}
+                                </p>
                             </div>
-                        );
-                    })}
+                        </div>
+                    ))}
                 </div>
             </section>
 
@@ -111,6 +109,7 @@ export function TeamAnalysis({ team, gameplan, format, onGoHome }: TeamAnalysisP
                     color="rose"
                     tips={[t("analysis.earlyTip1"), t("analysis.earlyTip2"), t("analysis.earlyTip3")]}
                     t={t}
+                    team={team}
                 />
 
                 {/* Mid Game */}
@@ -121,6 +120,7 @@ export function TeamAnalysis({ team, gameplan, format, onGoHome }: TeamAnalysisP
                     color="blue"
                     tips={[t("analysis.midTip1"), t("analysis.midTip2"), t("analysis.midTip3")]}
                     t={t}
+                    team={team}
                 />
 
                 {/* Late Game */}
@@ -131,6 +131,7 @@ export function TeamAnalysis({ team, gameplan, format, onGoHome }: TeamAnalysisP
                     color="emerald"
                     tips={[t("analysis.lateTip1"), t("analysis.lateTip2"), t("analysis.lateTip3")]}
                     t={t}
+                    team={team}
                 />
             </section>
 
@@ -230,6 +231,7 @@ function GamePhaseCard({
     color,
     tips,
     t,
+    team,
 }: {
     phase: GamePhase;
     title: string;
@@ -237,9 +239,14 @@ function GamePhaseCard({
     color: "rose" | "blue" | "emerald";
     tips: string[];
     t: (key: string) => string;
+    team: PokedexEntry[];
 }) {
     const c = colorMap[color];
-    const keyData = getPokemonData(phase.keyPokemon);
+    const keyData =
+        team.find((pokemon) => pokemon.name === phase.keyPokemon) ??
+        (getPokemonSummary(phase.keyPokemon)
+            ? { name: phase.keyPokemon, ...getPokemonSummary(phase.keyPokemon)! }
+            : null);
 
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">

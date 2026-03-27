@@ -28,7 +28,7 @@ function isValidTemplate(template: string): template is TemplateId {
 export default function ConfigurarPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { format, setFormat, addTeam, team } = useTeam();
+    const { format, setFormat, addTeam, team, isHydrated } = useTeam();
     const { t } = useTranslation();
 
     // Read format and template from URL query parameters
@@ -55,10 +55,10 @@ export default function ConfigurarPage() {
 
     // Apply URL format to context when initialFormat changes
     useEffect(() => {
-        if (initialFormat) {
+        if (isHydrated && initialFormat) {
             setFormat(initialFormat);
         }
-    }, [initialFormat, setFormat]);
+    }, [initialFormat, isHydrated, setFormat]);
 
     // Track page view
     useEffect(() => {

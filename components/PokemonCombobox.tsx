@@ -3,11 +3,8 @@
 import * as React from "react";
 import { Check, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-    getPokemonData,
-    getAllPokemonNames,
-    getPokemonSpriteUrl,
-} from "@/lib/showdown-data";
+import { getAllPokemonNames, getPokemonSummary } from "@/lib/pokemon-summary";
+import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
@@ -23,14 +20,9 @@ export function PokemonCombobox({ value, onChange, placeholder, className }: Pok
     const { t } = useTranslation();
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState(value || "");
-    const [allPokemon, setAllPokemon] = React.useState<string[]>([]);
+    const [allPokemon] = React.useState<string[]>(() => getAllPokemonNames());
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
-
-    // Load pokemon names on mount
-    React.useEffect(() => {
-        setAllPokemon(getAllPokemonNames());
-    }, []);
 
     // Sync query with value when value changes externally
     React.useEffect(() => {
@@ -128,7 +120,7 @@ export function PokemonCombobox({ value, onChange, placeholder, className }: Pok
                     ) : (
                         <div className="p-1">
                             {filteredPokemon.map((name) => {
-                                const data = getPokemonData(name);
+                                const data = getPokemonSummary(name);
                                 const isSelected = value === name;
                                 
                                 return (

@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useRef, useCallback, useMemo } from "react";
-import { X, Swords, Sparkles } from "lucide-react";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
@@ -54,13 +52,14 @@ function translateCategory(category: string, tFn: (key: string) => string): stri
 
 interface PokemonDetailsDialogProps {
     pokemon: PokedexEntry & {
-        moves?: MoveData[] | string[];
+        moves?: Array<MoveData | string>;
         analysis?: PokemonAnalysis;
     };
     item?: string;
     format?: string;
-    onUpdate?: (newMon: PokedexEntry & { moves?: MoveData[] | string[]; analysis?: PokemonAnalysis; item?: string; nature?: string; evs?: string }) => void;
-    children: React.ReactNode;
+    onUpdate?: (newMon: PokedexEntry & { moves?: Array<MoveData | string>; analysis?: PokemonAnalysis; item?: string; nature?: string; evs?: string }) => void;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -184,12 +183,12 @@ function ItemBadge({ item, label }: { item: string; label: string }) {
     );
 }
 
-export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children }: PokemonDetailsDialogProps) {
-    const [open, setOpen] = useState(false);
+export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, onOpenChange }: PokemonDetailsDialogProps) {
     const { t, lang } = useTranslation();
+    const pokemonTypes = pokemon.types ?? [];
+    const pokemonAbilities = pokemon.abilities ?? {};
     const stats = pokemon.baseStats || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
     const bst = Object.values(stats).reduce((a, b) => (a as number) + (b as number), 0);
-    const analysis = (pokemon.analysis || {}) as Partial<PokemonAnalysis>;
 
     const availableRoles = useMemo(() => {
         if (!format) return [];
@@ -206,10 +205,11 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
             const evsString = Object.entries(set.evs)
                 .map(([stat, val]) => `${val} ${statMap[stat] || stat}`)
                 .join(' / ');
+            const hydratedMoves = set.moves.map((move) => getMoveData(move) ?? move);
 
             const updated = {
                 ...pokemon,
-                moves: set.moves,
+                moves: hydratedMoves,
                 item: set.item,
                 nature: set.nature,
                 evs: evsString,
@@ -224,7 +224,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
         }
     };
 
-    const primaryType = pokemon.types[0].toLowerCase();
+    const primaryType = pokemonTypes[0]?.toLowerCase() || "normal";
 
     const theme = getTypeTheme(primaryType);
 
@@ -257,17 +257,14 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
 
     return (
         <>
-            <div onClick={() => setOpen(true)}>
-                {children}
-            </div>
             {open && (
                 <div
                     className="fixed inset-0 z-[9998] bg-black/80 backdrop-blur-sm"
-                    onClick={() => setOpen(false)}
+                    onClick={() => onOpenChange(false)}
                     aria-hidden="true"
                 />
             )}
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={onOpenChange}>
                 <DialogContent
                     modal={false}
                     className="border-0 shadow-2xl rounded-2xl bg-transparent max-w-4xl w-full mx-auto p-0 gap-0"
@@ -302,7 +299,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
                                         <span style={{ fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.1em' }}>
-                                            #{pokemon.num.toString().padStart(3, '0')}
+                                            #{(pokemon.num ?? 0).toString().padStart(3, '0')}
                                         </span>
                                         <Badge variant="outline" className="border-white/20 text-white bg-white/10" style={{ fontSize: '10px', padding: '2px 6px', height: '18px', lineHeight: '14px' }}>
                                             Gen {getPokemonGeneration(pokemon.name)}
@@ -312,7 +309,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                         {pokemon.name}
                                     </DialogTitle>
                                     <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '4px' }}>
-                                        {pokemon.types.map((type) => (
+                                        {pokemonTypes.map((type) => (
                                             <Badge
                                                 key={type}
                                                 className={`${getTypeColor(type.toLowerCase())} text-white border-0`}
@@ -433,7 +430,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                                 <div className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
                                     <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5">{t("details.abilities")}</h4>
                                     <div className="flex flex-wrap gap-2">
-                                        {Object.entries(pokemon.abilities).map(([key, ability]) => (
+                                        {Object.entries(pokemonAbilities).map(([key, ability]) => (
                                             <AbilityBadge key={key} abilityKey={key} ability={ability as string} labels={{ primary: t("details.primary"), secondary: t("details.secondary"), hidden: t("details.hidden") }} />
                                         ))}
                                     </div>
@@ -463,7 +460,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, children
                             {/* RIGHT COLUMN */}
                             <div className="flex flex-col gap-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[calc(90vh-280px)] overflow-y-auto pr-1">
-                                    {pokemon.moves && pokemon.moves.map((rawMove: MoveData | string, index: number) => {
+                                    {(pokemon.moves || []).map((rawMove: MoveData | string, index: number) => {
                                         // Hydrate move data if it's a string
                                         let move = rawMove;
                                         if (typeof rawMove === 'string') {

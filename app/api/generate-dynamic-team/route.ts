@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateDynamicTeam } from '@/lib/dynamic-builder';
 import { TemplateId } from '@/config/templates';
+import { getMoveData, getPokemonData } from '@/lib/showdown-data';
 import { z } from 'zod';
 
 const generateTeamSchema = z.object({
@@ -13,6 +14,31 @@ const generateTeamSchema = z.object({
     templateId: z.string().optional().default('balanced'),
     lang: z.enum(['en', 'es']).optional().default('en'),
 });
+
+function hydrateTeamForClient(team: any[]) {
+    return team.map((member: any) => {
+        const pokemonData = getPokemonData(member.name);
+        const moves = Array.isArray(member.moves)
+            ? member.moves.map((move: any) => {
+                if (typeof move !== 'string') {
+                    return move;
+                }
+
+                return getMoveData(move) ?? move;
+            })
+            : [];
+
+        return {
+            ...pokemonData,
+            ...member,
+            num: member.num ?? pokemonData?.num ?? 0,
+            types: member.types ?? pokemonData?.types ?? [],
+            baseStats: member.baseStats ?? pokemonData?.baseStats ?? { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+            abilities: member.abilities ?? pokemonData?.abilities ?? {},
+            moves,
+        };
+    });
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -47,7 +73,10 @@ export async function POST(req: NextRequest) {
             lang
         });
 
-        return NextResponse.json(result);
+        return NextResponse.json({
+            ...result,
+            team: hydrateTeamForClient(result.team),
+        });
     } catch (error) {
         console.error('Error generating dynamic team:', error);
         return NextResponse.json(

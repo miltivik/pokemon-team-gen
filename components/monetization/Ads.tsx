@@ -35,7 +35,7 @@ export function MonetizationScripts() {
       {CONFIG.ezoic.ezoicId && (
         <Script
           id="ezoic-init"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           src={`https://www.googletagmanager.com/gtag/js?id=${CONFIG.ezoic.ezoicId}`}
         />
       )}
@@ -50,19 +50,46 @@ declare global {
   }
 }
 
+function useDeferredAdMount(delayMs: number = 1200) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof globalThis.setTimeout> | undefined;
+    let idleId: number | undefined;
+    let cancelled = false;
+
+    const activate = () => {
+      if (!cancelled) {
+        setMounted(true);
+      }
+    };
+
+    if ("requestIdleCallback" in window) {
+      idleId = (window as any).requestIdleCallback(activate, { timeout: delayMs });
+    } else {
+      timeoutId = globalThis.setTimeout(activate, delayMs);
+    }
+
+    return () => {
+      cancelled = true;
+      if (timeoutId) {
+        globalThis.clearTimeout(timeoutId);
+      }
+      if (idleId && "cancelIdleCallback" in window) {
+        (window as any).cancelIdleCallback(idleId);
+      }
+    };
+  }, [delayMs]);
+
+  return mounted;
+}
+
 /**
  * Banner horizontal (728x90) - Header/Footer
  */
 export function AdBanner() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useDeferredAdMount();
   const pushedRef = useRef(false);
-
-  useEffect(() => {
-    // Evitar warning de eslint con un setTimeout o ignorando
-    // pero la forma correcta es un simple efecto
-    const timer = setTimeout(() => setMounted(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     if (mounted && !pushedRef.current && CONFIG.adsense.publisherId) {
@@ -103,13 +130,8 @@ export function AdBanner() {
  * Rectángulo (300x250) - Sidebar
  */
 export function AdRectangle() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useDeferredAdMount();
   const pushedRef = useRef(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     if (mounted && !pushedRef.current && CONFIG.adsense.publisherId) {
@@ -148,13 +170,8 @@ export function AdRectangle() {
  * Banner responsive - Se adapta al contenedor
  */
 export function AdResponsive() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useDeferredAdMount();
   const pushedRef = useRef(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 10);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     if (mounted && !pushedRef.current && CONFIG.adsense.publisherId) {
@@ -222,13 +239,14 @@ export function KoFiButton() {
       <img
         src="/icons/support_me_on_kofi_dark.png"
         alt="Support me on Ko-Fi"
+        loading="lazy"
         className="hidden md:block drop-shadow-lg"
         style={{ height: '36px', width: 'auto' }}
       />
 
       {/* Ícono circular para Móvil (SVG) */}
       <div className="md:hidden flex items-center justify-center w-10 h-10 bg-[#13C3FF] text-white rounded-full shadow-lg border border-black/10 dark:border-white/10 group-hover:bg-[#00b0ec] transition-colors">
-        <img src="/icons/kofi_logo.svg" alt="Ko-fi" className="w-6 h-6 object-contain" />
+        <img src="/icons/kofi_logo.svg" alt="Ko-fi" className="w-6 h-6 object-contain" loading="lazy" />
       </div>
     </a>
   );
@@ -254,6 +272,7 @@ export function KoFiWidget() {
         <img
           src="/icons/support_me_on_kofi_dark.png"
           alt="Support me on Ko-Fi"
+          loading="lazy"
           style={{ height: '36px', width: 'auto' }}
         />
       </a>

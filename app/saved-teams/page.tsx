@@ -10,7 +10,7 @@ import { Pencil, Check, X } from "lucide-react";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
 import { useTeam } from "@/lib/team-context";
-import { getPokemonData } from "@/lib/showdown-data";
+import { getPokemonSummary } from "@/lib/pokemon-summary";
 import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
 
@@ -25,7 +25,7 @@ interface SavedTeam {
 export default function SavedTeamsPage() {
     const { t } = useTranslation();
     const router = useRouter();
-    const { setTeam, setFormat, setGameplan } = useTeam();
+    const { setTeam, setFormat } = useTeam();
     const [savedTeams, setSavedTeams] = useState<SavedTeam[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -204,8 +204,7 @@ export default function SavedTeamsPage() {
                                 <CardContent>
                                     <div className="flex flex-wrap gap-2">
                                         {team.team.slice(0, 6).map((pokemon: any, index: number) => {
-                                            const pokeData = getPokemonData(pokemon.name);
-                                            const types = pokeData?.types || [];
+                                            const types = pokemon.types || getPokemonSummary(pokemon.name)?.types || [];
                                             return (
                                                 <div
                                                     key={index}

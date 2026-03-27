@@ -38,13 +38,11 @@ export function ItemIcon({ item, className = "", size = 24 }: ItemIconProps) {
     const urls = useMemo(() => getItemSpriteUrls(item), [item]);
     const [srcIndex, setSrcIndex] = useState(0);
     const [allFailed, setAllFailed] = useState(false);
-    const [prevItem, setPrevItem] = useState(item);
 
-    if (item !== prevItem) {
-        setPrevItem(item);
+    useEffect(() => {
         setSrcIndex(0);
         setAllFailed(false);
-    }
+    }, [item, urls]);
 
     const handleError = useCallback(() => {
         if (srcIndex < urls.length - 1) {

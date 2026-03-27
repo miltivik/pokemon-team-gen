@@ -5,13 +5,13 @@ import { useTeam } from "@/lib/team-context";
 import { Button } from "@/components/ui/button";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
-import { getExportText } from "@/lib/showdown-data";
+import { getExportText } from "@/lib/export-text";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { analytics } from "@/lib/analytics";
 
 export default function ExportarPage() {
-    const { team, format } = useTeam();
+    const { team, format, isHydrated } = useTeam();
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
 
@@ -19,6 +19,14 @@ export default function ExportarPage() {
     useEffect(() => {
         analytics.viewExportar();
     }, []);
+
+    if (!isHydrated) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
 
     if (team.length === 0) {
         return (

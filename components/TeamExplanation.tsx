@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslation } from "@/lib/i18n";
-import { type PokedexEntry, getPokemonData } from "@/lib/showdown-data";
+import type { PokedexEntry } from "@/lib/showdown-data";
+import { getPokemonSummary } from "@/lib/pokemon-summary";
 
 interface TeamExplanationProps {
     team: PokedexEntry[];
@@ -20,7 +21,8 @@ function analyzeTeamRoles(team: PokedexEntry[]): {
     const typeCount: Record<string, number> = {};
 
     team.forEach((pokemon) => {
-        const data = getPokemonData(pokemon.name);
+        const data =
+            pokemon.baseStats && pokemon.types?.length ? pokemon : getPokemonSummary(pokemon.name);
         if (!data) return;
 
         // Collect types
@@ -132,7 +134,7 @@ export function TeamExplanation({ team, format }: TeamExplanationProps) {
                 <div className="flex flex-wrap gap-2">
                     {Object.entries(
                         team.reduce((acc, p) => {
-                            const data = getPokemonData(p.name);
+                            const data = p.types?.length ? p : getPokemonSummary(p.name);
                             if (data) {
                                 data.types.forEach((t: string) => {
                                     acc[t] = (acc[t] || 0) + 1;

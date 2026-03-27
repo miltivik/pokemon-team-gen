@@ -1,15 +1,6 @@
-import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { TeamProvider } from "@/lib/team-context";
 
-export const metadata: Metadata = {
-  title: "Tu Equipo Generado",
-  description: "Visualiza tu equipo Pokémon generado con movesets óptimos, spreads de EVs e ítems recomendados para Showdown.",
-  robots: "noindex, follow", // Generated teams are dynamic client-side, don't index
-};
-
-export default function EquipoLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <>{children}</>;
+export default function EquipoLayout({ children }: { children: ReactNode }) {
+    return <TeamProvider>{children}</TeamProvider>;
 }

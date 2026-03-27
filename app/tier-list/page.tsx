@@ -9,7 +9,8 @@ import { AdResponsive, AdBanner } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
 import { getSmogonStats, classifyTier, TierRank, SmogonMonData } from "@/lib/smogon-stats";
-import { getPokemonSpriteUrl, getPokemonData } from "@/lib/showdown-data";
+import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
+import { getPokemonSummary } from "@/lib/pokemon-summary";
 
 // Format options
 const FORMAT_OPTIONS = [
@@ -130,9 +131,10 @@ export default function TierListPage() {
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                     {tierData[tier].map((mon) => {
-                                        // Fix for sprite URL: Get full pokemon data including 'num'
-                                        const pokemonData = getPokemonData(mon.name);
-                                        const spriteUrl = getPokemonSpriteUrl(pokemonData || { name: mon.name });
+                                        const pokemonData = getPokemonSummary(mon.name);
+                                        const spriteUrl = getPokemonSpriteUrl(
+                                            pokemonData ? { ...pokemonData, name: mon.name } : mon.name
+                                        );
 
                                         return (
                                             <div key={mon.name} className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:shadow-md transition-shadow">

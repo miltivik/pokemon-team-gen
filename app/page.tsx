@@ -3,41 +3,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
+import { AdBanner, AdInline } from "@/components/monetization/Ads";
+import { HomeQuickActions } from "@/components/home/HomeQuickActions";
 import { useTranslation } from "@/lib/i18n";
-import { useTeam } from "@/lib/team-context";
-import { useSyncExternalStore } from "react";
-import { getPokemonSpriteUrl } from "@/lib/showdown-data";
-
-// Helper for useSyncExternalStore to avoid hydration mismatch
-const subscribe = (listener: () => void) => {
-  if (typeof window !== "undefined") {
-    window.addEventListener("storage", listener);
-    return () => window.removeEventListener("storage", listener);
-  }
-  return () => {};
-};
-
-const getSnapshot = () => {
-  if (typeof window === "undefined") return 0;
-  const saved = window.localStorage.getItem("saved-teams");
-  if (!saved) return 0;
-  try {
-    const teams = JSON.parse(saved);
-    return Array.isArray(teams) ? teams.length : 0;
-  } catch {
-    return 0;
-  }
-};
-
-const getServerSnapshot = () => 0;
+import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 
 export default function Home() {
   const { t } = useTranslation();
-  const { team } = useTeam();
-
-  // Use React 18's useSyncExternalStore to safely read from localStorage
-  const savedTeamsCount = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   return (
     <div className="min-h-screen font-sans">
@@ -73,22 +45,7 @@ export default function Home() {
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{t("app.freeNoReg")}</p>
 
           {/* Quick access buttons */}
-          <div className="flex flex-wrap gap-3 justify-center" role="group" aria-label="Quick actions">
-            {team.length > 0 && (
-              <Link href="/equipo">
-                <Button variant="outline" size="sm" className="bg-white dark:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2">
-                  <span aria-hidden="true">📋</span> {t("app.viewPreviousTeam")}
-                </Button>
-              </Link>
-            )}
-            {savedTeamsCount > 0 && (
-              <Link href="/saved-teams">
-                <Button variant="outline" size="sm" className="bg-white dark:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2">
-                  <span aria-hidden="true">📁</span> {t("nav.savedTeams")} ({savedTeamsCount})
-                </Button>
-              </Link>
-            )}
-          </div>
+          <HomeQuickActions />
         </section>
 
         {/* Visual Mockup (Team Preview) */}
@@ -138,11 +95,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </section>
-
-        {/* Ad relocated below the hero/mockup */}
-        <section className="w-full flex justify-center min-h-[100px] my-8">
-          <AdResponsive />
         </section>
 
         {/* Supported formats - Moved up for Social Proof */}
@@ -246,7 +198,7 @@ export default function Home() {
                   {["Great Tusk", "Kingambit", "Gholdengo", "Rillaboom", "Dragapult", "Gliscor"].map((pokemon, i) => (
                     <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
+                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" loading="lazy" />
                     </div>
                   ))}
                 </div>
@@ -266,7 +218,7 @@ export default function Home() {
                   {["Glimmora", "Roaring Moon", "Iron Valiant", "Iron Boulder", "Gouging Fire", "Kingambit"].map((pokemon, i) => (
                     <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
+                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" loading="lazy" />
                     </div>
                   ))}
                 </div>
@@ -286,7 +238,7 @@ export default function Home() {
                   {["Pelipper", "Barraskewda", "Archaludon", "Swampert", "Tornadus-Therian", "Raging Bolt"].map((pokemon, i) => (
                     <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
+                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" loading="lazy" />
                     </div>
                   ))}
                 </div>
@@ -306,7 +258,7 @@ export default function Home() {
                   {["Torkoal", "Flutter Mane", "Incineroar", "Chi-Yu", "Venusaur", "Raging Bolt"].map((pokemon, i) => (
                     <div key={i} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border-2 border-white dark:border-zinc-900 -ml-4 first:ml-0 flex items-center justify-center overflow-hidden z-10 group-hover:-translate-y-1 transition-transform drop-shadow-sm" style={{ zIndex: 10 - i }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" />
+                      <img src={getPokemonSpriteUrl(pokemon)} alt={pokemon} className="w-full h-full object-contain scale-110" loading="lazy" />
                     </div>
                   ))}
                 </div>
