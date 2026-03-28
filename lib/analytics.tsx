@@ -8,6 +8,18 @@ import { usePathname } from "next/navigation";
 
 type EventParams = Record<string, string | number | boolean>;
 
+interface Gtag {
+    (command: "config", targetId: string, params?: EventParams): void;
+    (command: "event", eventName: string, params?: EventParams): void;
+    (command: "js", date: Date): void;
+}
+
+declare global {
+    interface Window {
+        gtag?: Gtag;
+    }
+}
+
 // Read GA4 ID from env — set NEXT_PUBLIC_GA_ID in .env.local
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -16,7 +28,7 @@ function getGtag() {
         return null;
     }
 
-    return (window as any).gtag ?? null;
+    return window.gtag ?? null;
 }
 
 // Track page views
@@ -100,6 +112,18 @@ export const analytics = {
 
     clickAd: (adPosition: string) => trackEvent("click_ad", {
         ad_position: adPosition,
+    }),
+
+    reportBugOpened: (page: string) => trackEvent("report_bug_opened", {
+        page,
+    }),
+
+    reportBugSubmitted: (page: string) => trackEvent("report_bug_submitted", {
+        page,
+    }),
+
+    reportBugFailed: (page: string) => trackEvent("report_bug_failed", {
+        page,
     }),
 };
 

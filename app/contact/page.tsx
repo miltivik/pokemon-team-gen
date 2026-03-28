@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { BugReportDialog } from "@/components/BugReportDialog";
+import { useTeam } from "@/lib/team-context";
+import { buildBugReportGenerationContext } from "@/lib/bug-report";
 import { useTranslation } from "@/lib/i18n";
 
 export default function ContactPage() {
-    const { t } = useTranslation();
-    const [submitted, setSubmitted] = useState(false);
+    const { team, generationOptions } = useTeam();
+    const { lang } = useTranslation();
+    const bugReportContext = buildBugReportGenerationContext(team, generationOptions);
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
@@ -49,17 +52,19 @@ export default function ContactPage() {
                                     <div>
                                         <h3 className="font-medium text-zinc-900 dark:text-zinc-100">Bug Reports</h3>
                                         <p className="text-zinc-700 dark:text-zinc-300 text-sm">
-                                            Found a bug or issue? Please report it through our{" "}
-                                            <a
-                                                href="https://github.com"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-600 dark:text-blue-400 hover:underline"
-                                            >
-                                                GitHub repository
-                                            </a>{" "}
-                                            or send us an email with details about what happened.
+                                            Found a bug or issue? Send it from the in-app form so we can receive the current
+                                            generation context together with your description.
                                         </p>
+                                        <div className="mt-3">
+                                            <BugReportDialog
+                                                generationContext={bugReportContext}
+                                                trigger={
+                                                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                                                        {lang === "es" ? "Abrir formulario de bug" : "Open Bug Report Form"}
+                                                    </Button>
+                                                }
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 

@@ -1,24 +1,28 @@
 import type { FormatId } from "@/config/formats";
-import type { GamePhase } from "@/lib/dynamic-builder";
-import type { PokedexEntry } from "@/lib/showdown-data";
+import type { GamePhase, GeneratedTeamMember, TeamGuideData } from "@/lib/team-guide";
+import type { TeamGenerationOptions } from "@/lib/team-generation-options";
 
 export type GameplanData = { early: GamePhase; mid: GamePhase; late: GamePhase };
 
 export interface TeamStorageSnapshot {
-    team: PokedexEntry[];
+    team: GeneratedTeamMember[];
     gameplan: GameplanData | null;
     gameplanI18n: Record<string, GameplanData> | null;
+    teamGuide: TeamGuideData | null;
+    teamGuideI18n: Record<string, TeamGuideData> | null;
     format: FormatId;
-    generationOptions: any;
+    generationOptions: TeamGenerationOptions | null;
 }
 
-const TEAM_STORAGE_KEY = "team-context-v1";
+const TEAM_STORAGE_KEY = "team-context-v2";
 const SAVED_TEAMS_KEY = "saved-teams";
 
 export const DEFAULT_TEAM_STATE: TeamStorageSnapshot = {
     team: [],
     gameplan: null,
     gameplanI18n: null,
+    teamGuide: null,
+    teamGuideI18n: null,
     format: "gen9ou",
     generationOptions: null,
 };

@@ -32,6 +32,16 @@ export interface PokemonSpecies {
 
 const Pokedex = pokedexData as unknown as Record<string, PokemonSpecies>;
 
+function hasCompleteBaseStats(
+  baseStats: PokemonSpecies["baseStats"] | undefined
+): baseStats is PokemonSpecies["baseStats"] {
+  if (!baseStats) return false;
+
+  return ["hp", "atk", "def", "spa", "spd", "spe"].every((stat) =>
+    Number.isFinite(baseStats[stat as keyof PokemonSpecies["baseStats"]])
+  );
+}
+
 export class DexProvider {
 
   static getSpecies(name: string): PokemonSpecies | null {
@@ -42,6 +52,7 @@ export class DexProvider {
   static getSpeciesForGen(name: string, gen: number): PokemonSpecies | null {
     const species = this.getSpecies(name);
     if (!species) return null;
+    if (!hasCompleteBaseStats(species.baseStats)) return null;
 
     // Clone to avoid mutating original
     const mon = JSON.parse(JSON.stringify(species));
@@ -57,6 +68,7 @@ export class DexProvider {
 
     // Apply Stat Changes (simplified)
     this.applyStatChanges(mon, gen);
+    if (!hasCompleteBaseStats(mon.baseStats)) return null;
 
     return mon;
   }

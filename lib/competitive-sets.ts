@@ -7,7 +7,19 @@
 
 import setsData from '@/data/gen9-sets.json';
 
-const sets: Record<string, any> = setsData;
+interface RawCompetitiveSet {
+    moves?: Array<string | string[]>;
+    item?: string | string[];
+    ability?: string | string[];
+    nature?: string | string[];
+    evs?: Record<string, number | undefined> | Array<Record<string, number | undefined>>;
+    teratypes?: string | string[];
+}
+
+type TierSetMap = Record<string, RawCompetitiveSet>;
+type PokemonCompetitiveSets = Record<string, TierSetMap>;
+
+const sets = setsData as Record<string, PokemonCompetitiveSets>;
 
 export interface CompetitiveSet {
     pokemon: string;
@@ -18,6 +30,64 @@ export interface CompetitiveSet {
     evs: Record<string, number>;
     nature: string;
     teraType?: string;
+}
+
+function normalizeEvs(evs?: Record<string, number | undefined>) {
+    return {
+        hp: evs?.hp ?? 0,
+        atk: evs?.atk ?? 0,
+        def: evs?.def ?? 0,
+        spa: evs?.spa ?? 0,
+        spd: evs?.spd ?? 0,
+        spe: evs?.spe ?? 0,
+    };
+}
+
+function getPokemonSets(displayName: string) {
+    let pokemonSets = sets[displayName];
+
+    if (!pokemonSets) {
+        const lowerName = displayName.toLowerCase();
+        const foundKey = Object.keys(sets).find((key) => key.toLowerCase() === lowerName);
+        if (foundKey) {
+            pokemonSets = sets[foundKey];
+        }
+    }
+
+    return pokemonSets as PokemonCompetitiveSets | undefined;
+}
+
+function getTierCandidates(formatTier: string = "ou"): string[] {
+    const rawTier = formatTier.toLowerCase();
+    const cleanTier = rawTier.replace(/^gen\d+/, "");
+    const baseTier = cleanTier.replace(/[^a-z0-9]/g, "");
+    const candidates: string[] = [];
+    const pushCandidate = (tier: string) => {
+        if (!tier || candidates.includes(tier)) return;
+        candidates.push(tier);
+    };
+
+    pushCandidate(rawTier);
+    pushCandidate(cleanTier);
+    pushCandidate(baseTier);
+
+    const vgcMatch = baseTier.match(/^vgc(\d{4})/);
+    if (vgcMatch) {
+        const requestedYear = Number(vgcMatch[1]);
+        for (let year = requestedYear; year >= 2023; year -= 1) {
+            pushCandidate(`vgc${year}`);
+        }
+        pushCandidate("doublesou");
+    }
+
+    if (baseTier === "doublesou") {
+        pushCandidate("vgc2025");
+        pushCandidate("vgc2024");
+    }
+
+    TIER_FALLBACK.forEach(pushCandidate);
+
+    return candidates;
 }
 
 /**
@@ -60,11 +130,10 @@ export function getCompetitiveSet(
     displayName: string,
     formatTier: string = 'ou'
 ): CompetitiveSet | null {
-    const pokemonSets = sets[displayName];
+    const pokemonSets = getPokemonSets(displayName);
     if (!pokemonSets) return null;
 
-    // Build list of tiers to try: exact match first, then fallbacks
-    const tiersToTry = [formatTier, ...TIER_FALLBACK.filter(t => t !== formatTier)];
+    const tiersToTry = getTierCandidates(formatTier);
 
     for (const tier of tiersToTry) {
         const tierSets = pokemonSets[tier];
@@ -87,7 +156,7 @@ export function getCompetitiveSet(
         const ability = raw.ability ? pickRandom(raw.ability) : undefined;
 
         // Resolve EVs (can be an array of EV spreads)
-        const evs = raw.evs ? pickRandom(raw.evs) : { hp: 252, atk: 252, spe: 4 };
+        const evs = normalizeEvs(raw.evs ? pickRandom(raw.evs) : { hp: 252, atk: 252, spe: 4 });
 
         // Resolve Tera Type
         const teraType = raw.teratypes ? pickRandom(raw.teratypes) : undefined;
@@ -114,29 +183,10 @@ export function getAvailableRoles(
     displayName: string,
     formatTier: string = 'ou'
 ): string[] {
-    // Normalize display name to match Smogon data keys (Case sensitive usually, but let's be safe)
-    // Smogon keys are usually "Pokemon Name" (capitalized).
-    // But sets lookup is direct: sets[displayName].
-    // If displayName is "ivysaur", sets["ivysaur"] is undefined.
-    // We should try to find the key case-insensitively if direct lookup fails.
-    
-    let pokemonSets = sets[displayName];
-    
-    if (!pokemonSets) {
-        // Try to find key case-insensitively
-        const lowerName = displayName.toLowerCase();
-        const foundKey = Object.keys(sets).find(k => k.toLowerCase() === lowerName);
-        if (foundKey) {
-            pokemonSets = sets[foundKey];
-        }
-    }
-
+    const pokemonSets = getPokemonSets(displayName);
     if (!pokemonSets) return [];
 
-    // Normalize formatTier (strip 'gen9' etc if present)
-    const cleanTier = formatTier.replace(/^gen\d+/, '').toLowerCase();
-    
-    const tiersToTry = [formatTier, cleanTier, ...TIER_FALLBACK.filter(t => t !== formatTier && t !== cleanTier)];
+    const tiersToTry = getTierCandidates(formatTier);
 
     for (const tier of tiersToTry) {
         const tierSets = pokemonSets[tier];
@@ -156,20 +206,10 @@ export function getCompetitiveSetByRole(
     roleName: string,
     formatTier: string = 'ou'
 ): CompetitiveSet | null {
-    let pokemonSets = sets[displayName];
-    
-    if (!pokemonSets) {
-         const lowerName = displayName.toLowerCase();
-         const foundKey = Object.keys(sets).find(k => k.toLowerCase() === lowerName);
-         if (foundKey) {
-             pokemonSets = sets[foundKey];
-         }
-    }
-    
+    const pokemonSets = getPokemonSets(displayName);
     if (!pokemonSets) return null;
 
-    const cleanTier = formatTier.replace(/^gen\d+/, '').toLowerCase();
-    const tiersToTry = [formatTier, cleanTier, ...TIER_FALLBACK.filter(t => t !== formatTier && t !== cleanTier)];
+    const tiersToTry = getTierCandidates(formatTier);
 
     for (const tier of tiersToTry) {
         const tierSets = pokemonSets[tier];
@@ -186,7 +226,7 @@ export function getCompetitiveSetByRole(
             const ability = raw.ability ? pickRandom(raw.ability) : undefined;
 
             // Resolve EVs (can be an array of EV spreads)
-            const evs = raw.evs ? pickRandom(raw.evs) : { hp: 252, atk: 252, spe: 4 };
+            const evs = normalizeEvs(raw.evs ? pickRandom(raw.evs) : { hp: 252, atk: 252, spe: 4 });
 
             // Resolve Tera Type
             const teraType = raw.teratypes ? pickRandom(raw.teratypes) : undefined;

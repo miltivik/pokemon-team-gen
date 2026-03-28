@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTeam } from "@/lib/team-context";
 import { PokemonCard } from "@/components/PokemonCard";
@@ -11,14 +10,29 @@ import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads"
 import { useTranslation } from "@/lib/i18n";
 import { getExportText } from "@/lib/export-text";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { analytics } from "@/lib/analytics";
+import { BugReportDialog } from "@/components/BugReportDialog";
+import { buildBugReportGenerationContext } from "@/lib/bug-report";
+import { cloneGenerationOptions } from "@/lib/team-generation-options";
 
 export default function EquipoPage() {
-    const router = useRouter();
-    const { team, setTeam, gameplan, format, addTeam, generationOptions, isHydrated } = useTeam();
-    const { t } = useTranslation();
+    const { team, setTeam, gameplan, teamGuide, teamGuideI18n, format, addTeam, generationOptions, isHydrated } = useTeam();
+    const { t, lang } = useTranslation();
     const [isRegenerating, setIsRegenerating] = useState(false);
+    const regenerationOptions = useMemo(
+        () => cloneGenerationOptions(generationOptions),
+        [generationOptions]
+    );
+    const bugReportContext = buildBugReportGenerationContext(team, generationOptions);
+    const resolvedTeamGuide = teamGuideI18n?.[lang] || teamGuide;
+
+    interface StoredTeamRecord {
+        id: string;
+        team: typeof team;
+        format: string;
+        createdAt: string;
+    }
 
     // Track page view
     useEffect(() => {
@@ -33,7 +47,7 @@ export default function EquipoPage() {
         .filter((v, i, a) => a.indexOf(v) === i);
 
     const handleRegenerate = async () => {
-        if (!generationOptions) {
+        if (!regenerationOptions) {
             toast.error(t("form.error"));
             return;
         }
@@ -43,15 +57,22 @@ export default function EquipoPage() {
             const response = await fetch('/api/generate-dynamic-team', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(generationOptions),
+                body: JSON.stringify(regenerationOptions),
             });
 
             if (!response.ok) throw new Error('Generation failed');
 
             const data = await response.json();
 
-            analytics.generateTeam(generationOptions.format, generationOptions.templateId || "balanced");
-            addTeam(data.team, data.gameplan, data.gameplanI18n, generationOptions);
+            analytics.generateTeam(regenerationOptions.format ?? format, regenerationOptions.templateId || "balanced");
+            addTeam(
+                data.team,
+                data.gameplan,
+                data.gameplanI18n,
+                data.teamGuide,
+                data.teamGuideI18n,
+                regenerationOptions
+            );
 
             toast.success(t("app.generateAnother"));
         } catch (error) {
@@ -76,10 +97,10 @@ export default function EquipoPage() {
     const handleSaveTeam = () => {
         if (team.length === 0) return;
         const savedTeams = localStorage.getItem("saved-teams");
-        let teams: any[] = [];
+        let teams: StoredTeamRecord[] = [];
         if (savedTeams) {
             try {
-                teams = JSON.parse(savedTeams);
+                teams = JSON.parse(savedTeams) as StoredTeamRecord[];
             } catch (e) {
                 console.error("Failed to parse saved teams:", e);
             }
@@ -158,6 +179,14 @@ export default function EquipoPage() {
                             ✏️ {t("app.editOptions")}
                         </Button>
                     </Link>
+                    <BugReportDialog
+                        generationContext={bugReportContext}
+                        trigger={
+                            <Button variant="outline" className="border-zinc-300 dark:border-zinc-700 font-medium">
+                                {lang === "es" ? "Reportar bug" : "Report Bug"}
+                            </Button>
+                        }
+                    />
                 </div>
 
                 {/* Ad Banner before team */}
@@ -188,6 +217,25 @@ export default function EquipoPage() {
                 {gameplan && (
                     <div className="space-y-4 py-8 mt-8 w-full max-w-4xl">
                         <h3 className="text-xl font-bold text-center dark:text-white">{t("gameplan.title")}</h3>
+                        {resolvedTeamGuide && (
+                            <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                                <div className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+                                    {t("analysis.quickGuide")}
+                                </div>
+                                <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-700 dark:text-zinc-300">
+                                    {resolvedTeamGuide.overview.identitySummary}
+                                </p>
+                                {resolvedTeamGuide.generalTips.length > 0 && (
+                                    <div className="mt-4 grid gap-2 md:grid-cols-2">
+                                        {resolvedTeamGuide.generalTips.slice(0, 2).map((tip) => (
+                                            <div key={tip} className="rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950/50 dark:text-zinc-400">
+                                                {tip}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Early Game */}
                             <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col gap-3">
@@ -233,7 +281,7 @@ export default function EquipoPage() {
 
                 {/* NEW: Team Explanation Section */}
                 <section className="w-full max-w-4xl py-8">
-                    <TeamExplanation team={team} format={format} />
+                    <TeamExplanation team={team} format={format} guide={resolvedTeamGuide} />
                 </section>
 
                 {/* NEW: Similar Teams Section */}

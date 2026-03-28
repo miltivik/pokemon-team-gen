@@ -4,16 +4,21 @@ import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import type { PokedexEntry, MoveData } from "../lib/showdown-data";
-import type { PokemonAnalysis } from "@/lib/poke-analysis";
+import type {
+    GeneratedTeamMember,
+    PokemonAnalysis,
+    TeamBuildPreset,
+} from "@/lib/team-guide";
 import { getPokemonSummary } from "@/lib/pokemon-summary";
 import { getTranslatedItemLabel, getTranslatedMoveLabel } from "@/lib/pokemon-translations";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { ItemIcon } from "./ItemIcon";
 import { useTranslation } from "@/lib/i18n";
 import type { FormatId } from "@/config/formats";
+import { getStrategicRoleLabel } from "@/lib/strategic-role";
 
 const LazyPokemonDetailsDialog = dynamic(
-    () => import("./PokemonDetailsDialog").then((mod) => mod.PokemonDetailsDialog),
+    () => import("./PokemonDetailsPanel").then((mod) => mod.PokemonDetailsDialog),
     { ssr: false }
 );
 
@@ -27,28 +32,15 @@ const TYPE_BG_COLORS: Record<string, string> = {
 
 const EMPTY_STATS = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 
-type PokemonCardPokemon = Partial<PokedexEntry> & {
+type PokemonCardPokemon = Partial<GeneratedTeamMember> & Partial<PokedexEntry> & {
     name: string;
     moves?: Array<MoveData | string>;
     analysis?: PokemonAnalysis;
-    item?: string;
-    nature?: string;
-    evs?: string;
-    role?: string;
-    teraType?: string;
-    ability?: string;
+    selectedBuildPresetId?: string;
+    buildPresets?: Record<string, TeamBuildPreset>;
 };
 
-type PokemonCardDetailsPokemon = PokedexEntry & {
-    moves?: Array<MoveData | string>;
-    analysis?: PokemonAnalysis;
-    item?: string;
-    nature?: string;
-    evs?: string;
-    role?: string;
-    teraType?: string;
-    ability?: string;
-};
+type PokemonCardDetailsPokemon = GeneratedTeamMember;
 
 interface PokemonCardProps {
     pokemon: PokemonCardPokemon;
@@ -92,7 +84,10 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
     const { t, lang } = useTranslation();
     const summary = getPokemonSummary(pokemon.name);
 
-    const moves = pokemon.moves && pokemon.moves.length > 0 ? pokemon.moves : [];
+    const moves = useMemo(
+        () => (pokemon.moves && pokemon.moves.length > 0 ? pokemon.moves : []),
+        [pokemon.moves]
+    );
 
     const displayData = useMemo(() => {
         const resolvedTypes = pokemon.types && pokemon.types.length > 0 ? pokemon.types : (summary?.types ?? []);
@@ -122,6 +117,10 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
     const displayTypes = displayData.types || [];
     const stats = displayData.baseStats || EMPTY_STATS;
     const bst = Object.values(stats).reduce((a, b) => a + b, 0);
+    const currentRoleLabel =
+        getStrategicRoleLabel(pokemon.analysis?.role, t) ||
+        pokemon.role ||
+        getRole(stats);
 
     const handleOpenDetails = () => {
         setShouldLoadDetails(true);
@@ -157,7 +156,7 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
                         </h3>
                         <div className="flex gap-1 justify-center items-center mt-1 text-[8px] font-bold uppercase tracking-widest">
                             <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-1 py-0.5 rounded text-[7px]">BST {bst}</span>
-                            <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1 py-0.5 rounded text-[7px]">{getRole(stats)}</span>
+                            <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1 py-0.5 rounded text-[7px]">{currentRoleLabel}</span>
                         </div>
                     </div>
 

@@ -4,6 +4,34 @@ import { getEffectiveness } from '../type-chart';
 import { toID } from '../utils';
 import { Template } from '@/config/templates';
 import { Role } from '../showdown-data';
+import { isLegendaryOrParadoxSpecies } from '@/lib/pokemon-classification';
+import { FORMATS, FormatId } from '@/config/formats';
+import type { SetBundle } from './set-optimizer';
+import {
+  countAvailableMoves,
+  DOUBLES_SUPPORT_MOVES,
+  getCandidateAbilityIds,
+  getCandidateStatProfile,
+  getTemplateId,
+  HAZARD_MOVES,
+  hasAvailableMove,
+  hasAnyType,
+  LEAD_PRESSURE_MOVES,
+  PIVOT_MOVES,
+  RAIN_PAYOFF_MOVES,
+  RECOVERY_MOVES,
+  REMOVAL_MOVES,
+  SAND_PAYOFF_MOVES,
+  SETUP_MOVES,
+  STALL_PAYOFF_MOVES,
+  STACKING_HAZARD_MOVES,
+  SUN_PAYOFF_MOVES,
+  teamHasAnyAbility,
+  teamHasAnyMove,
+  VOLTTURN_ABILITY_IDS,
+  WEATHER_FLEX_MOVES,
+  WEATHER_SETTER_ABILITY_IDS,
+} from './template-heuristics';
 
 interface ScoredCandidate {
   species: PokemonSpecies;
@@ -13,6 +41,7 @@ interface ScoredCandidate {
     synergy: number;
     coverage: number;
     consistency: number;
+    setCoherence?: number;
     templateSynergy?: number;
   };
 }
@@ -23,6 +52,9 @@ interface ScoringOptions {
   template?: Template;
   getTeamMoves?: () => Set<string>;
   getTeamAbilities?: () => Set<string>;
+  getTeamRoles?: () => Role[];
+  getCandidateRole?: (candidate: PokemonSpecies, currentTeam: PokemonSpecies[]) => Role;
+  getCandidateBundle?: (candidate: PokemonSpecies, currentTeam: PokemonSpecies[]) => SetBundle;
 }
 
 export class WeightedScoringEngine {
@@ -45,8 +77,6 @@ export class WeightedScoringEngine {
 
     // Analyze current team state
     const teamWeaknesses = this.analyzeTeamWeaknesses(currentTeam);
-    const teamResistances = this.analyzeTeamResistances(currentTeam);
-
     for (const candidate of candidates) {
       const stats = this.data.pokemon[toID(candidate.name)];
       if (!stats) continue;
@@ -69,11 +99,7 @@ export class WeightedScoringEngine {
       const species = DexProvider.getSpeciesForGen(stats.name, this.gen);
       if (!species) continue;
 
-      if (this.options.excludeLegendaries) {
-        const isLegendary = species.tags?.some(t => t.includes('Legendary') || t.includes('Mythical')) ||
-          ['Uber', 'AG'].includes(species.tier || '');
-        if (isLegendary) continue;
-      }
+      if (this.options.excludeLegendaries && isLegendaryOrParadoxSpecies(species.name)) continue;
 
       if (this.options.requiredType) {
         // Normalize type names for comparison (e.g. 'dark' to 'Dark')
@@ -93,18 +119,26 @@ export class WeightedScoringEngine {
     team: PokemonSpecies[],
     teamWeaknesses: Record<string, number>
   ): ScoredCandidate {
+    const isDoubles = FORMATS[this.format as FormatId]?.gameType === 'doubles';
+    const templateId = getTemplateId(this.options.template);
+    const { bulk, maxOffense, speed } = getCandidateStatProfile(candidate);
+    const bundle = this.options.getCandidateBundle?.(candidate, team);
+    const bundleMoveIds = new Set(bundle?.moves.map((move) => toID(move)) ?? []);
+    const bundleAbilityId = bundle ? toID(bundle.ability) : null;
+    const bundleCoherenceScore = bundle?.coherenceScore ?? 0.5;
 
     // Weights
-    let W_USAGE = 0.3;
-    let W_SYNERGY = 0.45; // High weight on real data
-    const W_COVERAGE = 0.2;
-    const W_CONSISTENCY = 0.05;
-    let W_TEMPLATE = 0.5; // Significant boost for template requirements
-    const W_ROLE = 5.0; // Extreme boost for fulfilling needed roles
+    let W_USAGE = 0.24;
+    const W_SYNERGY = 0.34;
+    const W_COVERAGE = 0.16;
+    const W_CONSISTENCY = 0.06;
+    let W_TEMPLATE = 0.34;
+    const W_ROLE = 0.24;
+    const W_SET = 0.32;
 
     if (this.options.template?.label.includes('Stall')) {
       W_USAGE = 0.1; // Stall relies less on standard usage staples
-      W_TEMPLATE = 3.5; // Heavily prioritize defensive moves/abilities
+      W_TEMPLATE = 0.55;
     }
 
     // 1. Usage Score (0 to 1)
@@ -118,18 +152,25 @@ export class WeightedScoringEngine {
       let synergySum = 0;
       for (const member of team) {
         const memberId = toID(member.name);
-        // Look up candidate in member's teammates OR member in candidate's teammates
-        // Chaos data usually has mutual counts, but normalized we stored relative weights
-        // We'll use the candidate's teammate entry for the team member if available
-        const correlation = stats.teammates[memberId] || 0;
-
-        // Normalize correlation roughly (max weight is variable, usually < 0.1 for specific pairings)
-        // We cap it at some reasonable value derived from the data distribution
-        synergySum += Math.min(1, correlation * 10);
+        const memberStats = this.data.pokemon[memberId];
+        const jointWeight = Math.max(
+          stats.teammates[memberId] || 0,
+          memberStats?.teammates[toID(candidate.name)] || 0
+        );
+        const expectedWeight = Math.max(
+          0.0001,
+          (stats.usageRate || 0.005) *
+            (memberStats?.usageRate || 0.005) *
+            this.data.meta.totalBattles
+        );
+        const lift = jointWeight > 0 ? jointWeight / expectedWeight : 0;
+        const affinity = jointWeight > 0 ? Math.min(1, Math.log2(lift + 1) / 2) : 0;
+        synergySum += affinity;
       }
       synergyScore = synergySum / team.length;
     } else {
-      synergyScore = usageScore; // First pick depends mostly on usage
+      const leadUsage = this.data.meta.leadData[toID(candidate.name)] ?? 0;
+      synergyScore = Math.max(usageScore, Math.min(1, leadUsage * 3));
     }
 
     // 3. Coverage Score (Defensive)
@@ -161,43 +202,340 @@ export class WeightedScoringEngine {
       const t = this.options.template;
       const currentMoves = this.options.getTeamMoves ? this.options.getTeamMoves() : new Set<string>();
       const currentAbilities = this.options.getTeamAbilities ? this.options.getTeamAbilities() : new Set<string>();
+      const currentRoles = this.options.getTeamRoles ? this.options.getTeamRoles() : [];
+      const candidateAbilityIds = getCandidateAbilityIds(candidate, stats);
+      const hasPreferredAbility = (t.preferredAbilities ?? []).some((ability) =>
+        bundleAbilityId ? bundleAbilityId === toID(ability) : candidateAbilityIds.has(toID(ability))
+      );
+      const bundleHasMove = (moveName: string) =>
+        bundle ? bundleMoveIds.has(toID(moveName)) : hasAvailableMove(candidate, stats, moveName);
+      const bundleMoveCount = (moveNames: string[]) =>
+        bundle
+          ? moveNames.reduce(
+            (count, moveName) => count + (bundleMoveIds.has(toID(moveName)) ? 1 : 0),
+            0
+          )
+          : countAvailableMoves(candidate, stats, moveNames);
 
       let moveSynergy = 0;
 
       if (t.requiredMoves) {
         for (const move of t.requiredMoves) {
           const moveId = toID(move);
-          // If team doesn't have it yet, highly value a pokemon that learns it
-          if (!currentMoves.has(moveId) && stats.moves[moveId]) {
-            // stats.moves[moveId] represents the frequency.
-            // Even if low frequency, if they learn it, we give a massive boost
-            moveSynergy += 2.0;
+          if (!currentMoves.has(moveId) && bundleHasMove(move)) {
+            moveSynergy += 4.0;
           }
         }
       }
       if (t.preferredMoves) {
         for (const move of t.preferredMoves) {
           const moveId = toID(move);
-          if (stats.moves[moveId]) {
-            moveSynergy += (stats.moves[moveId] * 1.5);
+          if (bundleHasMove(move)) {
+            moveSynergy += ((stats.moves[moveId] ?? 0.05) * 1.5);
           }
         }
       }
       if (t.requiredAbilities) {
         for (const ability of t.requiredAbilities) {
           const abilityId = toID(ability);
-          if (!currentAbilities.has(abilityId) && stats.abilities[abilityId]) {
-            moveSynergy += 2.0;
+          if (
+            !currentAbilities.has(abilityId) &&
+            (bundleAbilityId ? bundleAbilityId === abilityId : candidateAbilityIds.has(abilityId))
+          ) {
+            moveSynergy += 4.0;
           }
         }
       }
       if (t.preferredAbilities) {
         for (const ability of t.preferredAbilities) {
           const abilityId = toID(ability);
-          if (stats.abilities[abilityId]) {
-            moveSynergy += (stats.abilities[abilityId] * 1.5);
+          if (bundleAbilityId ? bundleAbilityId === abilityId : candidateAbilityIds.has(abilityId)) {
+            moveSynergy += ((stats.abilities[abilityId] ?? 0.05) * 1.5);
           }
         }
+      }
+
+      switch (templateId) {
+        case "balanced":
+          if (!isDoubles && !teamHasAnyMove(currentMoves, HAZARD_MOVES)) {
+            moveSynergy += bundleMoveCount(HAZARD_MOVES) > 0 ? 0.7 : 0;
+          }
+          if (!isDoubles && !teamHasAnyMove(currentMoves, REMOVAL_MOVES)) {
+            moveSynergy += bundleMoveCount(REMOVAL_MOVES) > 0 ? 0.7 : 0;
+          }
+          if (bundleMoveCount(PIVOT_MOVES) > 0) {
+            moveSynergy += 0.35;
+          }
+          if (bundleMoveCount(RECOVERY_MOVES) > 0 && bulk >= 270) {
+            moveSynergy += 0.35;
+          }
+          if (isDoubles && bundleMoveCount(DOUBLES_SUPPORT_MOVES) > 0) {
+            moveSynergy += 0.45;
+          }
+          if (
+            isDoubles &&
+            bundleMoveCount([
+              "Icy Wind",
+              "Electroweb",
+              "Thunder Wave",
+              "Tailwind",
+              "Trick Room",
+            ]) > 0
+          ) {
+            moveSynergy += 0.8;
+          }
+          if (
+            isDoubles &&
+            bundleMoveCount([
+              "Volt Switch",
+              "U-turn",
+              "Flip Turn",
+              "Parting Shot",
+              "Rage Powder",
+              "Follow Me",
+              "Fake Out",
+            ]) > 0
+          ) {
+            moveSynergy += 0.6;
+          }
+          break;
+        case "offense":
+          if (bundleMoveCount(SETUP_MOVES) > 0) {
+            moveSynergy += 1.1;
+          }
+          if (speed >= 95 && maxOffense >= 100) {
+            moveSynergy += 1.0;
+          }
+          if (!isDoubles && team.length === 0 && bundleMoveCount(LEAD_PRESSURE_MOVES) > 0) {
+            moveSynergy += 0.9;
+          }
+          if (isDoubles && bundleHasMove("Protect") && maxOffense >= 100) {
+            moveSynergy += 0.35;
+          }
+          if (bulk >= 320 && maxOffense < 90 && bundleMoveCount(PIVOT_MOVES) === 0) {
+            moveSynergy -= 0.55;
+          }
+          break;
+        case "bulkyoffense":
+          if (maxOffense >= 100 && bulk >= 250) {
+            moveSynergy += 0.95;
+          }
+          if (countAvailableMoves(candidate, stats, PIVOT_MOVES) > 0) {
+            moveSynergy += 0.35;
+          }
+          if (countAvailableMoves(candidate, stats, SETUP_MOVES) > 0) {
+            moveSynergy += 0.4;
+          }
+          if (countAvailableMoves(candidate, stats, RECOVERY_MOVES) > 0) {
+            moveSynergy += 0.35;
+          }
+          if (
+            bulk >= 330 &&
+            maxOffense < 90 &&
+            countAvailableMoves(candidate, stats, PIVOT_MOVES) === 0 &&
+            countAvailableMoves(candidate, stats, HAZARD_MOVES) === 0
+          ) {
+            moveSynergy -= 0.35;
+          }
+          break;
+        case "voltturn": {
+          const pivotCount = bundleMoveCount(PIVOT_MOVES);
+          const existingPivotMoves = PIVOT_MOVES.filter((moveName) =>
+            currentMoves.has(toID(moveName))
+          ).length;
+
+          if (pivotCount > 0) {
+            moveSynergy += existingPivotMoves < 2 ? 1.35 : 0.9;
+          }
+          if ([...candidateAbilityIds].some((abilityId) => VOLTTURN_ABILITY_IDS.includes(abilityId))) {
+            moveSynergy += 0.45;
+          }
+          if (bundleMoveCount(["Knock Off", "Taunt", "Stealth Rock"]) > 0) {
+            moveSynergy += 0.35;
+          }
+          if (pivotCount === 0 && bulk >= 320 && maxOffense < 95) {
+            moveSynergy -= 0.55;
+          }
+          break;
+        }
+        case "hazardstack":
+          if (!teamHasAnyMove(currentMoves, ["Stealth Rock"]) && bundleHasMove("Stealth Rock")) {
+            moveSynergy += 1.8;
+          }
+          if (teamHasAnyMove(currentMoves, ["Stealth Rock"]) && bundleMoveCount(STACKING_HAZARD_MOVES) > 0) {
+            moveSynergy += 1.15;
+          }
+          if (teamHasAnyMove(currentMoves, HAZARD_MOVES) && hasAnyType(candidate, ["Ghost"])) {
+            moveSynergy += 0.45;
+          }
+          if (bundleMoveCount(["Knock Off", "Taunt"]) > 0) {
+            moveSynergy += 0.35;
+          }
+          break;
+        case "trickroom": {
+        const hasTrickRoomSetter = currentMoves.has(toID("Trick Room"));
+        const learnsTrickRoom = bundleHasMove("Trick Room");
+        const knowsProtect = bundleHasMove("Protect");
+        const slowBreaker =
+          candidate.baseStats.spe <= 70 &&
+          Math.max(candidate.baseStats.atk, candidate.baseStats.spa) >= 100;
+        const verySlowBreaker =
+          candidate.baseStats.spe <= 55 &&
+          Math.max(candidate.baseStats.atk, candidate.baseStats.spa) >= 85;
+        const fastMon = candidate.baseStats.spe >= 95;
+        const teamHasBreaker = currentRoles.some((role) => role === "Sweeper" || role === "Tank");
+
+          if (!hasTrickRoomSetter) {
+            if (learnsTrickRoom) moveSynergy += 2.5;
+            if (learnsTrickRoom && candidate.baseStats.spe <= 80) moveSynergy += 0.5;
+          if (!learnsTrickRoom && fastMon) moveSynergy -= 0.5;
+        } else {
+          if (slowBreaker) moveSynergy += 1.8;
+          if (verySlowBreaker) moveSynergy += 0.7;
+          if (knowsProtect) moveSynergy += 0.2;
+          if (learnsTrickRoom) moveSynergy += 0.35;
+          if (!teamHasBreaker && slowBreaker) moveSynergy += 0.5;
+          if (fastMon) moveSynergy -= 0.85;
+        }
+          break;
+        }
+        case "tailwind": {
+          const hasTailwindSetter = teamHasAnyMove(currentMoves, ["Tailwind"]);
+          const supportCount = bundleMoveCount(DOUBLES_SUPPORT_MOVES);
+
+          if (!hasTailwindSetter) {
+            if (bundleHasMove("Tailwind")) {
+              moveSynergy += 2.5;
+            }
+            if (supportCount > 0) {
+              moveSynergy += 0.45;
+            }
+          } else {
+            if (maxOffense >= 100 && speed >= 60 && speed <= 110) {
+              moveSynergy += 1.0;
+            }
+            if (bundleHasMove("Protect")) {
+              moveSynergy += 0.45;
+            }
+            if (bundleMoveCount(["Helping Hand", "Icy Wind", "Wide Guard", "Follow Me", "Rage Powder"]) > 0) {
+              moveSynergy += 0.35;
+            }
+            if (bulk >= 330 && maxOffense < 90) {
+              moveSynergy -= 0.35;
+            }
+          }
+          break;
+        }
+        case "rain": {
+          const hasRainSetter = teamHasAnyAbility(currentAbilities, ["Drizzle"]);
+
+          if (!hasRainSetter && bundleHasMove("Rain Dance")) {
+            moveSynergy += 0.35;
+          }
+          if (hasRainSetter) {
+            if (hasPreferredAbility) {
+              moveSynergy += 1.15;
+            }
+            if (hasAnyType(candidate, ["Water", "Flying", "Electric", "Steel"])) {
+              moveSynergy += 0.45;
+            }
+            moveSynergy += Math.min(0.8, bundleMoveCount(RAIN_PAYOFF_MOVES) * 0.22);
+            if (hasAnyType(candidate, ["Fire"]) && !candidateAbilityIds.has("dryskin")) {
+              moveSynergy -= 0.45;
+            }
+          }
+          break;
+        }
+        case "sun": {
+          const hasSunSetter = teamHasAnyAbility(currentAbilities, ["Drought", "Orichalcum Pulse"]);
+
+          if (!hasSunSetter && bundleHasMove("Sunny Day")) {
+            moveSynergy += 0.35;
+          }
+          if (hasSunSetter) {
+            if (hasPreferredAbility) {
+              moveSynergy += 1.15;
+            }
+            if (hasAnyType(candidate, ["Fire", "Grass", "Ground"])) {
+              moveSynergy += 0.45;
+            }
+            moveSynergy += Math.min(0.8, bundleMoveCount(SUN_PAYOFF_MOVES) * 0.22);
+            if (candidate.types.length === 1 && hasAnyType(candidate, ["Water"]) && !candidateAbilityIds.has("protosynthesis")) {
+              moveSynergy -= 0.35;
+            }
+          }
+          break;
+        }
+        case "sand": {
+          const hasSandSetter = teamHasAnyAbility(currentAbilities, ["Sand Stream"]);
+
+          if (!hasSandSetter && bundleHasMove("Sandstorm")) {
+            moveSynergy += 0.25;
+          }
+          if (hasSandSetter) {
+            if (hasPreferredAbility) {
+              moveSynergy += 1.15;
+            }
+            if (hasAnyType(candidate, ["Rock", "Ground", "Steel"])) {
+              moveSynergy += 0.55;
+            }
+            moveSynergy += Math.min(0.7, bundleMoveCount(SAND_PAYOFF_MOVES) * 0.2);
+          }
+          break;
+        }
+        case "weatheroffense": {
+          const hasWeatherSetter = teamHasAnyAbility(currentAbilities, WEATHER_SETTER_ABILITY_IDS);
+
+          if (!hasWeatherSetter && bundleMoveCount(["Rain Dance", "Sunny Day", "Sandstorm", "Snowscape"]) > 0) {
+            moveSynergy += 0.25;
+          }
+          if (hasWeatherSetter) {
+            if (hasPreferredAbility) {
+              moveSynergy += 1.1;
+            }
+            if (hasAnyType(candidate, ["Water", "Fire", "Grass", "Ice", "Rock", "Ground", "Steel", "Flying"])) {
+              moveSynergy += 0.35;
+            }
+            moveSynergy += Math.min(0.8, bundleMoveCount(WEATHER_FLEX_MOVES) * 0.22);
+          }
+          break;
+        }
+        case "semistall": {
+          if (!isDoubles && !teamHasAnyMove(currentMoves, ["Stealth Rock"]) && bundleHasMove("Stealth Rock")) {
+            moveSynergy += 0.9;
+          }
+          if (!isDoubles && !teamHasAnyMove(currentMoves, REMOVAL_MOVES) && bundleMoveCount(REMOVAL_MOVES) > 0) {
+            moveSynergy += 0.9;
+          }
+          moveSynergy += Math.min(1.6, bundleMoveCount([...RECOVERY_MOVES, ...STALL_PAYOFF_MOVES]) * 0.22);
+          if (bulk >= 290) {
+            moveSynergy += 0.65;
+          }
+          if (bundleMoveCount(SETUP_MOVES) > 0 && maxOffense >= 95) {
+            moveSynergy += 0.55;
+          }
+          if (speed >= 105 && bulk < 260 && maxOffense >= 110) {
+            moveSynergy -= 0.55;
+          }
+          break;
+        }
+        case "stall":
+          if (!isDoubles && !teamHasAnyMove(currentMoves, ["Stealth Rock"]) && bundleHasMove("Stealth Rock")) {
+            moveSynergy += 1.1;
+          }
+          if (!isDoubles && !teamHasAnyMove(currentMoves, REMOVAL_MOVES) && bundleMoveCount(REMOVAL_MOVES) > 0) {
+            moveSynergy += 1.1;
+          }
+          moveSynergy += Math.min(2.1, bundleMoveCount([...RECOVERY_MOVES, ...STALL_PAYOFF_MOVES, ...HAZARD_MOVES]) * 0.24);
+          if (bulk >= 300) {
+            moveSynergy += 0.85;
+          }
+          if (speed >= 100 && maxOffense >= 110 && countAvailableMoves(candidate, stats, RECOVERY_MOVES) === 0) {
+            moveSynergy -= 0.9;
+          }
+          break;
+        default:
+          break;
       }
 
       if (t.label.includes('Stall')) {
@@ -213,11 +551,10 @@ export class WeightedScoringEngine {
     let roleScore = 0;
     if (this.options.template && this.options.template.roles) {
       const neededRoles = [...this.options.template.roles];
+      const currentRoles = this.options.getTeamRoles ? this.options.getTeamRoles() : [];
 
       // Remove roles already fulfilled by the team
-      for (const member of team) {
-        // We use a simplified role detection here based on base stats to match what we do for candidates
-        const memberRole = this.getRoleFromStats(member.baseStats);
+      for (const memberRole of currentRoles) {
         const index = neededRoles.indexOf(memberRole);
         if (index !== -1) {
           neededRoles.splice(index, 1);
@@ -225,24 +562,34 @@ export class WeightedScoringEngine {
       }
 
       // Check if candidate fulfills a needed role
-      const candidateRole = this.getRoleFromStats(candidate.baseStats);
-      if (neededRoles.includes(candidateRole)) {
+      const candidateRole = this.options.getCandidateRole
+        ? this.options.getCandidateRole(candidate, team)
+        : this.getRoleFromStats(candidate.baseStats);
+      const satisfiesRole =
+        neededRoles.includes(candidateRole) ||
+        (
+          this.options.template?.label === "Trick Room" &&
+          neededRoles.includes("Sweeper") &&
+          candidateRole === "Tank" &&
+          candidate.baseStats.spe <= 70
+        );
+
+      if (satisfiesRole) {
         roleScore = 1.0;
-      } else {
-        // Massive penalty if it doesn't fit the remaining roles at all 
-        // We want to force Stall teams to actually pick Walls.
-        roleScore = -5.0;
+      } else if (neededRoles.length > 0) {
+        roleScore = -0.15;
       }
     }
 
     // Final Calculation
-    const totalScore =
+      const totalScore =
       (usageScore * W_USAGE) +
       (synergyScore * W_SYNERGY) +
       (normCoverage * W_COVERAGE) +
       (consistencyScore * W_CONSISTENCY) +
       (templateScore * W_TEMPLATE) +
-      (roleScore * W_ROLE);
+      (roleScore * W_ROLE) +
+      (bundleCoherenceScore * W_SET);
 
     return {
       species: candidate,
@@ -252,6 +599,7 @@ export class WeightedScoringEngine {
         synergy: synergyScore,
         coverage: normCoverage,
         consistency: consistencyScore,
+        setCoherence: bundleCoherenceScore,
         templateSynergy: templateScore
       }
     };
@@ -276,12 +624,6 @@ export class WeightedScoringEngine {
     }
     return weaknesses;
   }
-
-  private analyzeTeamResistances(team: PokemonSpecies[]) {
-    // Helper for future expansion
-    return {};
-  }
-
   private getRoleFromStats(baseStats: { hp: number, atk: number, spa: number, def: number, spd: number, spe: number }): Role {
     const { atk, spa, spe, def, spd, hp } = baseStats;
     const bulk = hp + def + spd;

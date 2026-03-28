@@ -1,341 +1,402 @@
 "use client";
 
-import { useTranslation } from "@/lib/i18n";
-import type { PokedexEntry } from "@/lib/showdown-data";
-import { type GamePhase } from "@/lib/dynamic-builder";
-import { getWeaknesses } from "@/lib/type-chart";
-import { FormatId, FORMATS } from "@/config/formats";
-import { AdResponsive, AdInline, AdBanner } from "@/components/monetization/Ads";
+import { FORMATS, FormatId } from "@/config/formats";
+import { AdResponsive } from "@/components/monetization/Ads";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
-import { getPokemonSummary } from "@/lib/pokemon-summary";
+import { useTranslation } from "@/lib/i18n";
+import type { GeneratedTeamMember, GamePhase, TeamGuideData } from "@/lib/team-guide";
 
 interface TeamAnalysisProps {
-    team: PokedexEntry[];
-    gameplan: { early: GamePhase; mid: GamePhase; late: GamePhase } | null;
-    format: FormatId;
-    onGoHome: () => void;
+  team: GeneratedTeamMember[];
+  guide: TeamGuideData | null;
+  format: FormatId;
+  onGoHome: () => void;
 }
 
-export function TeamAnalysis({ team, gameplan, format, onGoHome }: TeamAnalysisProps) {
-    const { t } = useTranslation();
-
-    if (team.length === 0 || !gameplan) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-                <div className="text-center space-y-3">
-                    <div className="text-6xl">📊</div>
-                    <h2 className="text-2xl font-bold dark:text-white">{t("analysis.title")}</h2>
-                    <p className="text-zinc-500 dark:text-zinc-400 max-w-md">
-                        {t("analysis.noTeam")}
-                    </p>
-                </div>
-                <button
-                    onClick={onGoHome}
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
-                >
-                    {t("analysis.goHome")}
-                </button>
-            </div>
-        );
-    }
-
-    // Calculate team weaknesses
-    const weaknessCounts: Record<string, number> = {};
-    for (const mon of team) {
-        const types = mon.types ?? getPokemonSummary(mon.name)?.types ?? [];
-        for (const w of getWeaknesses(types)) {
-            weaknessCounts[w] = (weaknessCounts[w] || 0) + 1;
-        }
-    }
-    const sortedWeaknesses = Object.entries(weaknessCounts)
-        .sort((a, b) => b[1] - a[1])
-        .filter(([, count]) => count >= 2);
-
-    return (
-        <div className="w-full max-w-5xl mx-auto space-y-10">
-            {/* Header */}
-            <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold dark:text-white">{t("analysis.title")}</h2>
-                <p className="text-zinc-500 dark:text-zinc-400">
-                    {t("app.format")}: <span className="font-bold text-zinc-900 dark:text-zinc-200">{FORMATS[format].label}</span>
-                </p>
-            </div>
-
-            {/* Ad Responsive after header - Analysis PV 1 */}
-            <div className="w-full flex justify-center">
-                <AdResponsive />
-            </div>
-
-            {/* Team Overview - Compact roster */}
-            <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
-                <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
-                    {t("analysis.teamRoles")}
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {team.map((mon, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={getPokemonSpriteUrl(mon)}
-                                alt={mon.name}
-                                className="w-12 h-12 object-contain"
-                            />
-                            <div className="flex-1 min-w-0">
-                                <p className="font-bold text-sm dark:text-white truncate">{mon.name}</p>
-                                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-                                    {(mon as any).role || t("analysis.pokemonRole")}
-                                </p>
-                                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 truncate">
-                                    {((mon as any).moves || []).slice(0, 2).join(" / ")}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Detailed Strategy */}
-            <section className="space-y-6">
-                <h3 className="text-xl font-bold dark:text-white text-center">
-                    {t("analysis.detailedStrategy")}
-                </h3>
-
-                {/* Early Game */}
-                <GamePhaseCard
-                    phase={gameplan.early}
-                    title={t("analysis.earlyGame")}
-                    description={t("analysis.earlyGameDesc")}
-                    color="rose"
-                    tips={[t("analysis.earlyTip1"), t("analysis.earlyTip2"), t("analysis.earlyTip3")]}
-                    t={t}
-                    team={team}
-                />
-
-                {/* Mid Game */}
-                <GamePhaseCard
-                    phase={gameplan.mid}
-                    title={t("analysis.midGame")}
-                    description={t("analysis.midGameDesc")}
-                    color="blue"
-                    tips={[t("analysis.midTip1"), t("analysis.midTip2"), t("analysis.midTip3")]}
-                    t={t}
-                    team={team}
-                />
-
-                {/* Late Game */}
-                <GamePhaseCard
-                    phase={gameplan.late}
-                    title={t("analysis.lateGame")}
-                    description={t("analysis.lateGameDesc")}
-                    color="emerald"
-                    tips={[t("analysis.lateTip1"), t("analysis.lateTip2"), t("analysis.lateTip3")]}
-                    t={t}
-                    team={team}
-                />
-            </section>
-
-            {/* Team Weaknesses */}
-            {sortedWeaknesses.length > 0 && (
-                <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
-                    <h3 className="text-lg font-bold dark:text-white mb-2 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-red-500" />
-                        {t("analysis.weaknesses")}
-                    </h3>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">{t("analysis.weaknessesDesc")}</p>
-                    <div className="flex flex-wrap gap-2">
-                        {sortedWeaknesses.map(([type, count]) => (
-                            <span
-                                key={type}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200/50 dark:border-red-800/30"
-                            >
-                                {t(`type.${type.toLowerCase()}`)}
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300">
-                                    ×{count}
-                                </span>
-                            </span>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* General Matchup Tips */}
-            <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
-                <h3 className="text-lg font-bold dark:text-white mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    {t("analysis.matchupTips")}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {[
-                        t("analysis.matchupTip1"),
-                        t("analysis.matchupTip2"),
-                        t("analysis.matchupTip3"),
-                        t("analysis.matchupTip4"),
-                    ].map((tip, i) => (
-                        <div key={i} className="flex gap-3 p-3 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20">
-                            <span className="text-amber-500 font-bold text-lg flex-shrink-0">💡</span>
-                            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">{tip}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-        </div>
-    );
+interface GamePhaseCardProps {
+  phase: GamePhase;
+  title: string;
+  description: string;
+  color: "rose" | "blue" | "emerald";
+  t: (key: string) => string;
 }
-
-// ---- Sub-component for each game phase ----
 
 const colorMap = {
-    rose: {
-        dot: "bg-rose-500",
-        title: "text-rose-600 dark:text-rose-400",
-        bg: "bg-rose-50 dark:bg-rose-900/10",
-        border: "border-rose-200/50 dark:border-rose-800/30",
-        bullet: "text-rose-400",
-        tagBg: "bg-rose-50 dark:bg-rose-900/20",
-        tagText: "text-rose-600 dark:text-rose-400",
-        tagBorder: "border-rose-200/50 dark:border-rose-800/30",
-        tipBg: "bg-rose-50/50 dark:bg-rose-900/10",
-        tipBorder: "border-rose-100 dark:border-rose-900/20",
-    },
-    blue: {
-        dot: "bg-blue-500",
-        title: "text-blue-600 dark:text-blue-400",
-        bg: "bg-blue-50 dark:bg-blue-900/10",
-        border: "border-blue-200/50 dark:border-blue-800/30",
-        bullet: "text-blue-400",
-        tagBg: "bg-amber-50 dark:bg-amber-900/20",
-        tagText: "text-amber-600 dark:text-amber-400",
-        tagBorder: "border-amber-200/50 dark:border-amber-800/30",
-        tipBg: "bg-blue-50/50 dark:bg-blue-900/10",
-        tipBorder: "border-blue-100 dark:border-blue-900/20",
-    },
-    emerald: {
-        dot: "bg-emerald-500",
-        title: "text-emerald-600 dark:text-emerald-400",
-        bg: "bg-emerald-50 dark:bg-emerald-900/10",
-        border: "border-emerald-200/50 dark:border-emerald-800/30",
-        bullet: "text-emerald-400",
-        tagBg: "bg-red-50 dark:bg-red-900/20",
-        tagText: "text-red-600 dark:text-red-400",
-        tagBorder: "border-red-200/50 dark:border-red-800/30",
-        tipBg: "bg-emerald-50/50 dark:bg-emerald-900/10",
-        tipBorder: "border-emerald-100 dark:border-emerald-900/20",
-    },
+  rose: {
+    dot: "bg-rose-500",
+    title: "text-rose-600 dark:text-rose-400",
+    bg: "bg-rose-50 dark:bg-rose-900/10",
+    border: "border-rose-200/50 dark:border-rose-800/30",
+  },
+  blue: {
+    dot: "bg-blue-500",
+    title: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-50 dark:bg-blue-900/10",
+    border: "border-blue-200/50 dark:border-blue-800/30",
+  },
+  emerald: {
+    dot: "bg-emerald-500",
+    title: "text-emerald-600 dark:text-emerald-400",
+    bg: "bg-emerald-50 dark:bg-emerald-900/10",
+    border: "border-emerald-200/50 dark:border-emerald-800/30",
+  },
 };
 
-function GamePhaseCard({
-    phase,
-    title,
-    description,
-    color,
-    tips,
-    t,
-    team,
+function GuideList({
+  title,
+  values,
+  emptyLabel,
 }: {
-    phase: GamePhase;
-    title: string;
-    description: string;
-    color: "rose" | "blue" | "emerald";
-    tips: string[];
-    t: (key: string) => string;
-    team: PokedexEntry[];
+  title: string;
+  values: string[];
+  emptyLabel: string;
 }) {
-    const c = colorMap[color];
-    const keyData =
-        team.find((pokemon) => pokemon.name === phase.keyPokemon) ??
-        (getPokemonSummary(phase.keyPokemon)
-            ? { name: phase.keyPokemon, ...getPokemonSummary(phase.keyPokemon)! }
-            : null);
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+        {title}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {(values.length > 0 ? values : [emptyLabel]).map((value) => (
+          <span
+            key={value}
+            className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+          >
+            {value}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-    return (
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-            {/* Phase Header */}
-            <div className={`px-6 py-4 ${c.bg} border-b ${c.border}`}>
-                <div className="flex items-center gap-3">
-                    <span className={`w-3 h-3 rounded-full ${c.dot} flex-shrink-0`} />
-                    <div>
-                        <h4 className={`font-bold text-lg ${c.title}`}>{title}</h4>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-0.5 leading-relaxed">{description}</p>
-                    </div>
-                </div>
-            </div>
+function GamePhaseCard({ phase, title, description, color, t }: GamePhaseCardProps) {
+  const styles = colorMap[color];
 
-            <div className="p-6 space-y-5">
-                {/* Summary + Key Pokemon */}
-                <div className="flex items-start gap-4">
-                    {keyData && (
-                        <div className="flex-shrink-0 flex flex-col items-center gap-1">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={getPokemonSpriteUrl(keyData)}
-                                alt={phase.keyPokemon}
-                                className="w-16 h-16 object-contain"
-                            />
-                            <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                                {t("analysis.keyPokemon")}
-                            </span>
-                            <span className="text-xs font-bold dark:text-white">{phase.keyPokemon}</span>
-                        </div>
-                    )}
-                    <div className="flex-1">
-                        <p className="text-zinc-800 dark:text-zinc-200 font-semibold leading-relaxed">{phase.summary}</p>
-                    </div>
-                </div>
-
-                {/* Action Plan */}
-                {phase.steps.length > 0 && (
-                    <div>
-                        <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
-                            {t("analysis.steps")}
-                        </h5>
-                        <ol className="space-y-2">
-                            {phase.steps.map((step, i) => (
-                                <li key={i} className="flex gap-3 items-start">
-                                    <span className={`${c.bullet} font-bold text-sm mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-[10px]`}>
-                                        {i + 1}
-                                    </span>
-                                    <span className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">{step}</span>
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
-                )}
-
-                {/* Threats */}
-                {phase.threats.length > 0 && (
-                    <div>
-                        <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
-                            {t("analysis.threats")}
-                        </h5>
-                        <div className="flex flex-wrap gap-1.5">
-                            {phase.threats.map((threat, i) => (
-                                <span
-                                    key={i}
-                                    className={`text-xs px-2.5 py-1 rounded-full ${c.tagBg} ${c.tagText} font-semibold border ${c.tagBorder}`}
-                                >
-                                    ⚠️ {threat}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Pro Tips */}
-                <div>
-                    <h5 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">
-                        {t("analysis.tips")}
-                    </h5>
-                    <div className="space-y-2">
-                        {tips.map((tip, i) => (
-                            <div key={i} className={`flex gap-2.5 p-2.5 rounded-lg ${c.tipBg} border ${c.tipBorder}`}>
-                                <span className="text-sm flex-shrink-0">💡</span>
-                                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">{tip}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className={`border-b px-6 py-4 ${styles.bg} ${styles.border}`}>
+        <div className="flex items-center gap-3">
+          <span className={`h-3 w-3 rounded-full ${styles.dot}`} />
+          <div>
+            <h4 className={`text-lg font-bold ${styles.title}`}>{title}</h4>
+            <p className="mt-0.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              {description}
+            </p>
+          </div>
         </div>
+      </div>
+
+      <div className="space-y-5 p-6">
+        <div>
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+            {t("analysis.summary")}
+          </div>
+          <p className="text-sm font-medium leading-relaxed text-zinc-700 dark:text-zinc-300">
+            {phase.summary}
+          </p>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              {t("analysis.objectives")}
+            </div>
+            <ul className="space-y-2">
+              {phase.objectives.map((item) => (
+                <li key={item} className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              {t("analysis.steps")}
+            </div>
+            <ol className="space-y-2">
+              {phase.steps.map((step, index) => (
+                <li key={step} className="flex gap-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  <span className="inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[11px] font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    {index + 1}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          <div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              {t("analysis.keyPokemon")}
+            </div>
+            <div className="rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-950/50 dark:text-zinc-300">
+              {phase.keyPokemon}
+            </div>
+          </div>
+          <div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              {t("analysis.preserve")}
+            </div>
+            <ul className="space-y-2">
+              {phase.preserve.map((item) => (
+                <li key={item} className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              {t("analysis.avoid")}
+            </div>
+            <ul className="space-y-2">
+              {phase.avoid.map((item) => (
+                <li key={item} className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+            {t("analysis.decisionRules")}
+          </div>
+          <div className="grid gap-2">
+            {phase.decisionRules.map((rule) => (
+              <div
+                key={rule}
+                className="rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950/50 dark:text-zinc-400"
+              >
+                {rule}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {phase.threats.length > 0 && (
+          <div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              {t("analysis.threats")}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {phase.threats.map((threat) => (
+                <span
+                  key={threat}
+                  className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/20 dark:text-red-300"
+                >
+                  {threat}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function TeamAnalysis({ team, guide, format, onGoHome }: TeamAnalysisProps) {
+  const { t } = useTranslation();
+
+  if (team.length === 0 || !guide) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6">
+        <div className="space-y-3 text-center">
+          <div className="text-6xl">INFO</div>
+          <h2 className="text-2xl font-bold dark:text-white">{t("analysis.title")}</h2>
+          <p className="max-w-md text-zinc-500 dark:text-zinc-400">{t("analysis.noTeam")}</p>
+        </div>
+        <button
+          onClick={onGoHome}
+          className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700"
+        >
+          {t("analysis.goHome")}
+        </button>
+      </div>
     );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-5xl space-y-10">
+      <div className="space-y-2 text-center">
+        <h2 className="text-3xl font-bold dark:text-white">{t("analysis.title")}</h2>
+        <p className="text-zinc-500 dark:text-zinc-400">
+          {t("app.format")}:{" "}
+          <span className="font-bold text-zinc-900 dark:text-zinc-200">
+            {FORMATS[format].label}
+          </span>
+        </p>
+      </div>
+
+      <div className="flex w-full justify-center">
+        <AdResponsive />
+      </div>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mb-4 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-blue-500" />
+          <h3 className="text-lg font-bold dark:text-white">{t("analysis.overview")}</h3>
+        </div>
+        <h4 className="text-2xl font-bold dark:text-white">{guide.overview.identity}</h4>
+        <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+          {guide.overview.identitySummary}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+          {guide.overview.planSummary}
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <GuideList title={t("analysis.speedControl")} values={guide.overview.speedControl} emptyLabel={t("analysis.noneDetected")} />
+          <GuideList title={t("analysis.winConditions")} values={guide.overview.winConditions} emptyLabel={t("analysis.noneDetected")} />
+          <GuideList title={t("analysis.hazards")} values={guide.overview.hazards} emptyLabel={t("analysis.noneDetected")} />
+          <GuideList title={t("analysis.removal")} values={guide.overview.removal} emptyLabel={format.includes("vgc") ? t("analysis.notRelevant") : t("analysis.noneDetected")} />
+          <GuideList title={t("analysis.pivots")} values={guide.overview.pivots} emptyLabel={t("analysis.noneDetected")} />
+          <GuideList title={t("analysis.weaknesses")} values={guide.overview.structuralWeaknesses} emptyLabel={t("analysis.noneDetected")} />
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h3 className="text-xl font-bold text-center dark:text-white">{t("analysis.teamRoles")}</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          {team.map((pokemon) => {
+            const memberGuide = guide.members.find((member) => member.name === pokemon.name);
+            if (!memberGuide) return null;
+
+            return (
+              <div
+                key={pokemon.name}
+                className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+              >
+                <div className="flex items-start gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={getPokemonSpriteUrl(pokemon)}
+                    alt={pokemon.name}
+                    className="h-14 w-14 object-contain"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="text-lg font-bold dark:text-white">{pokemon.name}</div>
+                      <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                        {memberGuide.primaryFunction}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                      {memberGuide.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+                      {t("analysis.pokemonMoves")}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {memberGuide.keyMoves.map((move) => (
+                        <span
+                          key={move}
+                          className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                        >
+                          {move}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+                      {t("analysis.preserve")}
+                    </div>
+                    <ul className="space-y-2">
+                      {memberGuide.preserve.map((item) => (
+                        <li key={item} className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {memberGuide.synergyTip && (
+                  <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 dark:border-emerald-900/30 dark:bg-emerald-900/10">
+                    <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-400">
+                      {t("analysis.synergyTip")}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                      {memberGuide.synergyTip.headline}
+                    </div>
+                    <div className="mt-1 text-sm leading-relaxed text-emerald-700 dark:text-emerald-400">
+                      {memberGuide.synergyTip.detail}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="space-y-6">
+        <h3 className="text-center text-xl font-bold dark:text-white">{t("analysis.detailedStrategy")}</h3>
+        <GamePhaseCard phase={guide.phases.early} title={t("analysis.earlyGame")} description={t("analysis.earlyGameDesc")} color="rose" t={t} />
+        <GamePhaseCard phase={guide.phases.mid} title={t("analysis.midGame")} description={t("analysis.midGameDesc")} color="blue" t={t} />
+        <GamePhaseCard phase={guide.phases.late} title={t("analysis.lateGame")} description={t("analysis.lateGameDesc")} color="emerald" t={t} />
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mb-4 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-amber-500" />
+          <h3 className="text-lg font-bold dark:text-white">{t("analysis.matchupTips")}</h3>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          {guide.matchups.map((matchup) => (
+            <div
+              key={matchup.title}
+              className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950/50"
+            >
+              <div className="text-base font-bold dark:text-white">{matchup.title}</div>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                {matchup.summary}
+              </p>
+              {matchup.keyPokemon && (
+                <div className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                  {t("analysis.keyPokemon")}: {matchup.keyPokemon}
+                </div>
+              )}
+              <ul className="mt-3 space-y-2">
+                {matchup.tips.map((tip) => (
+                  <li key={tip} className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mb-4 flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-emerald-500" />
+          <h3 className="text-lg font-bold dark:text-white">{t("analysis.quickTips")}</h3>
+        </div>
+        <div className="grid gap-2">
+          {guide.generalTips.map((tip) => (
+            <div
+              key={tip}
+              className="rounded-xl border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950/50 dark:text-zinc-400"
+            >
+              {tip}
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
 }

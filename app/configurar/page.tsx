@@ -4,13 +4,27 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { TeamForm } from "@/components/TeamForm";
 import { useTeam } from "@/lib/team-context";
 import { FormatId, FORMATS } from "@/config/formats";
-import { TemplateId, TEMPLATES } from "@/config/templates";
+import {
+    TemplateId,
+    TEMPLATES,
+    isTemplateCompatible,
+    sanitizeTemplateForFormat,
+} from "@/config/templates";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { analytics } from "@/lib/analytics";
+import type { GameplanData } from "@/lib/team-storage";
+import {
+    cloneGenerationOptions,
+    getGenerationOptionsFixedMembers,
+    getGenerationOptionsFormat,
+    getGenerationOptionsType,
+    type TeamGenerationOptions,
+} from "@/lib/team-generation-options";
+import type { GeneratedTeamMember, TeamGuideData } from "@/lib/team-guide";
 
 // Valid format IDs from config
 const VALID_FORMATS = Object.keys(FORMATS) as FormatId[];
@@ -25,11 +39,25 @@ function isValidTemplate(template: string): template is TemplateId {
     return VALID_TEMPLATES.includes(template as TemplateId);
 }
 
+interface TeamGenerationResult {
+    team: GeneratedTeamMember[];
+    gameplan?: GameplanData | null;
+    gameplanI18n?: Record<string, GameplanData> | null;
+    teamGuide?: TeamGuideData | null;
+    teamGuideI18n?: Record<string, TeamGuideData> | null;
+    templateId?: string;
+    options?: TeamGenerationOptions | null;
+}
+
 export default function ConfigurarPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { format, setFormat, addTeam, team, isHydrated } = useTeam();
+    const { format, setFormat, addTeam, team, isHydrated, generationOptions } = useTeam();
     const { t } = useTranslation();
+    const storedGenerationOptions = useMemo(
+        () => cloneGenerationOptions(generationOptions),
+        [generationOptions]
+    );
 
     // Read format and template from URL query parameters
     const initialFormat = useMemo(() => {
@@ -37,21 +65,62 @@ export default function ConfigurarPage() {
         if (formatParam && isValidFormat(formatParam)) {
             return formatParam as FormatId;
         }
-        return undefined;
-    }, [searchParams]);
+
+        return getGenerationOptionsFormat(storedGenerationOptions);
+    }, [searchParams, storedGenerationOptions]);
 
     const initialTemplate = useMemo(() => {
         const templateParam = searchParams.get("template");
-        if (templateParam && isValidTemplate(templateParam)) {
+        const resolvedFormat = initialFormat ?? format;
+
+        if (
+            templateParam &&
+            isValidTemplate(templateParam) &&
+            isTemplateCompatible(templateParam, resolvedFormat)
+        ) {
+            return sanitizeTemplateForFormat(templateParam, resolvedFormat);
+        }
+
+        if (templateParam && isValidTemplate(templateParam) && !searchParams.get("format")) {
             return templateParam as TemplateId;
         }
+
+        const storedTemplate = storedGenerationOptions?.templateId;
+        if (
+            storedTemplate &&
+            isValidTemplate(storedTemplate) &&
+            isTemplateCompatible(storedTemplate, resolvedFormat)
+        ) {
+            return sanitizeTemplateForFormat(storedTemplate, resolvedFormat);
+        }
+
         return undefined;
-    }, [searchParams]);
+    }, [format, initialFormat, searchParams, storedGenerationOptions]);
 
     const initialType = useMemo(() => {
         const tipoStr = searchParams.get("tipo");
-        return tipoStr ? tipoStr.toLowerCase() : undefined;
-    }, [searchParams]);
+        return tipoStr ? tipoStr.toLowerCase() : getGenerationOptionsType(storedGenerationOptions);
+    }, [searchParams, storedGenerationOptions]);
+
+    const initialExcludeLegendaries = useMemo(
+        () => storedGenerationOptions?.excludeLegendaries ?? false,
+        [storedGenerationOptions]
+    );
+
+    const initialFixedPokemon = useMemo(() => {
+        const fixedMembers = getGenerationOptionsFixedMembers(storedGenerationOptions);
+        const maxMembers = FORMATS[initialFormat ?? format].maxTeamSize;
+        return fixedMembers.slice(0, maxMembers);
+    }, [format, initialFormat, storedGenerationOptions]);
+
+    const formSeedKey = useMemo(() => JSON.stringify({
+        format: initialFormat ?? format,
+        template: initialTemplate ?? "balanced",
+        type: initialType ?? "all",
+        excludeLegendaries: initialExcludeLegendaries,
+        fixedPokemon: initialFixedPokemon,
+        isHydrated,
+    }), [format, initialExcludeLegendaries, initialFixedPokemon, initialFormat, initialTemplate, initialType, isHydrated]);
 
     // Apply URL format to context when initialFormat changes
     useEffect(() => {
@@ -65,11 +134,21 @@ export default function ConfigurarPage() {
         analytics.viewConfigurar();
     }, []);
 
-    const handleGenerate = (data: { team: any[]; gameplan?: any; gameplanI18n?: any, templateId?: string, options?: any }) => {
+    const handleGenerate = (data: TeamGenerationResult) => {
         // Track team generation
-        analytics.generateTeam(format, data.templateId || "balanced");
+        analytics.generateTeam(
+            data.options?.format || format,
+            data.templateId || "balanced"
+        );
         // Add team to context
-        addTeam(data.team, data.gameplan, data.gameplanI18n, data.options);
+        addTeam(
+            data.team,
+            data.gameplan,
+            data.gameplanI18n,
+            data.teamGuide,
+            data.teamGuideI18n,
+            data.options
+        );
         // Navigate to team page
         router.push("/equipo");
     };
@@ -113,13 +192,14 @@ export default function ConfigurarPage() {
                 {/* Form */}
                 <section className="w-full flex justify-center">
                     <TeamForm
-                        key={initialFormat || 'default'}
+                        key={formSeedKey}
                         onGenerate={handleGenerate}
                         format={format}
                         onFormatChange={setFormat}
-                        initialFormat={initialFormat}
                         initialTemplate={initialTemplate}
                         initialType={initialType}
+                        initialExcludeLegendaries={initialExcludeLegendaries}
+                        initialFixedPokemon={initialFixedPokemon}
                     />
                 </section>
 

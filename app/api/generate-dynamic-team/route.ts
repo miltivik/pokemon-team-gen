@@ -1,9 +1,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { generateDynamicTeam } from '@/lib/dynamic-builder';
-import { TemplateId } from '@/config/templates';
+import { sanitizeTemplateForFormat, TemplateId } from '@/config/templates';
 import { getMoveData, getPokemonData } from '@/lib/showdown-data';
 import { z } from 'zod';
+import { FormatId } from '@/config/formats';
 
 const generateTeamSchema = z.object({
     format: z.string().optional().default('gen9ou'),
@@ -15,11 +16,20 @@ const generateTeamSchema = z.object({
     lang: z.enum(['en', 'es']).optional().default('en'),
 });
 
-function hydrateTeamForClient(team: any[]) {
-    return team.map((member: any) => {
+interface HydratableTeamMember {
+    name: string;
+    moves?: unknown[];
+    num?: number;
+    types?: string[];
+    baseStats?: { hp: number; atk: number; def: number; spa: number; spd: number; spe: number };
+    abilities?: Record<string, string>;
+}
+
+function hydrateTeamForClient(team: HydratableTeamMember[]) {
+    return team.map((member) => {
         const pokemonData = getPokemonData(member.name);
         const moves = Array.isArray(member.moves)
-            ? member.moves.map((move: any) => {
+            ? member.moves.map((move) => {
                 if (typeof move !== 'string') {
                     return move;
                 }
@@ -53,6 +63,10 @@ export async function POST(req: NextRequest) {
         }
 
         const { format, tipo, excludeLegendaries, fijo, fijos, templateId, lang } = parsed.data;
+        const safeTemplateId = sanitizeTemplateForFormat(
+            templateId as TemplateId | undefined,
+            format as FormatId
+        );
 
         // Support both old string format and new array format
         let fixedMembers: string[] | null = null;
@@ -62,14 +76,14 @@ export async function POST(req: NextRequest) {
             fixedMembers = [fijo.trim()];
         }
 
-        console.log(`Generating dynamic team for format: ${format}, type: ${tipo}, fixed: ${fixedMembers?.join(', ')}, template: ${templateId}, lang: ${lang}`);
+        console.log(`Generating dynamic team for format: ${format}, type: ${tipo}, fixed: ${fixedMembers?.join(', ')}, template: ${safeTemplateId}, lang: ${lang}`);
 
         const result = await generateDynamicTeam({
             format,
             type: tipo,
             excludeLegendaries,
             fixedMembers,
-            templateId: templateId as TemplateId,
+            templateId: safeTemplateId,
             lang
         });
 

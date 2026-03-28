@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { FORMATS, FormatId, getGenFromFormat } from "../config/formats";
-import { TEMPLATES, TemplateId } from "../config/templates";
+import {
+    TemplateId,
+    getCompatibleTemplates,
+    sanitizeTemplateForFormat,
+} from "../config/templates";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -18,15 +21,29 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { PokemonCombobox } from "./PokemonCombobox";
 import { useTranslation } from "@/lib/i18n";
+import type { GameplanData } from "@/lib/team-storage";
+import type { TeamGenerationOptions } from "@/lib/team-generation-options";
+import type { GeneratedTeamMember, TeamGuideData } from "@/lib/team-guide";
+
+interface TeamGenerationResult {
+    team: GeneratedTeamMember[];
+    gameplan?: GameplanData | null;
+    gameplanI18n?: Record<string, GameplanData> | null;
+    teamGuide?: TeamGuideData | null;
+    teamGuideI18n?: Record<string, TeamGuideData> | null;
+    templateId?: string;
+    options?: TeamGenerationOptions | null;
+}
 
 interface TeamFormProps {
-    onGenerate: (data: { team: any[]; gameplan?: any; gameplanI18n?: any; templateId?: string; options?: any }) => void;
+    onGenerate: (data: TeamGenerationResult) => void;
     format: FormatId;
     onFormatChange: (format: FormatId) => void;
     isLoading?: boolean;
-    initialFormat?: FormatId;
     initialTemplate?: TemplateId;
     initialType?: string;
+    initialExcludeLegendaries?: boolean;
+    initialFixedPokemon?: string[];
 }
 
 const TYPE_KEYS = [
@@ -35,33 +52,37 @@ const TYPE_KEYS = [
     "poison", "ground", "rock", "bug", "steel", "ice"
 ] as const;
 
-export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parentLoading, initialFormat, initialTemplate, initialType }: TeamFormProps) {
-    const [type, setType] = useState("all");
-    const [fixedPokemon, setFixedPokemon] = useState<string[]>([]);
+export function TeamForm({
+    onGenerate,
+    format,
+    onFormatChange,
+    isLoading: parentLoading,
+    initialTemplate,
+    initialType,
+    initialExcludeLegendaries = false,
+    initialFixedPokemon = [],
+}: TeamFormProps) {
+    const [type, setType] = useState(initialType ?? "all");
+    const [fixedPokemon, setFixedPokemon] = useState<string[]>(
+        initialFixedPokemon.slice(0, FORMATS[format].maxTeamSize)
+    );
     const [pokemonName, setPokemonName] = useState("");
-    const [templateId, setTemplateId] = useState<TemplateId>("balanced");
-    const [excludeLegendaries, setExcludeLegendaries] = useState(false);
+    const [templateId, setTemplateId] = useState<TemplateId>(
+        sanitizeTemplateForFormat(initialTemplate ?? "balanced", format)
+    );
+    const [excludeLegendaries, setExcludeLegendaries] = useState(initialExcludeLegendaries);
     const [localLoading, setLocalLoading] = useState(false);
     const { t, lang } = useTranslation();
-
-    // Apply initial values from props
-    useEffect(() => {
-        if (initialFormat && initialFormat !== format) {
-            onFormatChange(initialFormat);
-        }
-    }, [initialFormat, format, onFormatChange]);
+    const maxFixedMembers = FORMATS[format].maxTeamSize;
+    const compatibleTemplates = getCompatibleTemplates(format);
 
     useEffect(() => {
-        if (initialTemplate && initialTemplate !== templateId) {
-            setTemplateId(initialTemplate);
-        }
-    }, [initialTemplate, templateId]);
+        setFixedPokemon((current) => current.slice(0, maxFixedMembers));
+    }, [maxFixedMembers]);
 
     useEffect(() => {
-        if (initialType && initialType !== type) {
-            setType(initialType);
-        }
-    }, [initialType, type]);
+        setTemplateId((current) => sanitizeTemplateForFormat(current, format));
+    }, [format]);
 
     const isLoading = parentLoading || localLoading;
 
@@ -85,7 +106,7 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
                 tipo: type === 'all' ? null : (type || null),
                 fijos: fixedPokemon.length > 0 ? fixedPokemon : null,
                 excludeLegendaries,
-                templateId,
+                templateId: sanitizeTemplateForFormat(templateId, format),
                 lang
             };
 
@@ -158,7 +179,7 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
                                     <SelectValue placeholder={t("form.stylePlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {Object.entries(TEMPLATES).map(([key]) => (
+                                    {compatibleTemplates.map((key) => (
                                         <SelectItem key={key} value={key}>
                                             {t(`template.${key}`)}
                                         </SelectItem>
@@ -191,7 +212,7 @@ export function TeamForm({ onGenerate, format, onFormatChange, isLoading: parent
                             <PokemonCombobox
                                 value={pokemonName}
                                 onChange={(name) => {
-                                    if (name && !fixedPokemon.includes(name) && fixedPokemon.length < 6) {
+                                    if (name && !fixedPokemon.includes(name) && fixedPokemon.length < maxFixedMembers) {
                                         setFixedPokemon([...fixedPokemon, name]);
                                     }
                                     setPokemonName("");

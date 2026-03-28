@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { analytics } from "@/lib/analytics";
 
 export default function AnalisisPage() {
-    const { team, gameplan, gameplanI18n, format, isHydrated } = useTeam();
+    const { team, teamGuide, teamGuideI18n, format, isHydrated } = useTeam();
     const { t, lang } = useTranslation();
 
     // Track page view
@@ -18,8 +18,7 @@ export default function AnalisisPage() {
         analytics.viewAnalisis();
     }, []);
 
-    // Resolve gameplan for current language (falls back to generation-time gameplan)
-    const resolvedGameplan = gameplanI18n?.[lang] || gameplan;
+    const resolvedTeamGuide = teamGuideI18n?.[lang] || teamGuide;
 
     const handleGoHome = () => {
         // This won't be used since we have navigation
@@ -68,7 +67,7 @@ export default function AnalisisPage() {
                 {/* Analysis component */}
                 <TeamAnalysis
                     team={team}
-                    gameplan={resolvedGameplan}
+                    guide={resolvedTeamGuide}
                     format={format}
                     onGoHome={handleGoHome}
                 />
