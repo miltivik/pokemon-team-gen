@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, use, useState, useMemo } from "react";
+import { useEffect, use, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
 import { FormatId, FORMATS } from "@/config/formats";
 import { getCombinedStats, CombinedPokemonData } from "@/lib/pikalytics";
-import { Badge } from "@/components/ui/badge";
 import { PokemonStatCard } from "@/components/guides/PokemonStatCard";
 import { Loader2, TrendingUp, ShieldAlert } from "lucide-react";
 import { FORMAT_GUIDES, COLOR_THEMES } from "@/config/format-guides";
@@ -31,6 +30,12 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
     const [loading, setLoading] = useState(true);
 
     const guideData = FORMAT_GUIDES[format] || FORMAT_GUIDES.default;
+    const descriptionKey = `guides.${format}.desc`;
+    const translatedDescription = t(descriptionKey);
+    const formatDescription =
+        translatedDescription === descriptionKey
+            ? t("guides.genericDesc")
+            : translatedDescription;
 
     useEffect(() => {
         analytics.viewGuides(format);
@@ -66,7 +71,7 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
                         🏆 {t("guides.title")} - {formatInfo.label}
                     </h1>
                     <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        {t(`guides.${format}.desc`) || t("guides.genericDesc")}
+                        {formatDescription}
                     </p>
                 </header>
 

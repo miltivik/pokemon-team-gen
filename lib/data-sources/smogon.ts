@@ -1,41 +1,60 @@
-import { toID } from '../utils';
+import { resolveProviderFormatCandidates } from "@/lib/data-sources/format-source-resolver";
+import { toID } from "../utils";
 
-// Interfaces mapping the Smogon Chaos JSON structure
 export interface ChaosData {
   info: {
     metagame: string;
     cutoff: number;
-    cutoff_deviation: number;
-    team_type: string;
-    number_of_battles: number;
+    cutoff_deviation?: number;
+    "cutoff deviation"?: number;
+    team_type?: string;
+    "team type"?: string | null;
+    number_of_battles?: number;
+    "number of battles"?: number;
   };
   data: Record<string, ChaosMonData>;
 }
 
 export interface ChaosMonData {
-  "Moves": Record<string, number>;
-  "Teammates": Record<string, number>;
-  "Abilities": Record<string, number>;
-  "Items": Record<string, number>;
-  "Spreads": Record<string, number>; // "Nature:HP/Atk/Def/SpA/SpD/Spe" -> usage
+  Moves: Record<string, number>;
+  Teammates: Record<string, number>;
+  Abilities: Record<string, number>;
+  Items: Record<string, number>;
+  Spreads: Record<string, number>;
   "Tera Types"?: Record<string, number>;
-  "usage": number; // Raw usage count usually, or weighted
+  usage: number;
   "Raw count": number;
 }
 
-// Normalized Data Structure for our App
+export interface SmogonSourceInfo {
+  provider: "smogon";
+  requestedFormat: string;
+  resolvedFormat: string;
+  month: string;
+  rating: number;
+  fallbackType:
+    | "exact"
+    | "mapped"
+    | "historical_regulation"
+    | "same_game_fallback";
+}
+
 export interface NormalizedSmogonData {
   pokemon: Record<string, NormalizedMonData>;
   meta: {
     format: string;
     totalBattles: number;
+    leadData: Record<string, number>;
+    sourceInfo: SmogonSourceInfo;
+    optionalArchetypeHints?: string[];
   };
 }
 
 export interface NormalizedMonData {
   name: string;
-  usageRate: number; // 0.0 to 1.0
-  teammates: Record<string, number>; // pokemonId -> correlation (-1.0 to 1.0 or probability)
+  usageRate: number;
+  optionalWinRate?: number | null;
+  teammates: Record<string, number>;
   moves: Record<string, number>;
   items: Record<string, number>;
   abilities: Record<string, number>;
@@ -47,143 +66,202 @@ export interface NormalizedMonData {
   }>;
 }
 
-// In-memory cache
+interface FetchResult {
+  data: ChaosData;
+  leadData: Record<string, number>;
+  sourceInfo: SmogonSourceInfo;
+}
+
+function normalizeUsageMap(values: Record<string, number> | undefined) {
+  const normalized: Record<string, number> = {};
+  const entries = Object.entries(values || {});
+  const total = entries.reduce((sum, [, usage]) => sum + usage, 0) || 1;
+
+  for (const [name, usage] of entries) {
+    const id = toID(name);
+    normalized[id] = (normalized[id] || 0) + usage / total;
+  }
+
+  return normalized;
+}
+
+function normalizeLeadData(text: string) {
+  const leadData: Record<string, number> = {};
+  const leadRegex = /\|\s*\d+\s*\|\s*([^|]+?)\s*\|\s*([\d.]+)%\s*\|/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = leadRegex.exec(text)) !== null) {
+    const pokemonId = toID(match[1]?.trim());
+    const usageRate = Number(match[2]);
+    if (!pokemonId || Number.isNaN(usageRate)) continue;
+    leadData[pokemonId] = usageRate / 100;
+  }
+
+  return leadData;
+}
+
 const cache: Map<string, NormalizedSmogonData> = new Map();
 const cacheTime: Map<string, number> = new Map();
-const CACHE_TTL = 1000 * 60 * 60 * 6; // 6 hours
+const CACHE_TTL = 1000 * 60 * 60 * 6;
+const BASE_URL = "https://www.smogon.com/stats";
+const RATINGS = [1760, 1695, 1500, 0];
 
-// Helper to find valid URL
-const BASE_URL = 'https://www.smogon.com/stats';
-
-// Dates to check (Current + previous 6 months)
 function getRecentMonths(): string[] {
   const dates = [];
   const now = new Date();
-  for (let i = 1; i <= 6; i++) { // Start from previous month usually
+  for (let i = 1; i <= 6; i += 1) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, "0");
     dates.push(`${year}-${month}`);
   }
   return dates;
 }
 
-// Standard ratings to check
-const RATINGS = [1760, 1695, 1500, 0];
-
 export class SmogonDataSource {
-
   static async getStats(format: string): Promise<NormalizedSmogonData | null> {
     const cached = cache.get(format);
-    if (cached && (Date.now() - (cacheTime.get(format) || 0) < CACHE_TTL)) {
+    if (cached && Date.now() - (cacheTime.get(format) || 0) < CACHE_TTL) {
       return cached;
     }
 
-    // Try finding the data
-    const chaosData = await this.fetchChaosData(format);
-    if (!chaosData) return null;
+    const fetchResult = await this.fetchChaosData(format);
+    if (!fetchResult) {
+      return null;
+    }
 
-    const normalized = this.normalize(chaosData, format);
-
+    const normalized = this.normalize(fetchResult, format);
     cache.set(format, normalized);
     cacheTime.set(format, Date.now());
 
     return normalized;
   }
 
-  private static async fetchChaosData(format: string): Promise<ChaosData | null> {
+  private static async fetchChaosData(format: string): Promise<FetchResult | null> {
     const months = getRecentMonths();
+    const plan = resolveProviderFormatCandidates(format, "smogon");
 
-    // Hardcoded logic for known Gen9 formats to prioritize recent stats
-    // Note: In a real app, we might want to configure this map externally
-    const formatSlug = format.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-    for (const month of months) {
-      const testUrl = `${BASE_URL}/${month}/chaos/${formatSlug}-0.json`;
-      try {
-          const headRes = await fetch(testUrl, { method: 'HEAD', cache: 'no-store' });
-          if (!headRes.ok) continue;
-      } catch (e) {
-          continue;
-      }
-
-      for (const rating of RATINGS) {
-        // https://www.smogon.com/stats/2024-11/chaos/gen9ou-1695.json
-        const url = `${BASE_URL}/${month}/chaos/${formatSlug}-${rating}.json`;
+    for (const candidate of plan.candidates) {
+      for (const month of months) {
+        const baselineUrl = `${BASE_URL}/${month}/chaos/${candidate.slug}-0.json`;
         try {
-          // console.log(`Trying to fetch ${url}...`);
-          const res = await fetch(url, { cache: 'no-store' });
-          if (res.ok) {
-            const data = await res.json();
-            // console.log(`Found stats for ${format} in ${month} (rating ${rating})`);
-            return data as ChaosData;
+          const headRes = await fetch(baselineUrl, {
+            method: "HEAD",
+            cache: "no-store",
+          });
+          if (!headRes.ok) continue;
+        } catch {
+          continue;
+        }
+
+        for (const rating of RATINGS) {
+          const url = `${BASE_URL}/${month}/chaos/${candidate.slug}-${rating}.json`;
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) continue;
+
+            const data = (await res.json()) as ChaosData;
+            const leadData = await this.fetchLeadData(candidate.slug, month);
+
+            return {
+              data,
+              leadData,
+              sourceInfo: {
+                provider: "smogon",
+                requestedFormat: format,
+                resolvedFormat: candidate.slug,
+                month,
+                rating,
+                fallbackType: candidate.reason,
+              },
+            };
+          } catch {
+            continue;
           }
-        } catch (e) {
-            // Ignore errors, continue searching
         }
       }
     }
 
-    // Fallback: Check for gen9ou specific if format is weird, or return null
     return null;
   }
 
-  private static normalize(data: ChaosData, format: string): NormalizedSmogonData {
-    const totalBattles = data.info.number_of_battles || 1000;
+  private static async fetchLeadData(formatSlug: string, month: string) {
+    for (const rating of RATINGS) {
+      const url = `${BASE_URL}/${month}/leads/${formatSlug}-${rating}.txt`;
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) continue;
+
+        const text = await res.text();
+        const leadData = normalizeLeadData(text);
+        if (Object.keys(leadData).length > 0) {
+          return leadData;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    return {};
+  }
+
+  private static normalize(fetchResult: FetchResult, format: string): NormalizedSmogonData {
+    const { data, leadData, sourceInfo } = fetchResult;
+    const totalBattles =
+      data.info.number_of_battles ??
+      data.info["number of battles"] ??
+      1000;
+
     const normalized: NormalizedSmogonData = {
       meta: {
         format,
-        totalBattles
+        totalBattles,
+        leadData,
+        sourceInfo,
       },
-      pokemon: {}
+      pokemon: {},
     };
 
     for (const [name, raw] of Object.entries(data.data)) {
       const id = toID(name);
+      const rawCount = raw["Raw count"] || 0;
+      const usageRate =
+        typeof raw.usage === "number" && Number.isFinite(raw.usage)
+          ? raw.usage > 1
+            ? raw.usage / 100
+            : raw.usage
+          : totalBattles > 0
+            ? rawCount / (totalBattles * 2)
+            : 0;
+      const totalSpreadWeight =
+        Object.values(raw.Spreads || {}).reduce((sum, value) => sum + value, 0) || 1;
 
-      // Calculate real usage rate (approximate if raw usage not present, usually 'usage' in Chaos is weighted)
-      // If 'usage' is < 1, it's a rate. If > 1, it's a count.
-      let usageRate = raw.usage;
-      if (usageRate > 1) {
-          usageRate = usageRate / totalBattles;
-      }
+      const spreads = Object.entries(raw.Spreads || {})
+        .map(([key, value]) => {
+          const [nature, evStr] = key.split(":");
+          const evs = evStr ? evStr.split("/").map(Number) : [0, 0, 0, 0, 0, 0];
+          return {
+            nature: nature || "Serious",
+            evs: evs.length === 6 ? evs : [0, 0, 0, 0, 0, 0],
+            percentage: value / totalSpreadWeight,
+          };
+        })
+        .sort((a, b) => b.percentage - a.percentage);
 
-      // Normalize Spreads
-      // Format key: "Nature:HP/Atk/Def/SpA/SpD/Spe"
-      const spreads = Object.entries(raw.Spreads || {}).map(([key, val]) => {
-         const [nature, evStr] = key.split(':');
-         const evs = evStr ? evStr.split('/').map(Number) : [0,0,0,0,0,0];
-         return {
-           nature: nature || 'Serious',
-           evs: evs.length === 6 ? evs : [0,0,0,0,0,0],
-           percentage: val // usually raw count or weight
-         };
-      }).sort((a, b) => b.percentage - a.percentage);
-
-      // Normalize Teammates
-      // Chaos teammates are raw numbers (weighted or unweighted).
-      // We want to know correlation.
-      // P(A|B) = Count(A & B) / Count(B)
-      // Here raw.Teammates[TeammateName] is roughly Count(A & B)
       const teammates: Record<string, number> = {};
-      let totalTeammateWeight = 0;
-      for (const tVal of Object.values(raw.Teammates || {})) totalTeammateWeight += tVal;
-
-      for (const [tName, tVal] of Object.entries(raw.Teammates || {})) {
-          // For simplicity in the MVP, we use the raw weight value as a synergy score relative to others
-          // Ideally we'd calculate Lift or Jaccard index
-          teammates[toID(tName)] = tVal;
+      for (const [teammateName, teammateValue] of Object.entries(raw.Teammates || {})) {
+        teammates[toID(teammateName)] = teammateValue;
       }
 
       normalized.pokemon[id] = {
         name,
         usageRate,
-        teammates, // Map ID -> Score
-        moves: raw.Moves || {}, // Already Name -> Usage
-        items: raw.Items || {},
-        abilities: raw.Abilities || {},
-        teraTypes: raw["Tera Types"] || {},
-        spreads
+        teammates,
+        moves: normalizeUsageMap(raw.Moves),
+        items: normalizeUsageMap(raw.Items),
+        abilities: normalizeUsageMap(raw.Abilities),
+        teraTypes: normalizeUsageMap(raw["Tera Types"]),
+        spreads,
       };
     }
 

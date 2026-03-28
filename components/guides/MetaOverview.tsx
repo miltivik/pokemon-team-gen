@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "@/lib/i18n";
 import { getCombinedStats, CombinedPokemonData } from "@/lib/pikalytics";
 import { PokemonStatCard } from "./PokemonStatCard";
+import { formatPercentage } from "@/lib/format-percent";
 
 interface MetaOverviewProps {
     format: string;
@@ -104,7 +105,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                                             {i + 1}. {ability.name}
                                         </span>
                                         <span className="text-purple-600 font-mono flex-shrink-0">
-                                            {(ability.usage * 100).toFixed(2)}%
+                                            {formatPercentage(ability.usage, { fromRatio: true })}
                                         </span>
                                     </div>
                                 ))}
@@ -119,7 +120,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                                             {i + 1}. {item.name}
                                         </span>
                                         <span className="text-amber-600 font-mono flex-shrink-0">
-                                            {(item.usage * 100).toFixed(2)}%
+                                            {formatPercentage(item.usage, { fromRatio: true })}
                                         </span>
                                     </div>
                                 ))}

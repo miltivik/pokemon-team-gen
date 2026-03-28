@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
+const projectRoot = process.cwd();
+
 const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
+  outputFileTracingRoot: projectRoot,
   images: {
     remotePatterns: [
       {
@@ -24,6 +27,9 @@ const nextConfig: NextConfig = {
         pathname: '/sprites/**',
       },
     ],
+  },
+  turbopack: {
+    root: projectRoot,
   },
   reactCompiler: false,
 };
