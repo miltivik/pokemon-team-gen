@@ -10,6 +10,9 @@ import { Template, TemplateId, TEMPLATES, sanitizeTemplateForFormat } from "@/co
 import { DexProvider, type PokemonSpecies } from "@/lib/data-sources/dex";
 import { NormalizedSmogonData, SmogonDataSource } from "@/lib/data-sources/smogon";
 import { getVGCArchetypes } from "@/lib/victory-road";
+import { isAllowedInFormat } from "@/lib/format-rules";
+import { getCanonicalSpeciesId } from "@/lib/pokemon-forms";
+import { isLegendaryOrParadoxSpecies } from "@/lib/pokemon-classification";
 import {
   attachMemberAnalyses,
   generateTeamGuide,
@@ -51,6 +54,7 @@ interface DynamicTeamOptions {
   fixedMembers?: string[] | null;
   templateId?: TemplateId;
   lang?: "en" | "es";
+  dataOverride?: NormalizedSmogonData | null;
 }
 
 interface CandidateTeamBuild {
@@ -69,13 +73,23 @@ export async function generateDynamicTeam(
     templateId = "balanced",
     lang = "en",
     fixedMembers,
+    dataOverride,
   } = options;
 
   const gen = getGenFromFormat(format as FormatId) || 9;
-  const data = await SmogonDataSource.getStats(format);
+  const data = dataOverride ?? (await SmogonDataSource.getStats(format));
   const finalData: NormalizedSmogonData = data
     ? { ...data, meta: { ...data.meta } }
     : generateMockData(format, gen);
+
+  if (type) {
+    ensureTypeCandidateCoverage(finalData, {
+      format,
+      gen,
+      type,
+      excludeLegendaries,
+    });
+  }
 
   if (FORMATS[format as FormatId]?.gameType === "doubles" && format.includes("vgc")) {
     try {
@@ -180,6 +194,59 @@ export async function generateDynamicTeam(
       es: teamGuideEs,
     },
   };
+}
+
+function ensureTypeCandidateCoverage(
+  data: NormalizedSmogonData,
+  options: {
+    format: string;
+    gen: number;
+    type: string;
+    excludeLegendaries: boolean;
+  }
+) {
+  const requestedType = options.type.toLowerCase();
+  const allowLowTierFillers = options.format.endsWith("lc");
+
+  for (const dexSpecies of DexProvider.getAllSpecies()) {
+    const species = DexProvider.getSpeciesForGen(dexSpecies.name, options.gen);
+    if (!species) continue;
+    if (!species.types.some((type) => type.toLowerCase() === requestedType)) continue;
+    if (
+      !allowLowTierFillers &&
+      (species.tier === "LC" || species.tier === "NFE")
+    ) {
+      continue;
+    }
+    if (
+      options.excludeLegendaries &&
+      isLegendaryOrParadoxSpecies(species.name)
+    ) {
+      continue;
+    }
+    if (
+      options.gen === 9 &&
+      !isAllowedInFormat(species.name, options.format as FormatId)
+    ) {
+      continue;
+    }
+
+    const speciesId = toID(species.name);
+    if (data.pokemon[speciesId]) {
+      continue;
+    }
+
+    data.pokemon[speciesId] = {
+      name: species.name,
+      usageRate: 0.001,
+      teammates: {},
+      moves: {},
+      items: {},
+      abilities: {},
+      teraTypes: {},
+      spreads: [],
+    };
+  }
 }
 
 function convertToTeamMember(
@@ -461,6 +528,8 @@ function buildCandidateTeam(options: {
   const teamSpecies: PokemonSpecies[] = [];
   const teamMoves = new Set<string>();
   const teamAbilities = new Set<string>();
+  const teamCanonicalIds = new Set<string>();
+  const processedFixedCanonicalIds = new Set<string>();
   const optimizer = new SetOptimizer(data);
 
   const engine = new WeightedScoringEngine(format, gen, data, {
@@ -493,6 +562,10 @@ function buildCandidateTeam(options: {
       if (team.length >= maxTeamSize) break;
       const species = DexProvider.getSpeciesForGen(fixed, gen);
       if (!species) continue;
+      const canonicalId = getCanonicalSpeciesId(species);
+      if (processedFixedCanonicalIds.has(canonicalId)) continue;
+      processedFixedCanonicalIds.add(canonicalId);
+      if (teamCanonicalIds.has(canonicalId)) continue;
 
       const set = optimizer.optimize(species, teamSpecies, {
         template,
@@ -500,11 +573,18 @@ function buildCandidateTeam(options: {
         teamAbilities,
         format,
       });
+      if (!isResolvedSetViable(set, teamCanonicalIds, species)) {
+        optimizer.clearCache();
+        continue;
+      }
+
       const member = convertToTeamMember(species, set);
       team.push(member);
       teamSpecies.push(species);
+      teamCanonicalIds.add(canonicalId);
       set.moves.forEach((move) => teamMoves.add(toID(move)));
       teamAbilities.add(toID(set.ability));
+      optimizer.clearCache();
     }
   }
 
@@ -575,10 +655,20 @@ function buildCandidateTeam(options: {
       teamAbilities,
       format,
     });
+    if (!isResolvedSetViable(set, teamCanonicalIds, selected.species)) {
+      optimizer.clearCache();
+      suggestions.splice(selectedIndex, 1);
+      if (suggestions.length === 0) {
+        break;
+      }
+      continue;
+    }
+
     const member = convertToTeamMember(selected.species, set);
 
     team.push(member);
     teamSpecies.push(selected.species);
+    teamCanonicalIds.add(getCanonicalSpeciesId(selected.species));
     set.moves.forEach((move) => teamMoves.add(toID(move)));
     teamAbilities.add(toID(set.ability));
     optimizer.clearCache();
@@ -603,6 +693,29 @@ function buildCandidateTeam(options: {
   };
 }
 
+function isResolvedSetViable(
+  set: OptimizedSet,
+  teamCanonicalIds: Set<string>,
+  species: PokemonSpecies
+) {
+  if (teamCanonicalIds.has(getCanonicalSpeciesId(species))) {
+    return false;
+  }
+
+  if (!set.item?.trim() || !set.ability?.trim() || !set.nature?.trim()) {
+    return false;
+  }
+
+  const uniqueMoves = new Set(
+    (set.moves ?? [])
+      .map((move) => String(move || "").trim())
+      .filter(Boolean)
+      .map((move) => toID(move))
+  );
+
+  return uniqueMoves.size >= 4;
+}
+
 function generateMockData(format: string, gen: number): NormalizedSmogonData {
   const data: NormalizedSmogonData = {
     meta: {
@@ -622,9 +735,12 @@ function generateMockData(format: string, gen: number): NormalizedSmogonData {
   };
 
   const allSpecies = DexProvider.getAllSpecies();
+  const allowLowTierFillers = format.endsWith("lc");
   for (const species of allSpecies) {
     const mon = DexProvider.getSpeciesForGen(species.name, gen);
     if (!mon) continue;
+    if (gen === 9 && !isAllowedInFormat(mon.name, format as FormatId)) continue;
+    if (!allowLowTierFillers && (mon.tier === "LC" || mon.tier === "NFE")) continue;
     if (mon.evos && mon.evos.length > 0) continue;
 
     data.pokemon[toID(mon.name)] = {

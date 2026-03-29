@@ -336,6 +336,8 @@ const translations: Record<Lang, Record<string, string>> = {
         "form.noPokemonFound": "No Pokémon found.",
         "form.monotypeRequiresType": "For monotype formats, please select a specific type.",
         "form.monotypeRequiresTypeDesc": "Choose a type from the dropdown to generate a valid monotype team.",
+        "form.duplicateFormBlocked": "You can't lock two forms from the same species.",
+        "form.duplicateFormBlockedDesc": "{selected} conflicts with {kept}. Only one form from the {family} family can be fixed.",
 
         // Template labels
         "template.balanced": "Balanced",
@@ -858,6 +860,8 @@ const translations: Record<Lang, Record<string, string>> = {
         "form.noPokemonFound": "No se encontró ningún Pokémon.",
         "form.monotypeRequiresType": "Para formatos monotype, por favor selecciona un tipo específico.",
         "form.monotypeRequiresTypeDesc": "Elige un tipo del menú desplegable para generar un equipo monotype válido.",
+        "form.duplicateFormBlocked": "No puedes fijar dos formas de la misma especie.",
+        "form.duplicateFormBlockedDesc": "{selected} entra en conflicto con {kept}. Solo se puede fijar una forma de la familia {family}.",
 
         // Etiquetas de plantilla
         "template.balanced": "Equilibrado",

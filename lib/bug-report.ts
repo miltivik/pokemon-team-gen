@@ -30,11 +30,27 @@ export interface BugReportClientMeta {
   currentUrl?: string;
 }
 
+export const BUG_REPORT_TITLE_MIN_LENGTH = 3;
+export const BUG_REPORT_BODY_MIN_LENGTH = 10;
+
+function trimOptionalString(value: unknown) {
+  return typeof value === "string" ? value.trim() : value;
+}
+
 export const bugReportSchema = z.object({
-  title: z.string().trim().min(3).max(120),
-  description: z.string().trim().min(10).max(4000),
-  stepsToReproduce: z.string().trim().min(10).max(4000),
-  email: z.union([z.literal(""), z.string().email().max(254)]).optional(),
+  title: z.string().trim().min(BUG_REPORT_TITLE_MIN_LENGTH).max(120),
+  description: z.string().trim().min(BUG_REPORT_BODY_MIN_LENGTH).max(4000),
+  stepsToReproduce: z
+    .string()
+    .trim()
+    .min(BUG_REPORT_BODY_MIN_LENGTH)
+    .max(4000),
+  email: z
+    .preprocess(
+      trimOptionalString,
+      z.union([z.literal(""), z.string().email().max(254)])
+    )
+    .optional(),
   page: z.string().trim().min(1).max(200),
   lang: z.enum(["en", "es"]),
   clientMeta: z.object({
@@ -64,7 +80,7 @@ export const bugReportSchema = z.object({
         .optional(),
     })
     .optional(),
-  honeypot: z.string().max(0).optional(),
+  honeypot: z.preprocess(trimOptionalString, z.string().max(0)).optional(),
 });
 
 export type BugReportPayload = z.infer<typeof bugReportSchema>;

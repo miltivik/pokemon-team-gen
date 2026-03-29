@@ -21,6 +21,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { PokemonCombobox } from "./PokemonCombobox";
 import { useTranslation } from "@/lib/i18n";
+import { getCanonicalSpeciesId, getCanonicalSpeciesName } from "@/lib/pokemon-forms";
 import type { GameplanData } from "@/lib/team-storage";
 import type { TeamGenerationOptions } from "@/lib/team-generation-options";
 import type { GeneratedTeamMember, TeamGuideData } from "@/lib/team-guide";
@@ -212,7 +213,37 @@ export function TeamForm({
                             <PokemonCombobox
                                 value={pokemonName}
                                 onChange={(name) => {
-                                    if (name && !fixedPokemon.includes(name) && fixedPokemon.length < maxFixedMembers) {
+                                    if (!name) {
+                                        setPokemonName("");
+                                        return;
+                                    }
+
+                                    if (fixedPokemon.includes(name)) {
+                                        setPokemonName("");
+                                        return;
+                                    }
+
+                                    const selectedCanonicalId = getCanonicalSpeciesId(name);
+                                    const conflictingFixed = fixedPokemon.find(
+                                        (member) => getCanonicalSpeciesId(member) === selectedCanonicalId
+                                    );
+
+                                    if (conflictingFixed) {
+                                        toast.warning(t("form.duplicateFormBlocked"), {
+                                            description: t("form.duplicateFormBlockedDesc")
+                                                .replace("{selected}", name)
+                                                .replace("{kept}", conflictingFixed)
+                                                .replace(
+                                                    "{family}",
+                                                    getCanonicalSpeciesName(name)
+                                                ),
+                                            duration: 5000,
+                                        });
+                                        setPokemonName("");
+                                        return;
+                                    }
+
+                                    if (fixedPokemon.length < maxFixedMembers) {
                                         setFixedPokemon([...fixedPokemon, name]);
                                     }
                                     setPokemonName("");

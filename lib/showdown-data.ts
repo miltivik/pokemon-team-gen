@@ -451,33 +451,38 @@ export function isAvailableInGen(name: string, targetGen: number): boolean {
 
 
 export function getRandomMovesWithDetails(pokemonName: string, count: number = 4): MoveData[] {
-    const id = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    let data = learnsets[id];
-
-    // If no learnset found, try to find the base species learnset
-    if (!data) {
-        const pokemonData = getPokemonData(pokemonName);
-        if (pokemonData?.baseSpecies) {
-            const baseId = pokemonData.baseSpecies.toLowerCase().replace(/[^a-z0-9]/g, '');
-            data = learnsets[baseId];
-        }
-    }
-
-    if (!data) {
-        // Fallback: If learnset still missing, return empty array
-        return [];
-    }
-
-    const learnsetMoves = data.learnset || data;
-    const allMoveIds = Object.keys(learnsetMoves);
-    if (allMoveIds.length === 0) return [];
-
-    // Filter moves to only include those that exist in our moves database
-    const validMoveIds = allMoveIds.filter(mid => moves[mid]);
+    const validMoveIds = getLearnsetMoveIds(pokemonName);
+    if (validMoveIds.length === 0) return [];
 
     const selectedIds = validMoveIds.sort(() => 0.5 - Math.random()).slice(0, count);
 
     return selectedIds.map(mid => moves[mid]);
+}
+
+export function getLearnableMovesWithDetails(pokemonName: string): MoveData[] {
+    return getLearnsetMoveIds(pokemonName).map((moveId) => moves[moveId]);
+}
+
+function getLearnsetMoveIds(pokemonName: string): string[] {
+    const id = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const pokemonData = getPokemonData(pokemonName);
+    const directData = learnsets[id];
+    const baseData = pokemonData?.baseSpecies
+        ? learnsets[pokemonData.baseSpecies.toLowerCase().replace(/[^a-z0-9]/g, '')]
+        : undefined;
+
+    if (!directData && !baseData) {
+        return [];
+    }
+
+    const learnsetMoves = {
+        ...((baseData?.learnset || baseData || {}) as Record<string, unknown>),
+        ...((directData?.learnset || directData || {}) as Record<string, unknown>),
+    };
+    const allMoveIds = Object.keys(learnsetMoves);
+    if (allMoveIds.length === 0) return [];
+
+    return allMoveIds.filter(mid => moves[mid]);
 }
 
 export function getTypeColor(type: string): string {

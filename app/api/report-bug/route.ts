@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
     const parsed = bugReportSchema.safeParse(body);
 
     if (!parsed.success) {
+      console.warn("Invalid bug report payload:", parsed.error.flatten());
       return NextResponse.json(
         { error: "Invalid bug report payload.", details: parsed.error.issues },
         { status: 400 }
@@ -49,6 +50,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (parsed.data.honeypot) {
+      console.warn("Bug report honeypot triggered.", {
+        page: parsed.data.page,
+        submittedAt: parsed.data.clientMeta.submittedAt,
+      });
       return NextResponse.json(
         { error: "Spam protection triggered." },
         { status: 400 }

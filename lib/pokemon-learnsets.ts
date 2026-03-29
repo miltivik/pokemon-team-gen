@@ -9,26 +9,37 @@ interface LearnsetRecord {
 
 const learnsets = learnsetsRaw as unknown as Record<string, LearnsetRecord>;
 
-function getLearnsetRecord(name: string): LearnsetRecord | undefined {
+function getLearnsetSources(name: string) {
   const direct = learnsets[toID(name)];
-  if (direct) return direct;
-
   const pokemon = getPokemonData(name);
-  if (!pokemon?.baseSpecies) return undefined;
+  const base = pokemon?.baseSpecies ? learnsets[toID(pokemon.baseSpecies)] : undefined;
 
-  return learnsets[toID(pokemon.baseSpecies)];
+  return {
+    direct,
+    base,
+  };
+}
+
+function getMergedLearnset(name: string) {
+  const { direct, base } = getLearnsetSources(name);
+  if (!direct && !base) return undefined;
+
+  const baseLearnset = (base?.learnset ?? base) as Record<string, unknown> | undefined;
+  const directLearnset = (direct?.learnset ?? direct) as Record<string, unknown> | undefined;
+
+  return {
+    ...(baseLearnset ?? {}),
+    ...(directLearnset ?? {}),
+  };
 }
 
 export function pokemonCanLearnMove(name: string, moveName: string): boolean {
-  const record = getLearnsetRecord(name);
-  if (!record) return false;
-
-  const learnsetSource = record.learnset ?? record;
-  if (!learnsetSource || typeof learnsetSource !== "object") {
+  const learnset = getMergedLearnset(name);
+  if (!learnset || typeof learnset !== "object") {
     return false;
   }
 
   return Boolean(
-    Reflect.get(learnsetSource as Record<string, unknown>, toID(moveName))
+    Reflect.get(learnset as Record<string, unknown>, toID(moveName))
   );
 }

@@ -6,6 +6,7 @@ import movesData from "../../data/moves.json";
 import setsData from "../../data/gen9-sets.json";
 import { getSmogonTierKey } from "@/lib/format-rules";
 import { pokemonCanLearnMove } from "@/lib/pokemon-learnsets";
+import { getLearnableMovesWithDetails, getRandomMovesWithDetails } from "@/lib/showdown-data";
 import { PokemonSpecies } from "../data-sources/dex";
 import { NormalizedMonData, NormalizedSmogonData } from "../data-sources/smogon";
 import { toID } from "../utils";
@@ -52,6 +53,58 @@ const STATUS_WHITELIST = new Set([
   "Memento",
   "Parting Shot",
 ]);
+const FALLBACK_DISALLOWED_MOVE_IDS = new Set([
+  "gigaimpact",
+  "hyperbeam",
+  "frenzyplant",
+  "blastburn",
+  "hydrocannon",
+  "rockwrecker",
+  "roaroftime",
+  "prismaticlaser",
+  "eternabeam",
+  "meteorassault",
+  "confide",
+  "celebrate",
+  "holdhands",
+  "happyhour",
+  "bestow",
+  "teatime",
+  "afteryou",
+  "splash",
+]);
+const FALLBACK_UTILITY_MOVE_IDS = new Set(
+  [
+    ...PIVOT_MOVES,
+    ...RECOVERY_MOVES,
+    ...SETUP_MOVES,
+    ...HAZARD_MOVES,
+    ...REMOVAL_MOVES,
+    ...STALL_PAYOFF_MOVES,
+    ...DOUBLES_SUPPORT_MOVES,
+    "Protect",
+    "Knock Off",
+    "Taunt",
+    "Encore",
+  ].map(toID)
+);
+const FALLBACK_PRIORITY_MOVE_IDS = new Set(
+  [
+    "Ice Shard",
+    "Aqua Jet",
+    "Bullet Punch",
+    "Mach Punch",
+    "Sucker Punch",
+    "Shadow Sneak",
+    "Extreme Speed",
+    "Quick Attack",
+    "First Impression",
+    "Vacuum Wave",
+  ].map(toID)
+);
+const FALLBACK_SLEEP_ENABLER_IDS = new Set(
+  ["Spore", "Sleep Powder", "Hypnosis", "Sing", "Lovely Kiss", "Yawn", "Dark Void"].map(toID)
+);
 
 export interface OptimizedSet {
   species: string;
@@ -114,7 +167,7 @@ export class SetOptimizer {
     options: OptimizerOptions = {}
   ): SetBundle {
     const stats = this.data.pokemon[toID(pokemon.name)];
-    if (!stats) {
+    if (!stats || !this.hasUsableMeta(stats)) {
       return this.generateBlankSet(pokemon, options.format);
     }
 
@@ -520,6 +573,21 @@ export class SetOptimizer {
         chosen.push(moveName);
       });
 
+    if (chosen.length < count) {
+      const fallbackMoves = this.selectCompetitiveFallbackMoves(
+        pokemon,
+        Math.max(count * 2, 6)
+      );
+
+      for (const moveName of fallbackMoves) {
+        const moveId = toID(moveName);
+        if (seen.has(moveId)) continue;
+        seen.add(moveId);
+        chosen.push(moveName);
+        if (chosen.length >= count) break;
+      }
+    }
+
     return chosen.slice(0, count);
   }
 
@@ -727,21 +795,270 @@ export class SetOptimizer {
     pokemon: PokemonSpecies,
     format = "gen9ou"
   ): SetBundle {
+    const fallbackMoves = this.selectCompetitiveFallbackMoves(pokemon, 4);
+    const fallbackSpread = this.selectFallbackSpreadAndNature(pokemon, fallbackMoves);
+    const fallbackItem = this.selectFallbackItem(fallbackMoves, pokemon);
+
     return {
       species: pokemon.name,
       ability: Object.values(pokemon.abilities)[0] || "No Ability",
-      item: "Leftovers",
-      nature: "Serious",
-      evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
-      moves: [],
+      item: fallbackItem,
+      nature: fallbackSpread.nature,
+      evs: fallbackSpread.evs,
+      moves: fallbackMoves,
       score: 0.1,
-      coherenceScore: 0.25,
+      coherenceScore: fallbackMoves.length > 0 ? 0.45 : 0.25,
       source: {
         provider: "fallback",
         format,
       },
-      issues: ["missing-meta-data"],
+      issues: fallbackMoves.length > 0 ? ["missing-meta-data"] : ["missing-meta-data", "missing-fallback-moves"],
     };
+  }
+
+  private hasUsableMeta(stats: NormalizedMonData) {
+    return (
+      Object.keys(stats.moves || {}).length > 0 ||
+      Object.keys(stats.items || {}).length > 0 ||
+      Object.keys(stats.abilities || {}).length > 0 ||
+      (stats.spreads?.length ?? 0) > 0
+    );
+  }
+
+  private selectCompetitiveFallbackMoves(
+    pokemon: PokemonSpecies,
+    count: number
+  ): string[] {
+    const learnableMoves = getLearnableMovesWithDetails(pokemon.name);
+    if (learnableMoves.length === 0) {
+      return getRandomMovesWithDetails(pokemon.name, count).map((move) => move.name);
+    }
+
+    const preferredCategory =
+      pokemon.baseStats.atk >= pokemon.baseStats.spa + 15
+        ? "Physical"
+        : pokemon.baseStats.spa >= pokemon.baseStats.atk + 15
+          ? "Special"
+          : pokemon.baseStats.atk >= pokemon.baseStats.spa
+            ? "Physical"
+            : "Special";
+    const speed = pokemon.baseStats.spe;
+    const bulk = pokemon.baseStats.hp + pokemon.baseStats.def + pokemon.baseStats.spd;
+    const isFastAttacker = speed >= 85;
+    const prefersOffense = Math.max(pokemon.baseStats.atk, pokemon.baseStats.spa) >= 100;
+    const scoredMoves = learnableMoves
+      .map((move) => ({
+        move,
+        moveId: toID(move.name),
+        score: this.scoreCompetitiveFallbackMove(
+          move,
+          pokemon,
+          preferredCategory,
+          isFastAttacker,
+          bulk,
+          prefersOffense
+        ),
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    const chosen: string[] = [];
+    const seen = new Set<string>();
+    let attackCount = 0;
+    let statusCount = 0;
+    let hasSleepEnabler = false;
+
+    for (const { move, moveId, score } of scoredMoves) {
+      if (seen.has(moveId) || chosen.length >= count) continue;
+      if (score < 0) continue;
+
+      const isAttack = move.category !== "Status";
+      if (!isAttack && statusCount >= 1 && attackCount < 2) continue;
+      if (!isAttack && statusCount >= 2) continue;
+
+      chosen.push(move.name);
+      seen.add(moveId);
+      attackCount += isAttack ? 1 : 0;
+      statusCount += isAttack ? 0 : 1;
+      hasSleepEnabler ||= FALLBACK_SLEEP_ENABLER_IDS.has(moveId);
+    }
+
+    if (!chosen.some((moveName) => {
+      const move = Moves[toID(moveName)];
+      return move && move.category !== "Status" && pokemon.types.includes(move.type || "");
+    })) {
+      const bestStabAttack = scoredMoves.find(({ move, moveId }) =>
+        move.category !== "Status" &&
+        pokemon.types.includes(move.type || "") &&
+        !FALLBACK_DISALLOWED_MOVE_IDS.has(moveId)
+      );
+      if (bestStabAttack && !seen.has(bestStabAttack.moveId)) {
+        chosen.unshift(bestStabAttack.move.name);
+        seen.add(bestStabAttack.moveId);
+      }
+    }
+
+    if (!hasSleepEnabler) {
+      const dreamEaterIndex = chosen.findIndex((moveName) => toID(moveName) === "dreameater");
+      if (dreamEaterIndex !== -1) {
+        chosen.splice(dreamEaterIndex, 1);
+      }
+    }
+
+    if (chosen.length < count) {
+      for (const { move, moveId } of scoredMoves) {
+        if (seen.has(moveId) || FALLBACK_DISALLOWED_MOVE_IDS.has(moveId)) continue;
+        chosen.push(move.name);
+        seen.add(moveId);
+        if (chosen.length >= count) break;
+      }
+    }
+
+    if (chosen.length < count) {
+      const randomFallback = getRandomMovesWithDetails(pokemon.name, count * 3).map(
+        (move) => move.name
+      );
+      for (const moveName of randomFallback) {
+        const moveId = toID(moveName);
+        if (seen.has(moveId) || FALLBACK_DISALLOWED_MOVE_IDS.has(moveId)) continue;
+        chosen.push(moveName);
+        seen.add(moveId);
+        if (chosen.length >= count) break;
+      }
+    }
+
+    return chosen.slice(0, count);
+  }
+
+  private scoreCompetitiveFallbackMove(
+    move: { name: string; category: string; type?: string; basePower?: number },
+    pokemon: PokemonSpecies,
+    preferredCategory: "Physical" | "Special",
+    isFastAttacker: boolean,
+    bulk: number,
+    prefersOffense: boolean
+  ) {
+    const moveId = toID(move.name);
+    const isStatus = move.category === "Status";
+    const isStab = move.type ? pokemon.types.includes(move.type) : false;
+    const basePower = typeof move.basePower === "number" ? move.basePower : 0;
+    const isPreferredAttackCategory = move.category === preferredCategory;
+
+    if (FALLBACK_DISALLOWED_MOVE_IDS.has(moveId)) {
+      return -100;
+    }
+
+    let score = 0;
+
+    if (!isStatus) {
+      score += isStab ? 28 : 12;
+      score += isPreferredAttackCategory ? 12 : 2;
+      score += Math.min(basePower, 120) / 5;
+      if (basePower < 55 && !FALLBACK_PRIORITY_MOVE_IDS.has(moveId) && !FALLBACK_UTILITY_MOVE_IDS.has(moveId)) {
+        score -= 14;
+      }
+      if (isFastAttacker && FALLBACK_PRIORITY_MOVE_IDS.has(moveId)) {
+        score += 2;
+      }
+      if (prefersOffense && basePower >= 80) {
+        score += 8;
+      }
+      if (!prefersOffense && isStab) {
+        score += 5;
+      }
+    } else {
+      score -= 16;
+      if (FALLBACK_UTILITY_MOVE_IDS.has(moveId)) {
+        score += bulk >= 255 ? 20 : 12;
+      }
+      if (SETUP_MOVES.map(toID).includes(moveId)) {
+        score += prefersOffense ? 18 : 6;
+      }
+      if (RECOVERY_MOVES.map(toID).includes(moveId)) {
+        score += bulk >= 255 ? 16 : 4;
+      }
+      if (DOUBLES_SUPPORT_MOVES.map(toID).includes(moveId)) {
+        score += 8;
+      }
+      if (moveId === "protect") {
+        score += bulk >= 250 ? 10 : 4;
+      }
+      if (FALLBACK_SLEEP_ENABLER_IDS.has(moveId)) {
+        score += 6;
+      }
+      if (moveId === "dreameater") {
+        score -= 40;
+      }
+    }
+
+    if (moveId === "dreameater") {
+      score -= 40;
+    }
+
+    return score;
+  }
+
+  private selectFallbackSpreadAndNature(
+    pokemon: PokemonSpecies,
+    moves: string[]
+  ) {
+    const moveEntries = moves
+      .map((moveName) => Moves[toID(moveName)])
+      .filter(Boolean) as Array<{ name: string; category: string; type?: string }>;
+    const physicalCount = moveEntries.filter((move) => move.category === "Physical").length;
+    const specialCount = moveEntries.filter((move) => move.category === "Special").length;
+    const utilityCount = moveEntries.filter((move) => move.category === "Status").length;
+    const prefersPhysical =
+      physicalCount > specialCount ||
+      (physicalCount === specialCount && pokemon.baseStats.atk >= pokemon.baseStats.spa);
+    const speed = pokemon.baseStats.spe;
+    const bulk = pokemon.baseStats.hp + pokemon.baseStats.def + pokemon.baseStats.spd;
+    const hasSetup = moves.some((move) => SETUP_MOVES.map(toID).includes(toID(move)));
+    const isOffensive =
+      Math.max(pokemon.baseStats.atk, pokemon.baseStats.spa) >= 100 &&
+      (speed >= 80 || hasSetup || utilityCount === 0);
+
+    if (isOffensive) {
+      return {
+        nature: prefersPhysical ? (speed >= 85 ? "Jolly" : "Adamant") : (speed >= 85 ? "Timid" : "Modest"),
+        evs: prefersPhysical
+          ? { hp: 4, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 }
+          : { hp: 4, atk: 0, def: 0, spa: 252, spd: 0, spe: 252 },
+      };
+    }
+
+    if (bulk >= 250 && utilityCount > 0) {
+      return {
+        nature: prefersPhysical ? "Adamant" : "Modest",
+        evs: prefersPhysical
+          ? { hp: 252, atk: 252, def: 0, spa: 0, spd: 4, spe: 0 }
+          : { hp: 252, atk: 0, def: 0, spa: 252, spd: 4, spe: 0 },
+      };
+    }
+
+    return {
+      nature: prefersPhysical ? "Adamant" : "Modest",
+      evs: prefersPhysical
+        ? { hp: 4, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 }
+        : { hp: 4, atk: 0, def: 0, spa: 252, spd: 0, spe: 252 },
+    };
+  }
+
+  private selectFallbackItem(moves: string[], pokemon: PokemonSpecies) {
+    const hasUtility = moves.some((move) => FALLBACK_UTILITY_MOVE_IDS.has(toID(move)));
+    const hasOnlyAttacks = moves.every((move) => {
+      const moveData = Moves[toID(move)];
+      return moveData && moveData.category !== "Status";
+    });
+    const highOffense = Math.max(pokemon.baseStats.atk, pokemon.baseStats.spa) >= 110;
+    const bulk = pokemon.baseStats.hp + pokemon.baseStats.def + pokemon.baseStats.spd;
+
+    if (hasOnlyAttacks && bulk >= 250) {
+      return "Assault Vest";
+    }
+    if (!hasUtility && highOffense) {
+      return "Life Orb";
+    }
+    return "Leftovers";
   }
 
   private getTemplateMoveBonus(

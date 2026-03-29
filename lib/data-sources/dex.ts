@@ -4,6 +4,8 @@ import { toID } from '../utils';
 export interface PokemonSpecies {
   num: number;
   name: string;
+  baseSpecies?: string;
+  forme?: string;
   types: string[];
   baseStats: {
     hp: number;

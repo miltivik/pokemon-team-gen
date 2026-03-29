@@ -5,6 +5,7 @@ import { toID } from '../utils';
 import { Template } from '@/config/templates';
 import { Role } from '../showdown-data';
 import { isLegendaryOrParadoxSpecies } from '@/lib/pokemon-classification';
+import { getCanonicalSpeciesId } from '@/lib/pokemon-forms';
 import { FORMATS, FormatId } from '@/config/formats';
 import type { SetBundle } from './set-optimizer';
 import {
@@ -89,24 +90,28 @@ export class WeightedScoringEngine {
   }
 
   private getCandidates(currentTeam: PokemonSpecies[]): PokemonSpecies[] {
-    const currentIds = new Set(currentTeam.map(p => toID(p.name)));
+    const currentIds = new Set(currentTeam.map((p) => getCanonicalSpeciesId(p)));
     const validMons: PokemonSpecies[] = [];
+    const requiredType = this.options.requiredType?.toLowerCase() ?? null;
 
-    for (const [id, stats] of Object.entries(this.data.pokemon)) {
-      if (currentIds.has(id)) continue; // Species Clause
-      if (stats.usageRate < 0.005) continue; // Filter irrelevants (<0.5%)
-
+    for (const stats of Object.values(this.data.pokemon)) {
       const species = DexProvider.getSpeciesForGen(stats.name, this.gen);
       if (!species) continue;
+      if (currentIds.has(getCanonicalSpeciesId(species))) continue; // Species Clause by base family
 
       if (this.options.excludeLegendaries && isLegendaryOrParadoxSpecies(species.name)) continue;
 
-      if (this.options.requiredType) {
-        // Normalize type names for comparison (e.g. 'dark' to 'Dark')
-        const reqType = this.options.requiredType.toLowerCase();
-        const hasType = species.types.some(t => t.toLowerCase() === reqType);
-        if (!hasType) continue;
+      const hasRequiredType = requiredType
+        ? species.types.some(t => t.toLowerCase() === requiredType)
+        : true;
+
+      if (requiredType && !hasRequiredType) {
+        continue;
       }
+
+      // For explicit type searches, keep low-usage candidates so the selector does
+      // not collapse to the tiny slice present in a single Smogon cutoff snapshot.
+      if (!requiredType && stats.usageRate < 0.005) continue; // Filter irrelevants (<0.5%)
 
       validMons.push(species);
     }
