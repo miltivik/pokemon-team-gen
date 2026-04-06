@@ -8,6 +8,9 @@ import { isLegendaryOrParadoxSpecies } from '@/lib/pokemon-classification';
 import { getCanonicalSpeciesId } from '@/lib/pokemon-forms';
 import { FORMATS, FormatId } from '@/config/formats';
 import type { SetBundle } from './set-optimizer';
+import { getCompetitiveFormatProfile } from '@/lib/competitive-format-profile';
+import { isAllowedInFormat } from '@/lib/format-rules';
+import { getTournamentPriorCandidateSignals } from '@/lib/tournament-priors';
 import {
   countAvailableMoves,
   DOUBLES_SUPPORT_MOVES,
@@ -44,6 +47,9 @@ interface ScoredCandidate {
     consistency: number;
     setCoherence?: number;
     templateSynergy?: number;
+    speciesPrior?: number;
+    packageFit?: number;
+    leadPrior?: number;
   };
 }
 
@@ -52,7 +58,9 @@ interface ScoringOptions {
   requiredType?: string | null;
   template?: Template;
   getTeamMoves?: () => Set<string>;
+  getTeamMoveCounts?: () => Map<string, number>;
   getTeamAbilities?: () => Set<string>;
+  getTeamItems?: () => Set<string>;
   getTeamRoles?: () => Role[];
   getCandidateRole?: (candidate: PokemonSpecies, currentTeam: PokemonSpecies[]) => Role;
   getCandidateBundle?: (candidate: PokemonSpecies, currentTeam: PokemonSpecies[]) => SetBundle;
@@ -70,6 +78,20 @@ export class WeightedScoringEngine {
     this.gen = gen;
     this.data = data;
     this.options = options;
+  }
+
+  private getCurrentMoveCount(moveName: string) {
+    return this.options.getTeamMoveCounts?.().get(toID(moveName)) ?? 0;
+  }
+
+  private getDoublesProtectSoftCap(templateId: string | null) {
+    if (this.format.includes("vgc")) {
+      return 4;
+    }
+    if (templateId === "tailwind" || templateId === "trickroom") {
+      return 4;
+    }
+    return 3;
   }
 
   public suggestMembers(currentTeam: PokemonSpecies[], limit: number = 10): ScoredCandidate[] {
@@ -98,6 +120,7 @@ export class WeightedScoringEngine {
       const species = DexProvider.getSpeciesForGen(stats.name, this.gen);
       if (!species) continue;
       if (currentIds.has(getCanonicalSpeciesId(species))) continue; // Species Clause by base family
+      if (this.gen === 9 && !isAllowedInFormat(species.name, this.format as FormatId)) continue;
 
       if (this.options.excludeLegendaries && isLegendaryOrParadoxSpecies(species.name)) continue;
 
@@ -125,12 +148,23 @@ export class WeightedScoringEngine {
     teamWeaknesses: Record<string, number>
   ): ScoredCandidate {
     const isDoubles = FORMATS[this.format as FormatId]?.gameType === 'doubles';
+    const formatProfile = getCompetitiveFormatProfile(this.format);
     const templateId = getTemplateId(this.options.template);
+    const protectUsers = this.getCurrentMoveCount("Protect");
+    const protectSoftCap = this.getDoublesProtectSoftCap(templateId);
+    const teamItems = this.options.getTeamItems?.() ?? new Set<string>();
     const { bulk, maxOffense, speed } = getCandidateStatProfile(candidate);
     const bundle = this.options.getCandidateBundle?.(candidate, team);
     const bundleMoveIds = new Set(bundle?.moves.map((move) => toID(move)) ?? []);
     const bundleAbilityId = bundle ? toID(bundle.ability) : null;
+    const bundleItemId = bundle ? bundle.item : null;
     const bundleCoherenceScore = bundle?.coherenceScore ?? 0.5;
+    const tournamentPriorSignals = getTournamentPriorCandidateSignals({
+      format: this.format,
+      templateId: templateId ?? undefined,
+      candidateName: candidate.name,
+      currentTeam: team,
+    });
 
     // Weights
     let W_USAGE = 0.24;
@@ -140,6 +174,9 @@ export class WeightedScoringEngine {
     let W_TEMPLATE = 0.34;
     const W_ROLE = 0.24;
     const W_SET = 0.32;
+    const W_SPECIES_PRIOR = 0.08;
+    const W_PACKAGE_PRIOR = 0.42;
+    const W_LEAD_PRIOR = 0.24;
 
     if (this.options.template?.label.includes('Stall')) {
       W_USAGE = 0.1; // Stall relies less on standard usage staples
@@ -223,6 +260,15 @@ export class WeightedScoringEngine {
           : countAvailableMoves(candidate, stats, moveNames);
 
       let moveSynergy = 0;
+
+      if (
+        bundle &&
+        formatProfile.enforceItemClause &&
+        bundleItemId &&
+        teamItems.has(bundleItemId)
+      ) {
+        moveSynergy -= 1.5;
+      }
 
       if (t.requiredMoves) {
         for (const move of t.requiredMoves) {
@@ -315,7 +361,7 @@ export class WeightedScoringEngine {
             moveSynergy += 0.9;
           }
           if (isDoubles && bundleHasMove("Protect") && maxOffense >= 100) {
-            moveSynergy += 0.35;
+            moveSynergy += protectUsers >= protectSoftCap ? -0.25 : 0.12;
           }
           if (bulk >= 320 && maxOffense < 90 && bundleMoveCount(PIVOT_MOVES) === 0) {
             moveSynergy -= 0.55;
@@ -378,30 +424,34 @@ export class WeightedScoringEngine {
           }
           break;
         case "trickroom": {
-        const hasTrickRoomSetter = currentMoves.has(toID("Trick Room"));
-        const learnsTrickRoom = bundleHasMove("Trick Room");
-        const knowsProtect = bundleHasMove("Protect");
-        const slowBreaker =
-          candidate.baseStats.spe <= 70 &&
-          Math.max(candidate.baseStats.atk, candidate.baseStats.spa) >= 100;
-        const verySlowBreaker =
-          candidate.baseStats.spe <= 55 &&
-          Math.max(candidate.baseStats.atk, candidate.baseStats.spa) >= 85;
-        const fastMon = candidate.baseStats.spe >= 95;
-        const teamHasBreaker = currentRoles.some((role) => role === "Sweeper" || role === "Tank");
+          const hasTrickRoomSetter = currentMoves.has(toID("Trick Room"));
+          const learnsTrickRoom = bundleHasMove("Trick Room");
+          const knowsProtect = bundleHasMove("Protect");
+          const slowBreaker =
+            candidate.baseStats.spe <= 70 &&
+            Math.max(candidate.baseStats.atk, candidate.baseStats.spa) >= 100;
+          const verySlowBreaker =
+            candidate.baseStats.spe <= 55 &&
+            Math.max(candidate.baseStats.atk, candidate.baseStats.spa) >= 85;
+          const fastMon = candidate.baseStats.spe >= 95;
+          const teamHasBreaker = currentRoles.some(
+            (role) => role === "Sweeper" || role === "Tank"
+          );
 
           if (!hasTrickRoomSetter) {
             if (learnsTrickRoom) moveSynergy += 2.5;
             if (learnsTrickRoom && candidate.baseStats.spe <= 80) moveSynergy += 0.5;
-          if (!learnsTrickRoom && fastMon) moveSynergy -= 0.5;
-        } else {
-          if (slowBreaker) moveSynergy += 1.8;
-          if (verySlowBreaker) moveSynergy += 0.7;
-          if (knowsProtect) moveSynergy += 0.2;
-          if (learnsTrickRoom) moveSynergy += 0.35;
-          if (!teamHasBreaker && slowBreaker) moveSynergy += 0.5;
-          if (fastMon) moveSynergy -= 0.85;
-        }
+            if (!learnsTrickRoom && fastMon) moveSynergy -= 0.5;
+          } else {
+            if (slowBreaker) moveSynergy += 1.8;
+            if (verySlowBreaker) moveSynergy += 0.7;
+            if (knowsProtect) {
+              moveSynergy += protectUsers >= protectSoftCap ? -0.2 : 0.1;
+            }
+            if (learnsTrickRoom) moveSynergy += 0.35;
+            if (!teamHasBreaker && slowBreaker) moveSynergy += 0.5;
+            if (fastMon) moveSynergy -= 0.85;
+          }
           break;
         }
         case "tailwind": {
@@ -420,7 +470,7 @@ export class WeightedScoringEngine {
               moveSynergy += 1.0;
             }
             if (bundleHasMove("Protect")) {
-              moveSynergy += 0.45;
+              moveSynergy += protectUsers >= protectSoftCap ? -0.2 : 0.18;
             }
             if (bundleMoveCount(["Helping Hand", "Icy Wind", "Wide Guard", "Follow Me", "Rage Powder"]) > 0) {
               moveSynergy += 0.35;
@@ -587,14 +637,17 @@ export class WeightedScoringEngine {
     }
 
     // Final Calculation
-      const totalScore =
+    const totalScore =
       (usageScore * W_USAGE) +
       (synergyScore * W_SYNERGY) +
       (normCoverage * W_COVERAGE) +
       (consistencyScore * W_CONSISTENCY) +
       (templateScore * W_TEMPLATE) +
       (roleScore * W_ROLE) +
-      (bundleCoherenceScore * W_SET);
+      (bundleCoherenceScore * W_SET) +
+      (tournamentPriorSignals.speciesPriorScore * W_SPECIES_PRIOR) +
+      (tournamentPriorSignals.packageFitScore * W_PACKAGE_PRIOR) +
+      (tournamentPriorSignals.leadPriorScore * W_LEAD_PRIOR);
 
     return {
       species: candidate,
@@ -605,7 +658,10 @@ export class WeightedScoringEngine {
         coverage: normCoverage,
         consistency: consistencyScore,
         setCoherence: bundleCoherenceScore,
-        templateSynergy: templateScore
+        templateSynergy: templateScore,
+        speciesPrior: tournamentPriorSignals.speciesPriorScore,
+        packageFit: tournamentPriorSignals.packageFitScore,
+        leadPrior: tournamentPriorSignals.leadPriorScore,
       }
     };
   }

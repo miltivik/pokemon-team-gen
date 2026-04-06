@@ -105,6 +105,29 @@ function formatEvs(evs: Record<string, number>) {
     return Object.entries(evs).filter((entry) => entry[1] > 0).map(([stat, value]) => `${value} ${statMap[stat] || stat}`).join(" / ") || "No investment";
 }
 
+function normalizeAbilityKey(value?: string) {
+    return (value ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function getAbilitySlotLabel(slot: string, lang: string) {
+    switch (slot) {
+        case "0":
+            return lang === "es" ? "Principal" : "Primary";
+        case "1":
+            return lang === "es" ? "Secundaria" : "Secondary";
+        case "H":
+            return lang === "es" ? "Oculta" : "Hidden";
+        case "S":
+            return lang === "es" ? "Especial" : "Special";
+        default:
+            return slot;
+    }
+}
+
+function getSelectedAbilityLabel(lang: string) {
+    return lang === "es" ? "Elegida" : "Selected";
+}
+
 function getRoleDescriptionKey(role: Role) {
     switch (role) {
         case "Sweeper":
@@ -193,6 +216,7 @@ function HoverInfo({ title, description, children }: { title: string; descriptio
 
 export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, onOpenChange }: PokemonDetailsDialogProps) {
     const { t, lang } = useTranslation();
+    const selectedAbilityKey = normalizeAbilityKey(pokemon.ability);
     const stats = pokemon.baseStats || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
     const bst = Object.values(stats).reduce((sum, value) => sum + value, 0);
     const displayItem = pokemon.item || item;
@@ -496,17 +520,45 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                         <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
                             <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">{t("details.abilities")}</h4>
                             <div className="flex flex-wrap gap-2">
-                                {Object.entries(pokemon.abilities || {}).map(([slot, ability]) => (
-                                    <HoverInfo
-                                        key={slot}
-                                        title={getTranslatedAbilityName(ability, lang)}
-                                        description={getTranslatedAbilityDesc(ability, lang) || getAbilityDescription(ability).shortDesc || getAbilityDescription(ability).desc}
-                                    >
-                                        <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-semibold dark:border-zinc-800 dark:bg-zinc-950/50">
-                                            {getTranslatedAbilityName(ability, lang)}
-                                        </div>
-                                    </HoverInfo>
-                                ))}
+                                {Object.entries(pokemon.abilities || {}).map(([slot, ability]) => {
+                                    const isSelected = normalizeAbilityKey(ability) === selectedAbilityKey;
+
+                                    return (
+                                        <HoverInfo
+                                            key={slot}
+                                            title={getTranslatedAbilityName(ability, lang)}
+                                            description={getTranslatedAbilityDesc(ability, lang) || getAbilityDescription(ability).shortDesc || getAbilityDescription(ability).desc}
+                                        >
+                                            <div
+                                                className={`rounded-xl border px-3 py-2 text-sm transition-colors ${
+                                                    isSelected
+                                                        ? "border-sky-400 bg-sky-50 text-sky-950 shadow-sm dark:border-sky-500/70 dark:bg-sky-500/10 dark:text-sky-100"
+                                                        : "border-zinc-200 bg-zinc-50 text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950/50 dark:text-zinc-100"
+                                                }`}
+                                            >
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <div
+                                                            className={`text-[10px] font-bold uppercase tracking-[0.18em] ${
+                                                                isSelected ? "text-sky-700 dark:text-sky-300" : "text-zinc-500"
+                                                            }`}
+                                                        >
+                                                            {getAbilitySlotLabel(slot, lang)}
+                                                        </div>
+                                                        <div className="truncate font-semibold">
+                                                            {getTranslatedAbilityName(ability, lang)}
+                                                        </div>
+                                                    </div>
+                                                    {isSelected ? (
+                                                        <span className="rounded-full border border-sky-300 bg-white/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-sky-700 dark:border-sky-400/40 dark:bg-sky-950/70 dark:text-sky-200">
+                                                            {getSelectedAbilityLabel(lang)}
+                                                        </span>
+                                                    ) : null}
+                                                </div>
+                                            </div>
+                                        </HoverInfo>
+                                    );
+                                })}
                             </div>
                         </div>
 

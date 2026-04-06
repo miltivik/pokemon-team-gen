@@ -55,6 +55,14 @@ export async function getVictoryRoadData(format: string): Promise<VictoryRoadDat
 
   const vrFormat = getPrimaryProviderSlug(format, "victoryroad") || "vgc2026regf";
 
+  if (typeof window === "undefined" && !process.env.NEXT_PUBLIC_BASE_URL) {
+    return {
+      format,
+      reports: [],
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+
   try {
     const baseUrl =
       typeof window !== "undefined"

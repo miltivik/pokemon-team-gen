@@ -1,5 +1,6 @@
 import { FORMATS, FormatId } from "@/config/formats";
 import { Template, TemplateId } from "@/config/templates";
+import { getCompetitiveFormatProfile } from "@/lib/competitive-format-profile";
 import {
   HAZARD_MOVES,
   PIVOT_MOVES,
@@ -8,11 +9,13 @@ import {
   SCREEN_MOVES,
   SETUP_MOVES,
 } from "@/lib/builder/template-heuristics";
+import { isAllowedInFormat } from "@/lib/format-rules";
 import {
   GeneratedTeamMember,
   getMoveNames,
   TeamGuideData,
 } from "@/lib/team-guide";
+import { getTournamentPriorModeCoverage } from "@/lib/tournament-priors";
 import { toID } from "@/lib/utils";
 
 interface TeamValidationOptions {
@@ -72,6 +75,7 @@ interface TeamSignals {
   fastAttackers: number;
   slowBreakers: number;
   sweepers: number;
+  duplicateItems: number;
 }
 
 const SUPPORT_PACKAGE_CHECKS: Record<
@@ -244,7 +248,12 @@ function buildTeamSignals(
     if (hasRecovery) recoveryMons += 1;
     if (bulk >= 280) bulkyMons += 1;
     if (member.role === "Sweeper") sweepers += 1;
-    if (speed >= 95 && offense >= 100) fastAttackers += 1;
+    if (
+      (isDoubles && speed >= 80 && offense >= 95) ||
+      (!isDoubles && speed >= 95 && offense >= 100)
+    ) {
+      fastAttackers += 1;
+    }
     if (speed <= 70 && offense >= 100) slowBreakers += 1;
     if (member.types.includes("Ghost")) ghostAnchors += 1;
     if (abilityId === "goodasgold") goodAsGoldUsers += 1;
@@ -326,6 +335,93 @@ function buildTeamSignals(
     fastAttackers,
     slowBreakers,
     sweepers,
+    duplicateItems: team.length - new Set(team.map((member) => toID(member.item))).size,
+  };
+}
+
+function validateRecommendedModes(
+  team: GeneratedTeamMember[],
+  guide: TeamGuideData,
+  options: TeamValidationOptions,
+  signals: TeamSignals
+) {
+  const formatProfile = getCompetitiveFormatProfile(options.format);
+  const issues: string[] = [];
+  const modes = guide.recommendedModes ?? [];
+
+  if (!signals.isDoubles) {
+    return {
+      issues,
+      score: 1,
+    };
+  }
+
+  if (formatProfile.requireRecommendedModes && modes.length === 0) {
+    return {
+      issues: ["recommended-modes:missing"],
+      score: 0,
+    };
+  }
+
+  const teamNames = new Set(team.map((member) => member.name));
+  let hasStandardMode = false;
+  let hasTailwindMode = false;
+  let hasTrickRoomMode = false;
+
+  for (const mode of modes) {
+    const uniqueMembers = Array.from(new Set(mode.members.filter(Boolean)));
+    const missingMembers = uniqueMembers.filter((memberName) => !teamNames.has(memberName));
+
+    if (uniqueMembers.length < 3 || uniqueMembers.length > 4) {
+      issues.push(`recommended-mode:size:${mode.title}`);
+    }
+    if (missingMembers.length > 0) {
+      issues.push(`recommended-mode:unknown-members:${mode.title}`);
+    }
+
+    const normalizedTitle = mode.title.toLowerCase();
+    if (normalizedTitle.includes("standard") || normalizedTitle.includes("estandar")) {
+      hasStandardMode = true;
+    }
+    if (normalizedTitle.includes("tailwind")) {
+      hasTailwindMode = true;
+    }
+    if (normalizedTitle.includes("trick room")) {
+      hasTrickRoomMode = true;
+    }
+  }
+
+  if (formatProfile.requireRecommendedModes && !hasStandardMode) {
+    issues.push("recommended-modes:missing-standard-mode");
+  }
+  if (
+    options.templateId === "tailwind" &&
+    signals.tailwindSetters > 0 &&
+    !hasTailwindMode
+  ) {
+    issues.push("recommended-modes:missing-tailwind-mode");
+  }
+  if (
+    options.templateId === "trickroom" &&
+    signals.trickRoomSetters > 0 &&
+    !hasTrickRoomMode
+  ) {
+    issues.push("recommended-modes:missing-trick-room-mode");
+  }
+
+  const tournamentPriorCoverage = getTournamentPriorModeCoverage({
+    format: options.format,
+    templateId: options.templateId,
+    team,
+    recommendedModes: modes,
+  });
+  if (tournamentPriorCoverage) {
+    issues.push(...tournamentPriorCoverage.issues);
+  }
+
+  return {
+    issues,
+    score: Math.max(0, 1 - issues.length * 0.25),
   };
 }
 
@@ -381,6 +477,7 @@ export function validateTeamForTemplate(
   options: TeamValidationOptions
 ): TeamValidationResult {
   const signals = buildTeamSignals(team, options.format);
+  const formatProfile = getCompetitiveFormatProfile(options.format);
   const template = options.template;
   const missingCore = (template?.requiredCore ?? []).filter((core) => {
     const check = REQUIRED_CORE_CHECKS[core];
@@ -399,6 +496,18 @@ export function validateTeamForTemplate(
     ...missingSupportPackages.map((supportPackage) => `missing-support:${supportPackage}`),
     ...triggeredForbidden.map((pattern) => `forbidden-pattern:${pattern}`),
   ];
+  const illegalMembers =
+    options.format in FORMATS
+      ? team.filter(
+          (member) => !isAllowedInFormat(member.name, options.format as FormatId)
+        )
+      : [];
+  const recommendedModesCheck = validateRecommendedModes(
+    team,
+    guide,
+    options,
+    signals
+  );
 
   if (
     options.templateId === "rain" &&
@@ -424,6 +533,18 @@ export function validateTeamForTemplate(
   if (signals.isDoubles && options.templateId === "trickroom" && signals.trickRoomSetters === 0) {
     issues.push("missing-core:trick-room-setter");
   }
+  if (signals.isDoubles && signals.hazards > 0) {
+    issues.push("doubles:hazards-present");
+  }
+  if (formatProfile.enforceItemClause && signals.duplicateItems > 0) {
+    issues.push("item-clause:duplicate-item");
+  }
+  if (illegalMembers.length > 0) {
+    issues.push(
+      `illegal-members:${illegalMembers.map((member) => member.name).join(",")}`
+    );
+  }
+  issues.push(...recommendedModesCheck.issues);
 
   const archetypeAlignment = getArchetypeAlignmentScore(guide, options.templateId);
   const coreCompletion =
@@ -438,6 +559,10 @@ export function validateTeamForTemplate(
     ? triggeredForbidden.length / template.forbiddenPatterns.length
     : 0;
   const hintsBonus = getHintsBonus(guide, options.archetypeHints);
+  const itemClausePenalty =
+    formatProfile.enforceItemClause && signals.duplicateItems > 0 ? 0.18 : 0;
+  const illegalMemberPenalty = illegalMembers.length > 0 ? 0.24 : 0;
+  const doublesHazardPenalty = signals.isDoubles && signals.hazards > 0 ? 0.18 : 0;
 
   const score = Math.max(
     0,
@@ -446,9 +571,12 @@ export function validateTeamForTemplate(
       archetypeAlignment * 0.34 +
         coreCompletion * 0.34 +
         supportCoverage * 0.22 +
-        (signals.isDoubles && guide.recommendedModes?.length ? 0.05 : 0) +
+        recommendedModesCheck.score * (signals.isDoubles ? 0.1 : 0) +
         hintsBonus -
-        forbiddenPenalty * 0.25
+        forbiddenPenalty * 0.25 -
+        itemClausePenalty -
+        illegalMemberPenalty -
+        doublesHazardPenalty
     )
   );
 

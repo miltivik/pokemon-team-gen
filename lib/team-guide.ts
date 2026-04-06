@@ -10,6 +10,11 @@ import {
   SCREEN_MOVES,
   SETUP_MOVES,
 } from "@/lib/builder/template-heuristics";
+import {
+  getCompetitiveFormatProfile,
+  type CompetitiveFormatProfile,
+} from "@/lib/competitive-format-profile";
+import { getTournamentPriorSet } from "@/lib/tournament-priors";
 import { inferPrimaryStrategicRole } from "@/lib/strategic-role";
 import type { MoveData, PokedexEntry, Role } from "@/lib/showdown-data";
 import { getEffectiveness } from "@/lib/type-chart";
@@ -289,6 +294,7 @@ interface TeamProfile {
   templateId: string;
   lang: GuideLang;
   isDoubles: boolean;
+  formatProfile: CompetitiveFormatProfile;
   archetype: string;
   subarchetype?: string;
   profiles: MemberProfile[];
@@ -663,12 +669,85 @@ function buildMemberProfile(
   return profile;
 }
 
-function inferArchetype(profiles: MemberProfile[], templateId: string, isDoubles: boolean) {
-  if (profiles.some((profile) => profile.moveIds.has(toID("Trick Room"))) && profiles.some((profile) => profile.isSlow && profile.maxOffense >= 95)) {
-    return "trickroom";
-  }
-  if (isDoubles && profiles.some((profile) => profile.moveIds.has(toID("Tailwind")))) {
-    return "tailwind";
+function isTrickRoomSetter(profile: MemberProfile) {
+  return profile.moveIds.has(toID("Trick Room"));
+}
+
+function isTailwindSetter(profile: MemberProfile) {
+  return profile.moveIds.has(toID("Tailwind"));
+}
+
+function isDoublesPositioningPiece(profile: MemberProfile) {
+  return (
+    profile.pivots.length > 0 ||
+    profile.supportMoves.length > 0 ||
+    profile.moveIds.has(toID("Fake Out")) ||
+    profile.moveIds.has(toID("Follow Me")) ||
+    profile.moveIds.has(toID("Rage Powder")) ||
+    profile.moveIds.has(toID("Parting Shot")) ||
+    profile.moveIds.has(toID("Helping Hand")) ||
+    profile.isGlue
+  );
+}
+
+function isTailwindPayoff(profile: MemberProfile) {
+  return (
+    !isTailwindSetter(profile) &&
+    ((profile.isFast && profile.maxOffense >= 95) ||
+      (profile.maxOffense >= 110 && profile.speed >= 80) ||
+      (profile.priorityMoves.length > 0 && profile.maxOffense >= 95))
+  );
+}
+
+function isTrickRoomBreaker(profile: MemberProfile) {
+  return !isTrickRoomSetter(profile) && profile.isSlow && profile.maxOffense >= 95;
+}
+
+function isBalancedCleaner(profile: MemberProfile) {
+  return profile.isCleaner || (profile.isFast && profile.maxOffense >= 95);
+}
+
+function getDoublesModeSignals(profiles: MemberProfile[]) {
+  return {
+    trickRoomSetters: profiles.filter(isTrickRoomSetter).length,
+    tailwindSetters: profiles.filter(isTailwindSetter).length,
+    trickRoomBreakers: profiles.filter(isTrickRoomBreaker).length,
+    tailwindPayoffs: profiles.filter(isTailwindPayoff).length,
+    positioningPieces: profiles.filter(isDoublesPositioningPiece).length,
+    speedControlPieces: profiles.filter((profile) => profile.speedControlMoves.length > 0).length,
+    cleaners: profiles.filter(isBalancedCleaner).length,
+  };
+}
+
+function inferArchetype(
+  profiles: MemberProfile[],
+  templateId: string,
+  formatProfile: CompetitiveFormatProfile
+) {
+  const isDoubles = formatProfile.isDoubles;
+  const doublesSignals = isDoubles ? getDoublesModeSignals(profiles) : null;
+
+  if (isDoubles && doublesSignals) {
+    if (templateId === "trickroom") {
+      return "trickroom";
+    }
+    if (templateId === "tailwind") {
+      return "tailwind";
+    }
+    if (
+      doublesSignals.tailwindSetters >= 1 &&
+      doublesSignals.tailwindPayoffs >= 2 &&
+      (doublesSignals.trickRoomSetters === 0 || templateId === "balanced")
+    ) {
+      return "tailwind";
+    }
+    if (
+      doublesSignals.trickRoomSetters >= 1 &&
+      doublesSignals.trickRoomBreakers >= 2 &&
+      doublesSignals.tailwindSetters === 0
+    ) {
+      return "trickroom";
+    }
   }
 
   const bulkyCount = profiles.filter((profile) => profile.isBulky).length;
@@ -709,6 +788,15 @@ function inferArchetype(profiles: MemberProfile[], templateId: string, isDoubles
   if (!isDoubles && pivotCount >= (strictVoltTurn ? 2 : 3) && sweepCount >= 2) {
     return "voltturn";
   }
+  if (
+    isDoubles &&
+    doublesSignals &&
+    doublesSignals.positioningPieces >= 1 &&
+    doublesSignals.speedControlPieces >= 1 &&
+    doublesSignals.cleaners >= 1
+  ) {
+    return bulkyCount >= 2 && sweepCount >= 2 ? "bulkyoffense" : "balanced";
+  }
   if (sweepCount >= Math.max(3, profiles.length - 1)) {
     return "offense";
   }
@@ -724,30 +812,37 @@ function inferArchetype(profiles: MemberProfile[], templateId: string, isDoubles
 function inferSubarchetype(
   profiles: MemberProfile[],
   archetype: string,
-  isDoubles: boolean
+  formatProfile: CompetitiveFormatProfile
 ) {
+  const isDoubles = formatProfile.isDoubles;
   const bulkyCount = profiles.filter((profile) => profile.isBulky).length;
   const hazardCount = profiles.reduce((sum, profile) => sum + profile.hazards.length, 0);
   const screenCount = profiles.reduce((sum, profile) => sum + profile.screens.length, 0);
-  const trickRoomSetters = profiles.filter((profile) => profile.moveIds.has(toID("Trick Room"))).length;
-  const tailwindSetters = profiles.filter((profile) => profile.moveIds.has(toID("Tailwind"))).length;
-  const slowBreakers = profiles.filter(
-    (profile) => profile.isSlow && profile.maxOffense >= 95
-  ).length;
+  const doublesSignals = isDoubles ? getDoublesModeSignals(profiles) : null;
   const weatherSetter = profiles.find((profile) => profile.weather)?.weather;
   const weatherAbusers = profiles.filter((profile) => profile.weatherAbuser).length;
 
   switch (archetype) {
     case "balanced":
+      if (
+        isDoubles &&
+        doublesSignals &&
+        doublesSignals.trickRoomSetters >= 1 &&
+        doublesSignals.tailwindSetters >= 1
+      ) {
+        return "tailroom";
+      }
       return bulkyCount >= 4 ? "fat balance" : "bulky balance";
     case "offense":
       if (!isDoubles && screenCount >= 2) return "screens HO";
       if (!isDoubles && hazardCount >= 2) return "hazard HO";
       return "fast offense";
     case "trickroom":
-      return trickRoomSetters >= 2 && slowBreakers >= 3 ? "hard TR" : "semiroom";
+      return doublesSignals && doublesSignals.trickRoomSetters >= 2 && doublesSignals.trickRoomBreakers >= 3
+        ? "hard TR"
+        : "semiroom";
     case "tailwind":
-      return tailwindSetters >= 1 && trickRoomSetters >= 1 ? "tailroom" : "tailwind offense";
+      return "tailwind offense";
     case "rain":
     case "sun":
     case "sand":
@@ -760,86 +855,237 @@ function inferSubarchetype(
   }
 }
 
+function pickUniqueModeMembers(
+  teamProfile: TeamProfile,
+  preferred: MemberProfile[],
+  minimum = 3,
+  maximum = 4
+) {
+  const ordered = [
+    ...preferred,
+    ...teamProfile.supportMembers,
+    ...teamProfile.pivotMembers,
+    ...teamProfile.winConditionMembers,
+    ...teamProfile.breakerMembers,
+    ...teamProfile.profiles,
+  ];
+  const names: string[] = [];
+
+  for (const profile of ordered) {
+    const name = profile?.member.name;
+    if (!name || names.includes(name)) {
+      continue;
+    }
+    names.push(name);
+    if (names.length >= maximum) {
+      break;
+    }
+  }
+
+  return names.length >= minimum ? names : [];
+}
+
+function getTournamentPreferredProfiles(
+  teamProfile: TeamProfile,
+  mode?: "balanced" | "tailwind" | "trickroom" | "tempo",
+  minimumOverlap: number = 3
+) {
+  const priorSet = getTournamentPriorSet(teamProfile.format);
+  if (!priorSet) {
+    return [];
+  }
+
+  const teamProfilesById = new Map(
+    teamProfile.profiles.map((profile) => [toID(profile.member.name), profile])
+  );
+  const templateId = teamProfile.templateId;
+  const matches = priorSet.bring4Priors
+    .filter((entry) => !mode || entry.mode === mode)
+    .map((entry) => {
+      const profiles = entry.members
+        .map((memberName) => teamProfilesById.get(toID(memberName)))
+        .filter((profile): profile is MemberProfile => Boolean(profile));
+      const overlap = profiles.length;
+      const modeBoost =
+        templateId === entry.mode ? 1.25 : templateId === "balanced" ? 1 : entry.mode === "balanced" ? 1 : 0.6;
+      return {
+        profiles,
+        overlap,
+        score: overlap * entry.weight * entry.confidence * modeBoost,
+      };
+    })
+    .filter((match) => match.overlap >= minimumOverlap)
+    .sort((a, b) => b.score - a.score);
+
+  return matches[0]?.profiles ?? [];
+}
+
+function getTournamentLeadPairProfiles(
+  teamProfile: TeamProfile,
+  mode?: "balanced" | "tailwind" | "trickroom" | "tempo"
+) {
+  const priorSet = getTournamentPriorSet(teamProfile.format);
+  if (!priorSet) {
+    return [];
+  }
+
+  const teamProfilesById = new Map(
+    teamProfile.profiles.map((profile) => [toID(profile.member.name), profile])
+  );
+  const templateId = teamProfile.templateId;
+  const matches = priorSet.leadPairs
+    .filter((entry) => !mode || entry.mode === mode)
+    .map((entry) => {
+      const profiles = entry.members
+        .map((memberName) => teamProfilesById.get(toID(memberName)))
+        .filter((profile): profile is MemberProfile => Boolean(profile));
+      const overlap = profiles.length;
+      const modeBoost =
+        templateId === entry.mode ? 1.25 : templateId === "balanced" ? 1 : entry.mode === "balanced" ? 1 : 0.6;
+      return {
+        profiles,
+        overlap,
+        score: overlap * entry.weight * entry.confidence * modeBoost,
+      };
+    })
+    .filter((match) => match.overlap >= 2)
+    .sort((a, b) => b.score - a.score);
+
+  return matches[0]?.profiles ?? [];
+}
+
 function buildRecommendedModes(teamProfile: TeamProfile): TeamGuideMode[] {
-  if (!teamProfile.isDoubles) {
+  if (!teamProfile.formatProfile.requireRecommendedModes) {
     return [];
   }
 
   const { lang } = teamProfile;
   const modes: TeamGuideMode[] = [];
-  const trickRoomSetter = teamProfile.profiles.find((profile) =>
-    profile.moveIds.has(toID("Trick Room"))
-  );
-  const tailwindSetter = teamProfile.profiles.find((profile) =>
-    profile.moveIds.has(toID("Tailwind"))
-  );
+  const trickRoomSetter = teamProfile.profiles.find(isTrickRoomSetter);
+  const tailwindSetter = teamProfile.profiles.find(isTailwindSetter);
   const weatherSetter = teamProfile.weatherSetter;
-  const slowBreakers = teamProfile.profiles
-    .filter((profile) => profile.isSlow && profile.maxOffense >= 95)
-    .slice(0, 3)
-    .map((profile) => profile.member.name);
-  const fastAttackers = teamProfile.profiles
-    .filter((profile) => profile.isFast && profile.maxOffense >= 95)
-    .slice(0, 3)
-    .map((profile) => profile.member.name);
+  const slowBreakers = teamProfile.profiles.filter(isTrickRoomBreaker);
+  const fastAttackers = teamProfile.profiles.filter(isTailwindPayoff);
+  const positioningPieces = teamProfile.profiles.filter(isDoublesPositioningPiece);
+  const balancedPriorProfiles = getTournamentPreferredProfiles(teamProfile, "balanced");
+  const tempoPriorProfiles = getTournamentPreferredProfiles(teamProfile, "tempo");
+  const standardPriorProfiles =
+    balancedPriorProfiles.length > 0 ? balancedPriorProfiles : tempoPriorProfiles;
+  const tailwindPriorProfiles = [
+    ...getTournamentLeadPairProfiles(teamProfile, "tailwind"),
+    ...getTournamentPreferredProfiles(teamProfile, "tailwind"),
+  ];
+  const trickRoomPriorProfiles = [
+    ...getTournamentLeadPairProfiles(teamProfile, "trickroom"),
+    ...getTournamentPreferredProfiles(teamProfile, "trickroom"),
+  ];
+  const standardModeMembers = pickUniqueModeMembers(
+    teamProfile,
+    [
+      ...standardPriorProfiles,
+      getEarlyKey(teamProfile),
+      getMidKey(teamProfile),
+      getLateKey(teamProfile),
+      positioningPieces[0] ?? teamProfile.supportMembers[0],
+    ].filter((profile): profile is MemberProfile => Boolean(profile))
+  );
 
-  if (trickRoomSetter) {
+  if (standardModeMembers.length > 0) {
     modes.push({
-      title: text(lang, "Trick Room Mode", "Modo Trick Room"),
+      title: text(lang, "Standard Mode", "Modo estandar"),
       summary: text(
         lang,
-        `Use ${trickRoomSetter.member.name} to create room and convert those turns with ${joinList(slowBreakers, lang)}.`,
-        `Usa a ${trickRoomSetter.member.name} para poner room y convertir esos turnos con ${joinList(slowBreakers, lang)}.`
+        "Default to this four when you want the most stable mix of positioning, speed control, and endgame pressure.",
+        "Este es el cuatro por defecto cuando quieres la mezcla mas estable de posicionamiento, speed control y presion de endgame."
       ),
-      members: [trickRoomSetter.member.name, ...slowBreakers].slice(0, 4),
+      members: standardModeMembers,
     });
   }
 
+  const addMode = (mode: TeamGuideMode, prioritize = false) => {
+    if (mode.members.length < 3 || mode.members.length > 4) {
+      return;
+    }
+    if (prioritize) {
+      modes.unshift(mode);
+      return;
+    }
+    modes.push(mode);
+  };
+
   if (tailwindSetter) {
-    modes.push({
-      title: text(lang, "Tailwind Mode", "Modo Tailwind"),
-      summary: text(
-        lang,
-        `Lead with ${tailwindSetter.member.name} when you want immediate tempo and let ${joinList(fastAttackers, lang)} abuse the speed swing.`,
-        `Abre con ${tailwindSetter.member.name} cuando quieras tempo inmediato y deja que ${joinList(fastAttackers, lang)} exploten el cambio de velocidad.`
-      ),
-      members: [tailwindSetter.member.name, ...fastAttackers].slice(0, 4),
-    });
+    const tailwindModeMembers = pickUniqueModeMembers(teamProfile, [
+      ...tailwindPriorProfiles,
+      tailwindSetter,
+      ...fastAttackers.slice(0, 2),
+      positioningPieces.find((profile) => profile.member.name !== tailwindSetter.member.name) ??
+        teamProfile.supportMembers[0],
+    ]);
+    if (tailwindModeMembers.length > 0) {
+      addMode(
+        {
+          title: text(lang, "Tailwind Mode", "Modo Tailwind"),
+          summary: text(
+            lang,
+            `Lead with ${tailwindSetter.member.name} when you want immediate tempo and let ${joinList(tailwindModeMembers.slice(1), lang)} abuse the speed swing.`,
+            `Abre con ${tailwindSetter.member.name} cuando quieras tempo inmediato y deja que ${joinList(tailwindModeMembers.slice(1), lang)} exploten el cambio de velocidad.`
+          ),
+          members: tailwindModeMembers,
+        },
+        teamProfile.templateId === "tailwind"
+      );
+    }
+  }
+
+  if (trickRoomSetter) {
+    const trickRoomModeMembers = pickUniqueModeMembers(teamProfile, [
+      ...trickRoomPriorProfiles,
+      trickRoomSetter,
+      ...slowBreakers.slice(0, 2),
+      positioningPieces.find((profile) => profile.member.name !== trickRoomSetter.member.name) ??
+        teamProfile.supportMembers[0],
+    ]);
+    if (trickRoomModeMembers.length > 0) {
+      addMode(
+        {
+          title: text(lang, "Trick Room Mode", "Modo Trick Room"),
+          summary: text(
+            lang,
+            `Use ${trickRoomSetter.member.name} to create room and convert those turns with ${joinList(trickRoomModeMembers.slice(1), lang)}.`,
+            `Usa a ${trickRoomSetter.member.name} para poner room y convertir esos turnos con ${joinList(trickRoomModeMembers.slice(1), lang)}.`
+          ),
+          members: trickRoomModeMembers,
+        },
+        teamProfile.templateId === "trickroom"
+      );
+    }
   }
 
   if (weatherSetter && teamProfile.weatherAbusers.length > 0) {
-    const weatherCore = [
-      weatherSetter.member.name,
-      ...teamProfile.weatherAbusers.slice(0, 3).map((profile) => profile.member.name),
-    ].slice(0, 4);
-    modes.push({
-      title: text(lang, "Weather Mode", "Modo de clima"),
-      summary: text(
-        lang,
-        `Preserve ${weatherSetter.member.name}, refresh weather only when the next attacker can cash it in, and rotate through ${joinList(weatherCore.slice(1), lang)}.`,
-        `Preserva a ${weatherSetter.member.name}, refresca el clima solo cuando el siguiente atacante lo pueda cobrar y rota con ${joinList(weatherCore.slice(1), lang)}.`
-      ),
-      members: weatherCore,
-    });
+    const weatherCore = pickUniqueModeMembers(teamProfile, [
+      weatherSetter,
+      ...teamProfile.weatherAbusers.slice(0, 2),
+      positioningPieces[0] ?? teamProfile.supportMembers[0],
+    ]);
+    if (weatherCore.length > 0) {
+      addMode({
+        title: text(lang, "Weather Mode", "Modo de clima"),
+        summary: text(
+          lang,
+          `Preserve ${weatherSetter.member.name}, refresh weather only when the next attacker can cash it in, and rotate through ${joinList(weatherCore.slice(1), lang)}.`,
+          `Preserva a ${weatherSetter.member.name}, refresca el clima solo cuando el siguiente atacante lo pueda cobrar y rota con ${joinList(weatherCore.slice(1), lang)}.`
+        ),
+        members: weatherCore,
+      });
+    }
   }
 
-  const balanceModeMembers = [
-    getEarlyKey(teamProfile).member.name,
-    getMidKey(teamProfile).member.name,
-    getLateKey(teamProfile).member.name,
-    teamProfile.supportMembers[0]?.member.name,
-  ].filter((name): name is string => Boolean(name));
-  modes.push({
-    title: text(lang, "Standard Mode", "Modo estandar"),
-    summary: text(
-      lang,
-      "This is the flexible default mode when you need a safer four that preserves both board control and endgame options.",
-      "Este es el modo flexible por defecto cuando necesitas un cuatro mas seguro que conserve control de board y opciones de endgame."
-    ),
-    members: Array.from(new Set(balanceModeMembers)).slice(0, 4),
-  });
-
-  return modes.slice(0, 3);
+  return modes
+    .filter(
+      (mode, index, array) =>
+        array.findIndex((candidate) => candidate.title === mode.title) === index
+    )
+    .slice(0, 3);
 }
 
 function buildStructuralWeaknesses(team: GeneratedTeamMember[], lang: GuideLang, teamProfile: TeamProfile) {
@@ -896,9 +1142,10 @@ function buildTeamProfile(
   lang: GuideLang
 ): TeamProfile {
   const profiles = team.map((member) => buildMemberProfile(member, team, templateId));
-  const isDoubles = FORMATS[format as FormatId]?.gameType === "doubles";
-  const archetype = inferArchetype(profiles, templateId, isDoubles);
-  const subarchetype = inferSubarchetype(profiles, archetype, isDoubles);
+  const formatProfile = getCompetitiveFormatProfile(format);
+  const isDoubles = formatProfile.isDoubles || FORMATS[format as FormatId]?.gameType === "doubles";
+  const archetype = inferArchetype(profiles, templateId, formatProfile);
+  const subarchetype = inferSubarchetype(profiles, archetype, formatProfile);
   const hazardMembers = profiles.filter((profile) => profile.hazards.length > 0);
   const removalMembers = profiles.filter((profile) => profile.removal.length > 0);
   const pivotMembers = profiles.filter((profile) => profile.pivots.length > 0);
@@ -916,6 +1163,7 @@ function buildTeamProfile(
     templateId,
     lang,
     isDoubles,
+    formatProfile,
     archetype,
     subarchetype,
     profiles,

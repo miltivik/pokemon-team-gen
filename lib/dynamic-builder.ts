@@ -9,10 +9,19 @@ import { detectSetRole } from "@/lib/builder/roles";
 import { Template, TemplateId, TEMPLATES, sanitizeTemplateForFormat } from "@/config/templates";
 import { DexProvider, type PokemonSpecies } from "@/lib/data-sources/dex";
 import { NormalizedSmogonData, SmogonDataSource } from "@/lib/data-sources/smogon";
+import {
+  getCompetitiveFormatProfile,
+  getFallbackSpeciesPool,
+  type CompetitiveFormatProfile,
+} from "@/lib/competitive-format-profile";
 import { getVGCArchetypes } from "@/lib/victory-road";
 import { isAllowedInFormat } from "@/lib/format-rules";
 import { getCanonicalSpeciesId } from "@/lib/pokemon-forms";
 import { isLegendaryOrParadoxSpecies } from "@/lib/pokemon-classification";
+import {
+  getTournamentPriorDiagnostics,
+  getTournamentPriorSelectionPlan,
+} from "@/lib/tournament-priors";
 import {
   attachMemberAnalyses,
   generateTeamGuide,
@@ -44,6 +53,19 @@ export interface DynamicTeamResponse {
   teamGuideI18n: {
     en: TeamGuideData;
     es: TeamGuideData;
+  };
+  generationDiagnostics?: {
+    ruleProfile: string;
+    usedFallbackData: boolean;
+    validationScore: number;
+    validationIssues: string[];
+    tournamentPriors?: {
+      setId: string;
+      sources: Array<{ source: string; sourceDate: string }>;
+      activePackages: string[];
+      activeLeadPairs: string[];
+      modeMatch: "match" | "neutral" | "conflict" | "none";
+    };
   };
 }
 
@@ -77,10 +99,12 @@ export async function generateDynamicTeam(
   } = options;
 
   const gen = getGenFromFormat(format as FormatId) || 9;
+  const formatProfile = getCompetitiveFormatProfile(format);
   const data = dataOverride ?? (await SmogonDataSource.getStats(format));
+  const usedFallbackData = !data;
   const finalData: NormalizedSmogonData = data
     ? { ...data, meta: { ...data.meta } }
-    : generateMockData(format, gen);
+    : generateMockData(format, gen, formatProfile);
 
   if (type) {
     ensureTypeCandidateCoverage(finalData, {
@@ -91,7 +115,7 @@ export async function generateDynamicTeam(
     });
   }
 
-  if (FORMATS[format as FormatId]?.gameType === "doubles" && format.includes("vgc")) {
+  if (formatProfile.isVgc) {
     try {
       const archetypeHints = await getVGCArchetypes(format);
       if (archetypeHints.length > 0) {
@@ -122,6 +146,7 @@ export async function generateDynamicTeam(
       templateId: safeTemplateId,
       excludeLegendaries,
       fixedMembers,
+      formatProfile,
     });
 
     if (!bestCandidate || rankCandidate(candidate, maxTeamSize) > rankCandidate(bestCandidate, maxTeamSize)) {
@@ -150,12 +175,19 @@ export async function generateDynamicTeam(
       templateId: safeTemplateId,
       excludeLegendaries,
       fixedMembers,
+      formatProfile,
     });
 
   const teamWithAnalysis = attachMemberAnalyses(
     selectedCandidate.team,
     selectedCandidate.guide
   );
+  const tournamentPriorDiagnostics = getTournamentPriorDiagnostics({
+    format,
+    templateId: safeTemplateId,
+    team: teamWithAnalysis,
+    recommendedModes: selectedCandidate.guide.recommendedModes,
+  });
   const teamGuideEn =
     lang === "en"
       ? selectedCandidate.guide
@@ -192,6 +224,13 @@ export async function generateDynamicTeam(
     teamGuideI18n: {
       en: teamGuideEn,
       es: teamGuideEs,
+    },
+    generationDiagnostics: {
+      ruleProfile: formatProfile.id,
+      usedFallbackData,
+      validationScore: selectedCandidate.validation.score,
+      validationIssues: selectedCandidate.validation.issues,
+      tournamentPriors: tournamentPriorDiagnostics ?? undefined,
     },
   };
 }
@@ -415,13 +454,204 @@ function teamHasAnyRequiredMove(teamMoves: Set<string>, moves: string[] = []) {
   return moves.some((move) => teamMoves.has(toID(move)));
 }
 
+const DOUBLES_SPEED_CONTROL_MOVE_IDS = new Set(
+  ["Tailwind", "Trick Room", "Icy Wind", "Electroweb", "Thunder Wave"].map(toID)
+);
+const DOUBLES_POSITIONING_MOVE_IDS = new Set(
+  [
+    "Fake Out",
+    "Follow Me",
+    "Rage Powder",
+    "Helping Hand",
+    "Wide Guard",
+    "Quick Guard",
+    "Parting Shot",
+    "U-turn",
+    "Volt Switch",
+    "Flip Turn",
+  ].map(toID)
+);
+const HAZARD_MOVE_IDS = new Set(
+  ["Stealth Rock", "Spikes", "Toxic Spikes", "Sticky Web", "Ceaseless Edge"].map(
+    toID
+  )
+);
+
+function getSetMoveIds(moves: Array<string | MoveData>) {
+  return new Set(
+    moves.map((move) => toID(typeof move === "string" ? move : move.name))
+  );
+}
+
+function hasPositioningMove(moves: Array<string | MoveData>) {
+  const moveIds = getSetMoveIds(moves);
+  return Array.from(DOUBLES_POSITIONING_MOVE_IDS).some((moveId) =>
+    moveIds.has(moveId)
+  );
+}
+
+function hasSpeedControlMove(moves: Array<string | MoveData>) {
+  const moveIds = getSetMoveIds(moves);
+  return Array.from(DOUBLES_SPEED_CONTROL_MOVE_IDS).some((moveId) =>
+    moveIds.has(moveId)
+  );
+}
+
+function isFastDamageSet(
+  species: Pick<PokemonSpecies, "baseStats">,
+  moves: Array<string | MoveData>
+) {
+  const maxOffense = Math.max(species.baseStats.atk, species.baseStats.spa);
+  const moveIds = getSetMoveIds(moves);
+
+  return (
+    species.baseStats.spe >= 90 &&
+    maxOffense >= 100 &&
+    (!moveIds.has(toID("Trick Room")) || moveIds.has(toID("Tailwind")))
+  );
+}
+
+function isSlowBreakerSet(
+  species: Pick<PokemonSpecies, "baseStats">,
+  moves: Array<string | MoveData>
+) {
+  const maxOffense = Math.max(species.baseStats.atk, species.baseStats.spa);
+  const moveIds = getSetMoveIds(moves);
+
+  return (
+    species.baseStats.spe <= 70 &&
+    maxOffense >= 100 &&
+    !moveIds.has(toID("Tailwind"))
+  );
+}
+
+function hasCleanerProfile(
+  species: Pick<PokemonSpecies, "baseStats">,
+  moves: Array<string | MoveData>
+) {
+  const maxOffense = Math.max(species.baseStats.atk, species.baseStats.spa);
+  const moveIds = getSetMoveIds(moves);
+
+  return (
+    maxOffense >= 105 &&
+    (species.baseStats.spe >= 95 ||
+      moveIds.has(toID("Tailwind")) ||
+      moveIds.has(toID("Icy Wind")))
+  );
+}
+
+function countTeamMembersWithPredicate(
+  team: TeamMember[],
+  predicate: (member: TeamMember) => boolean
+) {
+  return team.reduce((count, member) => count + (predicate(member) ? 1 : 0), 0);
+}
+
+function narrowDoublesSuggestionsForFormatProfile(options: {
+  currentTeam: TeamMember[];
+  withBundle: Array<{
+    suggestion: ReturnType<WeightedScoringEngine["suggestMembers"]>[number];
+    bundle: OptimizedSet;
+  }>;
+  templateId: TemplateId;
+  formatProfile: CompetitiveFormatProfile;
+}) {
+  const { currentTeam, withBundle, templateId, formatProfile } = options;
+
+  if (!formatProfile.isDoubles || withBundle.length === 0) {
+    return withBundle;
+  }
+
+  const teamHasTailwind = countTeamMembersWithPredicate(currentTeam, (member) =>
+    setHasAnyMove(member.moves, ["Tailwind"])
+  ) > 0;
+  const teamHasTrickRoom = countTeamMembersWithPredicate(currentTeam, (member) =>
+    setHasAnyMove(member.moves, ["Trick Room"])
+  ) > 0;
+  const teamSpeedControlCount = countTeamMembersWithPredicate(
+    currentTeam,
+    (member) => hasSpeedControlMove(member.moves)
+  );
+  const teamPositioningCount = countTeamMembersWithPredicate(
+    currentTeam,
+    (member) => hasPositioningMove(member.moves)
+  );
+  const teamFastPayoffCount = countTeamMembersWithPredicate(currentTeam, (member) =>
+    isFastDamageSet(member, member.moves)
+  );
+  const teamSlowBreakerCount = countTeamMembersWithPredicate(
+    currentTeam,
+    (member) => isSlowBreakerSet(member, member.moves)
+  );
+  const teamCleanerCount = countTeamMembersWithPredicate(currentTeam, (member) =>
+    hasCleanerProfile(member, member.moves)
+  );
+
+  const filterMatching = (
+    predicate: (entry: (typeof withBundle)[number]) => boolean
+  ) => {
+    const filtered = withBundle.filter(predicate);
+    return filtered.length > 0 ? filtered : withBundle;
+  };
+
+  if (templateId === "tailwind") {
+    if (!teamHasTailwind) {
+      return filterMatching(({ bundle }) => setHasAnyMove(bundle.moves, ["Tailwind"]));
+    }
+    if (teamFastPayoffCount < 2) {
+      return filterMatching(({ suggestion, bundle }) =>
+        isFastDamageSet(suggestion.species, bundle.moves)
+      );
+    }
+    if (teamPositioningCount === 0) {
+      return filterMatching(({ bundle }) => hasPositioningMove(bundle.moves));
+    }
+    return withBundle;
+  }
+
+  if (templateId === "trickroom") {
+    if (!teamHasTrickRoom) {
+      return filterMatching(({ bundle }) =>
+        setHasAnyMove(bundle.moves, ["Trick Room"])
+      );
+    }
+    if (teamSlowBreakerCount < 2) {
+      return filterMatching(({ suggestion, bundle }) =>
+        isSlowBreakerSet(suggestion.species, bundle.moves)
+      );
+    }
+    if (teamPositioningCount === 0) {
+      return filterMatching(({ bundle }) => hasPositioningMove(bundle.moves));
+    }
+    return withBundle;
+  }
+
+  if (templateId === "balanced" && formatProfile.isDoubles) {
+    if (teamSpeedControlCount === 0) {
+      return filterMatching(({ bundle }) => hasSpeedControlMove(bundle.moves));
+    }
+    if (teamPositioningCount === 0) {
+      return filterMatching(({ bundle }) => hasPositioningMove(bundle.moves));
+    }
+    if (teamCleanerCount === 0) {
+      return filterMatching(({ suggestion, bundle }) =>
+        hasCleanerProfile(suggestion.species, bundle.moves)
+      );
+    }
+  }
+
+  return withBundle;
+}
+
 function narrowSuggestionsForTemplateState(options: {
   suggestions: ReturnType<WeightedScoringEngine["suggestMembers"]>;
   optimizer: SetOptimizer;
   teamSpecies: PokemonSpecies[];
   template: Template | undefined;
   templateId: TemplateId;
+  formatProfile: CompetitiveFormatProfile;
   teamMoves: Set<string>;
+  teamMoveCounts: Map<string, number>;
   teamAbilities: Set<string>;
   format: string;
   currentTeam: TeamMember[];
@@ -432,7 +662,9 @@ function narrowSuggestionsForTemplateState(options: {
     teamSpecies,
     template,
     templateId,
+    formatProfile,
     teamMoves,
+    teamMoveCounts,
     teamAbilities,
     format,
     currentTeam,
@@ -446,6 +678,7 @@ function narrowSuggestionsForTemplateState(options: {
     const bundle = optimizer.optimizeBundle(suggestion.species, teamSpecies, {
       template,
       teamMoves,
+      teamMoveCounts,
       teamAbilities,
       format,
     });
@@ -496,7 +729,58 @@ function narrowSuggestionsForTemplateState(options: {
     }
   }
 
-  return suggestions;
+  return narrowDoublesSuggestionsForFormatProfile({
+    currentTeam,
+    templateId,
+    formatProfile,
+    withBundle,
+  }).map(({ suggestion }) => suggestion);
+}
+
+function prioritizeSuggestionsWithTournamentPriors(options: {
+  format: string;
+  templateId: TemplateId;
+  currentTeam: TeamMember[];
+  suggestions: ReturnType<WeightedScoringEngine["suggestMembers"]>;
+}) {
+  const selectionPlan = getTournamentPriorSelectionPlan({
+    format: options.format,
+    templateId: options.templateId,
+    currentTeam: options.currentTeam,
+  });
+
+  if (selectionPlan.candidates.length === 0) {
+    return options.suggestions;
+  }
+
+  const candidatePlan = new Map(
+    selectionPlan.candidates.map((entry) => [entry.candidateId, entry])
+  );
+
+  return options.suggestions
+    .map((suggestion) => {
+      const entry = candidatePlan.get(toID(suggestion.species.name));
+      if (!entry) {
+        return suggestion;
+      }
+
+      const boostApplied =
+        Math.random() <= entry.pickRate
+          ? entry.scoreBoost
+          : 1 + (entry.scoreBoost - 1) * 0.3;
+      const jitter =
+        entry.tier === "anchor"
+          ? 0.96 + Math.random() * 0.1
+          : entry.tier === "core"
+            ? 0.94 + Math.random() * 0.12
+            : 0.92 + Math.random() * 0.14;
+
+      return {
+        ...suggestion,
+        score: suggestion.score * boostApplied * jitter,
+      };
+    })
+    .sort((a, b) => b.score - a.score);
 }
 
 function buildCandidateTeam(options: {
@@ -510,6 +794,7 @@ function buildCandidateTeam(options: {
   templateId: TemplateId;
   excludeLegendaries?: boolean;
   fixedMembers?: string[] | null;
+  formatProfile: CompetitiveFormatProfile;
 }): CandidateTeamBuild {
   const {
     data,
@@ -522,35 +807,82 @@ function buildCandidateTeam(options: {
     templateId,
     excludeLegendaries,
     fixedMembers,
+    formatProfile,
   } = options;
 
   const team: TeamMember[] = [];
   const teamSpecies: PokemonSpecies[] = [];
   const teamMoves = new Set<string>();
+  const teamMoveCounts = new Map<string, number>();
   const teamAbilities = new Set<string>();
+  const teamItems = new Set<string>();
   const teamCanonicalIds = new Set<string>();
   const processedFixedCanonicalIds = new Set<string>();
   const optimizer = new SetOptimizer(data);
+  const trySelectViableSuggestion = (
+    suggestions: ReturnType<WeightedScoringEngine["suggestMembers"]>
+  ) => {
+    const remaining = [...suggestions];
+
+    while (remaining.length > 0) {
+      const weights = remaining.map((suggestion, index) =>
+        suggestion.score * Math.pow(0.6, index)
+      );
+      const selectedIndex = pickWeightedSuggestionIndex(weights);
+      const selected = remaining[selectedIndex];
+      const set = optimizer.optimize(selected.species, teamSpecies, {
+        template,
+        teamMoves,
+        teamMoveCounts,
+        teamAbilities,
+        teamItems,
+        format,
+      });
+
+      if (
+        isResolvedSetViable(
+          set,
+          teamCanonicalIds,
+          teamItems,
+          selected.species,
+          formatProfile
+        )
+      ) {
+        return { selected, set };
+      }
+
+      remaining.splice(selectedIndex, 1);
+      optimizer.clearCache();
+    }
+
+    return null;
+  };
 
   const engine = new WeightedScoringEngine(format, gen, data, {
     excludeLegendaries,
     requiredType: type,
     template,
     getTeamMoves: () => teamMoves,
+    getTeamMoveCounts: () => teamMoveCounts,
     getTeamAbilities: () => teamAbilities,
+    getTeamItems: () => teamItems,
     getTeamRoles: () => team.map((member) => member.role),
     getCandidateBundle: (candidate, currentTeam) =>
       optimizer.optimizeBundle(candidate, currentTeam, {
         template,
         teamMoves,
+        teamMoveCounts,
         teamAbilities,
+        teamItems,
         format,
       }),
     getCandidateRole: (candidate, currentTeam) => {
       const set = optimizer.optimizeBundle(candidate, currentTeam, {
         template,
         teamMoves,
+        teamMoveCounts,
         teamAbilities,
+        teamItems,
         format,
       });
       return detectSetRole(set);
@@ -562,6 +894,13 @@ function buildCandidateTeam(options: {
       if (team.length >= maxTeamSize) break;
       const species = DexProvider.getSpeciesForGen(fixed, gen);
       if (!species) continue;
+      if (
+        formatProfile.isDoubles &&
+        gen === 9 &&
+        !isAllowedInFormat(species.name, format as FormatId)
+      ) {
+        continue;
+      }
       const canonicalId = getCanonicalSpeciesId(species);
       if (processedFixedCanonicalIds.has(canonicalId)) continue;
       processedFixedCanonicalIds.add(canonicalId);
@@ -570,10 +909,14 @@ function buildCandidateTeam(options: {
       const set = optimizer.optimize(species, teamSpecies, {
         template,
         teamMoves,
+        teamMoveCounts,
         teamAbilities,
+        teamItems,
         format,
       });
-      if (!isResolvedSetViable(set, teamCanonicalIds, species)) {
+      if (
+        !isResolvedSetViable(set, teamCanonicalIds, teamItems, species, formatProfile)
+      ) {
         optimizer.clearCache();
         continue;
       }
@@ -582,8 +925,13 @@ function buildCandidateTeam(options: {
       team.push(member);
       teamSpecies.push(species);
       teamCanonicalIds.add(canonicalId);
-      set.moves.forEach((move) => teamMoves.add(toID(move)));
+      set.moves.forEach((move) => {
+        const moveId = toID(move);
+        teamMoves.add(moveId);
+        teamMoveCounts.set(moveId, (teamMoveCounts.get(moveId) ?? 0) + 1);
+      });
       teamAbilities.add(toID(set.ability));
+      teamItems.add(set.item);
       optimizer.clearCache();
     }
   }
@@ -606,28 +954,38 @@ function buildCandidateTeam(options: {
           (template?.requiredMoves?.length ?? 0) > 0
         ? 60
         : 25;
-    let suggestions = engine.suggestMembers(teamSpecies, suggestionLimit);
+    const suggestions = engine.suggestMembers(teamSpecies, suggestionLimit);
     if (suggestions.length === 0) break;
 
-    suggestions = narrowSuggestionsForTemplateState({
+    const prioritizedSuggestions = narrowSuggestionsForTemplateState({
       suggestions,
       optimizer,
       teamSpecies,
       template,
       templateId,
+      formatProfile,
       teamMoves,
+      teamMoveCounts,
       teamAbilities,
       format,
       currentTeam: team,
     });
+    const tournamentPrioritizedSuggestions = prioritizeSuggestionsWithTournamentPriors({
+      format,
+      templateId,
+      currentTeam: team,
+      suggestions: prioritizedSuggestions,
+    });
 
     const targetRole = template?.roles?.[team.length];
     if (targetRole) {
-      const roleSuggestions = suggestions.filter((suggestion) => {
+      const roleSuggestions = tournamentPrioritizedSuggestions.filter((suggestion) => {
         const set = optimizer.optimize(suggestion.species, teamSpecies, {
           template,
           teamMoves,
+          teamMoveCounts,
           teamAbilities,
+          teamItems,
           format,
         });
         return matchesTemplateRole(
@@ -640,37 +998,41 @@ function buildCandidateTeam(options: {
       });
 
       if (roleSuggestions.length > 0) {
-        suggestions = roleSuggestions;
+        tournamentPrioritizedSuggestions.splice(
+          0,
+          tournamentPrioritizedSuggestions.length,
+          ...roleSuggestions
+        );
       }
+    }
+    const prioritizedNames = new Set(
+      tournamentPrioritizedSuggestions.map((suggestion) => toID(suggestion.species.name))
+    );
+    const fallbackSuggestions = suggestions.filter(
+      (suggestion) => !prioritizedNames.has(toID(suggestion.species.name))
+    );
+
+    const viableSelection =
+      trySelectViableSuggestion(tournamentPrioritizedSuggestions) ??
+      trySelectViableSuggestion(fallbackSuggestions);
+    if (!viableSelection) {
+      break;
     }
 
-    const weights = suggestions.map((suggestion, index) =>
-      suggestion.score * Math.pow(0.6, index)
-    );
-    const selectedIndex = pickWeightedSuggestionIndex(weights);
-    const selected = suggestions[selectedIndex];
-    const set = optimizer.optimize(selected.species, teamSpecies, {
-      template,
-      teamMoves,
-      teamAbilities,
-      format,
-    });
-    if (!isResolvedSetViable(set, teamCanonicalIds, selected.species)) {
-      optimizer.clearCache();
-      suggestions.splice(selectedIndex, 1);
-      if (suggestions.length === 0) {
-        break;
-      }
-      continue;
-    }
+    const { selected, set } = viableSelection;
 
     const member = convertToTeamMember(selected.species, set);
 
     team.push(member);
     teamSpecies.push(selected.species);
     teamCanonicalIds.add(getCanonicalSpeciesId(selected.species));
-    set.moves.forEach((move) => teamMoves.add(toID(move)));
+    set.moves.forEach((move) => {
+      const moveId = toID(move);
+      teamMoves.add(moveId);
+      teamMoveCounts.set(moveId, (teamMoveCounts.get(moveId) ?? 0) + 1);
+    });
     teamAbilities.add(toID(set.ability));
+    teamItems.add(set.item);
     optimizer.clearCache();
   }
 
@@ -696,13 +1058,28 @@ function buildCandidateTeam(options: {
 function isResolvedSetViable(
   set: OptimizedSet,
   teamCanonicalIds: Set<string>,
-  species: PokemonSpecies
+  teamItems: Set<string>,
+  species: PokemonSpecies,
+  formatProfile: CompetitiveFormatProfile
 ) {
   if (teamCanonicalIds.has(getCanonicalSpeciesId(species))) {
     return false;
   }
 
   if (!set.item?.trim() || !set.ability?.trim() || !set.nature?.trim()) {
+    return false;
+  }
+
+  if (
+    formatProfile.enforceItemClause &&
+    teamItems.has(set.item)
+  ) {
+    return false;
+  }
+
+  if (
+    formatProfile.forbiddenAbilityIds.includes(toID(set.ability))
+  ) {
     return false;
   }
 
@@ -713,10 +1090,21 @@ function isResolvedSetViable(
       .map((move) => toID(move))
   );
 
+  if (
+    !formatProfile.allowHazards &&
+    Array.from(uniqueMoves).some((moveId) => HAZARD_MOVE_IDS.has(moveId))
+  ) {
+    return false;
+  }
+
   return uniqueMoves.size >= 4;
 }
 
-function generateMockData(format: string, gen: number): NormalizedSmogonData {
+function generateMockData(
+  format: string,
+  gen: number,
+  formatProfile: CompetitiveFormatProfile
+): NormalizedSmogonData {
   const data: NormalizedSmogonData = {
     meta: {
       format,
@@ -734,18 +1122,29 @@ function generateMockData(format: string, gen: number): NormalizedSmogonData {
     pokemon: {},
   };
 
-  const allSpecies = DexProvider.getAllSpecies();
+  const requestedPool = getFallbackSpeciesPool(formatProfile);
+  const speciesPool =
+    requestedPool.length > 0
+      ? requestedPool
+          .map((speciesName) => DexProvider.getSpecies(speciesName))
+          .filter((species): species is PokemonSpecies => Boolean(species))
+      : DexProvider.getAllSpecies();
   const allowLowTierFillers = format.endsWith("lc");
-  for (const species of allSpecies) {
+  speciesPool.forEach((species, index) => {
     const mon = DexProvider.getSpeciesForGen(species.name, gen);
-    if (!mon) continue;
-    if (gen === 9 && !isAllowedInFormat(mon.name, format as FormatId)) continue;
-    if (!allowLowTierFillers && (mon.tier === "LC" || mon.tier === "NFE")) continue;
-    if (mon.evos && mon.evos.length > 0) continue;
+    if (!mon) return;
+    if (gen === 9 && !isAllowedInFormat(mon.name, format as FormatId)) return;
+    if (!allowLowTierFillers && (mon.tier === "LC" || mon.tier === "NFE")) return;
+    if (mon.evos && mon.evos.length > 0) return;
+
+    const usageRate = Math.max(
+      0.01,
+      (speciesPool.length - index) / Math.max(speciesPool.length * 12, 1)
+    );
 
     data.pokemon[toID(mon.name)] = {
       name: mon.name,
-      usageRate: 0.1,
+      usageRate,
       teammates: {},
       moves: {},
       items: {},
@@ -753,7 +1152,8 @@ function generateMockData(format: string, gen: number): NormalizedSmogonData {
       teraTypes: {},
       spreads: [],
     };
-  }
+    data.meta.leadData[toID(mon.name)] = usageRate;
+  });
 
   return data;
 }
