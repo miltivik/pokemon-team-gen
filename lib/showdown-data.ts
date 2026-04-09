@@ -52,6 +52,8 @@ const translationsEs: {
     abilities: Record<string, { name: string; desc?: string }>;
     items: Record<string, { name: string; desc?: string }>;
 } = translationsEsRaw as any;
+const learnsetMoveIdsCache = new Map<string, string[]>();
+const learnableMovesCache = new Map<string, MoveData[]>();
 
 const MANUAL_ITEM_TRANSLATIONS: Record<string, string> = {
     "Booster Energy": "Energía Potenciadora",
@@ -451,7 +453,7 @@ export function isAvailableInGen(name: string, targetGen: number): boolean {
 
 
 export function getRandomMovesWithDetails(pokemonName: string, count: number = 4): MoveData[] {
-    const validMoveIds = getLearnsetMoveIds(pokemonName);
+    const validMoveIds = [...getLearnsetMoveIds(pokemonName)];
     if (validMoveIds.length === 0) return [];
 
     const selectedIds = validMoveIds.sort(() => 0.5 - Math.random()).slice(0, count);
@@ -460,11 +462,24 @@ export function getRandomMovesWithDetails(pokemonName: string, count: number = 4
 }
 
 export function getLearnableMovesWithDetails(pokemonName: string): MoveData[] {
-    return getLearnsetMoveIds(pokemonName).map((moveId) => moves[moveId]);
+    const cacheKey = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cached = learnableMovesCache.get(cacheKey);
+    if (cached) {
+        return cached;
+    }
+
+    const learnableMoves = getLearnsetMoveIds(pokemonName).map((moveId) => moves[moveId]);
+    learnableMovesCache.set(cacheKey, learnableMoves);
+    return learnableMoves;
 }
 
 function getLearnsetMoveIds(pokemonName: string): string[] {
     const id = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cached = learnsetMoveIdsCache.get(id);
+    if (cached) {
+        return cached;
+    }
+
     const pokemonData = getPokemonData(pokemonName);
     const directData = learnsets[id];
     const baseData = pokemonData?.baseSpecies
@@ -472,6 +487,7 @@ function getLearnsetMoveIds(pokemonName: string): string[] {
         : undefined;
 
     if (!directData && !baseData) {
+        learnsetMoveIdsCache.set(id, []);
         return [];
     }
 
@@ -480,9 +496,14 @@ function getLearnsetMoveIds(pokemonName: string): string[] {
         ...((directData?.learnset || directData || {}) as Record<string, unknown>),
     };
     const allMoveIds = Object.keys(learnsetMoves);
-    if (allMoveIds.length === 0) return [];
+    if (allMoveIds.length === 0) {
+        learnsetMoveIdsCache.set(id, []);
+        return [];
+    }
 
-    return allMoveIds.filter(mid => moves[mid]);
+    const filteredMoveIds = allMoveIds.filter(mid => moves[mid]);
+    learnsetMoveIdsCache.set(id, filteredMoveIds);
+    return filteredMoveIds;
 }
 
 export function getTypeColor(type: string): string {

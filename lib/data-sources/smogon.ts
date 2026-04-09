@@ -1,4 +1,6 @@
 import { resolveProviderFormatCandidates } from "@/lib/data-sources/format-source-resolver";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { toID } from "../utils";
 
 export interface ChaosData {
@@ -102,9 +104,17 @@ function normalizeLeadData(text: string) {
 
 const cache: Map<string, NormalizedSmogonData> = new Map();
 const cacheTime: Map<string, number> = new Map();
+const inFlightFetches: Map<string, Promise<NormalizedSmogonData | null>> = new Map();
 const CACHE_TTL = 1000 * 60 * 60 * 6;
+const STALE_CACHE_TTL = 1000 * 60 * 60 * 24 * 35;
 const BASE_URL = "https://www.smogon.com/stats";
 const RATINGS = [1760, 1695, 1500, 0];
+const DISK_CACHE_DIR = path.join(process.cwd(), ".cache", "smogon");
+
+interface DiskCacheEntry {
+  cachedAt: number;
+  data: NormalizedSmogonData;
+}
 
 function getRecentMonths(): string[] {
   const dates = [];
@@ -118,6 +128,55 @@ function getRecentMonths(): string[] {
   return dates;
 }
 
+function getDiskCachePath(format: string) {
+  return path.join(
+    DISK_CACHE_DIR,
+    `${format.toLowerCase().replace(/[^a-z0-9-]+/g, "_")}.json`
+  );
+}
+
+async function readDiskCache(format: string) {
+  const cachePath = getDiskCachePath(format);
+
+  try {
+    const [rawEntry, fileStats] = await Promise.all([
+      readFile(cachePath, "utf8"),
+      stat(cachePath),
+    ]);
+    const parsed = JSON.parse(rawEntry) as Partial<DiskCacheEntry>;
+    const cachedAt =
+      typeof parsed.cachedAt === "number" ? parsed.cachedAt : fileStats.mtimeMs;
+
+    if (!parsed.data) {
+      return null;
+    }
+
+    return {
+      cachedAt,
+      data: parsed.data,
+      isFresh: Date.now() - cachedAt < CACHE_TTL,
+      isUsable: Date.now() - cachedAt < STALE_CACHE_TTL,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function writeDiskCache(format: string, data: NormalizedSmogonData) {
+  try {
+    await mkdir(DISK_CACHE_DIR, { recursive: true });
+    await writeFile(
+      getDiskCachePath(format),
+      JSON.stringify({
+        cachedAt: Date.now(),
+        data,
+      } satisfies DiskCacheEntry)
+    );
+  } catch {
+    // Ignore cache persistence errors and keep the in-memory result.
+  }
+}
+
 export class SmogonDataSource {
   static async getStats(format: string): Promise<NormalizedSmogonData | null> {
     const cached = cache.get(format);
@@ -125,16 +184,37 @@ export class SmogonDataSource {
       return cached;
     }
 
-    const fetchResult = await this.fetchChaosData(format);
-    if (!fetchResult) {
-      return null;
+    const diskCached = await readDiskCache(format);
+    if (diskCached?.isFresh) {
+      cache.set(format, diskCached.data);
+      cacheTime.set(format, diskCached.cachedAt);
+      return diskCached.data;
     }
 
-    const normalized = this.normalize(fetchResult, format);
-    cache.set(format, normalized);
-    cacheTime.set(format, Date.now());
+    if (diskCached?.isUsable) {
+      cache.set(format, diskCached.data);
+      cacheTime.set(format, diskCached.cachedAt);
 
-    return normalized;
+      if (!inFlightFetches.has(format)) {
+        const refreshPromise = this.fetchAndCacheStats(format).finally(() => {
+          inFlightFetches.delete(format);
+        });
+        inFlightFetches.set(format, refreshPromise);
+      }
+
+      return diskCached.data;
+    }
+
+    const existingFetch = inFlightFetches.get(format);
+    if (existingFetch) {
+      return existingFetch;
+    }
+
+    const fetchPromise = this.fetchAndCacheStats(format).finally(() => {
+      inFlightFetches.delete(format);
+    });
+    inFlightFetches.set(format, fetchPromise);
+    return fetchPromise;
   }
 
   private static async fetchChaosData(format: string): Promise<FetchResult | null> {
@@ -160,7 +240,7 @@ export class SmogonDataSource {
             const res = await fetch(url, { cache: "no-store" });
             if (!res.ok) continue;
 
-            const data = (await res.json()) as ChaosData;
+            const data = JSON.parse(await res.text()) as ChaosData;
             const leadData = await this.fetchLeadData(candidate.slug, month);
 
             return {
@@ -183,6 +263,19 @@ export class SmogonDataSource {
     }
 
     return null;
+  }
+
+  private static async fetchAndCacheStats(format: string) {
+    const fetchResult = await this.fetchChaosData(format);
+    if (!fetchResult) {
+      return null;
+    }
+
+    const normalized = this.normalize(fetchResult, format);
+    cache.set(format, normalized);
+    cacheTime.set(format, Date.now());
+    await writeDiskCache(format, normalized);
+    return normalized;
   }
 
   private static async fetchLeadData(formatSlug: string, month: string) {

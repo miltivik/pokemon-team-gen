@@ -49,3 +49,4 @@ tmp*
 smogon_*.txt  
 ~* 
 *.log 
+.cache/

@@ -326,6 +326,8 @@ type FallbackMoveOptions = Pick<
 export class SetOptimizer {
   private data: NormalizedSmogonData;
   private cache: Map<string, SetBundle> = new Map();
+  private spreadSelectionCache: Map<string, { nature: string; evs: OptimizedSet["evs"] }> =
+    new Map();
 
   constructor(data: NormalizedSmogonData) {
     this.data = data;
@@ -333,6 +335,17 @@ export class SetOptimizer {
 
   public clearCache() {
     this.cache.clear();
+  }
+
+  private getSpreadCacheKey(
+    pokemon: PokemonSpecies,
+    options: OptimizerOptions
+  ) {
+    return [
+      toID(pokemon.name),
+      options.format || this.data.meta.format || "gen9ou",
+      getTemplateId(options.template) || "none",
+    ].join("|");
   }
 
   public optimize(
@@ -1106,6 +1119,14 @@ export class SetOptimizer {
     pokemon: PokemonSpecies,
     options: OptimizerOptions
   ): { nature: string; evs: OptimizedSet["evs"] } {
+    const cacheKey = this.getSpreadCacheKey(pokemon, options);
+    const cached = this.spreadSelectionCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    let selectedSpread: { nature: string; evs: OptimizedSet["evs"] };
+
     if (stats.spreads && stats.spreads.length > 0) {
       let top = stats.spreads[0];
       const templateId = getTemplateId(options.template);
@@ -1231,7 +1252,7 @@ export class SetOptimizer {
           break;
       }
 
-      return {
+      selectedSpread = {
         nature: top.nature,
         evs: {
           hp: top.evs[0],
@@ -1242,12 +1263,15 @@ export class SetOptimizer {
           spe: top.evs[5],
         },
       };
+    } else {
+      selectedSpread = {
+        nature: "Serious",
+        evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+      };
     }
 
-    return {
-      nature: "Serious",
-      evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
-    };
+    this.spreadSelectionCache.set(cacheKey, selectedSpread);
+    return selectedSpread;
   }
 
   private findSpreadUsage(stats: NormalizedMonData | undefined, bundle: SetBundle) {
