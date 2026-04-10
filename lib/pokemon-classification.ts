@@ -72,10 +72,5 @@ export function isLegendaryOrParadoxSpecies(name: string): boolean {
     return true;
   }
 
-  const baseStatTotal = Object.values(pokemon.baseStats).reduce(
-    (sum, stat) => sum + stat,
-    0
-  );
-
-  return baseStatTotal >= 670;
+  return false;
 }

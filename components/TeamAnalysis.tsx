@@ -1,7 +1,7 @@
 "use client";
 
 import { FORMATS, FormatId } from "@/config/formats";
-import { AdResponsive } from "@/components/monetization/Ads";
+import { AdHero } from "@/components/monetization/Ads";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { useTranslation } from "@/lib/i18n";
 import type { GeneratedTeamMember, GamePhase, TeamGuideData } from "@/lib/team-guide";
@@ -235,7 +235,7 @@ export function TeamAnalysis({ team, guide, format, onGoHome }: TeamAnalysisProp
       </div>
 
       <div className="flex w-full justify-center">
-        <AdResponsive />
+        <AdHero />
       </div>
 
       <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">

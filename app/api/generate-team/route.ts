@@ -108,7 +108,12 @@ export async function POST(req: NextRequest) {
         // 1. Add fixed pokemon (also gets competitive set now)
         if (fijo) {
             const data = getPokemonData(fijo);
-            if (data) {
+            if (
+                data &&
+                isAvailableInGen(data.name, gen) &&
+                !(excludeLegendaries && isLegendaryOrParadox(data.name)) &&
+                (gen !== 9 || isAllowedInFormat(data.name, format))
+            ) {
                 const member = buildTeamMember(data, smogonTier, usedItems, isVGC, isDoubles);
                 newTeam.push(member);
             }

@@ -548,6 +548,10 @@ export class SetOptimizer {
       : 0;
     const spreadUsage = this.findSpreadUsage(stats, bundleWithMoves);
     const abilityContextScore = this.getAbilityContextScore(bundleWithMoves);
+    const templateAbilityBonus = this.getTemplateAbilityBonus(
+      bundleWithMoves,
+      options
+    );
 
     const sourceBase =
       bundleWithMoves.source.provider === "competitive-sets"
@@ -564,6 +568,7 @@ export class SetOptimizer {
       spreadUsage * 0.35 +
       teraUsage * 0.2 +
       abilityContextScore * 0.35 +
+      templateAbilityBonus +
       templateBonus * 0.2 +
       coherenceScore * 1.8;
 
@@ -783,8 +788,20 @@ export class SetOptimizer {
     const formatProfile = getCompetitiveFormatProfile(
       options.format || this.data.meta.format || "gen9ou"
     );
+    const templateId = getTemplateId(options.template);
     const requiredAbilities = new Set(options.template?.requiredAbilities?.map(toID) ?? []);
     const preferredAbilities = new Set(options.template?.preferredAbilities?.map(toID) ?? []);
+    const teamAbilities = options.teamAbilities ?? new Set<string>();
+    const templateWeatherActive =
+      (templateId === "rain" && teamAbilities.has(toID("Drizzle"))) ||
+      (templateId === "sun" &&
+        (teamAbilities.has(toID("Drought")) ||
+          teamAbilities.has(toID("Orichalcum Pulse")))) ||
+      (templateId === "sand" && teamAbilities.has(toID("Sand Stream"))) ||
+      (templateId === "weatheroffense" &&
+        ["Drizzle", "Drought", "Sand Stream", "Snow Warning", "Orichalcum Pulse"].some(
+          (ability) => teamAbilities.has(toID(ability))
+        ));
     const slotPriority = new Map<string, number>();
     Object.values(pokemon.abilities).forEach((abilityName, index) => {
       slotPriority.set(toID(abilityName), index);
@@ -806,6 +823,10 @@ export class SetOptimizer {
         }
         if (preferredAbilities.has(abilityId)) {
           score += 12;
+          // Weather styles need the actual abuser ability, not just the right species.
+          if (templateWeatherActive) {
+            score += 110;
+          }
         }
         score -= (slotPriority.get(abilityId) ?? 2) * 0.05;
         return [abilityId, score] as [string, number];
@@ -913,6 +934,71 @@ export class SetOptimizer {
     }
 
     return score;
+  }
+
+  private getTemplateAbilityBonus(
+    bundle: Pick<SetBundle, "ability">,
+    options: OptimizerOptions
+  ) {
+    const templateId = getTemplateId(options.template);
+    if (!templateId) {
+      return 0;
+    }
+
+    const abilityId = toID(bundle.ability);
+    const teamAbilities = options.teamAbilities ?? new Set<string>();
+    const weatherActive =
+      (templateId === "rain" && teamAbilities.has(toID("Drizzle"))) ||
+      (templateId === "sun" &&
+        (teamAbilities.has(toID("Drought")) ||
+          teamAbilities.has(toID("Orichalcum Pulse")))) ||
+      (templateId === "sand" && teamAbilities.has(toID("Sand Stream"))) ||
+      (templateId === "weatheroffense" &&
+        ["Drizzle", "Drought", "Sand Stream", "Snow Warning", "Orichalcum Pulse"].some(
+          (ability) => teamAbilities.has(toID(ability))
+        ));
+
+    if (!weatherActive) {
+      return 0;
+    }
+
+    switch (templateId) {
+      case "rain":
+        return [
+          "swiftswim",
+          "raindish",
+          "dryskin",
+          "hydration",
+          "waterabsorb",
+          "stormdrain",
+        ].includes(abilityId)
+          ? 0.9
+          : 0;
+      case "sun":
+        return ["chlorophyll", "solarpower", "flowergift", "protosynthesis"].includes(
+          abilityId
+        )
+          ? 0.9
+          : 0;
+      case "sand":
+        return ["sandrush", "sandforce", "sandveil"].includes(abilityId)
+          ? 1
+          : 0;
+      case "weatheroffense":
+        return [
+          "swiftswim",
+          "chlorophyll",
+          "sandrush",
+          "solarpower",
+          "sandforce",
+          "protosynthesis",
+          "slushrush",
+        ].includes(abilityId)
+          ? 0.85
+          : 0;
+      default:
+        return 0;
+    }
   }
 
   private getAbilityMoveSynergyScore(

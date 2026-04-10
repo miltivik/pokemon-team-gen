@@ -1,6 +1,17 @@
 import { toID } from "@/lib/utils";
 
-type TournamentPriorMode = "balanced" | "tailwind" | "trickroom" | "tempo";
+type TournamentPriorMode =
+  | "balanced"
+  | "offense"
+  | "bulkyoffense"
+  | "voltturn"
+  | "rain"
+  | "sun"
+  | "sand"
+  | "hazardstack"
+  | "tailwind"
+  | "trickroom"
+  | "tempo";
 type PriorModeMatch = "match" | "neutral" | "conflict" | "none";
 type TournamentSelectionTier = "anchor" | "core" | "flex";
 
@@ -290,9 +301,433 @@ const VGC_REG_F_PRIOR_SET: TournamentPriorSet = {
   ],
 };
 
+const GEN9_OU_PRIOR_SET: TournamentPriorSet = {
+  id: "gen9ou-internal-curated-priors-v1",
+  format: "gen9ou",
+  sources: [
+    {
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+    },
+  ],
+  speciesPriors: [
+    createSpeciesPrior("gen9ou", "balanced", "Great Tusk", 1.0, "Internal curated OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen9ou", "balanced", "Gholdengo", 0.98, "Internal curated OU priors", "2026-04-09", 0.98),
+    createSpeciesPrior("gen9ou", "balanced", "Dragapult", 0.95, "Internal curated OU priors", "2026-04-09", 0.95),
+    createSpeciesPrior("gen9ou", "bulkyoffense", "Ogerpon-Wellspring", 0.92, "Internal curated OU priors", "2026-04-09", 0.92),
+    createSpeciesPrior("gen9ou", "bulkyoffense", "Zamazenta", 0.88, "Internal curated OU priors", "2026-04-09", 0.88),
+    createSpeciesPrior("gen9ou", "offense", "Kingambit", 0.95, "Internal curated OU priors", "2026-04-09", 0.95),
+    createSpeciesPrior("gen9ou", "offense", "Kyurem", 0.92, "Internal curated OU priors", "2026-04-09", 0.92),
+    createSpeciesPrior("gen9ou", "offense", "Iron Valiant", 0.9, "Internal curated OU priors", "2026-04-09", 0.9),
+    createSpeciesPrior("gen9ou", "hazardstack", "Glimmora", 1.0, "Internal curated OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen9ou", "hazardstack", "Samurott-Hisui", 0.94, "Internal curated OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen9ou", "voltturn", "Zapdos", 0.96, "Internal curated OU priors", "2026-04-09", 0.96),
+    createSpeciesPrior("gen9ou", "voltturn", "Rotom-Wash", 0.94, "Internal curated OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen9ou", "rain", "Pelipper", 1.0, "Internal curated OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen9ou", "rain", "Barraskewda", 0.98, "Internal curated OU priors", "2026-04-09", 0.98),
+    createSpeciesPrior("gen9ou", "rain", "Basculegion-F", 0.94, "Internal curated OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen9ou", "sun", "Torkoal", 0.95, "Internal curated OU priors", "2026-04-09", 0.95),
+    createSpeciesPrior("gen9ou", "sun", "Ninetales", 0.86, "Internal curated OU priors", "2026-04-09", 0.86),
+    createSpeciesPrior("gen9ou", "sand", "Hippowdon", 1.0, "Internal curated OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen9ou", "sand", "Excadrill", 0.98, "Internal curated OU priors", "2026-04-09", 0.98),
+  ],
+  packages: [
+    createPackagePrior("package", {
+      id: "ou-balance-standard",
+      format: "gen9ou",
+      mode: "balanced",
+      members: ["Great Tusk", "Gholdengo", "Dragapult", "Clefable"],
+      weight: 0.95,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.95,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "ou-bulkyoffense-standard",
+      format: "gen9ou",
+      mode: "bulkyoffense",
+      members: ["Zamazenta", "Ogerpon-Wellspring", "Gliscor", "Gholdengo"],
+      weight: 0.92,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.92,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "ou-offense-spikes",
+      format: "gen9ou",
+      mode: "offense",
+      members: ["Samurott-Hisui", "Gholdengo", "Kingambit", "Dragapult"],
+      weight: 0.94,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.94,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "ou-offense-screens",
+      format: "gen9ou",
+      mode: "offense",
+      members: ["Grimmsnarl", "Kyurem", "Iron Valiant", "Iron Boulder"],
+      weight: 0.84,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.82,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "ou-voltturn-standard",
+      format: "gen9ou",
+      mode: "voltturn",
+      members: ["Zapdos", "Rotom-Wash", "Cinderace", "Ogerpon-Wellspring"],
+      weight: 0.9,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "ou-rain-standard",
+      format: "gen9ou",
+      mode: "rain",
+      members: ["Pelipper", "Barraskewda", "Basculegion-F", "Ogerpon-Wellspring"],
+      weight: 0.96,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.96,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "ou-sand-standard",
+      format: "gen9ou",
+      mode: "sand",
+      members: ["Hippowdon", "Excadrill", "Gliscor", "Garchomp"],
+      weight: 0.94,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.94,
+    }) as TournamentPackagePrior,
+  ],
+  leadPairs: [
+    createPackagePrior("leadPair", {
+      id: "ou-balance-pult-tusk",
+      format: "gen9ou",
+      mode: "balanced",
+      members: ["Dragapult", "Great Tusk"],
+      weight: 0.86,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.88,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "ou-offense-glimm-kingambit",
+      format: "gen9ou",
+      mode: "offense",
+      members: ["Glimmora", "Kingambit"],
+      weight: 0.92,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "ou-voltturn-zap-rotom",
+      format: "gen9ou",
+      mode: "voltturn",
+      members: ["Zapdos", "Rotom-Wash"],
+      weight: 0.9,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "ou-rain-pelipper-barra",
+      format: "gen9ou",
+      mode: "rain",
+      members: ["Pelipper", "Barraskewda"],
+      weight: 0.98,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.98,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "ou-sand-hippo-drill",
+      format: "gen9ou",
+      mode: "sand",
+      members: ["Hippowdon", "Excadrill"],
+      weight: 0.98,
+      source: "Internal curated OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.98,
+    }) as TournamentLeadPairPrior,
+  ],
+  bring4Priors: [],
+};
+
+const GEN8_OU_PRIOR_SET: TournamentPriorSet = {
+  id: "gen8ou-internal-curated-priors-v1",
+  format: "gen8ou",
+  sources: [
+    {
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+    },
+  ],
+  speciesPriors: [
+    createSpeciesPrior("gen8ou", "balanced", "Landorus-Therian", 1.0, "Internal curated Gen 8 OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen8ou", "balanced", "Heatran", 0.96, "Internal curated Gen 8 OU priors", "2026-04-09", 0.96),
+    createSpeciesPrior("gen8ou", "balanced", "Ferrothorn", 0.94, "Internal curated Gen 8 OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen8ou", "balanced", "Clefable", 0.92, "Internal curated Gen 8 OU priors", "2026-04-09", 0.92),
+    createSpeciesPrior("gen8ou", "offense", "Weavile", 0.96, "Internal curated Gen 8 OU priors", "2026-04-09", 0.96),
+    createSpeciesPrior("gen8ou", "offense", "Dragapult", 0.94, "Internal curated Gen 8 OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen8ou", "offense", "Kartana", 0.9, "Internal curated Gen 8 OU priors", "2026-04-09", 0.9),
+    createSpeciesPrior("gen8ou", "voltturn", "Rotom-Wash", 0.95, "Internal curated Gen 8 OU priors", "2026-04-09", 0.95),
+    createSpeciesPrior("gen8ou", "voltturn", "Zapdos", 0.93, "Internal curated Gen 8 OU priors", "2026-04-09", 0.93),
+    createSpeciesPrior("gen8ou", "rain", "Pelipper", 1.0, "Internal curated Gen 8 OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen8ou", "rain", "Barraskewda", 0.98, "Internal curated Gen 8 OU priors", "2026-04-09", 0.98),
+    createSpeciesPrior("gen8ou", "sand", "Tyranitar", 1.0, "Internal curated Gen 8 OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen8ou", "sand", "Excadrill", 0.98, "Internal curated Gen 8 OU priors", "2026-04-09", 0.98),
+  ],
+  packages: [
+    createPackagePrior("package", {
+      id: "gen8ou-balance-standard",
+      format: "gen8ou",
+      mode: "balanced",
+      members: ["Landorus-Therian", "Heatran", "Ferrothorn", "Clefable"],
+      weight: 0.96,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.96,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen8ou-offense-standard",
+      format: "gen8ou",
+      mode: "offense",
+      members: ["Weavile", "Dragapult", "Kartana", "Heatran"],
+      weight: 0.9,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen8ou-voltturn-standard",
+      format: "gen8ou",
+      mode: "voltturn",
+      members: ["Rotom-Wash", "Landorus-Therian", "Zapdos", "Heatran"],
+      weight: 0.9,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen8ou-rain-standard",
+      format: "gen8ou",
+      mode: "rain",
+      members: ["Pelipper", "Barraskewda", "Ferrothorn", "Zapdos"],
+      weight: 0.95,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.95,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen8ou-sand-standard",
+      format: "gen8ou",
+      mode: "sand",
+      members: ["Tyranitar", "Excadrill", "Landorus-Therian", "Zapdos"],
+      weight: 0.95,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.95,
+    }) as TournamentPackagePrior,
+  ],
+  leadPairs: [
+    createPackagePrior("leadPair", {
+      id: "gen8ou-balance-lando-heatran",
+      format: "gen8ou",
+      mode: "balanced",
+      members: ["Landorus-Therian", "Heatran"],
+      weight: 0.88,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.88,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "gen8ou-voltturn-rotom-lando",
+      format: "gen8ou",
+      mode: "voltturn",
+      members: ["Rotom-Wash", "Landorus-Therian"],
+      weight: 0.92,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "gen8ou-rain-pelipper-barra",
+      format: "gen8ou",
+      mode: "rain",
+      members: ["Pelipper", "Barraskewda"],
+      weight: 0.98,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.98,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "gen8ou-sand-ttar-drill",
+      format: "gen8ou",
+      mode: "sand",
+      members: ["Tyranitar", "Excadrill"],
+      weight: 0.98,
+      source: "Internal curated Gen 8 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.98,
+    }) as TournamentLeadPairPrior,
+  ],
+  bring4Priors: [],
+};
+
+const GEN7_OU_PRIOR_SET: TournamentPriorSet = {
+  id: "gen7ou-internal-curated-priors-v1",
+  format: "gen7ou",
+  sources: [
+    {
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+    },
+  ],
+  speciesPriors: [
+    createSpeciesPrior("gen7ou", "balanced", "Landorus-Therian", 1.0, "Internal curated Gen 7 OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen7ou", "balanced", "Heatran", 0.96, "Internal curated Gen 7 OU priors", "2026-04-09", 0.96),
+    createSpeciesPrior("gen7ou", "balanced", "Ferrothorn", 0.94, "Internal curated Gen 7 OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen7ou", "balanced", "Toxapex", 0.92, "Internal curated Gen 7 OU priors", "2026-04-09", 0.92),
+    createSpeciesPrior("gen7ou", "offense", "Greninja", 0.95, "Internal curated Gen 7 OU priors", "2026-04-09", 0.95),
+    createSpeciesPrior("gen7ou", "offense", "Kartana", 0.93, "Internal curated Gen 7 OU priors", "2026-04-09", 0.93),
+    createSpeciesPrior("gen7ou", "offense", "Tapu Koko", 0.9, "Internal curated Gen 7 OU priors", "2026-04-09", 0.9),
+    createSpeciesPrior("gen7ou", "voltturn", "Landorus-Therian", 0.96, "Internal curated Gen 7 OU priors", "2026-04-09", 0.96),
+    createSpeciesPrior("gen7ou", "voltturn", "Tapu Koko", 0.94, "Internal curated Gen 7 OU priors", "2026-04-09", 0.94),
+    createSpeciesPrior("gen7ou", "voltturn", "Tornadus-Therian", 0.92, "Internal curated Gen 7 OU priors", "2026-04-09", 0.92),
+    createSpeciesPrior("gen7ou", "rain", "Pelipper", 1.0, "Internal curated Gen 7 OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen7ou", "rain", "Kingdra", 0.98, "Internal curated Gen 7 OU priors", "2026-04-09", 0.98),
+    createSpeciesPrior("gen7ou", "sand", "Tyranitar", 1.0, "Internal curated Gen 7 OU priors", "2026-04-09", 1),
+    createSpeciesPrior("gen7ou", "sand", "Excadrill", 0.98, "Internal curated Gen 7 OU priors", "2026-04-09", 0.98),
+  ],
+  packages: [
+    createPackagePrior("package", {
+      id: "gen7ou-balance-standard",
+      format: "gen7ou",
+      mode: "balanced",
+      members: ["Landorus-Therian", "Heatran", "Ferrothorn", "Toxapex"],
+      weight: 0.96,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.96,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen7ou-offense-standard",
+      format: "gen7ou",
+      mode: "offense",
+      members: ["Greninja", "Kartana", "Tapu Koko", "Landorus-Therian"],
+      weight: 0.9,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen7ou-voltturn-standard",
+      format: "gen7ou",
+      mode: "voltturn",
+      members: ["Tapu Koko", "Landorus-Therian", "Tornadus-Therian", "Heatran"],
+      weight: 0.92,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.92,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen7ou-rain-standard",
+      format: "gen7ou",
+      mode: "rain",
+      members: ["Pelipper", "Kingdra", "Ferrothorn", "Tapu Koko"],
+      weight: 0.94,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.94,
+    }) as TournamentPackagePrior,
+    createPackagePrior("package", {
+      id: "gen7ou-sand-standard",
+      format: "gen7ou",
+      mode: "sand",
+      members: ["Tyranitar", "Excadrill", "Landorus-Therian", "Toxapex"],
+      weight: 0.94,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.94,
+    }) as TournamentPackagePrior,
+  ],
+  leadPairs: [
+    createPackagePrior("leadPair", {
+      id: "gen7ou-balance-lando-heatran",
+      format: "gen7ou",
+      mode: "balanced",
+      members: ["Landorus-Therian", "Heatran"],
+      weight: 0.88,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.88,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "gen7ou-voltturn-koko-lando",
+      format: "gen7ou",
+      mode: "voltturn",
+      members: ["Tapu Koko", "Landorus-Therian"],
+      weight: 0.92,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.9,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "gen7ou-rain-pelipper-kingdra",
+      format: "gen7ou",
+      mode: "rain",
+      members: ["Pelipper", "Kingdra"],
+      weight: 0.98,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.98,
+    }) as TournamentLeadPairPrior,
+    createPackagePrior("leadPair", {
+      id: "gen7ou-sand-ttar-drill",
+      format: "gen7ou",
+      mode: "sand",
+      members: ["Tyranitar", "Excadrill"],
+      weight: 0.98,
+      source: "Internal curated Gen 7 OU priors",
+      sourceDate: "2026-04-09",
+      confidence: 0.98,
+    }) as TournamentLeadPairPrior,
+  ],
+  bring4Priors: [],
+};
+
 const TOURNAMENT_PRIOR_SETS: Record<string, TournamentPriorSet> = {
+  gen7ou: GEN7_OU_PRIOR_SET,
+  gen8ou: GEN8_OU_PRIOR_SET,
+  gen9ou: GEN9_OU_PRIOR_SET,
   gen9vgc2026f: VGC_REG_F_PRIOR_SET,
 };
+
+function isCompatibleMode(templateId: string, priorMode: TournamentPriorMode) {
+  switch (templateId) {
+    case "balanced":
+      return ["bulkyoffense", "voltturn"].includes(priorMode);
+    case "offense":
+      return ["hazardstack", "bulkyoffense"].includes(priorMode);
+    case "bulkyoffense":
+      return ["balanced", "offense", "voltturn"].includes(priorMode);
+    case "voltturn":
+      return ["balanced", "bulkyoffense"].includes(priorMode);
+    case "hazardstack":
+      return ["offense"].includes(priorMode);
+    case "rain":
+    case "sun":
+    case "sand":
+      return ["offense", "bulkyoffense"].includes(priorMode);
+    default:
+      return false;
+  }
+}
 
 function getTeamNameIds(team: TeamMemberLike[]) {
   return team
@@ -305,7 +740,7 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function getModeMatch(templateId: string | undefined, priorMode: TournamentPriorMode): PriorModeMatch {
-  if (!templateId || templateId === "balanced" || templateId === "offense" || templateId === "bulkyoffense") {
+  if (!templateId || templateId === "random") {
     return priorMode === "balanced" ? "match" : "neutral";
   }
   if (templateId === priorMode) {
@@ -317,12 +752,15 @@ function getModeMatch(templateId: string | undefined, priorMode: TournamentPrior
   ) {
     return "conflict";
   }
+  if (isCompatibleMode(templateId, priorMode)) {
+    return "neutral";
+  }
   return "neutral";
 }
 
 function getModeMultiplier(templateId: string | undefined, priorMode: TournamentPriorMode) {
-  if (!templateId || templateId === "balanced" || templateId === "offense" || templateId === "bulkyoffense") {
-    return 1;
+  if (!templateId || templateId === "random") {
+    return priorMode === "balanced" ? 1.1 : 1;
   }
   if (templateId === priorMode) {
     return 1.25;
@@ -332,6 +770,9 @@ function getModeMultiplier(templateId: string | undefined, priorMode: Tournament
     (templateId === "trickroom" && priorMode === "tailwind")
   ) {
     return 0.6;
+  }
+  if (isCompatibleMode(templateId, priorMode)) {
+    return 1.08;
   }
   return 1;
 }

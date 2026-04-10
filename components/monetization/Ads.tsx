@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import Image from "next/image";
 import Script from "next/script";
 
 /**
@@ -64,8 +65,8 @@ function useDeferredAdMount(delayMs: number = 1200) {
       }
     };
 
-    if ("requestIdleCallback" in window) {
-      idleId = (window as any).requestIdleCallback(activate, { timeout: delayMs });
+    if (window.requestIdleCallback) {
+      idleId = window.requestIdleCallback(activate, { timeout: delayMs });
     } else {
       timeoutId = globalThis.setTimeout(activate, delayMs);
     }
@@ -75,8 +76,8 @@ function useDeferredAdMount(delayMs: number = 1200) {
       if (timeoutId) {
         globalThis.clearTimeout(timeoutId);
       }
-      if (idleId && "cancelIdleCallback" in window) {
-        (window as any).cancelIdleCallback(idleId);
+      if (idleId && window.cancelIdleCallback) {
+        window.cancelIdleCallback(idleId);
       }
     };
   }, [delayMs]);
@@ -84,44 +85,90 @@ function useDeferredAdMount(delayMs: number = 1200) {
   return mounted;
 }
 
+interface AdSlotProps {
+  placement: string;
+  slot: string;
+  fallbackLabel: string;
+  shellClassName: string;
+  slotClassName: string;
+  slotStyle?: CSSProperties;
+  format?: string;
+  fullWidthResponsive?: boolean;
+}
+
+function AdSlot({
+  placement,
+  slot,
+  fallbackLabel,
+  shellClassName,
+  slotClassName,
+  slotStyle,
+  format,
+  fullWidthResponsive,
+}: AdSlotProps) {
+  const mounted = useDeferredAdMount();
+  const pushedRef = useRef(false);
+  const adRef = useRef<HTMLModElement | null>(null);
+
+  useEffect(() => {
+    if (!mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
+      return;
+    }
+
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      pushedRef.current = true;
+    } catch (error) {
+      console.error("AdSense error:", error);
+    }
+  }, [mounted]);
+
+  return (
+    <div
+      className={`ad-slot relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900/60 ${shellClassName}`}
+      data-ad-shell
+      data-ad-placement={placement}
+    >
+      {!CONFIG.adsense.publisherId && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
+          <span className="text-center text-sm text-zinc-400">{fallbackLabel}</span>
+        </div>
+      )}
+
+      {!mounted && CONFIG.adsense.publisherId && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 animate-pulse bg-zinc-200 dark:bg-zinc-800/60"
+        />
+      )}
+
+      <ins
+        ref={adRef}
+        className={`adsbygoogle ${slotClassName}`}
+        style={{ display: "block", background: "transparent", ...slotStyle }}
+        data-ad-client={CONFIG.adsense.publisherId}
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive={fullWidthResponsive ? "true" : undefined}
+        data-ad-placement={placement}
+      />
+    </div>
+  );
+}
+
 /**
  * Banner horizontal (728x90) - Header/Footer
  */
 export function AdBanner() {
-  const mounted = useDeferredAdMount();
-  const pushedRef = useRef(false);
-
-  useEffect(() => {
-    if (mounted && !pushedRef.current && CONFIG.adsense.publisherId) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        pushedRef.current = true;
-      } catch (e) {
-        console.error("AdSense error:", e);
-      }
-    }
-  }, [mounted]);
-
-  if (!CONFIG.adsense.publisherId) {
-    return (
-      <div className="w-full h-[90px] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center rounded-lg">
-        <span className="text-zinc-400 text-sm">Espacio publicitario</span>
-      </div>
-    );
-  }
-
-  if (!mounted) {
-    return <div className="w-full h-[90px] bg-zinc-200 dark:bg-zinc-800/50 animate-pulse rounded-lg" />;
-  }
-
   return (
-    <ins
-      className="adsbygoogle"
-      style={{ display: "block", width: "728px", height: "90px", background: "transparent" }}
-      data-ad-client={CONFIG.adsense.publisherId}
-      data-ad-slot="1234567890"
-      data-ad-format="horizontal"
-      data-full-width-responsive="true"
+    <AdSlot
+      placement="banner"
+      slot="1234567890"
+      fallbackLabel="Espacio publicitario"
+      shellClassName="w-full max-w-[728px] h-[90px]"
+      slotClassName="h-full w-full"
+      format="horizontal"
+      fullWidthResponsive
     />
   );
 }
@@ -130,82 +177,52 @@ export function AdBanner() {
  * Rectángulo (300x250) - Sidebar
  */
 export function AdRectangle() {
-  const mounted = useDeferredAdMount();
-  const pushedRef = useRef(false);
-
-  useEffect(() => {
-    if (mounted && !pushedRef.current && CONFIG.adsense.publisherId) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        pushedRef.current = true;
-      } catch (e) {
-        console.error("AdSense error:", e);
-      }
-    }
-  }, [mounted]);
-
-  if (!CONFIG.adsense.publisherId) {
-    return (
-      <div className="w-[300px] h-[250px] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center rounded-lg">
-        <span className="text-zinc-400 text-sm">Espacio publicitario</span>
-      </div>
-    );
-  }
-
-  if (!mounted) {
-    return <div className="w-[300px] h-[250px] bg-zinc-200 dark:bg-zinc-800/50 animate-pulse rounded-lg" />;
-  }
-
   return (
-    <ins
-      className="adsbygoogle"
-      style={{ display: "inline-block", width: "300px", height: "250px", background: "transparent" }}
-      data-ad-client={CONFIG.adsense.publisherId}
-      data-ad-slot="1234567891"
+    <AdSlot
+      placement="sidebar-rectangle"
+      slot="1234567891"
+      fallbackLabel="Espacio publicitario"
+      shellClassName="h-[250px] w-[300px]"
+      slotClassName="h-full w-full"
     />
   );
 }
 
 /**
- * Banner responsive - Se adapta al contenedor
+ * Placement superior estable para zonas above-the-fold
  */
-export function AdResponsive() {
-  const mounted = useDeferredAdMount();
-  const pushedRef = useRef(false);
-
-  useEffect(() => {
-    if (mounted && !pushedRef.current && CONFIG.adsense.publisherId) {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        pushedRef.current = true;
-      } catch (e) {
-        console.error("AdSense error:", e);
-      }
-    }
-  }, [mounted]);
-
-  if (!CONFIG.adsense.publisherId) {
-    return (
-      <div className="w-full min-h-[250px] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center rounded-lg">
-        <span className="text-zinc-400 text-sm">Espacio publicitario responsivo</span>
-      </div>
-    );
-  }
-
-  if (!mounted) {
-    return <div className="w-full min-h-[250px] bg-zinc-200 dark:bg-zinc-800/50 animate-pulse rounded-lg" />;
-  }
-
+export function AdHero() {
   return (
-    <ins
-      className="adsbygoogle"
-      style={{ display: "block", width: "100%", minHeight: "250px", background: "transparent" }}
-      data-ad-client={CONFIG.adsense.publisherId}
-      data-ad-slot="1234567893"
-      data-ad-format="auto"
-      data-full-width-responsive="true"
+    <AdSlot
+      placement="hero"
+      slot="1234567893"
+      fallbackLabel="Espacio publicitario destacado"
+      shellClassName="w-full max-w-[970px] h-[250px] lg:h-[280px]"
+      slotClassName="h-full w-full"
     />
   );
+}
+
+/**
+ * Placement inline estable para contenido
+ */
+export function AdInlineDisplay() {
+  return (
+    <AdSlot
+      placement="inline-content"
+      slot="1234567893"
+      fallbackLabel="Espacio publicitario en contenido"
+      shellClassName="w-full max-w-[970px] h-[250px] md:h-[280px]"
+      slotClassName="h-full w-full"
+    />
+  );
+}
+
+/**
+ * Compatibilidad con usos existentes del top placement.
+ */
+export function AdResponsive() {
+  return <AdHero />;
 }
 
 /**
@@ -214,7 +231,7 @@ export function AdResponsive() {
 export function AdInline() {
   return (
     <div className="w-full my-8 flex justify-center">
-      <AdResponsive />
+      <AdInlineDisplay />
     </div>
   );
 }
@@ -236,17 +253,24 @@ export function KoFiButton() {
       title="Apóyanos en Ko-Fi"
     >
       {/* Botón completo para Desktop */}
-      <img
+      <Image
         src="/icons/support_me_on_kofi_dark.png"
         alt="Support me on Ko-Fi"
-        loading="lazy"
-        className="hidden md:block drop-shadow-lg"
-        style={{ height: '36px', width: 'auto' }}
+        width={980}
+        height={198}
+        sizes="(min-width: 768px) 178px, 0px"
+        className="hidden h-9 w-auto drop-shadow-lg md:block"
       />
 
       {/* Ícono circular para Móvil (SVG) */}
       <div className="md:hidden flex items-center justify-center w-10 h-10 bg-[#13C3FF] text-white rounded-full shadow-lg border border-black/10 dark:border-white/10 group-hover:bg-[#00b0ec] transition-colors">
-        <img src="/icons/kofi_logo.svg" alt="Ko-fi" className="w-6 h-6 object-contain" loading="lazy" />
+        <Image
+          src="/icons/kofi_logo.svg"
+          alt="Ko-fi"
+          width={24}
+          height={24}
+          className="h-6 w-6 object-contain"
+        />
       </div>
     </a>
   );
@@ -269,11 +293,13 @@ export function KoFiWidget() {
         className="transition-transform hover:scale-105"
         title="Apóyanos en Ko-Fi"
       >
-        <img
+        <Image
           src="/icons/support_me_on_kofi_dark.png"
           alt="Support me on Ko-Fi"
-          loading="lazy"
-          style={{ height: '36px', width: 'auto' }}
+          width={980}
+          height={198}
+          sizes="178px"
+          className="h-9 w-auto"
         />
       </a>
     </div>

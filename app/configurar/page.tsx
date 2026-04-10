@@ -10,7 +10,7 @@ import {
     isTemplateCompatible,
     sanitizeTemplateForFormat,
 } from "@/config/templates";
-import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
+import { AdHero, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -158,11 +158,11 @@ export default function ConfigurarPage() {
             <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
                 {/* Ad at top */}
                 <section className="w-full flex justify-center">
-                    <AdResponsive />
+                    <AdHero />
                 </section>
 
                 {/* Header */}
-                <header className="text-center space-y-4">
+                <header className="flex min-h-28 flex-col items-center justify-center text-center space-y-4">
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {t("form.title")}
                     </h1>
@@ -170,18 +170,24 @@ export default function ConfigurarPage() {
                         {t("form.description")}
                     </p>
                     {/* Show selected format badge if coming from URL */}
-                    {initialFormat && (
-                        <div className="flex justify-center gap-2">
+                    <div className="flex min-h-8 items-center justify-center gap-2">
+                        {initialFormat && (
                             <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-medium">
                                 {initialFormat.toUpperCase()}
                             </span>
-                            {initialTemplate && (
+                        )}
+                        {initialTemplate && (
+                            initialFormat ? (
                                 <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-sm font-medium">
                                     {initialTemplate}
                                 </span>
-                            )}
-                        </div>
-                    )}
+                            ) : (
+                                <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-sm font-medium">
+                                    {initialTemplate}
+                                </span>
+                            )
+                        )}
+                    </div>
                 </header>
 
                 {/* Ad Banner before form */}

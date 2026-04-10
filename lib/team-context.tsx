@@ -52,6 +52,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const storedState = readStoredTeamState();
         stateRef.current = storedState;
+        writeStoredTeamState(storedState);
         // This hydration step intentionally replays sessionStorage after mount.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setState(storedState);

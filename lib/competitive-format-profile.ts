@@ -80,6 +80,131 @@ const GEN9_VGC_REG_F_FALLBACK_POOL = [
   "Annihilape",
 ];
 
+const GEN8_DOUBLES_FALLBACK_POOL = [
+  "Incineroar",
+  "Rillaboom",
+  "Landorus-Therian",
+  "Regieleki",
+  "Urshifu-Rapid-Strike",
+  "Zapdos",
+  "Kartana",
+  "Tapu Fini",
+  "Amoonguss",
+  "Heatran",
+  "Volcarona",
+  "Metagross",
+  "Porygon2",
+  "Celesteela",
+  "Torkoal",
+  "Venusaur",
+  "Rotom-Wash",
+  "Moltres-Galar",
+  "Glastrier",
+  "Dragapult",
+];
+
+const GEN7_DOUBLES_FALLBACK_POOL = [
+  "Incineroar",
+  "Landorus-Therian",
+  "Tapu Fini",
+  "Tapu Koko",
+  "Tapu Lele",
+  "Kartana",
+  "Zapdos",
+  "Amoonguss",
+  "Heatran",
+  "Volcanion",
+  "Diancie",
+  "Porygon2",
+  "Kyurem-Black",
+  "Kommo-o",
+  "Celesteela",
+  "Tyranitar",
+  "Excadrill",
+  "Snorlax",
+  "Naganadel",
+  "Metagross",
+];
+
+const GEN9_OU_FALLBACK_POOL = [
+  "Great Tusk",
+  "Gholdengo",
+  "Kingambit",
+  "Dragapult",
+  "Dragonite",
+  "Gliscor",
+  "Zamazenta",
+  "Ogerpon-Wellspring",
+  "Samurott-Hisui",
+  "Pecharunt",
+  "Clefable",
+  "Torkoal",
+  "Pelipper",
+  "Barraskewda",
+  "Basculegion-F",
+  "Hippowdon",
+  "Excadrill",
+  "Zapdos",
+  "Rotom-Wash",
+  "Cinderace",
+  "Corviknight",
+  "Moltres",
+  "Glimmora",
+  "Iron Valiant",
+  "Kyurem",
+  "Iron Boulder",
+  "Darkrai",
+  "Rillaboom",
+  "Iron Crown",
+  "Volcanion",
+];
+
+const GEN8_OU_FALLBACK_POOL = [
+  "Landorus-Therian",
+  "Heatran",
+  "Dragapult",
+  "Kartana",
+  "Melmetal",
+  "Tapu Fini",
+  "Ferrothorn",
+  "Tornadus-Therian",
+  "Slowking-Galar",
+  "Weavile",
+  "Urshifu-Rapid-Strike",
+  "Rillaboom",
+  "Garchomp",
+  "Dragonite",
+  "Tyranitar",
+  "Excadrill",
+  "Corviknight",
+  "Zapdos",
+  "Rotom-Wash",
+  "Blaziken",
+];
+
+const GEN7_OU_FALLBACK_POOL = [
+  "Landorus-Therian",
+  "Heatran",
+  "Tapu Fini",
+  "Tapu Koko",
+  "Tapu Lele",
+  "Magearna",
+  "Greninja",
+  "Ash-Greninja",
+  "Ferrothorn",
+  "Celesteela",
+  "Toxapex",
+  "Garchomp",
+  "Tyranitar",
+  "Excadrill",
+  "Zapdos",
+  "Scizor",
+  "Hawlucha",
+  "Volcarona",
+  "Kartana",
+  "Kommo-o",
+];
+
 const DEFAULT_PROFILE: CompetitiveFormatProfile = {
   id: "default",
   format: "default",
@@ -111,6 +236,27 @@ export function getCompetitiveFormatProfile(
   format: string
 ): CompetitiveFormatProfile {
   switch (format) {
+    case "gen9ou":
+      return {
+        ...DEFAULT_PROFILE,
+        id: "gen9ou",
+        format,
+        fallbackSpeciesPool: GEN9_OU_FALLBACK_POOL,
+      };
+    case "gen8ou":
+      return {
+        ...DEFAULT_PROFILE,
+        id: "gen8ou",
+        format,
+        fallbackSpeciesPool: GEN8_OU_FALLBACK_POOL,
+      };
+    case "gen7ou":
+      return {
+        ...DEFAULT_PROFILE,
+        id: "gen7ou",
+        format,
+        fallbackSpeciesPool: GEN7_OU_FALLBACK_POOL,
+      };
     case "gen9doublesou":
       return buildDoublesProfile(format, {
         id: "gen9doublesou",
@@ -128,8 +274,15 @@ export function getCompetitiveFormatProfile(
     default: {
       const knownFormat = FORMATS[format as FormatId];
       if (knownFormat?.gameType === "doubles") {
+        const fallbackSpeciesPool =
+          format === "gen8doublesou"
+            ? GEN8_DOUBLES_FALLBACK_POOL
+            : format === "gen7doublesou"
+              ? GEN7_DOUBLES_FALLBACK_POOL
+              : [];
         return buildDoublesProfile(format, {
           id: format,
+          fallbackSpeciesPool,
         });
       }
 

@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AdResponsive, AdBanner } from "@/components/monetization/Ads";
+import { AdHero, AdBanner } from "@/components/monetization/Ads";
+import { TierListLoadingSkeleton } from "@/components/page-skeletons";
 import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
 import { getSmogonStats, classifyTier, TierRank, SmogonMonData } from "@/lib/smogon-stats";
@@ -88,7 +89,7 @@ export default function TierListPage() {
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
             <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
                 <section className="w-full flex justify-center">
-                    <AdResponsive />
+                    <AdHero />
                 </section>
 
                 <header className="text-center space-y-4">
@@ -115,10 +116,7 @@ export default function TierListPage() {
 
                 <div className="w-full max-w-5xl space-y-8">
                     {loading ? (
-                        <div className="text-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                            <p className="mt-4 text-zinc-500">{t("meta.loading") || "Loading data..."}</p>
-                        </div>
+                        <TierListLoadingSkeleton />
                     ) : Object.keys(tierData).length > 0 ? (
                         TIER_ORDER.filter((tier) => tierData[tier]?.length > 0).map((tier) => (
                             <div key={tier} className="space-y-3">

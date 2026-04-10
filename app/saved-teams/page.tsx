@@ -8,18 +8,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Pencil, Check, X } from "lucide-react";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
+import { SavedTeamsPageSkeleton } from "@/components/page-skeletons";
 import { useTranslation } from "@/lib/i18n";
 import { useTeam } from "@/lib/team-context";
 import { getPokemonSummary } from "@/lib/pokemon-summary";
 import { analytics } from "@/lib/analytics";
 import { toast } from "sonner";
+import type { FormatId } from "@/config/formats";
+import type { GeneratedTeamMember } from "@/lib/team-guide";
 
 interface SavedTeam {
     id: string;
-    team: any[];
-    format: string;
+    team: GeneratedTeamMember[];
+    format: FormatId;
     createdAt: string;
     name?: string;
+}
+
+function readSavedTeamsFromStorage(): SavedTeam[] {
+    if (typeof window === "undefined") {
+        return [];
+    }
+
+    const teams = localStorage.getItem("saved-teams");
+    if (!teams) {
+        return [];
+    }
+
+    try {
+        const parsed = JSON.parse(teams);
+        return Array.isArray(parsed) ? parsed as SavedTeam[] : [];
+    } catch (error) {
+        console.error("Failed to parse saved teams:", error);
+        return [];
+    }
 }
 
 export default function SavedTeamsPage() {
@@ -33,21 +55,21 @@ export default function SavedTeamsPage() {
 
     // Load saved teams from localStorage
     useEffect(() => {
-        const teams = localStorage.getItem("saved-teams");
-        if (teams) {
-            try {
-                setSavedTeams(JSON.parse(teams));
-            } catch (e) {
-                console.error("Failed to parse saved teams:", e);
-            }
-        }
-        setLoading(false);
+        const frameId = window.requestAnimationFrame(() => {
+            setSavedTeams(readSavedTeamsFromStorage());
+            setLoading(false);
+        });
+
         analytics.viewSavedTeams();
+
+        return () => {
+            window.cancelAnimationFrame(frameId);
+        };
     }, []);
 
     const handleLoadTeam = (savedTeam: SavedTeam) => {
         setTeam(savedTeam.team);
-        setFormat(savedTeam.format as any);
+        setFormat(savedTeam.format);
         router.push("/equipo");
     };
 
@@ -95,11 +117,7 @@ export default function SavedTeamsPage() {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-        );
+        return <SavedTeamsPageSkeleton />;
     }
 
     return (
@@ -203,7 +221,7 @@ export default function SavedTeamsPage() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex flex-wrap gap-2">
-                                        {team.team.slice(0, 6).map((pokemon: any, index: number) => {
+                                        {team.team.slice(0, 6).map((pokemon: GeneratedTeamMember, index: number) => {
                                             const types = pokemon.types || getPokemonSummary(pokemon.name)?.types || [];
                                             return (
                                                 <div

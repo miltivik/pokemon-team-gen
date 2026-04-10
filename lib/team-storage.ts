@@ -16,6 +16,7 @@ export interface TeamStorageSnapshot {
 
 const TEAM_STORAGE_KEY = "team-context-v2";
 const SAVED_TEAMS_KEY = "saved-teams";
+export const TEAM_PRESENCE_COOKIE_KEY = "ptg_has_team";
 
 export const DEFAULT_TEAM_STATE: TeamStorageSnapshot = {
     team: [],
@@ -53,6 +54,9 @@ export function writeStoredTeamState(state: TeamStorageSnapshot) {
     }
 
     window.sessionStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(state));
+    document.cookie = state.team.length > 0
+        ? `${TEAM_PRESENCE_COOKIE_KEY}=1; Path=/; SameSite=Lax`
+        : `${TEAM_PRESENCE_COOKIE_KEY}=; Path=/; Max-Age=0; SameSite=Lax`;
 }
 
 export function getSavedTeamsCount() {

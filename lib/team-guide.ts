@@ -16,7 +16,7 @@ import {
 } from "@/lib/competitive-format-profile";
 import { getTournamentPriorSet } from "@/lib/tournament-priors";
 import { inferPrimaryStrategicRole } from "@/lib/strategic-role";
-import type { MoveData, PokedexEntry, Role } from "@/lib/showdown-data";
+import { getMoveData, type MoveData, type PokedexEntry, type Role } from "@/lib/showdown-data";
 import { getEffectiveness } from "@/lib/type-chart";
 import { toID } from "@/lib/utils";
 
@@ -461,11 +461,35 @@ function detectWeatherFromAbility(abilityId: string): MemberProfile["weather"] {
   return null;
 }
 
-function getWeatherAbuser(profile: Pick<MemberProfile, "abilityId" | "moveIds" | "weather">) {
+function hasDamagingMoveOfType(
+  moves: Array<string | MoveData>,
+  targetType: string
+) {
+  return moves.some((move) => {
+    const resolvedMove = typeof move === "string" ? getMoveData(move) : move;
+    if (!resolvedMove) {
+      return false;
+    }
+
+    return (
+      resolvedMove.category !== "Status" &&
+      String(resolvedMove.type || "").toLowerCase() === targetType.toLowerCase()
+    );
+  });
+}
+
+function getWeatherAbuser(
+  profile: Pick<MemberProfile, "abilityId" | "moveIds" | "weather" | "member">
+) {
   if (profile.abilityId === "swiftswim" || profile.moveIds.has(toID("Hurricane")) || profile.moveIds.has(toID("Thunder"))) {
     return "rain";
   }
-  if (["chlorophyll", "solarpower", "protosynthesis"].includes(profile.abilityId) || profile.moveIds.has(toID("Growth"))) {
+  if (
+    ["chlorophyll", "solarpower", "protosynthesis"].includes(profile.abilityId) ||
+    profile.moveIds.has(toID("Growth")) ||
+    (profile.member.types.includes("Fire") &&
+      hasDamagingMoveOfType(profile.member.moves, "Fire"))
+  ) {
     return "sun";
   }
   if (["sandrush", "sandforce", "sandveil"].includes(profile.abilityId)) {
@@ -474,7 +498,7 @@ function getWeatherAbuser(profile: Pick<MemberProfile, "abilityId" | "moveIds" |
   if (["slushrush", "icebody"].includes(profile.abilityId) || profile.moveIds.has(toID("Blizzard"))) {
     return "snow";
   }
-  return profile.weather;
+  return null;
 }
 
 function getPriorityFunctionIds(profile: MemberProfile) {
@@ -663,7 +687,7 @@ function buildMemberProfile(
     isEmergencyCheck,
   };
 
-  profile.weatherAbuser = getWeatherAbuser(profile) !== null && !profile.weather;
+  profile.weatherAbuser = getWeatherAbuser(profile) !== null;
   profile.functions = getPriorityFunctionIds(profile);
 
   return profile;
@@ -764,7 +788,10 @@ function inferArchetype(
     weatherSetter?.weather
       ? profiles.filter((profile) => {
         const abuserWeather = getWeatherAbuser(profile);
-        return !profile.weather && abuserWeather === weatherSetter.weather;
+        return (
+          profile.member.name !== weatherSetter.member.name &&
+          abuserWeather === weatherSetter.weather
+        );
       }).length
       : 0;
 
@@ -1156,7 +1183,14 @@ function buildTeamProfile(
   const breakerMembers = profiles.filter((profile) => profile.isWallbreaker);
   const speedControlMembers = profiles.filter((profile) => profile.speedControlMoves.length > 0 || profile.priorityMoves.length > 0 || profile.isFast);
   const weatherSetter = profiles.find((profile) => profile.weather);
-  const weatherAbusers = profiles.filter((profile) => profile.weatherAbuser && !profile.weather);
+  const weatherAbusers =
+    weatherSetter?.weather
+      ? profiles.filter(
+          (profile) =>
+            profile.member.name !== weatherSetter.member.name &&
+            getWeatherAbuser(profile) === weatherSetter.weather
+        )
+      : profiles.filter((profile) => profile.weatherAbuser);
 
   const teamProfile: TeamProfile = {
     format,

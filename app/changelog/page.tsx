@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
+import { AdHero, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
 
@@ -81,7 +81,7 @@ export default function ChangelogPage() {
             <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
                 {/* Ad at top */}
                 <section className="w-full flex justify-center">
-                    <AdResponsive />
+                    <AdHero />
                 </section>
 
                 {/* Header */}

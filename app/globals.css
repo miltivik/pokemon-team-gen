@@ -199,9 +199,13 @@ html {
   }
 }
 
-/* Hide unfilled AdSense slots */
+/* Keep ad shells stable even when AdSense returns no fill */
+.ad-slot {
+  contain: layout paint style;
+}
+
 ins.adsbygoogle[data-ad-status="unfilled"] {
-  display: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }

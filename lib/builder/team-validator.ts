@@ -15,6 +15,7 @@ import {
   getMoveNames,
   TeamGuideData,
 } from "@/lib/team-guide";
+import { getMoveData } from "@/lib/showdown-data";
 import { getTournamentPriorModeCoverage } from "@/lib/tournament-priors";
 import { toID } from "@/lib/utils";
 
@@ -188,6 +189,20 @@ function countMembersWithMove(team: GeneratedTeamMember[], moveNames: string[]) 
   }, 0);
 }
 
+function hasDamagingMoveOfType(member: GeneratedTeamMember, targetType: string) {
+  return member.moves.some((move) => {
+    const resolvedMove = typeof move === "string" ? getMoveData(move) : move;
+    if (!resolvedMove) {
+      return false;
+    }
+
+    return (
+      resolvedMove.category !== "Status" &&
+      String(resolvedMove.type || "").toLowerCase() === targetType.toLowerCase()
+    );
+  });
+}
+
 function buildTeamSignals(
   team: GeneratedTeamMember[],
   format: string
@@ -289,7 +304,8 @@ function buildTeamSignals(
     }
     if (
       ["chlorophyll", "solarpower", "protosynthesis"].includes(abilityId) ||
-      moveIds.has(toID("Growth"))
+      moveIds.has(toID("Growth")) ||
+      (member.types.includes("Fire") && hasDamagingMoveOfType(member, "Fire"))
     ) {
       weatherAbusers.sun += 1;
     }

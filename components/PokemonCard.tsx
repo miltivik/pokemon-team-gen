@@ -113,11 +113,11 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
         );
     }
 
-    const displayImage = getPokemonSpriteUrl(displayData);
+const displayImage = getPokemonSpriteUrl(displayData);
     const displayTypes = displayData.types || [];
     const stats = displayData.baseStats || EMPTY_STATS;
     const bst = Object.values(stats).reduce((a, b) => a + b, 0);
-    const currentRoleLabel =
+const currentRoleLabel =
         getStrategicRoleLabel(pokemon.analysis?.role, t) ||
         pokemon.role ||
         getRole(stats);
@@ -154,7 +154,7 @@ export function PokemonCard({ pokemon, format, onUpdate }: PokemonCardProps) {
                         <h3 className="text-base font-bold capitalize text-zinc-900 dark:text-zinc-50 leading-tight">
                             {pokemon.name}
                         </h3>
-                        <div className="flex gap-1 justify-center items-center mt-1 text-[8px] font-bold uppercase tracking-widest">
+<div className="flex gap-1 justify-center items-center mt-1 text-[8px] font-bold uppercase tracking-widest">
                             <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-1 py-0.5 rounded text-[7px]">BST {bst}</span>
                             <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1 py-0.5 rounded text-[7px]">{currentRoleLabel}</span>
                         </div>

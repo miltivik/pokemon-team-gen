@@ -1,4 +1,5 @@
 import pokedexData from '../../data/pokedex.json';
+import { isAvailableInGen } from '../showdown-data';
 import { toID } from '../utils';
 
 export interface PokemonSpecies {
@@ -55,15 +56,10 @@ export class DexProvider {
     const species = this.getSpecies(name);
     if (!species) return null;
     if (!hasCompleteBaseStats(species.baseStats)) return null;
+    if (!isAvailableInGen(species.name, gen)) return null;
 
     // Clone to avoid mutating original
     const mon = JSON.parse(JSON.stringify(species));
-
-    // Filter out pokemon that didn't exist yet
-    // Note: 'gen' field in Pokedex usually denotes introduction generation.
-    // If it's missing, it's Gen 1.
-    const introGen = mon.gen || 1;
-    if (introGen > gen) return null;
 
     // Apply Type Changes
     this.applyTypeChanges(mon, gen);

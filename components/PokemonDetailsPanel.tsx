@@ -42,6 +42,7 @@ import {
 } from "@/lib/showdown-data";
 import { ItemIcon } from "@/components/ItemIcon";
 import { getStrategicRoleDescription, getStrategicRoleLabel } from "@/lib/strategic-role";
+import { getSmogonUrl } from "@/lib/pokemon-tier";
 
 const ALGORITHM_PRESET_ID = "__algorithm__";
 
@@ -516,6 +517,20 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                                 </HoverInfo>
                             </div>
                         )}
+
+                        <a
+                            href={getSmogonUrl(pokemon.name, format)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-violet-50 p-4 shadow-sm hover:bg-violet-100 dark:border-violet-900/30 dark:bg-violet-900/10 dark:hover:bg-violet-900/20 transition-colors"
+                        >
+                            <svg className="h-5 w-5 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            <span className="text-sm font-bold text-violet-700 dark:text-violet-300">
+                                {lang === "es" ? "Ver en Smogon" : "View on Smogon"}
+                            </span>
+                        </a>
 
                         <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
                             <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">{t("details.abilities")}</h4>

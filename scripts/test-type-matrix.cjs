@@ -10,8 +10,8 @@ const jiti = require("jiti")(__filename, {
   },
 });
 
-const { FORMATS } = jiti(path.join(rootDir, "config/formats.ts"));
-const { sanitizeTemplateForFormat } = jiti(
+const { FORMATS, getGenFromFormat } = jiti(path.join(rootDir, "config/formats.ts"));
+const { TEMPLATES, sanitizeTemplateForFormat } = jiti(
   path.join(rootDir, "config/templates.ts")
 );
 const { getCompetitiveFormatProfile } = jiti(
@@ -21,7 +21,10 @@ const { isAllowedInFormat } = jiti(path.join(rootDir, "lib/format-rules.ts"));
 const { getTournamentPriorModeCoverage } = jiti(
   path.join(rootDir, "lib/tournament-priors.ts")
 );
-const { getMoveData } = jiti(path.join(rootDir, "lib/showdown-data.ts"));
+const { validateTeamForTemplate } = jiti(
+  path.join(rootDir, "lib/builder/team-validator.ts")
+);
+const { getMoveData, isAvailableInGen } = jiti(path.join(rootDir, "lib/showdown-data.ts"));
 const { generateDynamicTeam } = jiti(path.join(rootDir, "lib/dynamic-builder.ts"));
 const { isLegendaryOrParadoxSpecies } = jiti(
   path.join(rootDir, "lib/pokemon-classification.ts")
@@ -70,6 +73,61 @@ const TYPE_MATRIX = [
     templateId: "balanced",
     type: "fire",
     excludeLegendaries: true,
+  },
+  {
+    id: "ou-offense-repair-structure",
+    format: "gen9ou",
+    templateId: "offense",
+    excludeLegendaries: false,
+    allowedArchetypes: ["offense", "hazardstack"],
+    minValidationScore: 0.88,
+    maxMissingSupport: 0,
+  },
+  {
+    id: "ou-voltturn-electric-style",
+    format: "gen9ou",
+    templateId: "voltturn",
+    type: "electric",
+    excludeLegendaries: false,
+    allowedArchetypes: ["voltturn"],
+    minValidationScore: 0.82,
+    requireCleanCore: true,
+    maxMissingSupport: 0,
+    forbiddenMembers: ["Pikachu"],
+  },
+  {
+    id: "ou-rain-water-style",
+    format: "gen9ou",
+    templateId: "rain",
+    type: "water",
+    excludeLegendaries: false,
+    allowedArchetypes: ["rain"],
+    minValidationScore: 0.82,
+    requireCleanCore: true,
+    maxMissingSupport: 1,
+    forbiddenMembers: ["Psyduck"],
+  },
+  {
+    id: "ou-sun-fire-style",
+    format: "gen9ou",
+    templateId: "sun",
+    type: "fire",
+    excludeLegendaries: false,
+    allowedArchetypes: ["sun"],
+    minValidationScore: 0.76,
+    requireCleanCore: true,
+    maxMissingSupport: 1,
+  },
+  {
+    id: "ou-sand-ground-style",
+    format: "gen9ou",
+    templateId: "sand",
+    type: "ground",
+    excludeLegendaries: false,
+    allowedArchetypes: ["sand"],
+    minValidationScore: 0.76,
+    requireCleanCore: true,
+    maxMissingSupport: 1,
   },
   {
     id: "monotype-electric",
@@ -168,6 +226,18 @@ const TYPE_MATRIX = [
     requiredActiveLeadPairs: ["vgc-regf-lead-cress-ursaluna"],
   },
   {
+    id: "vgc-tailwind-flying-style",
+    format: "gen9vgc2026f",
+    templateId: "tailwind",
+    type: "flying",
+    excludeLegendaries: false,
+    allowedArchetypes: ["tailwind"],
+    minValidationScore: 0.82,
+    requireCleanCore: true,
+    // Flying-locked VGC teams cannot reliably satisfy both Fake Out and redirection.
+    maxMissingSupport: 2,
+  },
+  {
     id: "vgc-sneasler-fixed-fallback-quality",
     format: "gen9vgc2026f",
     templateId: "offense",
@@ -198,6 +268,81 @@ const TYPE_MATRIX = [
     minAttackMoves: {
       Dragonite: 2,
     },
+  },
+  {
+    id: "dou-tailwind-flying-style",
+    format: "gen9doublesou",
+    templateId: "tailwind",
+    type: "flying",
+    excludeLegendaries: false,
+    allowedArchetypes: ["tailwind"],
+    minValidationScore: 0.82,
+    requireCleanCore: true,
+    maxMissingSupport: 1,
+  },
+  {
+    id: "gen8ou-no-legends-legacy-availability",
+    format: "gen8ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen7ou-no-legends-legacy-availability",
+    format: "gen7ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen6ou-no-legends-legacy-availability",
+    format: "gen6ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen5ou-no-legends-legacy-availability",
+    format: "gen5ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen4ou-no-legends-legacy-availability",
+    format: "gen4ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen3ou-no-legends-legacy-availability",
+    format: "gen3ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen2ou-no-legends-legacy-availability",
+    format: "gen2ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen1ou-no-legends-legacy-availability",
+    format: "gen1ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+  },
+  {
+    id: "gen8ou-fixed-legendary-excluded",
+    format: "gen8ou",
+    templateId: "balanced",
+    excludeLegendaries: true,
+    fixedMembers: ["Zapdos"],
+    forbiddenMembers: ["Zapdos"],
+  },
+  {
+    id: "gen9ubers-fixed-paradox-excluded",
+    format: "gen9ubers",
+    templateId: "balanced",
+    excludeLegendaries: true,
+    fixedMembers: ["Flutter Mane"],
+    forbiddenMembers: ["Flutter Mane"],
   },
   {
     id: "dou-protect-soft-cap",
@@ -467,10 +612,12 @@ function collectFormatIssues(team, format) {
 async function runCase(testCase, iterations) {
   const expectedTeamSize = FORMATS[testCase.format].maxTeamSize;
   const minimumTeamSize = testCase.minTeamSize ?? expectedTeamSize;
+  const generation = getGenFromFormat(testCase.format);
   const safeTemplateId = sanitizeTemplateForFormat(
     testCase.templateId,
     testCase.format
   );
+  const template = TEMPLATES[safeTemplateId];
   const failureCounts = new Map();
   const iterationResults = [];
   let passedRuns = 0;
@@ -488,12 +635,26 @@ async function runCase(testCase, iterations) {
       });
 
       const failures = [];
+      const validation =
+        testCase.minValidationScore !== undefined ||
+        testCase.maxMissingSupport !== undefined ||
+        testCase.requireCleanCore ||
+        Array.isArray(testCase.allowedArchetypes)
+          ? validateTeamForTemplate(result.team, result.teamGuide, {
+              format: testCase.format,
+              templateId: safeTemplateId,
+              template,
+            })
+          : null;
       const mismatchedMembers = result.team.filter(
         (member) => testCase.type && !hasRequestedType(member, testCase.type)
       );
       const forbiddenMembers = testCase.excludeLegendaries
         ? result.team.filter((member) => isLegendaryOrParadoxSpecies(member.name))
         : [];
+      const generationInvalidMembers = result.team.filter(
+        (member) => !isAvailableInGen(member.name, generation)
+      );
       const canonicalIds = result.team.map((member) => getCanonicalSpeciesId(member.name));
       const duplicateCanonicalFamilies = canonicalIds.filter(
         (canonicalId, memberIndex) => canonicalIds.indexOf(canonicalId) !== memberIndex
@@ -524,6 +685,45 @@ async function runCase(testCase, iterations) {
         failures.push(
           `legendary-filter:${forbiddenMembers.map((member) => member.name).join(",")}`
         );
+      }
+      if (generationInvalidMembers.length > 0) {
+        failures.push(
+          `generation-filter:${generationInvalidMembers
+            .map((member) => member.name)
+            .join(",")}`
+        );
+      }
+      if (
+        validation &&
+        testCase.minValidationScore !== undefined &&
+        validation.score < testCase.minValidationScore
+      ) {
+        failures.push(
+          `validation-score:${validation.score.toFixed(2)}<${testCase.minValidationScore.toFixed(2)}`
+        );
+      }
+      if (
+        validation &&
+        testCase.maxMissingSupport !== undefined &&
+        validation.missingSupportPackages.length > testCase.maxMissingSupport
+      ) {
+        failures.push(
+          `missing-support:${validation.missingSupportPackages.join(",") || "n/a"}`
+        );
+      }
+      if (
+        validation &&
+        testCase.requireCleanCore &&
+        validation.missingCore.length > 0
+      ) {
+        failures.push(`missing-core:${validation.missingCore.join(",")}`);
+      }
+      if (
+        validation &&
+        Array.isArray(testCase.allowedArchetypes) &&
+        !testCase.allowedArchetypes.includes(result.archetype)
+      ) {
+        failures.push(`archetype:${result.archetype || "n/a"}`);
       }
       if (duplicateCanonicalFamilies.length > 0) {
         failures.push(`canonical-duplicate:${duplicateCanonicalFamilies.join(",")}`);

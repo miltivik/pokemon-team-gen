@@ -16,6 +16,9 @@ export interface PokedexEntry {
     tags?: string[];
     forme?: string;
     baseSpecies?: string;
+    gen?: number;
+    isNonstandard?: string;
+    battleOnly?: string;
     evos?: string[];
     prevo?: string;
     // Add other fields from pokedex.json if needed
@@ -54,6 +57,12 @@ const translationsEs: {
 } = translationsEsRaw as any;
 const learnsetMoveIdsCache = new Map<string, string[]>();
 const learnableMovesCache = new Map<string, MoveData[]>();
+const UNSUPPORTED_NONSTANDARD_FOR_TEAM_BUILDER = new Set([
+    "CAP",
+    "Custom",
+    "Future",
+    "LGPE",
+]);
 
 const MANUAL_ITEM_TRANSLATIONS: Record<string, string> = {
     "Booster Energy": "Energía Potenciadora",
@@ -279,13 +288,17 @@ export function getPokemonGeneration(name: string): number {
     const p = getPokemonData(name);
     if (!p) return 0;
 
+    if (typeof p.gen === 'number' && Number.isFinite(p.gen) && p.gen > 0) {
+        return p.gen;
+    }
+
     // Check specific forms first
     if (p.name.includes("-Alola")) return 7;
     if (p.name.includes("-Galar")) return 8;
-    if (p.name.includes("-Hisui")) return 8; // Hisui is technically Gen 8 (Legends Arceus)
+    if (p.name.includes("-Hisui")) return 8;
     if (p.name.includes("-Paldea")) return 9;
 
-    // Mega Evolutions (Gen 6) - though user might want them in base gen, usually filtered out
+    // Major mechanics/forms introduced after the base species.
     if (p.name.includes("-Mega")) return 6;
     if (p.name.includes("-Gmax")) return 8;
 
@@ -374,6 +387,10 @@ export function getTranslatedItemDesc(itemName: string, lang: 'en' | 'es'): stri
 export function isLegendaryOrParadox(name: string): boolean {
     const p = getPokemonData(name);
     if (!p) return false;
+    if (p.battleOnly) return false;
+    if (p.isNonstandard && UNSUPPORTED_NONSTANDARD_FOR_TEAM_BUILDER.has(p.isNonstandard)) {
+        return false;
+    }
 
     const legendaryTags = ["Restricted Legendary", "Sub-Legendary", "Mythical", "Paradox"];
 
@@ -399,9 +416,6 @@ export function isLegendaryOrParadox(name: string): boolean {
     if (legendaryKeywords.some(l => p.name.includes(l))) return true;
 
     // 5. BST Check (Last Resort — catches anything else 670+)
-    const bst = Object.values(p.baseStats).reduce((a, b) => a + b, 0);
-    if (bst >= 670) return true;
-
     return false;
 }
 
@@ -435,18 +449,29 @@ const MAX_DEX_BY_GEN: Record<number, number> = {
 export function isAvailableInGen(name: string, targetGen: number): boolean {
     const p = getPokemonData(name);
     if (!p) return false;
+    if (p.battleOnly) return false;
+    if (p.isNonstandard && UNSUPPORTED_NONSTANDARD_FOR_TEAM_BUILDER.has(p.isNonstandard)) {
+        return false;
+    }
     if (p.num <= 0) return false; // Filter out CAP/custom Pokémon
 
     const maxDex = MAX_DEX_BY_GEN[targetGen];
     if (!maxDex) return true; // Unknown gen, allow all
 
-    // Regional forms: only available from their introduction gen onwards
+    if (p.name.includes('-Mega')) {
+        return targetGen >= 6 && targetGen <= 7 && p.num <= maxDex;
+    }
+    if (p.name.includes('-Gmax')) {
+        return false;
+    }
+
     if (p.name.includes('-Alola') && targetGen < 7) return false;
     if (p.name.includes('-Galar') && targetGen < 8) return false;
-    if (p.name.includes('-Hisui') && targetGen < 8) return false;
+    if (p.name.includes('-Hisui') && targetGen < 9) return false;
     if (p.name.includes('-Paldea') && targetGen < 9) return false;
-    if (p.name.includes('-Mega') && targetGen < 6) return false;
-    if (p.name.includes('-Gmax') && targetGen < 8) return false;
+
+    const introGen = getPokemonGeneration(name);
+    if (introGen > targetGen) return false;
 
     return p.num <= maxDex;
 }
