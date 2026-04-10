@@ -18,7 +18,8 @@ import {
 import { detectSetRole } from "@/lib/builder/roles";
 import { Template, TemplateId, TEMPLATES, sanitizeTemplateForFormat } from "@/config/templates";
 import { DexProvider, type PokemonSpecies } from "@/lib/data-sources/dex";
-import { NormalizedSmogonData, SmogonDataSource } from "@/lib/data-sources/smogon";
+import type { NormalizedSmogonData } from "@/lib/data-sources/smogon-types";
+import { SmogonDataSource } from "@/lib/data-sources/smogon";
 import {
   getCompetitiveFormatProfile,
   getFallbackSpeciesPool,

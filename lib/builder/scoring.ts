@@ -1,4 +1,4 @@
-import { NormalizedSmogonData, NormalizedMonData } from '../data-sources/smogon';
+import type { NormalizedMonData, NormalizedSmogonData } from '../data-sources/smogon-types';
 import { DexProvider, PokemonSpecies } from '../data-sources/dex';
 import { getEffectiveness } from '../type-chart';
 import { toID } from '../utils';

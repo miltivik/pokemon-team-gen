@@ -8,7 +8,7 @@ import { getSmogonTierKey } from "@/lib/format-rules";
 import { pokemonCanLearnMove } from "@/lib/pokemon-learnsets";
 import { getLearnableMovesWithDetails, getRandomMovesWithDetails } from "@/lib/showdown-data";
 import { PokemonSpecies } from "../data-sources/dex";
-import { NormalizedMonData, NormalizedSmogonData } from "../data-sources/smogon";
+import type { NormalizedMonData, NormalizedSmogonData } from "../data-sources/smogon-types";
 import { toID } from "../utils";
 import { getCompetitiveFormatProfile } from "../competitive-format-profile";
 import {

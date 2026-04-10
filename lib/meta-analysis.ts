@@ -1,5 +1,5 @@
 
-import { getSmogonStats, classifyTier, SmogonMonData } from "@/lib/smogon-stats";
+import { getClientSmogonStats, classifyTier, SmogonMonData } from "@/lib/client-smogon-stats";
 import { getProperItemName, getProperAbilityName } from "@/lib/showdown-data";
 
 export interface MetaOverviewData {
@@ -11,7 +11,7 @@ export interface MetaOverviewData {
 }
 
 export async function getMetaAnalysis(format: string): Promise<MetaOverviewData> {
-    const stats = await getSmogonStats(format);
+    const stats = await getClientSmogonStats(format);
     const mons = Object.values(stats).sort((a, b) => b.usage - a.usage);
 
     // 1. Top Threats (Top 5 por uso)

@@ -6,7 +6,8 @@
  */
 
 import { getPrimaryProviderSlug } from "./data-sources/format-source-resolver";
-import type { SmogonMonData } from "./smogon-stats";
+import { getClientSmogonStats } from "./client-smogon-stats";
+import type { SmogonMonData } from "./client-smogon-stats";
 import {
   getProperAbilityName,
   getProperItemName,
@@ -217,8 +218,7 @@ export async function getCombinedStats(
   };
 
   try {
-    const smogonModule = await import("./smogon-stats");
-    smogonData = await smogonModule.getSmogonStats(format);
+    smogonData = await getClientSmogonStats(format);
   } catch (error) {
     console.error("Failed to fetch Smogon stats:", error);
   }

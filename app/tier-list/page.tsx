@@ -7,7 +7,7 @@ import { AdHero, AdBanner } from "@/components/monetization/Ads";
 import { TierListLoadingSkeleton } from "@/components/page-skeletons";
 import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
-import { getSmogonStats, classifyTier, TierRank, SmogonMonData } from "@/lib/smogon-stats";
+import { getClientSmogonStats, classifyTier, TierRank, SmogonMonData } from "@/lib/client-smogon-stats";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { getPokemonSummary } from "@/lib/pokemon-summary";
 import { formatPercentage } from "@/lib/format-percent";
@@ -60,7 +60,7 @@ export default function TierListPage() {
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const stats = await getSmogonStats(format);
+            const stats = await getClientSmogonStats(format);
             const grouped: Record<string, SmogonMonData[]> = {};
 
             Object.values(stats).forEach((mon) => {

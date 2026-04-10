@@ -1,4 +1,5 @@
 import { SmogonDataSource } from "./data-sources/smogon";
+import type { NormalizedSmogonData } from "./data-sources/smogon-types";
 
 const cachedDataV2: Map<string, Record<string, SmogonMonData>> = new Map();
 const lastFetchTime: Map<string, number> = new Map();
@@ -34,7 +35,7 @@ export interface TieredPokemon {
 export type TierRank = "S" | "A+" | "A" | "A-" | "B+" | "B" | "B-" | "C" | "D";
 
 function normalizeData(
-  data: Awaited<ReturnType<typeof SmogonDataSource.getStats>>
+  data: NormalizedSmogonData | null
 ): Record<string, SmogonMonData> {
   if (!data) {
     return {};
@@ -74,7 +75,7 @@ async function fetchSmogonStatsFromApi(format: string) {
   }
 
   const rawData =
-    (await response.json()) as Awaited<ReturnType<typeof SmogonDataSource.getStats>>;
+    (await response.json()) as NormalizedSmogonData | null;
   return normalizeData(rawData);
 }
 
@@ -88,10 +89,9 @@ export async function getSmogonStats(
   }
 
   try {
-    const data =
-      typeof window === "undefined"
-        ? normalizeData(await SmogonDataSource.getStats(format))
-        : await fetchSmogonStatsFromApi(format);
+    const data = typeof window === "undefined"
+      ? normalizeData(await SmogonDataSource.getStats(format))
+      : await fetchSmogonStatsFromApi(format);
     cachedDataV2.set(format, data);
     lastFetchTime.set(format, Date.now());
     return data;

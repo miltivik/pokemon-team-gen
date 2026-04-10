@@ -11,8 +11,24 @@ import { analytics } from "@/lib/analytics";
 import { FormatId, FORMATS } from "@/config/formats";
 import { getCombinedStats, CombinedPokemonData } from "@/lib/pikalytics";
 import { PokemonStatCard } from "@/components/guides/PokemonStatCard";
-import { Loader2, TrendingUp, ShieldAlert } from "lucide-react";
+import { TrendingUp, ShieldAlert } from "lucide-react";
 import { FORMAT_GUIDES, COLOR_THEMES } from "@/config/format-guides";
+
+function GuideStatsLoadingSkeleton() {
+    return (
+        <div
+            aria-hidden="true"
+            className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        >
+            {Array.from({ length: 6 }, (_, index) => (
+                <div
+                    key={index}
+                    className="h-48 animate-pulse rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                />
+            ))}
+        </div>
+    );
+}
 
 export default function DynamicGuidePage({ params }: { params: Promise<{ format: string }> }) {
     const { format: formatParam } = use(params);
@@ -100,10 +116,7 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
                         </div>
 
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-24 text-zinc-500 gap-4 bg-white dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-                                <p className="font-medium animate-pulse">Cargando datos competitivos...</p>
-                            </div>
+                            <GuideStatsLoadingSkeleton />
                         ) : pokemonStats.length > 0 ? (
                             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                 {pokemonStats.map((mon, index) => (

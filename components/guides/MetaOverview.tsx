@@ -13,6 +13,63 @@ interface MetaOverviewProps {
     format: string;
 }
 
+function MetaOverviewSkeleton() {
+    return (
+        <div className="w-full space-y-6" aria-hidden="true">
+            <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+                <CardHeader>
+                    <div className="h-7 w-48 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {Array.from({ length: 3 }, (_, index) => (
+                            <div key={index} className="rounded-lg p-4 bg-zinc-100 dark:bg-zinc-800/50">
+                                <div className="h-5 w-24 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    {Array.from({ length: 5 }, (_, pillIndex) => (
+                                        <div key={pillIndex} className="h-7 w-20 animate-pulse rounded-full bg-zinc-200 dark:bg-zinc-700" />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+                <div className="h-8 w-56 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {Array.from({ length: 6 }, (_, index) => (
+                        <div key={index} className="h-48 animate-pulse rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900" />
+                    ))}
+                </div>
+            </div>
+
+            <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+                <CardHeader>
+                    <div className="h-7 w-64 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="rounded-lg p-4 bg-zinc-100 dark:bg-zinc-800/50 space-y-3">
+                            <div className="h-5 w-28 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                            {Array.from({ length: 5 }, (_, index) => (
+                                <div key={index} className="h-4 w-full animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                            ))}
+                        </div>
+                        <div className="rounded-lg p-4 bg-zinc-100 dark:bg-zinc-800/50 space-y-3">
+                            <div className="h-5 w-24 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                            {Array.from({ length: 5 }, (_, index) => (
+                                <div key={index} className="h-4 w-full animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+                            ))}
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
 export function MetaOverview({ format }: MetaOverviewProps) {
     const { t } = useTranslation();
     const [data, setData] = useState<MetaOverviewData | null>(null);
@@ -33,12 +90,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
     }, [format]);
 
     if (loading) {
-        return (
-            <div className="w-full text-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                <p className="mt-4 text-muted-foreground">{t("meta.loading") || "Loading data..."}</p>
-            </div>
-        );
+        return <MetaOverviewSkeleton />;
     }
 
     if (!data) return null;

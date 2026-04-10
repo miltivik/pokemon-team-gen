@@ -1,11 +1,12 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 
-const projectRoot = process.cwd();
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
-  outputFileTracingRoot: projectRoot,
   images: {
     remotePatterns: [
       {

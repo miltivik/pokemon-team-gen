@@ -1,6 +1,6 @@
 import { Template, TemplateId, TEMPLATES } from "@/config/templates";
 import { PokemonSpecies } from "@/lib/data-sources/dex";
-import { NormalizedMonData } from "@/lib/data-sources/smogon";
+import type { NormalizedMonData } from "@/lib/data-sources/smogon-types";
 import { pokemonCanLearnMove } from "@/lib/pokemon-learnsets";
 import { toID } from "@/lib/utils";
 
