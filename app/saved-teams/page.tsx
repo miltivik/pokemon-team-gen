@@ -1,59 +1,93 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Check, Pencil, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Pencil, Check, X } from "lucide-react";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { SavedTeamsPageSkeleton } from "@/components/page-skeletons";
 import { useTranslation } from "@/lib/i18n";
-import { useTeam } from "@/lib/team-context";
-import { getPokemonSummary } from "@/lib/pokemon-summary";
 import { analytics } from "@/lib/analytics";
-import { toast } from "sonner";
-import type { FormatId } from "@/config/formats";
+import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
+import { getPokemonSummary } from "@/lib/pokemon-summary";
+import {
+    readSavedTeamsFromStorage,
+    type SavedTeamRecord,
+    writeSavedTeamsToStorage,
+} from "@/lib/team-storage";
+import { useTeam } from "@/lib/team-context";
 import type { GeneratedTeamMember } from "@/lib/team-guide";
+import { toast } from "sonner";
 
-interface SavedTeam {
-    id: string;
-    team: GeneratedTeamMember[];
-    format: FormatId;
-    createdAt: string;
-    name?: string;
+function getSavedTeamDisplayName(team: SavedTeamRecord, lang: "en" | "es") {
+    return team.name?.trim() || `${lang === "es" ? "Equipo" : "Team"} ${team.id.slice(0, 8)}`;
 }
 
-function readSavedTeamsFromStorage(): SavedTeam[] {
-    if (typeof window === "undefined") {
-        return [];
-    }
+function SavedTeamPreviewMember({ pokemon }: { pokemon: GeneratedTeamMember }) {
+    const summary = getPokemonSummary(pokemon.name);
+    const displayTypes =
+        pokemon.types.length > 0 ? pokemon.types : summary?.types ?? [];
+    const spriteUrl = getPokemonSpriteUrl(
+        {
+            ...(summary ?? {}),
+            ...pokemon,
+            name: pokemon.name,
+        },
+        "sprite"
+    );
 
-    const teams = localStorage.getItem("saved-teams");
-    if (!teams) {
-        return [];
-    }
-
-    try {
-        const parsed = JSON.parse(teams);
-        return Array.isArray(parsed) ? parsed as SavedTeam[] : [];
-    } catch (error) {
-        console.error("Failed to parse saved teams:", error);
-        return [];
-    }
+    return (
+        <div className="flex min-w-0 items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-950/60">
+            <div className="relative h-10 w-10 shrink-0 rounded-lg bg-white dark:bg-zinc-900">
+                <Image
+                    src={spriteUrl}
+                    alt={pokemon.name}
+                    fill
+                    sizes="40px"
+                    className="object-contain p-1"
+                />
+            </div>
+            <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    {pokemon.name}
+                </div>
+                <div className="mt-1 flex flex-wrap gap-1">
+                    {displayTypes.slice(0, 2).map((type) => (
+                        <span
+                            key={`${pokemon.name}-${type}`}
+                            className="rounded-full bg-zinc-200 px-2 py-0.5 text-[10px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+                        >
+                            {type}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default function SavedTeamsPage() {
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
     const router = useRouter();
-    const { setTeam, setFormat } = useTeam();
-    const [savedTeams, setSavedTeams] = useState<SavedTeam[]>([]);
+    const {
+        setFormat,
+        setGameplan,
+        setGameplanI18n,
+        setGenerationOptions,
+        setTeam,
+        setTeamGuide,
+        setTeamGuideI18n,
+    } = useTeam();
+    const [savedTeams, setSavedTeams] = useState<SavedTeamRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editingName, setEditingName] = useState<string>("");
+    const [editingName, setEditingName] = useState("");
+    const hasSavedTeams = savedTeams.length > 0;
 
-    // Load saved teams from localStorage
     useEffect(() => {
         const frameId = window.requestAnimationFrame(() => {
             setSavedTeams(readSavedTeamsFromStorage());
@@ -67,52 +101,92 @@ export default function SavedTeamsPage() {
         };
     }, []);
 
-    const handleLoadTeam = (savedTeam: SavedTeam) => {
-        setTeam(savedTeam.team);
-        setFormat(savedTeam.format);
-        router.push("/equipo");
+    const handleLoadTeam = async (savedTeam: SavedTeamRecord) => {
+        try {
+            const { attachMemberAnalyses, generateTeamGuide } = await import("@/lib/team-guide");
+            const templateId = savedTeam.generationOptions?.templateId;
+            const teamGuideEn = generateTeamGuide(savedTeam.team, {
+                format: savedTeam.format,
+                templateId,
+                lang: "en",
+            });
+            const teamGuideEs = generateTeamGuide(savedTeam.team, {
+                format: savedTeam.format,
+                templateId,
+                lang: "es",
+            });
+            const localizedGuide = lang === "es" ? teamGuideEs : teamGuideEn;
+            const localizedTeam = attachMemberAnalyses(savedTeam.team, localizedGuide);
+
+            setTeam(localizedTeam);
+            setFormat(savedTeam.format);
+            setGameplan(localizedGuide.phases);
+            setGameplanI18n({
+                en: teamGuideEn.phases,
+                es: teamGuideEs.phases,
+            });
+            setTeamGuide(localizedGuide);
+            setTeamGuideI18n({
+                en: teamGuideEn,
+                es: teamGuideEs,
+            });
+            setGenerationOptions(savedTeam.generationOptions);
+
+            router.push("/equipo");
+        } catch (error) {
+            console.error("Failed to restore saved team", error);
+            toast.error(t("form.error"), {
+                description: t("form.errorDesc"),
+            });
+        }
     };
 
     const handleDeleteTeam = (id: string) => {
-        const updated = savedTeams.filter(t => t.id !== id);
-        setSavedTeams(updated);
-        localStorage.setItem("saved-teams", JSON.stringify(updated));
+        const updatedTeams = savedTeams.filter((team) => team.id !== id);
+        setSavedTeams(updatedTeams);
+        writeSavedTeamsToStorage(updatedTeams);
         toast.success(t("savedTeams.teamDeleted"));
     };
 
-    const startEditing = (team: SavedTeam) => {
+    const startEditing = (team: SavedTeamRecord) => {
         setEditingId(team.id);
-        setEditingName(team.name || `Team ${team.id.slice(0, 8)}`);
-    };
-
-    const saveEditing = () => {
-        if (!editingId) return;
-
-        const updated = savedTeams.map(t => {
-            if (t.id === editingId) {
-                return { ...t, name: editingName.trim() || undefined };
-            }
-            return t;
-        });
-
-        setSavedTeams(updated);
-        localStorage.setItem("saved-teams", JSON.stringify(updated));
-        setEditingId(null);
-        toast.success(t("savedTeams.teamRenamed") || "Equipo renombrado exitosamente");
+        setEditingName(getSavedTeamDisplayName(team, lang));
     };
 
     const cancelEditing = () => {
         setEditingId(null);
+        setEditingName("");
+    };
+
+    const saveEditing = () => {
+        if (!editingId) {
+            return;
+        }
+
+        const updatedTeams = savedTeams.map((team) => (
+            team.id === editingId
+                ? {
+                    ...team,
+                    name: editingName.trim() || undefined,
+                }
+                : team
+        ));
+
+        setSavedTeams(updatedTeams);
+        writeSavedTeamsToStorage(updatedTeams);
+        setEditingId(null);
+        setEditingName("");
+        toast.success(t("savedTeams.teamRenamed"));
     };
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
         return date.toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
         });
     };
 
@@ -122,14 +196,14 @@ export default function SavedTeamsPage() {
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
-            <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
-                {/* Ad at top */}
-                <section className="w-full flex justify-center">
-                    <AdResponsive />
-                </section>
+            <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
+                {hasSavedTeams && (
+                    <section className="w-full flex justify-center">
+                        <AdResponsive />
+                    </section>
+                )}
 
-                {/* Header */}
-                <header className="text-center space-y-4">
+                <header className="max-w-2xl space-y-4 text-center">
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {t("savedTeams.title")}
                     </h1>
@@ -138,135 +212,150 @@ export default function SavedTeamsPage() {
                     </p>
                 </header>
 
-                {/* Generate New Button */}
-                <div className="flex gap-4">
-                    <Link href="/configurar">
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                            🚀 {t("nav.generate")}
+                <div className="flex w-full justify-center">
+                    <Link href="/configurar" className="block w-full max-w-xs sm:inline-flex sm:w-auto sm:max-w-none">
+                        <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 sm:w-auto">
+                            {t("nav.generate")}
                         </Button>
                     </Link>
                 </div>
 
-                {/* Ad Banner */}
-                <section className="w-full flex justify-center py-4">
-                    <AdBanner />
-                </section>
+                {hasSavedTeams && (
+                    <section className="w-full flex justify-center py-4">
+                        <AdBanner />
+                    </section>
+                )}
 
-                {/* Saved Teams List */}
-                {savedTeams.length > 0 ? (
-                    <div className="w-full max-w-4xl grid gap-4">
+                {hasSavedTeams ? (
+                    <div className="grid w-full max-w-5xl gap-4">
                         {savedTeams.map((team) => (
-                            <Card key={team.id} className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
-                                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                    <div>
-                                        <CardTitle className="text-lg flex items-center gap-2">
-                                            <span className="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded text-xs font-mono shrink-0">
-                                                {team.format.toUpperCase()}
-                                            </span>
+                            <Card
+                                key={team.id}
+                                className="overflow-hidden border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+                            >
+                                <CardContent className="p-4 sm:p-5">
+                                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                        <div className="min-w-0 flex-1 space-y-3">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="shrink-0 rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-mono font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                                                    {team.format.toUpperCase()}
+                                                </span>
+                                                <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                                    {team.team.length} Pokemon
+                                                </span>
+                                            </div>
+
                                             {editingId === team.id ? (
-                                                <div className="flex items-center gap-2 flex-1">
+                                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                                                     <Input
                                                         value={editingName}
-                                                        onChange={(e) => setEditingName(e.target.value)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Enter") saveEditing();
-                                                            if (e.key === "Escape") cancelEditing();
+                                                        onChange={(event) => setEditingName(event.target.value)}
+                                                        onKeyDown={(event) => {
+                                                            if (event.key === "Enter") saveEditing();
+                                                            if (event.key === "Escape") cancelEditing();
                                                         }}
-                                                        className="h-8 max-w-[200px]"
+                                                        className="h-10 w-full sm:max-w-xs"
                                                         autoFocus
                                                     />
-                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-green-600" onClick={saveEditing}>
-                                                        <Check className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-red-600" onClick={cancelEditing}>
-                                                        <X className="h-4 w-4" />
-                                                    </Button>
+                                                    <div className="grid grid-cols-2 gap-2 sm:flex">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="gap-2"
+                                                            onClick={saveEditing}
+                                                        >
+                                                            <Check className="h-4 w-4" />
+                                                            {lang === "es" ? "Guardar" : "Save"}
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className="gap-2"
+                                                            onClick={cancelEditing}
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                            {lang === "es" ? "Cancelar" : "Cancel"}
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center gap-2 group">
-                                                    <span className="truncate">
-                                                        {team.name || `Team ${team.id.slice(0, 8)}`}
-                                                    </span>
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <h2 className="truncate text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                                                            {getSavedTeamDisplayName(team, lang)}
+                                                        </h2>
+                                                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                                                            {formatDate(team.createdAt)}
+                                                        </p>
+                                                    </div>
                                                     <Button
                                                         size="icon"
                                                         variant="ghost"
-                                                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        className="h-9 w-9 shrink-0 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                                                         onClick={() => startEditing(team)}
                                                     >
-                                                        <Pencil className="h-3 w-3" />
+                                                        <Pencil className="h-4 w-4" />
+                                                        <span className="sr-only">
+                                                            {lang === "es" ? "Editar nombre del equipo" : "Edit team name"}
+                                                        </span>
                                                     </Button>
                                                 </div>
                                             )}
-                                        </CardTitle>
-                                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                            {formatDate(team.createdAt)} • {team.team.length} Pokémon
-                                        </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap lg:min-w-[220px] lg:justify-end">
+                                            <Button
+                                                variant="outline"
+                                                className="gap-2"
+                                                onClick={() => handleDeleteTeam(team.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                                {lang === "es" ? "Eliminar" : "Delete"}
+                                            </Button>
+                                            <Button
+                                                className="col-span-2 bg-blue-600 text-white hover:bg-blue-700 sm:col-span-1"
+                                                onClick={() => void handleLoadTeam(team)}
+                                            >
+                                                {t("savedTeams.loadTeam")}
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleDeleteTeam(team.id)}
-                                        >
-                                            🗑️
-                                        </Button>
-                                        <Button
-                                            className="bg-blue-600 hover:bg-blue-700 text-white"
-                                            size="sm"
-                                            onClick={() => handleLoadTeam(team)}
-                                        >
-                                            {t("savedTeams.loadTeam")}
-                                        </Button>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex flex-wrap gap-2">
-                                        {team.team.slice(0, 6).map((pokemon: GeneratedTeamMember, index: number) => {
-                                            const types = pokemon.types || getPokemonSummary(pokemon.name)?.types || [];
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full"
-                                                >
-                                                    <span className="text-sm font-medium dark:text-zinc-200">
-                                                        {pokemon.name}
-                                                    </span>
-                                                    {types.length > 0 && (
-                                                        <span className="text-xs px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700">
-                                                            {types.join('/')}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
+
+                                    <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                                        {team.team.slice(0, 6).map((pokemon) => (
+                                            <SavedTeamPreviewMember
+                                                key={`${team.id}-${pokemon.name}`}
+                                                pokemon={pokemon}
+                                            />
+                                        ))}
                                     </div>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-12">
-                        <div className="text-6xl mb-4">📭</div>
-                        <h2 className="text-xl font-bold dark:text-white mb-2">
+                    <div className="rounded-2xl border border-dashed border-zinc-300 bg-white px-6 py-12 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
                             {t("savedTeams.noTeams")}
                         </h2>
-                        <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+                        <p className="mt-2 text-zinc-600 dark:text-zinc-400">
                             {t("savedTeams.noTeamsDesc")}
                         </p>
-                        <Link href="/configurar">
-                            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                        <Link href="/configurar" className="mt-6 inline-flex">
+                            <Button className="bg-blue-600 text-white hover:bg-blue-700">
                                 {t("app.startGenerating")}
                             </Button>
                         </Link>
                     </div>
                 )}
 
-                <AdInline />
+                {hasSavedTeams && <AdInline />}
 
-                {/* Ad Banner at bottom */}
-                <section className="w-full flex justify-center py-4">
-                    <AdBanner />
-                </section>
+                {hasSavedTeams && (
+                    <section className="w-full flex justify-center py-4">
+                        <AdBanner />
+                    </section>
+                )}
             </main>
         </div>
     );

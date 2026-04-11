@@ -435,7 +435,13 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                     <div className="relative flex items-start justify-between gap-4">
                         <div className="flex items-start gap-4">
                             <div className="relative h-20 w-20 rounded-xl border border-white/15 bg-white/10">
-                                <Image src={getPokemonSpriteUrl(pokemon)} alt={pokemon.name} fill className="object-contain p-1.5" unoptimized />
+                                <Image
+                                    src={getPokemonSpriteUrl(pokemon)}
+                                    alt={pokemon.name}
+                                    fill
+                                    sizes="80px"
+                                    className="object-contain p-1.5"
+                                />
                             </div>
                             <div>
                                 <div className="mb-1 flex items-center gap-2 text-xs text-white/60">

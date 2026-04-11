@@ -204,6 +204,10 @@ html {
   contain: layout paint style;
 }
 
+.ad-slot-wrapper[data-ad-collapsed="true"] {
+  display: none !important;
+}
+
 ins.adsbygoogle[data-ad-status="unfilled"] {
   opacity: 0 !important;
   visibility: hidden !important;

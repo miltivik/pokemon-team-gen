@@ -130,7 +130,8 @@ export default function TierListPage() {
                                     {tierData[tier].map((mon) => {
                                         const pokemonData = getPokemonSummary(mon.name);
                                         const spriteUrl = getPokemonSpriteUrl(
-                                            pokemonData ? { ...pokemonData, name: mon.name } : mon.name
+                                            pokemonData ? { ...pokemonData, name: mon.name } : mon.name,
+                                            "sprite"
                                         );
 
                                         return (
@@ -142,6 +143,7 @@ export default function TierListPage() {
                                                         alt={mon.name}
                                                         className="w-full h-full object-contain pixelated"
                                                         loading="lazy"
+                                                        decoding="async"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col min-w-0">

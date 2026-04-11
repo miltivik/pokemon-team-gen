@@ -14,6 +14,7 @@ import { buildBugReportGenerationContext } from "@/lib/bug-report";
 import { getExportText } from "@/lib/export-text";
 import { useTranslation } from "@/lib/i18n";
 import { cloneGenerationOptions } from "@/lib/team-generation-options";
+import { saveTeamToSavedTeams } from "@/lib/team-storage";
 import { useTeam } from "@/lib/team-context";
 
 interface EquipoPageClientProps {
@@ -132,13 +133,6 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
     const bugReportContext = buildBugReportGenerationContext(team, generationOptions);
     const resolvedTeamGuide = teamGuideI18n?.[lang] || teamGuide;
 
-    interface StoredTeamRecord {
-        id: string;
-        team: typeof team;
-        format: string;
-        createdAt: string;
-    }
-
     useEffect(() => {
         if (team.length > 0) {
             analytics.viewTeam(team.length);
@@ -199,23 +193,11 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
 
     const handleSaveTeam = () => {
         if (team.length === 0) return;
-        const savedTeams = localStorage.getItem("saved-teams");
-        let teams: StoredTeamRecord[] = [];
-        if (savedTeams) {
-            try {
-                teams = JSON.parse(savedTeams) as StoredTeamRecord[];
-            } catch (error) {
-                console.error("Failed to parse saved teams:", error);
-            }
-        }
-        const newTeam = {
-            id: Date.now().toString(),
+        saveTeamToSavedTeams({
             team,
             format,
-            createdAt: new Date().toISOString(),
-        };
-        teams.unshift(newTeam);
-        localStorage.setItem("saved-teams", JSON.stringify(teams.slice(0, 50)));
+            generationOptions,
+        });
         toast.success(t("app.teamSaved"));
     };
 

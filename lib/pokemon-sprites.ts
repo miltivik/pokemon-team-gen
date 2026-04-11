@@ -1,9 +1,12 @@
 import pokemonNumbersRaw from "../data/pokemon-numbers.json";
 
 type PokemonSpriteInput = string | { name?: string; num?: number | null };
+export type PokemonSpriteVariant = "artwork" | "sprite";
 
 const OFFICIAL_ARTWORK_BASE =
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork";
+const POKEAPI_SPRITE_BASE =
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
 const FALLBACK_SPRITE_URL =
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png";
 
@@ -124,12 +127,16 @@ function toPokemonDbSlug(name: string) {
         .replace(/^-|-$/g, "");
 }
 
-export function getPokemonSpriteUrl(pokemon: PokemonSpriteInput): string {
+export function getPokemonSpriteUrl(
+    pokemon: PokemonSpriteInput,
+    variant: PokemonSpriteVariant = "artwork"
+): string {
     const name = typeof pokemon === "string" ? pokemon : pokemon?.name ?? "";
     let num =
         typeof pokemon === "string"
             ? pokemonNumbers[name] ?? 0
             : pokemon?.num ?? pokemonNumbers[name] ?? 0;
+    const baseUrl = variant === "sprite" ? POKEAPI_SPRITE_BASE : OFFICIAL_ARTWORK_BASE;
 
     if (!name) {
         return FALLBACK_SPRITE_URL;
@@ -137,11 +144,15 @@ export function getPokemonSpriteUrl(pokemon: PokemonSpriteInput): string {
 
     const variantId = VARIANT_POKEAPI_IDS[name];
     if (variantId) {
-        return `${OFFICIAL_ARTWORK_BASE}/${variantId}.png`;
+        return `${baseUrl}/${variantId}.png`;
     }
 
     if (num > 0) {
-        return `${OFFICIAL_ARTWORK_BASE}/${num}.png`;
+        return `${baseUrl}/${num}.png`;
+    }
+
+    if (variant === "sprite") {
+        return FALLBACK_SPRITE_URL;
     }
 
     return `https://img.pokemondb.net/artwork/large/${toPokemonDbSlug(name)}.jpg`;

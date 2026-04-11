@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/sprites/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'img.pokemondb.net',
+        port: '',
+        pathname: '/artwork/large/**',
+      },
     ],
   },
   turbopack: {

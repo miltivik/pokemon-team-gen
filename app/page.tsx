@@ -178,8 +178,7 @@ function HomePokemonSprite({
 }) {
   return (
     <Image
-      unoptimized
-      src={getPokemonSpriteUrl(name)}
+      src={getPokemonSpriteUrl(name, "sprite")}
       alt={name}
       width={size}
       height={size}

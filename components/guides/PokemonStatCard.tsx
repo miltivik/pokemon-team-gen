@@ -10,7 +10,7 @@ import { ShieldAlert, Sparkles, Sword } from "lucide-react";
 import { formatPercentage } from "@/lib/format-percent";
 
 export function PokemonStatCard({ data, rank }: { data: CombinedPokemonData, rank: number }) {
-    const spriteUrl = useMemo(() => getPokemonSpriteUrl(data.name), [data.name]);
+    const spriteUrl = useMemo(() => getPokemonSpriteUrl(data.name, "sprite"), [data.name]);
 
     return (
         <Card className="bg-white dark:bg-zinc-900/90 border-zinc-200 dark:border-zinc-800 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-colors shadow-sm overflow-hidden group">
@@ -23,9 +23,6 @@ export function PokemonStatCard({ data, rank }: { data: CombinedPokemonData, ran
                             fill
                             className="object-contain scale-125"
                             sizes="48px"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png';
-                            }}
                         />
                     </div>
                     <div>

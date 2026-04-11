@@ -276,9 +276,11 @@ export function TeamAnalysis({ team, guide, format, onGoHome }: TeamAnalysisProp
                 <div className="flex items-start gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={getPokemonSpriteUrl(pokemon)}
+                    src={getPokemonSpriteUrl(pokemon, "sprite")}
                     alt={pokemon.name}
                     className="h-14 w-14 object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">

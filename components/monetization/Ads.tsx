@@ -89,6 +89,7 @@ interface AdSlotProps {
   placement: string;
   slot: string;
   fallbackLabel: string;
+  outerClassName?: string;
   shellClassName: string;
   slotClassName: string;
   slotStyle?: CSSProperties;
@@ -100,6 +101,7 @@ function AdSlot({
   placement,
   slot,
   fallbackLabel,
+  outerClassName,
   shellClassName,
   slotClassName,
   slotStyle,
@@ -109,6 +111,12 @@ function AdSlot({
   const mounted = useDeferredAdMount();
   const pushedRef = useRef(false);
   const adRef = useRef<HTMLModElement | null>(null);
+  const [isUnfilled, setIsUnfilled] = useState(false);
+
+  useEffect(() => {
+    setIsUnfilled(false);
+    pushedRef.current = false;
+  }, [placement, slot]);
 
   useEffect(() => {
     if (!mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
@@ -123,35 +131,79 @@ function AdSlot({
     }
   }, [mounted]);
 
+  useEffect(() => {
+    const adElement = adRef.current;
+    if (!mounted || !adElement || !CONFIG.adsense.publisherId) {
+      return;
+    }
+
+    const syncAdStatus = () => {
+      const adStatus = adElement.getAttribute("data-ad-status");
+      setIsUnfilled(adStatus === "unfilled");
+    };
+
+    syncAdStatus();
+
+    const observer = new MutationObserver(syncAdStatus);
+    observer.observe(adElement, {
+      attributes: true,
+      attributeFilter: ["data-ad-status"],
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [mounted, placement, slot]);
+
+  const collapseStyle = isUnfilled
+    ? {
+        height: 0,
+        minHeight: 0,
+        maxHeight: 0,
+        margin: 0,
+        opacity: 0,
+        overflow: "hidden" as const,
+        pointerEvents: "none" as const,
+      }
+    : undefined;
+
   return (
     <div
-      className={`ad-slot relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900/60 ${shellClassName}`}
-      data-ad-shell
+      className={`ad-slot-wrapper transition-all duration-300 ${outerClassName ?? ""}`}
+      data-ad-wrapper
       data-ad-placement={placement}
+      data-ad-collapsed={isUnfilled ? "true" : undefined}
+      style={collapseStyle}
     >
-      {!CONFIG.adsense.publisherId && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
-          <span className="text-center text-sm text-zinc-400">{fallbackLabel}</span>
-        </div>
-      )}
-
-      {!mounted && CONFIG.adsense.publisherId && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 z-10 animate-pulse bg-zinc-200 dark:bg-zinc-800/60"
-        />
-      )}
-
-      <ins
-        ref={adRef}
-        className={`adsbygoogle ${slotClassName}`}
-        style={{ display: "block", background: "transparent", ...slotStyle }}
-        data-ad-client={CONFIG.adsense.publisherId}
-        data-ad-slot={slot}
-        data-ad-format={format}
-        data-full-width-responsive={fullWidthResponsive ? "true" : undefined}
+      <div
+        className={`ad-slot relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900/60 transition-all duration-300 ${shellClassName}`}
+        data-ad-shell
         data-ad-placement={placement}
-      />
+      >
+        {!CONFIG.adsense.publisherId && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <span className="text-center text-sm text-zinc-400">{fallbackLabel}</span>
+          </div>
+        )}
+
+        {!mounted && CONFIG.adsense.publisherId && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-10 animate-pulse bg-zinc-200 dark:bg-zinc-800/60"
+          />
+        )}
+
+        <ins
+          ref={adRef}
+          className={`adsbygoogle ${slotClassName}`}
+          style={{ display: "block", background: "transparent", ...slotStyle }}
+          data-ad-client={CONFIG.adsense.publisherId}
+          data-ad-slot={slot}
+          data-ad-format={format}
+          data-full-width-responsive={fullWidthResponsive ? "true" : undefined}
+          data-ad-placement={placement}
+        />
+      </div>
     </div>
   );
 }
@@ -165,6 +217,7 @@ export function AdBanner() {
       placement="banner"
       slot="1234567890"
       fallbackLabel="Espacio publicitario"
+      outerClassName="w-full"
       shellClassName="w-full max-w-[728px] h-[90px]"
       slotClassName="h-full w-full"
       format="horizontal"
@@ -182,6 +235,7 @@ export function AdRectangle() {
       placement="sidebar-rectangle"
       slot="1234567891"
       fallbackLabel="Espacio publicitario"
+      outerClassName="w-[300px]"
       shellClassName="h-[250px] w-[300px]"
       slotClassName="h-full w-full"
     />
@@ -197,6 +251,7 @@ export function AdHero() {
       placement="hero"
       slot="1234567893"
       fallbackLabel="Espacio publicitario destacado"
+      outerClassName="w-full"
       shellClassName="w-full max-w-[970px] h-[250px] lg:h-[280px]"
       slotClassName="h-full w-full"
     />
@@ -212,6 +267,7 @@ export function AdInlineDisplay() {
       placement="inline-content"
       slot="1234567893"
       fallbackLabel="Espacio publicitario en contenido"
+      outerClassName="w-full my-8 flex justify-center"
       shellClassName="w-full max-w-[970px] h-[250px] md:h-[280px]"
       slotClassName="h-full w-full"
     />
@@ -229,11 +285,7 @@ export function AdResponsive() {
  * Banner inline entre contenido
  */
 export function AdInline() {
-  return (
-    <div className="w-full my-8 flex justify-center">
-      <AdInlineDisplay />
-    </div>
-  );
+  return <AdInlineDisplay />;
 }
 
 /**

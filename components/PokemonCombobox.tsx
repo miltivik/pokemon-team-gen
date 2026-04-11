@@ -135,13 +135,13 @@ export function PokemonCombobox({ value, onChange, placeholder, className }: Pok
                                     >
                                         <div className="mr-3 flex h-8 w-8 shrink-0 items-center justify-center rounded bg-zinc-100 dark:bg-zinc-800">
                                             {data ? (
-                                                <Image 
-                                                    src={getPokemonSpriteUrl({ ...data, name })} 
+                                                <Image
+                                                    src={getPokemonSpriteUrl({ ...data, name }, "sprite")}
                                                     alt={name}
                                                     width={32}
                                                     height={32}
+                                                    sizes="32px"
                                                     className="object-contain p-0.5"
-                                                    unoptimized
                                                 />
                                             ) : (
                                                 <span className="text-[10px] text-zinc-400">?</span>

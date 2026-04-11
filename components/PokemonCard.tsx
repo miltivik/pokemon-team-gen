@@ -141,8 +141,8 @@ const currentRoleLabel =
                         src={displayImage}
                         alt={pokemon.name}
                         fill
+                        sizes="(max-width: 640px) 44vw, (max-width: 768px) 30vw, 220px"
                         className="object-contain p-2 transition-transform group-hover:scale-110"
-                        unoptimized
                     />
                     <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <span className="bg-blue-600 text-white text-[10px] px-1 py-0.5 rounded font-bold shadow-md">INFO</span>
