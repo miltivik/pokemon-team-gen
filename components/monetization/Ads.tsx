@@ -114,11 +114,6 @@ function AdSlot({
   const [isUnfilled, setIsUnfilled] = useState(false);
 
   useEffect(() => {
-    setIsUnfilled(false);
-    pushedRef.current = false;
-  }, [placement, slot]);
-
-  useEffect(() => {
     if (!mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
       return;
     }
@@ -155,25 +150,12 @@ function AdSlot({
     };
   }, [mounted, placement, slot]);
 
-  const collapseStyle = isUnfilled
-    ? {
-        height: 0,
-        minHeight: 0,
-        maxHeight: 0,
-        margin: 0,
-        opacity: 0,
-        overflow: "hidden" as const,
-        pointerEvents: "none" as const,
-      }
-    : undefined;
-
   return (
     <div
       className={`ad-slot-wrapper transition-all duration-300 ${outerClassName ?? ""}`}
       data-ad-wrapper
       data-ad-placement={placement}
-      data-ad-collapsed={isUnfilled ? "true" : undefined}
-      style={collapseStyle}
+      data-ad-unfilled={isUnfilled ? "true" : undefined}
     >
       <div
         className={`ad-slot relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900/60 transition-all duration-300 ${shellClassName}`}

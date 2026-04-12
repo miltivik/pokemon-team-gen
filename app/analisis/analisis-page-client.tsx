@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { ArrowLeft, FileOutput, RefreshCw } from "lucide-react";
 import { TeamAnalysis } from "@/components/TeamAnalysis";
-import { Button } from "@/components/ui/button";
-import { AdHero, AdBanner } from "@/components/monetization/Ads";
+import { AdBanner, AdHero } from "@/components/monetization/Ads";
 import { AnalysisPageSkeleton } from "@/components/page-skeletons";
+import { Button } from "@/components/ui/button";
+import { analytics } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
 import { useTeam } from "@/lib/team-context";
-import { analytics } from "@/lib/analytics";
 
 interface AnalisisPageClientProps {
     expectsTeam: boolean;
@@ -18,13 +19,13 @@ function AnalisisEmptyState() {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans flex flex-col items-center justify-center gap-4">
-            <div className="text-center space-y-4">
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-50 font-sans dark:bg-black">
+            <div className="space-y-4 text-center">
                 <h1 className="text-2xl font-bold dark:text-white">{t("app.noTeam")}</h1>
                 <p className="text-zinc-500 dark:text-zinc-400">{t("app.generateFirst")}</p>
             </div>
             <Link href="/configurar">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">{t("nav.configurar")}</Button>
+                <Button className="bg-blue-600 text-white hover:bg-blue-700">{t("nav.configurar")}</Button>
             </Link>
         </div>
     );
@@ -40,10 +41,6 @@ export function AnalisisPageClient({ expectsTeam }: AnalisisPageClientProps) {
 
     const resolvedTeamGuide = teamGuideI18n?.[lang] || teamGuide;
 
-    const handleGoHome = () => {
-        // Navigation is handled by route links.
-    };
-
     if (!isHydrated) {
         return expectsTeam ? <AnalysisPageSkeleton /> : <AnalisisEmptyState />;
     }
@@ -53,16 +50,19 @@ export function AnalisisPageClient({ expectsTeam }: AnalisisPageClientProps) {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
-            <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
-                <section className="w-full flex justify-center">
+        <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
+            <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
+                <section className="flex w-full justify-center">
                     <AdHero />
                 </section>
 
-                <div className="w-full max-w-5xl flex justify-start mb-2">
+                <div className="mb-2 flex w-full max-w-5xl justify-start">
                     <Link href="/equipo">
-                        <Button variant="outline" className="gap-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-sm font-semibold">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                        <Button
+                            variant="outline"
+                            className="gap-2 border-zinc-300 font-semibold shadow-sm transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
                             {t("analysis.backToTeam")}
                         </Button>
                     </Link>
@@ -72,28 +72,31 @@ export function AnalisisPageClient({ expectsTeam }: AnalisisPageClientProps) {
                     team={team}
                     guide={resolvedTeamGuide}
                     format={format}
-                    onGoHome={handleGoHome}
+                    onGoHome={() => {}}
                 />
 
-                <div className="flex items-center justify-center gap-3 flex-wrap pt-4">
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
                     <Link href="/equipo">
-                        <Button variant="outline">
-                            Ã¢â€ Â {t("app.yourTeam")}
+                        <Button variant="outline" className="gap-2">
+                            <ArrowLeft className="h-4 w-4" />
+                            {t("app.yourTeam")}
                         </Button>
                     </Link>
                     <Link href="/configurar">
-                        <Button variant="outline">
-                            Ã°Å¸â€â€ž {t("app.generateAnother")}
+                        <Button variant="outline" className="gap-2">
+                            <RefreshCw className="h-4 w-4" />
+                            {t("app.generateAnother")}
                         </Button>
                     </Link>
                     <Link href="/exportar">
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                            Ã°Å¸â€œâ€¹ {t("nav.export")}
+                        <Button className="gap-2 bg-blue-600 text-white hover:bg-blue-700">
+                            <FileOutput className="h-4 w-4" />
+                            {t("nav.export")}
                         </Button>
                     </Link>
                 </div>
 
-                <section className="w-full flex justify-center py-4">
+                <section className="flex w-full justify-center py-4">
                     <AdBanner />
                 </section>
             </main>

@@ -34,6 +34,22 @@ export interface PikalyticsData {
   lastUpdated: string;
 }
 
+function normalizePokemonEntryName(name: string | null | undefined) {
+  if (typeof name !== "string") {
+    return null;
+  }
+
+  const normalizedName = name.trim();
+  if (!normalizedName) {
+    return null;
+  }
+
+  return {
+    name: normalizedName,
+    key: normalizedName.toLowerCase(),
+  };
+}
+
 export async function getPikalyticsData(format: string): Promise<PikalyticsData> {
   const cached = cachedDataV2.get(format);
   const fetchTime = lastFetchTime.get(format) || 0;
@@ -109,6 +125,11 @@ function parsePikalyticsHTML(html: string, format: string): PikalyticsData | nul
       try {
         const pokedexData = JSON.parse(jsonMatch[1]);
         for (const [name, rawData] of Object.entries(pokedexData)) {
+          const entryName = normalizePokemonEntryName(name);
+          if (!entryName) {
+            continue;
+          }
+
           const poke = rawData as {
             usage?: number;
             wins?: number;
@@ -120,8 +141,8 @@ function parsePikalyticsHTML(html: string, format: string): PikalyticsData | nul
           };
 
           const totalGames = (poke.wins || 0) + (poke.losses || 0);
-          data.pokemon[name.toLowerCase()] = {
-            name,
+          data.pokemon[entryName.key] = {
+            name: entryName.name,
             usage: poke.usage || 0,
             winRate: totalGames > 0 ? ((poke.wins || 0) / totalGames) * 100 : null,
             moves: poke.moves || {},
@@ -153,11 +174,11 @@ function parsePikalyticsHTML(html: string, format: string): PikalyticsData | nul
             tera_types?: Record<string, number>;
           };
 
-          const name = pokeData.pokemon || pokeData.name;
-          if (!name) continue;
+          const entryName = normalizePokemonEntryName(pokeData.pokemon || pokeData.name);
+          if (!entryName) continue;
 
-          data.pokemon[name.toLowerCase()] = {
-            name,
+          data.pokemon[entryName.key] = {
+            name: entryName.name,
             usage: pokeData.usage || 0,
             winRate: pokeData.win_rate ?? null,
             moves: pokeData.moves || {},
@@ -207,6 +228,10 @@ export interface CombinedPokemonData {
   topMoves: string[];
 }
 
+function hasValidPokemonName(name: string | undefined) {
+  return typeof name === "string" && name.trim().length > 0;
+}
+
 export async function getCombinedStats(
   format: string
 ): Promise<CombinedPokemonData[]> {
@@ -236,6 +261,11 @@ export async function getCombinedStats(
   );
 
   for (const [key, smogonMon] of Object.entries(smogonData)) {
+    const resolvedName = hasValidPokemonName(smogonMon.name) ? smogonMon.name.trim() : key.trim();
+    if (!hasValidPokemonName(resolvedName)) {
+      continue;
+    }
+
     const usage =
       smogonMon.usage !== undefined
         ? smogonMon.usage * 100
@@ -285,7 +315,7 @@ export async function getCombinedStats(
     if (topMoves.length > 0) topMoves = topMoves.map((move) => getProperMoveName(move));
 
     combined.push({
-      name: smogonMon.name || key,
+      name: resolvedName,
       usage,
       winRate: pikalyticsMon?.winRate ?? null,
       topAbility: topAbility || null,

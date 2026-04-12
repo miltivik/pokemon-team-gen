@@ -21,6 +21,22 @@ export default function ChangelogPage() {
 
     const releases = [
         {
+            version: "v0.4.0",
+            titleKey: "changelog.v040.title",
+            dateKey: "changelog.v040.date",
+            badgeLabel: t("changelog.latest"),
+            badgeClass: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20",
+            iconClass: "bg-emerald-100 dark:bg-emerald-900 text-emerald-500",
+            dotClass: "bg-emerald-500",
+            items: [
+                { type: "new", key: "changelog.v040.item1" },
+                { type: "new", key: "changelog.v040.item2" },
+                { type: "improved", key: "changelog.v040.item3" },
+                { type: "improved", key: "changelog.v040.item4" },
+                { type: "fixed", key: "changelog.v040.item5" },
+            ] as const,
+        },
+        {
             version: "v0.3.0",
             titleKey: "changelog.v030.title",
             dateKey: "changelog.v030.date",

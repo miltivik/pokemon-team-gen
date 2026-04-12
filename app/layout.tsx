@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -8,6 +9,7 @@ import { AnalyticsTracker } from "../components/AnalyticsTracker";
 import { KoFiButton } from "../components/monetization/Ads";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
+import { LANGUAGE_COOKIE_KEY, resolveLang } from "@/lib/i18n-shared";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -105,11 +107,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const initialLang = resolveLang(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -139,7 +143,7 @@ export default function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={initialLang} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -182,7 +186,7 @@ export default function RootLayout({
         <MonetizationScripts />
         <AnalyticsTracker />
         <KoFiButton />
-        <Providers>
+        <Providers initialLang={initialLang}>
            <Navbar />
            {children}
            <Footer />

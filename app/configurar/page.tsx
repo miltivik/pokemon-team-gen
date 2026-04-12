@@ -1,21 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 import { TeamForm } from "@/components/TeamForm";
-import { useTeam } from "@/lib/team-context";
-import { FormatId, FORMATS } from "@/config/formats";
+import { ConfigurarPageSkeleton } from "@/components/page-skeletons";
+import { AdBanner, AdHero, AdInline } from "@/components/monetization/Ads";
+import { Button } from "@/components/ui/button";
+import { FORMATS, FormatId } from "@/config/formats";
 import {
     TemplateId,
     TEMPLATES,
     isTemplateCompatible,
     sanitizeTemplateForFormat,
 } from "@/config/templates";
-import { AdHero, AdBanner, AdInline } from "@/components/monetization/Ads";
-import { useTranslation } from "@/lib/i18n";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useEffect, useMemo } from "react";
 import { analytics } from "@/lib/analytics";
+import { useTranslation } from "@/lib/i18n";
+import { useTeam } from "@/lib/team-context";
 import type { GameplanData } from "@/lib/team-storage";
 import {
     cloneGenerationOptions,
@@ -113,14 +114,24 @@ export default function ConfigurarPage() {
         return fixedMembers.slice(0, maxMembers);
     }, [format, initialFormat, storedGenerationOptions]);
 
-    const formSeedKey = useMemo(() => JSON.stringify({
-        format: initialFormat ?? format,
-        template: initialTemplate ?? "balanced",
-        type: initialType ?? "all",
-        excludeLegendaries: initialExcludeLegendaries,
-        fixedPokemon: initialFixedPokemon,
-        isHydrated,
-    }), [format, initialExcludeLegendaries, initialFixedPokemon, initialFormat, initialTemplate, initialType, isHydrated]);
+    const formSeedKey = useMemo(
+        () =>
+            JSON.stringify({
+                format: initialFormat ?? format,
+                template: initialTemplate ?? "balanced",
+                type: initialType ?? "all",
+                excludeLegendaries: initialExcludeLegendaries,
+                fixedPokemon: initialFixedPokemon,
+            }),
+        [
+            format,
+            initialExcludeLegendaries,
+            initialFixedPokemon,
+            initialFormat,
+            initialTemplate,
+            initialType,
+        ]
+    );
 
     // Apply URL format to context when initialFormat changes
     useEffect(() => {
@@ -135,12 +146,7 @@ export default function ConfigurarPage() {
     }, []);
 
     const handleGenerate = (data: TeamGenerationResult) => {
-        // Track team generation
-        analytics.generateTeam(
-            data.options?.format || format,
-            data.templateId || "balanced"
-        );
-        // Add team to context
+        analytics.generateTeam(data.options?.format || format, data.templateId || "balanced");
         addTeam(
             data.team,
             data.gameplan,
@@ -149,53 +155,45 @@ export default function ConfigurarPage() {
             data.teamGuideI18n,
             data.options
         );
-        // Navigate to team page
         router.push("/equipo");
     };
 
+    if (!isHydrated) {
+        return <ConfigurarPageSkeleton />;
+    }
+
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
-            <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
-                {/* Ad at top */}
+            <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
                 <section className="w-full flex justify-center">
                     <AdHero />
                 </section>
 
-                {/* Header */}
-                <header className="flex min-h-28 flex-col items-center justify-center text-center space-y-4">
+                <header className="flex min-h-28 flex-col items-center justify-center space-y-4 text-center">
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {t("form.title")}
                     </h1>
                     <p className="text-lg text-zinc-600 dark:text-zinc-400">
                         {t("form.description")}
                     </p>
-                    {/* Show selected format badge if coming from URL */}
                     <div className="flex min-h-8 items-center justify-center gap-2">
                         {initialFormat && (
-                            <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-medium">
+                            <span className="rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white">
                                 {initialFormat.toUpperCase()}
                             </span>
                         )}
                         {initialTemplate && (
-                            initialFormat ? (
-                                <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-sm font-medium">
-                                    {initialTemplate}
-                                </span>
-                            ) : (
-                                <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-sm font-medium">
-                                    {initialTemplate}
-                                </span>
-                            )
+                            <span className="rounded-full bg-purple-600 px-3 py-1 text-sm font-medium text-white">
+                                {initialTemplate}
+                            </span>
                         )}
                     </div>
                 </header>
 
-                {/* Ad Banner before form */}
                 <section className="w-full flex justify-center py-4">
                     <AdBanner />
                 </section>
 
-                {/* Form */}
                 <section className="w-full flex justify-center">
                     <TeamForm
                         key={formSeedKey}
@@ -211,21 +209,21 @@ export default function ConfigurarPage() {
 
                 <AdInline />
 
-                {/* Ad Banner after form */}
                 <section className="w-full flex justify-center py-4">
                     <AdBanner />
                 </section>
 
-                {/* Link to previous team if exists */}
-                {team.length > 0 && (
-                    <div className="text-center pt-4">
+                <div className="flex min-h-14 w-full items-start justify-center pt-4">
+                    {team.length > 0 ? (
                         <Link href="/equipo">
                             <Button variant="outline">
-                                ← {t("app.viewPreviousTeam")}
+                                <span aria-hidden="true">&larr;</span> {t("app.viewPreviousTeam")}
                             </Button>
                         </Link>
-                    </div>
-                )}
+                    ) : (
+                        <div aria-hidden="true" className="h-10" />
+                    )}
+                </div>
             </main>
         </div>
     );

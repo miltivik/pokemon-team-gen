@@ -2,18 +2,34 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import {
+    BookOpen,
+    CheckCircle2,
+    Flame,
+    Gamepad2,
+    Lightbulb,
+    MoonStar,
+    Rocket,
+    Trophy,
+    Wind,
+} from "lucide-react";
+import { AdBanner, AdHero, AdInline } from "@/components/monetization/Ads";
+import { MetaOverview } from "@/components/guides/MetaOverview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AdHero, AdBanner, AdInline } from "@/components/monetization/Ads";
-import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
-import { MetaOverview } from "@/components/guides/MetaOverview";
+import { useTranslation } from "@/lib/i18n";
+import { COLOR_THEMES, FORMAT_GUIDES } from "@/config/format-guides";
 import { CURRENT_VGC_FORMAT } from "@/config/formats";
 
-import { FORMAT_GUIDES, COLOR_THEMES } from "@/config/format-guides";
+const playstyleIcons = {
+    flame: Flame,
+    moon: MoonStar,
+    wind: Wind,
+};
 
 export default function VGCGuidePage() {
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
 
     useEffect(() => {
         analytics.viewGuides("vgc");
@@ -22,62 +38,74 @@ export default function VGCGuidePage() {
     const guideData = FORMAT_GUIDES.vgc;
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
-            <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
-                {/* Ad at top */}
-                <section className="w-full flex justify-center">
+        <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
+            <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
+                <section className="flex w-full justify-center">
                     <AdHero />
                 </section>
 
-                {/* Header */}
-                <header className="text-center space-y-4">
-                    <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                        🎮 {t("guides.vgcGuideTitle")}
+                <header className="max-w-3xl space-y-4 text-center">
+                    <div className="inline-flex items-center justify-center rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700 dark:bg-violet-950/40 dark:text-violet-300">
+                        <Trophy className="mr-2 h-4 w-4" />
+                        {t("guides.vgcGuideTitle")}
+                    </div>
+                    <h1 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
+                        VGC 2026 Reg F
                     </h1>
                     <p className="text-lg text-zinc-600 dark:text-zinc-400">
                         {t("guides.vgcGuideDesc")}
                     </p>
                 </header>
 
-                {/* Generate CTA */}
-                <div className="flex gap-4">
+                <div className="flex justify-center">
                     <Link href={`/configurar?format=${CURRENT_VGC_FORMAT}`}>
-                        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                            🚀 {t("guides.generateTeam")}
+                        <Button
+                            size="lg"
+                            className="gap-2 rounded-full bg-blue-600 px-8 font-semibold text-white shadow-md hover:bg-blue-700"
+                        >
+                            <Rocket className="h-4 w-4" />
+                            {t("guides.generateTeam")}
                         </Button>
                     </Link>
                 </div>
 
-                {/* Ad Banner */}
-                <section className="w-full flex justify-center py-4">
+                <section className="flex w-full justify-center py-4">
                     <AdBanner />
                 </section>
 
-                {/* Guide Content */}
                 <div className="w-full max-w-4xl space-y-6">
-                    {/* Dynamic Meta Overview */}
                     <MetaOverview format={CURRENT_VGC_FORMAT} />
 
-                    {/* Popular VGC Archetypes */}
-                    <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+                    <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                         <CardHeader>
-                            <CardTitle>⚔️ {t("guides.popularPlaystyles")}</CardTitle>
+                            <CardTitle className="flex items-center gap-2">
+                                <Gamepad2 className="h-5 w-5 text-violet-500" />
+                                {t("guides.popularPlaystyles")}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 {guideData.playstyles.map((style) => {
                                     const theme = COLOR_THEMES[style.colorTheme];
+                                    const Icon = playstyleIcons[style.icon as keyof typeof playstyleIcons];
+
                                     return (
-                                        <div key={style.id} className={`p-4 rounded-lg ${theme.bg}`}>
-                                            <h4 className={`font-bold mb-2 ${theme.text}`}>
-                                                {style.icon} {style.title}
+                                        <div key={style.id} className={`rounded-lg p-4 ${theme.bg}`}>
+                                            <h4 className={`mb-2 flex items-center gap-2 font-bold ${theme.text}`}>
+                                                <Icon className="h-4 w-4" />
+                                                {style.title[lang]}
                                             </h4>
                                             <p className="text-sm text-zinc-600 dark:text-zinc-400">
                                                 {t(style.descKey)}
                                             </p>
                                             {style.templateId && (
-                                                <Link href={`/configurar?template=${style.templateId}&format=${CURRENT_VGC_FORMAT}`}>
-                                                    <Button size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700 text-white">
+                                                <Link
+                                                    href={`/configurar?template=${style.templateId}&format=${CURRENT_VGC_FORMAT}`}
+                                                >
+                                                    <Button
+                                                        size="sm"
+                                                        className="mt-3 bg-blue-600 text-white hover:bg-blue-700"
+                                                    >
                                                         {t("guides.tryIt")}
                                                     </Button>
                                                 </Link>
@@ -89,17 +117,22 @@ export default function VGCGuidePage() {
                         </CardContent>
                     </Card>
 
-                    {/* Key Tips */}
                     {guideData.tips && guideData.tips.length > 0 && (
-                        <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+                        <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                             <CardHeader>
-                                <CardTitle>💡 {t("guides.vgcKeyTips")}</CardTitle>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Lightbulb className="h-5 w-5 text-amber-500" />
+                                    {t("guides.vgcKeyTips")}
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <ul className="space-y-2 text-zinc-700 dark:text-zinc-300">
-                                    {guideData.tips.map((tip, idx) => (
-                                        <li key={idx}>
-                                            ✅ <strong>{t(tip.titleKey)}:</strong> {t(tip.descKey)}
+                                    {guideData.tips.map((tip, index) => (
+                                        <li key={index} className="flex gap-3">
+                                            <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
+                                            <div>
+                                                <strong>{t(tip.titleKey)}:</strong> {t(tip.descKey)}
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>
@@ -110,22 +143,22 @@ export default function VGCGuidePage() {
 
                 <AdInline />
 
-                {/* Related Links */}
-                <div className="flex flex-wrap gap-4 justify-center">
+                <div className="flex flex-wrap justify-center gap-4">
                     <Link href="/guides/gen9-ou">
-                        <Button variant="outline">
-                            ⚔️ {t("guides.ouGuide")}
+                        <Button variant="outline" className="gap-2">
+                            <BookOpen className="h-4 w-4" />
+                            {t("guides.ouGuide")}
                         </Button>
                     </Link>
                     <Link href="/tier-list">
-                        <Button variant="outline">
-                            📊 {t("guides.fullTierList")}
+                        <Button variant="outline" className="gap-2">
+                            <Trophy className="h-4 w-4" />
+                            {t("guides.fullTierList")}
                         </Button>
                     </Link>
                 </div>
 
-                {/* Ad Banner at bottom */}
-                <section className="w-full flex justify-center py-4">
+                <section className="flex w-full justify-center py-4">
                     <AdBanner />
                 </section>
             </main>

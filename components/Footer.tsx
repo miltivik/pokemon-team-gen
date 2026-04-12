@@ -4,94 +4,143 @@ import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 
 export function Footer() {
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
     const currentYear = new Date().getFullYear();
+    const copy = {
+        brandName: "PokeTeamBuilder",
+        brandDescription:
+            lang === "es"
+                ? "Genera equipos competitivos de Pokemon basados en datos reales del meta. Hecho para la comunidad competitiva de Pokemon."
+                : "Generate competitive Pokemon teams based on real meta data. Built for the competitive Pokemon community.",
+        tool: lang === "es" ? "Herramienta" : "Tool",
+        generator: lang === "es" ? "Generador de equipos" : "Team Generator",
+        guides: lang === "es" ? "Guias" : "Guides",
+        blog: "Blog",
+        legal: lang === "es" ? "Legal" : "Legal",
+        privacy: lang === "es" ? "Politica de privacidad" : "Privacy Policy",
+        terms: lang === "es" ? "Terminos del servicio" : "Terms of Service",
+        contact: lang === "es" ? "Contacto" : "Contact",
+        disclaimer:
+            lang === "es"
+                ? "Pokemon y todos los nombres relacionados son marcas de Nintendo, The Pokemon Company y Game Freak. Esta es una herramienta hecha por fans, sin afiliacion ni respaldo oficial de esas companias."
+                : "Pokemon and all related names are trademarks of Nintendo, The Pokemon Company, and Game Freak. This is a fan-made tool, not affiliated with or endorsed by any of these companies.",
+        copyright:
+            lang === "es"
+                ? `(c) ${currentYear} PokeTeamBuilder. Todos los derechos reservados.`
+                : `(c) ${currentYear} PokeTeamBuilder. All rights reserved.`,
+    };
 
     return (
-        <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-auto">
+        <footer className="mt-auto w-full border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
             <div className="container mx-auto px-4 py-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {/* Brand */}
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-3">
                         <h3 className="font-bold text-zinc-900 dark:text-zinc-100">
-                            ⚡ PokéTeamBuilder
+                            {copy.brandName}
                         </h3>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                            Generate competitive Pokémon teams based on real meta data. Built for the competitive Pokémon community.
+                        <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                            {copy.brandDescription}
                         </p>
                     </div>
 
-                    {/* Tool */}
                     <div className="space-y-3">
-                        <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
-                            Tool
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                            {copy.tool}
                         </h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="/configurar" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    Team Generator
+                                <Link
+                                    href="/configurar"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {copy.generator}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/saved-teams" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                <Link
+                                    href="/saved-teams"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
                                     {t("nav.savedTeams")}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/tier-list" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                <Link
+                                    href="/tier-list"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
                                     Tier List
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Guides */}
                     <div className="space-y-3">
-                        <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
-                            {t("nav.guides")}
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                            {copy.guides}
                         </h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="/guides/gen9-ou" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    Gen 9 OU Guide
+                                <Link
+                                    href="/guides/gen9-ou"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {lang === "es" ? "Guia Gen 9 OU" : "Gen 9 OU Guide"}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/guides/vgc" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    VGC Guide
+                                <Link
+                                    href="/guides/vgc"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {lang === "es" ? "Guia VGC" : "VGC Guide"}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/blog" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    Blog
+                                <Link
+                                    href="/blog"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {copy.blog}
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Legal */}
                     <div className="space-y-3">
-                        <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
-                            Legal
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+                            {copy.legal}
                         </h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="/privacy" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    Privacy Policy
+                                <Link
+                                    href="/privacy"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {copy.privacy}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/terms" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    Terms of Service
+                                <Link
+                                    href="/terms"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {copy.terms}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/contact" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    Contact
+                                <Link
+                                    href="/contact"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {copy.contact}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/about" className="text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                <Link
+                                    href="/about"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
                                     {t("nav.about")}
                                 </Link>
                             </li>
@@ -99,14 +148,11 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom bar */}
-                <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <p className="text-sm text-zinc-500 dark:text-zinc-500">
-                            © {currentYear} PokéTeamBuilder. All rights reserved.
-                        </p>
-                        <p className="text-xs text-zinc-400 dark:text-zinc-600 text-center sm:text-right max-w-md">
-                            Pokémon and all related names are trademarks of Nintendo, The Pokémon Company, and Game Freak. This is a fan-made tool, not affiliated with or endorsed by any of these companies.
+                <div className="mt-8 border-t border-zinc-200 pt-6 dark:border-zinc-800">
+                    <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                        <p className="text-sm text-zinc-500 dark:text-zinc-500">{copy.copyright}</p>
+                        <p className="max-w-md text-center text-xs text-zinc-400 dark:text-zinc-600 sm:text-right">
+                            {copy.disclaimer}
                         </p>
                     </div>
                 </div>

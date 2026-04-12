@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { FolderKanban, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { getSavedTeamsCount, readStoredTeamState } from "@/lib/team-storage";
@@ -16,7 +17,7 @@ function readQuickActionState() {
 }
 
 export function HomeQuickActions() {
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
     const [hasStoredTeam, setHasStoredTeam] = useState(false);
     const [savedTeamsCount, setSavedTeamsCount] = useState(0);
 
@@ -42,15 +43,20 @@ export function HomeQuickActions() {
     }
 
     return (
-        <div className="flex flex-wrap gap-3 justify-center" role="group" aria-label="Quick actions">
+        <div
+            className="flex flex-wrap justify-center gap-3"
+            role="group"
+            aria-label={lang === "es" ? "Acciones rápidas" : "Quick actions"}
+        >
             {hasStoredTeam && (
                 <Link href="/equipo">
                     <Button
                         variant="outline"
                         size="sm"
-                        className="bg-white dark:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                        className="gap-2 bg-white focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:bg-zinc-900"
                     >
-                        <span aria-hidden="true">📋</span> {t("app.viewPreviousTeam")}
+                        <History className="h-4 w-4" />
+                        {t("app.viewPreviousTeam")}
                     </Button>
                 </Link>
             )}
@@ -59,9 +65,10 @@ export function HomeQuickActions() {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="bg-white dark:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                        className="gap-2 bg-white focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:bg-zinc-900"
                     >
-                        <span aria-hidden="true">📁</span> {t("nav.savedTeams")} ({savedTeamsCount})
+                        <FolderKanban className="h-4 w-4" />
+                        {t("nav.savedTeams")} ({savedTeamsCount})
                     </Button>
                 </Link>
             )}

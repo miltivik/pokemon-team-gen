@@ -1,8 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
-
-export type Lang = "en" | "es";
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
+import { createLangCookie, DEFAULT_LANG, type Lang, translateFromMap } from "@/lib/i18n-shared";
 
 const translations: Record<Lang, Record<string, string>> = {
     en: {
@@ -27,8 +26,10 @@ const translations: Record<Lang, Record<string, string>> = {
         "app.generateFirst": "Generate a team first to continue.",
         "app.editOptions": "Edit Options",
         "app.generateAnother": "Generate Another",
+        "app.refreshing": "Refreshing...",
         "app.copied": "Copied!",
         "app.copyShowdown": "Copy Showdown Format",
+        "app.quickActions": "Quick actions",
 
         // Team cross-links
         "team.exploreMore": "Explore More",
@@ -109,12 +110,23 @@ const translations: Record<Lang, Record<string, string>> = {
         "home.explore.tierDesc": "Rankings by viability",
         "home.explore.about": "About",
         "home.explore.aboutDesc": "How it works",
+        "home.explore.labelAbout": "About",
+        "home.explore.labelGuides": "Guide",
+        "home.explore.labelTier": "Tier",
+        "home.features.title": "Features",
         "home.trending": "Trending Teams",
         "home.trendingSubtitle": "Battle-ready teams based on the most successful archetypes.",
         "home.bottomCtaTitle": "Ready to dominate the ladder?",
-        "home.bottomCtaDesc": "Join thousands of players who are already creating unbeatable teams in seconds.",
+        "home.bottomCtaDesc": "Join thousands of players who are already creating battle-ready teams in seconds.",
         "home.demoTitle": "Live Demo",
         "home.demoDesc": "See the kind of meta-defining teams you can generate in one click",
+        "home.heroAccentTitle": "Meta-aware teams without the setup drag.",
+        "home.heroAccentFormats": "Formats",
+        "home.heroAccentMeta": "Meta-ready",
+        "home.heroAccentExport": "Showdown export",
+        "home.heroAccentFormatsValue": "12+",
+        "home.heroAccentMetaValue": "Daily",
+        "home.heroAccentExportValue": "1-click",
         "team.rainTeam": "Rain Team",
 
         // Export Page
@@ -141,6 +153,10 @@ const translations: Record<Lang, Record<string, string>> = {
         "nav.generate": "Generate",
         "nav.about": "About",
         "nav.changelog": "Changelog",
+        "nav.guidesMenu": "Guides menu",
+        "nav.guidesSubmenu": "Guides submenu",
+        "nav.switchToSpanish": "Switch to Spanish",
+        "nav.switchToEnglish": "Switch to English",
 
         // Changelog
         "changelog.title": "Changelog",
@@ -159,6 +175,13 @@ const translations: Record<Lang, Record<string, string>> = {
         "changelog.v030.item4": "Measured Gen 9 VGC 2026 Balanced + Ogerpon generation time improved from 28.6s to 2.6s.",
         "changelog.v030.item5": "Measured Gen 9 VGC 2026 Trick Room generation time improved from 6.9s to 5.4s.",
         "changelog.v030.item6": "These speed gains shipped without lowering team quality or relaxing competitive validation rules.",
+        "changelog.v040.title": "v0.4.0 - UI Fixes & Spanish Translation",
+        "changelog.v040.date": "April 2026",
+        "changelog.v040.item1": "Fixed hero section translation issues when switching between English and Spanish.",
+        "changelog.v040.item2": "Added proper translation keys for all homepage components including features, trending teams, and explore section.",
+        "changelog.v040.item3": "Improved Spanish translations with correct accents and terminology (meta, ranking, Pokémon).",
+        "changelog.v040.item4": "Fixed bottom CTA section showing wrong language text on page load.",
+        "changelog.v040.item5": "Updated home-copy.ts translations to match i18n.tsx for consistency.",
         "changelog.v020.title": "v0.2.0 - Usability & Guides Update",
         "changelog.v020.date": "March 2026",
         "changelog.v020.item1": "Competitive guides were added inside the app, including Gen 9 OU, VGC 2026, and team-building articles.",
@@ -234,6 +257,18 @@ const translations: Record<Lang, Record<string, string>> = {
         "guides.mostUsedItemsAbilities": "Most Used Items & Abilities",
         "guides.abilities": "Abilities",
         "guides.items": "Items",
+        "guides.usage": "Usage",
+        "guides.winRate": "WR",
+        "guides.ability": "Ability",
+        "guides.item": "Item",
+        "guides.moves": "Moves",
+        "guides.noDataHint": "We could not load live Smogon or Pikalytics data right now.",
+        "guides.metaInsights": "Meta Snapshot",
+        "guides.playstyle.damageSpam": "Damage Spam",
+        "guides.playstyle.tailwind": "Tailwind",
+        "guides.playstyle.trickRoom": "Trick Room",
+        "guides.playstyle.balanced": "Balanced",
+        "guides.playstyle.hyperOffense": "Hyper Offense",
 
         // Tier List
         "tierList.title": "Pokémon Tier List",
@@ -274,6 +309,17 @@ const translations: Record<Lang, Record<string, string>> = {
         "about.ouGuide": "OU Guide",
         "about.vgcGuide": "VGC Guide",
         "about.tierList": "Tier List",
+        "footer.brandName": "PokeTeamBuilder",
+        "footer.brandDescription": "Generate competitive Pokemon teams based on real meta data. Built for the competitive Pokemon community.",
+        "footer.tool": "Tool",
+        "footer.generator": "Team Generator",
+        "footer.guidesLabel": "Guides",
+        "footer.blog": "Blog",
+        "footer.legal": "Legal",
+        "footer.privacy": "Privacy Policy",
+        "footer.terms": "Terms of Service",
+        "footer.contact": "Contact",
+        "footer.disclaimer": "Pokemon and all related names are trademarks of Nintendo, The Pokemon Company, and Game Freak. This is a fan-made tool, not affiliated with or endorsed by any of these companies.",
 
         // Saved Teams
         "savedTeams.title": "My Saved Teams",
@@ -551,6 +597,8 @@ const translations: Record<Lang, Record<string, string>> = {
         "app.saveTeam": "Guardar Equipo",
         "app.emptyState": "¡Genera un equipo para verlo aquí!",
         "app.startGenerating": "Comenzar a Generar",
+        "app.startGeneratingNew": "Generar mi primer equipo",
+        "app.freeNoReg": "Es gratis. Sin registro.",
         "app.viewPreviousTeam": "Ver Equipo Anterior",
         "app.noTeam": "Sin Equipo Generado",
         "app.generateFirst": "Genera un equipo primero para continuar.",
@@ -632,18 +680,29 @@ const translations: Record<Lang, Record<string, string>> = {
         "home.explore.title": "Explorar",
         "home.explore.meta": "Meta Actual",
         "home.explore.metaDesc": "Top Pokémon y tendencias",
-        "home.explore.guides": "Guías",
-        "home.explore.guidesDesc": "Consejos y builds",
+        "home.explore.guides": "Guías estratégicas",
+        "home.explore.guidesDesc": "Consejos de meta, estructuras y planes de juego.",
         "home.explore.tier": "Lista de Tier",
-        "home.explore.tierDesc": "Rankings por viabilidad",
-        "home.explore.about": "Acerca de",
-        "home.explore.aboutDesc": "Cómo funciona",
+        "home.explore.tierDesc": "Una vista rápida de viabilidad en los formatos actuales.",
+        "home.explore.about": "Acerca del proyecto",
+        "home.explore.aboutDesc": "Cómo funciona el generador y qué formatos soporta.",
+        "home.explore.labelAbout": "Acerca",
+        "home.explore.labelGuides": "Guía",
+        "home.explore.labelTier": "Tier",
+        "home.features.title": "Funciones",
         "home.trending": "Equipos Populares",
         "home.trendingSubtitle": "Equipos listos para la batalla basados en los arquetipos más exitosos.",
-        "home.bottomCtaTitle": "¿Listo para dominar el ladder?",
+        "home.bottomCtaTitle": "¿Listo para dominar el ranking?",
         "home.bottomCtaDesc": "Únete a miles de jugadores que ya están creando equipos imbatibles en segundos.",
-        "home.demoTitle": "Demostración",
-        "home.demoDesc": "Mira la clase de equipos meta que puedes generar en un clic",
+        "home.demoTitle": "Demo en vivo",
+        "home.demoDesc": "Un vistazo rápido al tipo de equipos listos para el meta que puedes generar con un clic.",
+        "home.heroAccentTitle": "Equipos listos para el meta, sin la fricción del setup.",
+        "home.heroAccentFormats": "Formatos",
+        "home.heroAccentMeta": "Meta listo",
+        "home.heroAccentExport": "Exportación",
+        "home.heroAccentFormatsValue": "12+",
+        "home.heroAccentMetaValue": "Diario",
+        "home.heroAccentExportValue": "1 clic",
         "team.rainTeam": "Equipo de Lluvia",
 
         // Export Page
@@ -688,6 +747,13 @@ const translations: Record<Lang, Record<string, string>> = {
         "changelog.v030.item4": "El tiempo medido para generar Gen 9 VGC 2026 Balanced + Ogerpon mejoró de 28.6s a 2.6s.",
         "changelog.v030.item5": "El tiempo medido para generar Gen 9 VGC 2026 Trick Room mejoró de 6.9s a 5.4s.",
         "changelog.v030.item6": "Estas mejoras de velocidad se entregaron sin bajar la calidad de los equipos ni relajar las validaciones competitivas.",
+        "changelog.v040.title": "v0.4.0 - Correcciones de UI y Traducción al Español",
+        "changelog.v040.date": "Abril 2026",
+        "changelog.v040.item1": "Se corrigieron problemas de traducción en la sección hero al cambiar entre inglés y español.",
+        "changelog.v040.item2": "Se añadieron claves de traducción para todos los componentes de la página principal incluyendo características, equipos populares y sección explorar.",
+        "changelog.v040.item3": "Se mejoraron las traducciones al español con acentos correctos y terminología adecuada (meta, ranking, Pokémon).",
+        "changelog.v040.item4": "Se corrigió la sección CTA inferior que mostraba texto en el idioma incorrecto al cargar la página.",
+        "changelog.v040.item5": "Se actualizaron las traducciones de home-copy.ts para que coincidan con i18n.tsx para mayor consistencia.",
         "changelog.v020.title": "v0.2.0 - Actualización de Usabilidad y Guías",
         "changelog.v020.date": "Marzo 2026",
         "changelog.v020.item1": "Se añadieron guías competitivas dentro de la app, incluyendo Gen 9 OU, VGC 2026 y artículos de team building.",
@@ -1079,7 +1145,7 @@ interface I18nContextType {
 }
 
 const I18nContext = createContext<I18nContextType>({
-    lang: "en",
+    lang: DEFAULT_LANG,
     setLang: () => { },
     t: (key: string, params?: Record<string, string>) => {
         let text = key;
@@ -1092,21 +1158,24 @@ const I18nContext = createContext<I18nContextType>({
     },
 });
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [lang, setLang] = useState<Lang>("en");
+interface LanguageProviderProps {
+    children: ReactNode;
+    initialLang?: Lang;
+}
+
+export function LanguageProvider({ children, initialLang = DEFAULT_LANG }: LanguageProviderProps) {
+    const [lang, setLang] = useState<Lang>(initialLang);
 
     const t = useCallback(
         (key: string, params?: Record<string, string>) => {
-            let text = translations[lang][key] || translations["en"][key] || key;
-            if (params) {
-                Object.entries(params).forEach(([k, v]) => {
-                    text = text.replace(`{${k}}`, v);
-                });
-            }
-            return text;
+            return translateFromMap(translations, lang, key, params);
         },
         [lang]
     );
+
+    useEffect(() => {
+        document.cookie = createLangCookie(lang);
+    }, [lang]);
 
     return (
         <I18nContext.Provider value={{ lang, setLang, t }}>

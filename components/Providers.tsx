@@ -3,12 +3,18 @@
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/lib/i18n";
 import { TeamProvider } from "@/lib/team-context";
+import type { Lang } from "@/lib/i18n-shared";
 import { Toaster } from "@/components/ui/sonner";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps {
+    children: React.ReactNode;
+    initialLang: Lang;
+}
+
+export function Providers({ children, initialLang }: ProvidersProps) {
     return (
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <LanguageProvider>
+            <LanguageProvider initialLang={initialLang}>
                 <TeamProvider>
                     {children}
                 </TeamProvider>

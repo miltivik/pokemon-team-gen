@@ -113,6 +113,73 @@ export function ExportPageSkeleton() {
   );
 }
 
+export function ConfigurarPageSkeleton() {
+  return (
+    <ShellFrame>
+      <section className="w-full flex justify-center">
+        <AdHero />
+      </section>
+
+      <header className="flex min-h-28 w-full flex-col items-center justify-center space-y-4 text-center">
+        <SkeletonBlock className="h-10 w-64 max-w-full" />
+        <SkeletonBlock className="h-5 w-72 max-w-full" />
+        <div className="flex min-h-8 items-center justify-center gap-2">
+          <SkeletonPill className="h-8 w-20" />
+          <SkeletonPill className="h-8 w-28" />
+        </div>
+      </header>
+
+      <section className="w-full flex justify-center py-4">
+        <AdBanner />
+      </section>
+
+      <section className="w-full flex justify-center">
+        <div className="w-full max-w-2xl rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <SkeletonBlock className="h-4 w-20" />
+              <SkeletonBlock className="h-10 w-full" />
+            </div>
+            <div className="space-y-2">
+              <SkeletonBlock className="h-4 w-24" />
+              <SkeletonBlock className="h-10 w-full" />
+            </div>
+            <div className="space-y-2">
+              <SkeletonBlock className="h-4 w-32" />
+              <SkeletonBlock className="h-10 w-full" />
+            </div>
+            <div className="space-y-2">
+              <SkeletonBlock className="h-4 w-28" />
+              <SkeletonBlock className="h-10 w-full" />
+              <div className="flex flex-wrap gap-2 pt-2">
+                <SkeletonPill className="h-8 w-24" />
+                <SkeletonPill className="h-8 w-28" />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 flex items-center gap-3">
+            <SkeletonPill className="h-6 w-11" />
+            <SkeletonBlock className="h-4 w-48" />
+          </div>
+
+          <SkeletonBlock className="mt-6 h-11 w-full" />
+        </div>
+      </section>
+
+      <AdInline />
+
+      <section className="w-full flex justify-center py-4">
+        <AdBanner />
+      </section>
+
+      <div className="flex min-h-14 w-full items-center justify-center pt-4">
+        <SkeletonPill className="h-10 w-40" />
+      </div>
+    </ShellFrame>
+  );
+}
+
 export function SavedTeamsPageSkeleton() {
   return (
     <ShellFrame>

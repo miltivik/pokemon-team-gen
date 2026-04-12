@@ -32,6 +32,7 @@ export async function getMetaAnalysis(format: string): Promise<MetaOverviewData>
     // Analizar top 50 para rendimiento y relevancia (el meta lo definen los top mons)
     const top50 = mons.slice(0, 50);
     const totalUsage = top50.reduce((acc, mon) => acc + mon.usage, 0);
+    const safeTotalUsage = totalUsage || 1;
 
     top50.forEach(mon => {
         // Items
@@ -63,12 +64,12 @@ export async function getMetaAnalysis(format: string): Promise<MetaOverviewData>
     const topItems = Object.entries(itemUsageMap)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
-        .map(([name, usage]) => ({ name: getProperItemName(name), usage: usage / totalUsage })); // Normalizar relativo al top 50
+        .map(([name, usage]) => ({ name: getProperItemName(name), usage: usage / safeTotalUsage })); // Normalizar relativo al top 50
 
     const topAbilities = Object.entries(abilityUsageMap)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
-        .map(([name, usage]) => ({ name: getProperAbilityName(name), usage: usage / totalUsage }));
+        .map(([name, usage]) => ({ name: getProperAbilityName(name), usage: usage / safeTotalUsage }));
 
     return { topThreats, tierGroups, topItems, topAbilities, loading: false };
 }
