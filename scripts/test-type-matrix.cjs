@@ -279,6 +279,7 @@ const TYPE_MATRIX = [
     minValidationScore: 0.82,
     requireCleanCore: true,
     maxMissingSupport: 1,
+    requiredInfeasibleSupportPackages: ["fake-out", "redirection"],
   },
   {
     id: "gen8ou-no-legends-legacy-availability",
@@ -609,6 +610,13 @@ function collectFormatIssues(team, format) {
   return issues;
 }
 
+function getFeasibilityDiagnostics(result) {
+  return result.generationDiagnostics?.feasibility ?? {
+    infeasibleSupportPackages: [],
+    infeasibleCore: [],
+  };
+}
+
 async function runCase(testCase, iterations) {
   const expectedTeamSize = FORMATS[testCase.format].maxTeamSize;
   const minimumTeamSize = testCase.minTeamSize ?? expectedTeamSize;
@@ -632,9 +640,11 @@ async function runCase(testCase, iterations) {
         templateId: safeTemplateId,
         lang: "en",
         dataOverride: buildFixtureData(testCase.fixture),
+        rngSeed: `${testCase.id}:${index}`,
       });
 
       const failures = [];
+      const feasibility = getFeasibilityDiagnostics(result);
       const validation =
         testCase.minValidationScore !== undefined ||
         testCase.maxMissingSupport !== undefined ||
@@ -644,6 +654,7 @@ async function runCase(testCase, iterations) {
               format: testCase.format,
               templateId: safeTemplateId,
               template,
+              feasibility,
             })
           : null;
       const mismatchedMembers = result.team.filter(
@@ -710,6 +721,15 @@ async function runCase(testCase, iterations) {
         failures.push(
           `missing-support:${validation.missingSupportPackages.join(",") || "n/a"}`
         );
+      }
+      if (Array.isArray(testCase.requiredInfeasibleSupportPackages)) {
+        const missingDiagnostics = testCase.requiredInfeasibleSupportPackages.filter(
+          (supportPackage) =>
+            !feasibility.infeasibleSupportPackages.includes(supportPackage)
+        );
+        if (missingDiagnostics.length > 0) {
+          failures.push(`feasibility-support:${missingDiagnostics.join(",")}`);
+        }
       }
       if (
         validation &&

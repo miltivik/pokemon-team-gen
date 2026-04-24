@@ -469,6 +469,13 @@ function collectTournamentPriorIssues(result, testCase) {
   return issues;
 }
 
+function getFeasibilityDiagnostics(result) {
+  return result.generationDiagnostics?.feasibility ?? {
+    infeasibleSupportPackages: [],
+    infeasibleCore: [],
+  };
+}
+
 function buildFixtureData(fixture) {
   if (fixture === "vgc-prior-tailwind-sparse") {
     return {
@@ -655,12 +662,14 @@ async function runCase(testCase, iterations) {
         templateId: safeTemplateId,
         lang: "en",
         dataOverride: buildFixtureData(testCase.fixture),
+        rngSeed: `${testCase.id}:${index}`,
       });
 
       const validation = validateTeamForTemplate(result.team, result.teamGuide, {
         format: testCase.format,
         templateId: safeTemplateId,
         template,
+        feasibility: getFeasibilityDiagnostics(result),
       });
       const coherenceIssues = collectSetCoherenceIssues(result.team, testCase.format);
       const formatRuleIssues = collectFormatRuleIssues(result.team, testCase.format);

@@ -15,6 +15,10 @@ import {
   validateTeamForTemplate,
   type TeamValidationResult,
 } from "@/lib/builder/team-validator";
+import {
+  getTeamGenerationFeasibility,
+  type TeamGenerationFeasibility,
+} from "@/lib/builder/generation-feasibility";
 import { detectSetRole } from "@/lib/builder/roles";
 import { Template, TemplateId, TEMPLATES, sanitizeTemplateForFormat } from "@/config/templates";
 import { DexProvider, type PokemonSpecies } from "@/lib/data-sources/dex";
@@ -77,6 +81,7 @@ export interface DynamicTeamResponse {
       activeLeadPairs: string[];
       modeMatch: "match" | "neutral" | "conflict" | "none";
     };
+    feasibility?: TeamGenerationFeasibility;
   };
 }
 
@@ -88,6 +93,7 @@ interface DynamicTeamOptions {
   templateId?: TemplateId;
   lang?: "en" | "es";
   dataOverride?: NormalizedSmogonData | null;
+  rngSeed?: string;
 }
 
 interface CandidateTeamBuild {
@@ -108,6 +114,28 @@ interface RepairSwapCandidate extends CandidateTeamBuild {
   teamSpecies: PokemonSpecies[];
 }
 
+type RandomSource = () => number;
+
+function createSeededRandom(seed?: string): RandomSource {
+  if (!seed) {
+    return Math.random;
+  }
+
+  let hash = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return () => {
+    hash += 0x6d2b79f5;
+    let value = hash;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 export async function generateDynamicTeam(
   options: DynamicTeamOptions = {}
 ): Promise<DynamicTeamResponse> {
@@ -119,8 +147,10 @@ export async function generateDynamicTeam(
     lang = "en",
     fixedMembers,
     dataOverride,
+    rngSeed,
   } = options;
 
+  const rng = createSeededRandom(rngSeed);
   const gen = getGenFromFormat(format as FormatId) || 9;
   const formatProfile = getCompetitiveFormatProfile(format);
   const data = dataOverride ?? (await SmogonDataSource.getStats(format));
@@ -154,6 +184,15 @@ export async function generateDynamicTeam(
   );
   const template: Template | undefined = TEMPLATES[safeTemplateId];
   const maxTeamSize = FORMATS[format as FormatId]?.maxTeamSize ?? 6;
+  const feasibility = getTeamGenerationFeasibility({
+    data: finalData,
+    format,
+    gen,
+    type,
+    excludeLegendaries,
+    template,
+    templateId: safeTemplateId,
+  });
   const attempts = getGenerationAttempts(format, template, fixedMembers, maxTeamSize);
   let bestCandidate: CandidateTeamBuild | null = null;
 
@@ -170,6 +209,8 @@ export async function generateDynamicTeam(
       excludeLegendaries,
       fixedMembers,
       formatProfile,
+      feasibility,
+      rng,
     });
 
     if (!bestCandidate || rankCandidate(candidate, maxTeamSize) > rankCandidate(bestCandidate, maxTeamSize)) {
@@ -199,6 +240,8 @@ export async function generateDynamicTeam(
       excludeLegendaries,
       fixedMembers,
       formatProfile,
+      feasibility,
+      rng,
     });
   const finalizedCandidate = tryFinalizeTeamSets({
     candidate: selectedCandidate,
@@ -210,6 +253,7 @@ export async function generateDynamicTeam(
     template,
     templateId: safeTemplateId,
     formatProfile,
+    feasibility,
   });
 
   const teamWithAnalysis = attachMemberAnalyses(
@@ -265,6 +309,7 @@ export async function generateDynamicTeam(
       validationScore: finalizedCandidate.validation.score,
       validationIssues: finalizedCandidate.validation.issues,
       tournamentPriors: tournamentPriorDiagnostics ?? undefined,
+      feasibility,
     },
   };
 }
@@ -412,9 +457,9 @@ function matchesTemplateRole(
   return false;
 }
 
-function pickWeightedSuggestionIndex(weights: number[]) {
+function pickWeightedSuggestionIndex(weights: number[], rng: RandomSource) {
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-  let roll = Math.random() * Math.max(totalWeight, 0.0001);
+  let roll = rng() * Math.max(totalWeight, 0.0001);
   let selectedIndex = 0;
 
   for (let i = 0; i < weights.length; i += 1) {
@@ -688,6 +733,8 @@ function findBestRepairSwap(options: {
   formatProfile: CompetitiveFormatProfile;
   fixedCanonicalIds: Set<string>;
   repairNeeds: string[];
+  feasibility: TeamGenerationFeasibility;
+  rng: RandomSource;
 }): RepairSwapCandidate | null {
   const optimizer = new SetOptimizer(options.data);
   const needsExpandedHazardSearch = options.repairNeeds.some((repairNeed) =>
@@ -750,6 +797,7 @@ function findBestRepairSwap(options: {
       templateId: options.templateId,
       currentTeam: baseTeam,
       suggestions,
+      rng: options.rng,
     });
     const evaluationQueue = prioritizedSuggestions.slice(
       0,
@@ -832,6 +880,7 @@ function findBestRepairSwap(options: {
         templateId: options.templateId,
         template: options.template,
         archetypeHints: options.data.meta.optionalArchetypeHints,
+        feasibility: options.feasibility,
       });
       const repairCoverage = getRepairCoverageCount(
         suggestion.species,
@@ -879,6 +928,8 @@ function tryRepairCandidateTeam(options: {
   fixedCanonicalIds: Set<string>;
   guide: TeamGuideData;
   validation: TeamValidationResult;
+  feasibility: TeamGenerationFeasibility;
+  rng: RandomSource;
 }): CandidateTeamBuild {
   const repairEligibleTemplates = new Set<TemplateId>([
     "offense",
@@ -975,6 +1026,7 @@ function tryFinalizeTeamSets(options: {
   template?: Template;
   templateId: TemplateId;
   formatProfile: CompetitiveFormatProfile;
+  feasibility: TeamGenerationFeasibility;
 }): CandidateTeamBuild {
   const eligibleTemplates = new Set<TemplateId>([
     "semistall",
@@ -1047,6 +1099,7 @@ function tryFinalizeTeamSets(options: {
     templateId: options.templateId,
     template: options.template,
     archetypeHints: options.data.meta.optionalArchetypeHints,
+    feasibility: options.feasibility,
   });
   const recalibratedCandidate = {
     team: recalibratedTeam,
@@ -1359,6 +1412,7 @@ function prioritizeSuggestionsWithTournamentPriors(options: {
   templateId: TemplateId;
   currentTeam: TeamMember[];
   suggestions: ReturnType<WeightedScoringEngine["suggestMembers"]>;
+  rng: RandomSource;
 }) {
   const selectionPlan = getTournamentPriorSelectionPlan({
     format: options.format,
@@ -1382,15 +1436,15 @@ function prioritizeSuggestionsWithTournamentPriors(options: {
       }
 
       const boostApplied =
-        Math.random() <= entry.pickRate
+        options.rng() <= entry.pickRate
           ? entry.scoreBoost
           : 1 + (entry.scoreBoost - 1) * 0.3;
       const jitter =
         entry.tier === "anchor"
-          ? 0.96 + Math.random() * 0.1
+          ? 0.96 + options.rng() * 0.1
           : entry.tier === "core"
-            ? 0.94 + Math.random() * 0.12
-            : 0.92 + Math.random() * 0.14;
+            ? 0.94 + options.rng() * 0.12
+            : 0.92 + options.rng() * 0.14;
 
       return {
         ...suggestion,
@@ -1412,6 +1466,8 @@ function buildCandidateTeam(options: {
   excludeLegendaries?: boolean;
   fixedMembers?: string[] | null;
   formatProfile: CompetitiveFormatProfile;
+  feasibility: TeamGenerationFeasibility;
+  rng: RandomSource;
 }): CandidateTeamBuild {
   const {
     data,
@@ -1425,6 +1481,8 @@ function buildCandidateTeam(options: {
     excludeLegendaries,
     fixedMembers,
     formatProfile,
+    feasibility,
+    rng,
   } = options;
 
   const team: TeamMember[] = [];
@@ -1446,7 +1504,7 @@ function buildCandidateTeam(options: {
       const weights = remaining.map((suggestion, index) =>
         suggestion.score * Math.pow(0.6, index)
       );
-      const selectedIndex = pickWeightedSuggestionIndex(weights);
+      const selectedIndex = pickWeightedSuggestionIndex(weights, rng);
       const selected = remaining[selectedIndex];
       const set = optimizer.optimize(selected.species, teamSpecies, {
         template,
@@ -1600,6 +1658,7 @@ function buildCandidateTeam(options: {
       templateId,
       currentTeam: team,
       suggestions: prioritizedSuggestions,
+      rng,
     });
 
     const targetRole = template?.roles?.[team.length];
@@ -1671,6 +1730,7 @@ function buildCandidateTeam(options: {
     templateId,
     template,
     archetypeHints: data.meta.optionalArchetypeHints,
+    feasibility,
   });
   return tryRepairCandidateTeam({
     team,
@@ -1688,11 +1748,23 @@ function buildCandidateTeam(options: {
     fixedCanonicalIds,
     guide,
     validation,
+    feasibility,
+    rng,
   });
 }
 
+const HARD_SET_ISSUES = new Set([
+  "assault-vest-status-conflict",
+  "choice-status-conflict",
+  "choice-band-no-physical",
+  "choice-specs-no-special",
+  "duplicate-item-clause",
+  "banned-ability-in-format",
+  "no-real-progression",
+]);
+
 function isResolvedSetViable(
-  set: OptimizedSet,
+  set: OptimizedSet & { issues?: string[] },
   teamCanonicalIds: Set<string>,
   teamItems: Set<string>,
   species: PokemonSpecies,
@@ -1716,6 +1788,10 @@ function isResolvedSetViable(
   if (
     formatProfile.forbiddenAbilityIds.includes(toID(set.ability))
   ) {
+    return false;
+  }
+
+  if ((set.issues ?? []).some((issue) => HARD_SET_ISSUES.has(issue))) {
     return false;
   }
 

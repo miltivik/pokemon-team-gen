@@ -9,6 +9,7 @@ import {
   SCREEN_MOVES,
   SETUP_MOVES,
 } from "@/lib/builder/template-heuristics";
+import type { TeamGenerationFeasibility } from "@/lib/builder/generation-feasibility";
 import { isAllowedInFormat } from "@/lib/format-rules";
 import {
   GeneratedTeamMember,
@@ -24,6 +25,7 @@ interface TeamValidationOptions {
   templateId: TemplateId;
   template?: Template;
   archetypeHints?: string[];
+  feasibility?: TeamGenerationFeasibility;
 }
 
 export interface TeamValidationResult {
@@ -495,11 +497,18 @@ export function validateTeamForTemplate(
   const signals = buildTeamSignals(team, options.format);
   const formatProfile = getCompetitiveFormatProfile(options.format);
   const template = options.template;
+  const infeasibleSupportPackages = new Set(
+    options.feasibility?.infeasibleSupportPackages ?? []
+  );
+  const infeasibleCore = new Set(options.feasibility?.infeasibleCore ?? []);
+  const feasibleSupportPackages = (template?.supportPackages ?? []).filter(
+    (supportPackage) => !infeasibleSupportPackages.has(supportPackage)
+  );
   const missingCore = (template?.requiredCore ?? []).filter((core) => {
     const check = REQUIRED_CORE_CHECKS[core];
     return check ? !check(signals) : false;
   });
-  const missingSupportPackages = (template?.supportPackages ?? []).filter((supportPackage) => {
+  const missingSupportPackages = feasibleSupportPackages.filter((supportPackage) => {
     const check = SUPPORT_PACKAGE_CHECKS[supportPackage];
     return check ? !check(signals) : false;
   });
@@ -509,6 +518,9 @@ export function validateTeamForTemplate(
   });
   const issues = [
     ...missingCore.map((core) => `missing-core:${core}`),
+    ...missingCore
+      .filter((core) => infeasibleCore.has(core))
+      .map((core) => `infeasible-core:${core}`),
     ...missingSupportPackages.map((supportPackage) => `missing-support:${supportPackage}`),
     ...triggeredForbidden.map((pattern) => `forbidden-pattern:${pattern}`),
   ];
@@ -568,8 +580,8 @@ export function validateTeamForTemplate(
       ? 1 - missingCore.length / template.requiredCore.length
       : 1;
   const supportCoverage =
-    template?.supportPackages && template.supportPackages.length > 0
-      ? 1 - missingSupportPackages.length / template.supportPackages.length
+    feasibleSupportPackages.length > 0
+      ? 1 - missingSupportPackages.length / feasibleSupportPackages.length
       : 1;
   const forbiddenPenalty = template?.forbiddenPatterns?.length
     ? triggeredForbidden.length / template.forbiddenPatterns.length

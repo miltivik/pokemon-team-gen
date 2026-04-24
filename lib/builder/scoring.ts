@@ -1,16 +1,14 @@
 import type { NormalizedMonData, NormalizedSmogonData } from '../data-sources/smogon-types';
-import { DexProvider, PokemonSpecies } from '../data-sources/dex';
+import { PokemonSpecies } from '../data-sources/dex';
 import { getEffectiveness } from '../type-chart';
 import { toID } from '../utils';
 import { Template } from '@/config/templates';
 import { Role } from '../showdown-data';
-import { isLegendaryOrParadoxSpecies } from '@/lib/pokemon-classification';
-import { getCanonicalSpeciesId } from '@/lib/pokemon-forms';
 import { FORMATS, FormatId } from '@/config/formats';
 import type { SetBundle } from './set-optimizer';
 import { getCompetitiveFormatProfile } from '@/lib/competitive-format-profile';
-import { isAllowedInFormat } from '@/lib/format-rules';
 import { getTournamentPriorCandidateSignals } from '@/lib/tournament-priors';
+import { buildCandidatePool } from '@/lib/builder/candidate-pool';
 import {
   countAvailableMoves,
   DOUBLES_SUPPORT_MOVES,
@@ -66,57 +64,6 @@ interface ScoringOptions {
   getCandidateBundle?: (candidate: PokemonSpecies, currentTeam: PokemonSpecies[]) => SetBundle;
 }
 
-const REQUIRED_TYPE_TIER_WEIGHTS: Record<string, number> = {
-  AG: 1.06,
-  Uber: 1.04,
-  OU: 1,
-  UUBL: 0.97,
-  UU: 0.94,
-  RUBL: 0.91,
-  RU: 0.88,
-  NUBL: 0.85,
-  NU: 0.82,
-  PUBL: 0.79,
-  PU: 0.76,
-  ZUBL: 0.73,
-  ZU: 0.7,
-  NFE: 0.48,
-  LC: 0.42,
-};
-
-function getRequiredTypePoolScore(
-  species: PokemonSpecies,
-  usageRate: number,
-  allowLowTierFillers: boolean
-) {
-  const bst = Object.values(species.baseStats).reduce((sum, stat) => sum + stat, 0);
-  const bulk =
-    species.baseStats.hp + species.baseStats.def + species.baseStats.spd;
-  const maxOffense = Math.max(species.baseStats.atk, species.baseStats.spa);
-  const tierWeight =
-    REQUIRED_TYPE_TIER_WEIGHTS[species.tier ?? ""] ??
-    (species.tier === "NFE" ? 0.48 : species.tier === "LC" ? 0.42 : 0.64);
-
-  let score = tierWeight * 1000;
-  score += bst;
-  score += bulk * 0.35;
-  score += maxOffense * 0.45;
-  score += species.baseStats.spe * 0.18;
-  score += Math.log10(Math.max(usageRate, 0.000001) * 100000 + 1) * 90;
-
-  if (species.types.length > 1) {
-    score += 12;
-  }
-  if (species.evos && species.evos.length > 0) {
-    score -= 180;
-  }
-  if (!allowLowTierFillers && (species.tier === "LC" || species.tier === "NFE")) {
-    score -= 240;
-  }
-
-  return score;
-}
-
 export class WeightedScoringEngine {
 
   private gen: number;
@@ -163,63 +110,14 @@ export class WeightedScoringEngine {
   }
 
   private getCandidates(currentTeam: PokemonSpecies[]): PokemonSpecies[] {
-    const currentIds = new Set(currentTeam.map((p) => getCanonicalSpeciesId(p)));
-    const validMons: Array<{ species: PokemonSpecies; usageRate: number }> = [];
-    const requiredType = this.options.requiredType?.toLowerCase() ?? null;
-    const isDoubles = FORMATS[this.format as FormatId]?.gameType === "doubles";
-    const allowLowTierFillers = this.format.endsWith("lc");
-
-    for (const stats of Object.values(this.data.pokemon)) {
-      const species = DexProvider.getSpeciesForGen(stats.name, this.gen);
-      if (!species) continue;
-      if (currentIds.has(getCanonicalSpeciesId(species))) continue; // Species Clause by base family
-      if (this.gen === 9 && !isAllowedInFormat(species.name, this.format as FormatId)) continue;
-
-      if (this.options.excludeLegendaries && isLegendaryOrParadoxSpecies(species.name)) continue;
-
-      const hasRequiredType = requiredType
-        ? species.types.some(t => t.toLowerCase() === requiredType)
-        : true;
-
-      if (requiredType && !hasRequiredType) {
-        continue;
-      }
-
-      // For explicit type searches, keep low-usage candidates so the selector does
-      // not collapse to the tiny slice present in a single Smogon cutoff snapshot.
-      if (!requiredType && stats.usageRate < 0.005) continue; // Filter irrelevants (<0.5%)
-
-      validMons.push({
-        species,
-        usageRate: stats.usageRate,
-      });
-    }
-
-    if (!requiredType) {
-      return validMons.map(({ species }) => species);
-    }
-
-    const maxRequiredTypePool = isDoubles ? 14 : 20;
-    if (validMons.length <= maxRequiredTypePool) {
-      return validMons.map(({ species }) => species);
-    }
-
-    return [...validMons]
-      .sort(
-        (left, right) =>
-          getRequiredTypePoolScore(
-            right.species,
-            right.usageRate,
-            allowLowTierFillers
-          ) -
-          getRequiredTypePoolScore(
-            left.species,
-            left.usageRate,
-            allowLowTierFillers
-          )
-      )
-      .slice(0, maxRequiredTypePool)
-      .map(({ species }) => species);
+    return buildCandidatePool({
+      data: this.data,
+      format: this.format,
+      gen: this.gen,
+      currentTeam,
+      excludeLegendaries: this.options.excludeLegendaries,
+      requiredType: this.options.requiredType,
+    }).map(({ species }) => species);
   }
 
   private calculateScore(
