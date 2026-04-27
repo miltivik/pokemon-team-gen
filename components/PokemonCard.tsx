@@ -9,10 +9,9 @@ import type {
     TeamBuildPreset,
 } from "@/lib/team-guide";
 import { getPokemonSummary } from "@/lib/pokemon-summary";
-import { getTranslatedItemLabel, getTranslatedMoveLabel } from "@/lib/pokemon-translations";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { useTranslation } from "@/lib/i18n";
-import { getStrategicRoleLabel } from "@/lib/strategic-role";
+import { getStrategicRoleLabel } from "@/lib/strategic-role-label";
 import { Info } from "lucide-react";
 import { ItemIcon } from "./ItemIcon";
 
@@ -93,7 +92,7 @@ function getStatLabel(name: string) {
 }
 
 export function PokemonCard({ pokemon, onSelect, onPrefetchDetails }: PokemonCardProps) {
-    const { t, lang } = useTranslation();
+    const { t } = useTranslation();
     const summary = getPokemonSummary(pokemon.name);
 
     const displayData = useMemo(() => {
@@ -189,7 +188,7 @@ export function PokemonCard({ pokemon, onSelect, onPrefetchDetails }: PokemonCar
                     <div className="mx-auto flex w-fit items-center justify-center gap-1 rounded border border-amber-200/50 bg-amber-50 px-1 py-0.5 text-[9px] font-medium text-zinc-600 dark:border-amber-800/30 dark:bg-amber-900/20 dark:text-zinc-400">
                         <ItemIcon item={pokemon.item} size={12} />
                         <span className="max-w-[70px] truncate">
-                            {getTranslatedItemLabel(pokemon.item, lang)}
+                            {pokemon.item}
                         </span>
                     </div>
                 )}
@@ -205,13 +204,12 @@ export function PokemonCard({ pokemon, onSelect, onPrefetchDetails }: PokemonCar
                                 if (moveName === "Ghost" || moveName === "Fantasma") return null;
 
                                 const moveType = getMoveType(move);
-                                const displayMoveName = getTranslatedMoveLabel(moveName, lang);
 
                                 return (
                                     <div
                                         key={`${moveName}-${index}`}
                                         className="flex min-w-0 items-center gap-1 truncate text-[10px] text-zinc-700 dark:text-zinc-300"
-                                        title={displayMoveName}
+                                        title={moveName}
                                     >
                                         {moveType ? (
                                             <span
@@ -231,7 +229,7 @@ export function PokemonCard({ pokemon, onSelect, onPrefetchDetails }: PokemonCar
                                         ) : (
                                             <span className="h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
                                         )}
-                                        <span className="truncate">{displayMoveName}</span>
+                                        <span className="truncate">{moveName}</span>
                                     </div>
                                 );
                             })

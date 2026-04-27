@@ -1,8 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
 import {
     BookOpen,
     Bug,
@@ -28,20 +27,19 @@ import { cloneGenerationOptions } from "@/lib/team-generation-options";
 import { saveTeamToSavedTeams } from "@/lib/team-storage";
 import { useTeam } from "@/lib/team-context";
 import type { GeneratedTeamMember } from "@/lib/team-guide";
+import type { PokemonDetailsDialogProps } from "@/components/PokemonDetailsPanel";
 
 interface EquipoPageClientProps {
     expectsTeam: boolean;
 }
 
-function loadPokemonDetailsDialog() {
+type PokemonDetailsDialogComponent = ComponentType<PokemonDetailsDialogProps>;
+
+function loadPokemonDetailsDialog(): Promise<PokemonDetailsDialogComponent> {
     return import("@/components/PokemonDetailsPanel").then((module) => module.PokemonDetailsDialog);
 }
 
-const LazyPokemonDetailsDialog = dynamic(loadPokemonDetailsDialog, {
-    ssr: false,
-});
-
-let pokemonDetailsDialogPreloadPromise: Promise<unknown> | null = null;
+let pokemonDetailsDialogPreloadPromise: Promise<PokemonDetailsDialogComponent> | null = null;
 
 function preloadPokemonDetailsDialog() {
     if (!pokemonDetailsDialogPreloadPromise) {
@@ -103,14 +101,14 @@ function EquipoPageSkeleton() {
     return (
         <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
-                <section className="w-full flex justify-center">
-                    <AdHero />
-                </section>
-
                 <header className="flex min-h-24 w-full max-w-3xl flex-col items-center justify-center gap-4 text-center">
                     <SkeletonPill className="h-10 w-48" />
                     <SkeletonPill className="h-6 w-64" />
                 </header>
+
+                <section className="w-full flex justify-center">
+                    <AdHero />
+                </section>
 
                 <div className="flex w-full max-w-4xl flex-wrap items-center justify-center gap-3">
                     {Array.from({ length: 6 }, (_, index) => (
@@ -181,6 +179,9 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
     const [isRegenerating, setIsRegenerating] = useState(false);
     const [selectedPokemonIndex, setSelectedPokemonIndex] = useState<number | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [PokemonDetailsDialog, setPokemonDetailsDialog] =
+        useState<PokemonDetailsDialogComponent | null>(null);
+    const mountedRef = useRef(true);
     const regenerationOptions = useMemo(
         () => cloneGenerationOptions(generationOptions),
         [generationOptions]
@@ -197,40 +198,35 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
     }, [team.length]);
 
     useEffect(() => {
-        let timeoutId: number | undefined;
-        let idleId: number | undefined;
-
-        const warmDialog = () => {
-            void preloadPokemonDetailsDialog();
-        };
-
-        if (window.requestIdleCallback) {
-            idleId = window.requestIdleCallback(warmDialog, { timeout: 1500 });
-        } else {
-            timeoutId = window.setTimeout(warmDialog, 900);
-        }
-
         return () => {
-            if (timeoutId) {
-                window.clearTimeout(timeoutId);
-            }
-            if (idleId && window.cancelIdleCallback) {
-                window.cancelIdleCallback(idleId);
-            }
+            mountedRef.current = false;
         };
     }, []);
 
-    const teamTypes = team
-        .flatMap((pokemon) => pokemon.types || [])
-        .filter((value, index, values) => values.indexOf(value) === index);
+    const teamTypes = useMemo(
+        () =>
+            team
+                .flatMap((pokemon) => pokemon.types || [])
+                .filter((value, index, values) => values.indexOf(value) === index),
+        [team]
+    );
 
     const handlePrefetchPokemonDetails = useCallback(() => {
-        void preloadPokemonDetailsDialog();
+        void preloadPokemonDetailsDialog().then((Dialog) => {
+            if (mountedRef.current) {
+                setPokemonDetailsDialog(() => Dialog);
+            }
+        });
     }, []);
 
     const handleOpenPokemonDetails = useCallback((index: number) => {
         setSelectedPokemonIndex(index);
         setIsDetailsOpen(true);
+        void preloadPokemonDetailsDialog().then((Dialog) => {
+            if (mountedRef.current) {
+                setPokemonDetailsDialog(() => Dialog);
+            }
+        });
     }, []);
 
     const handlePokemonDetailsOpenChange = useCallback((open: boolean) => {
@@ -325,10 +321,6 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
     return (
         <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
-                <section className="w-full flex justify-center">
-                    <AdHero />
-                </section>
-
                 <header className="space-y-4 text-center">
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {t("app.yourTeam")}
@@ -341,6 +333,10 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                         </span>
                     </p>
                 </header>
+
+                <section className="w-full flex justify-center">
+                    <AdHero />
+                </section>
 
                 <div className="flex flex-wrap items-center justify-center gap-3">
                     {generationOptions && (
@@ -539,8 +535,8 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                     </div>
                 </div>
 
-                {selectedPokemon && (
-                    <LazyPokemonDetailsDialog
+                {selectedPokemon && PokemonDetailsDialog && (
+                    <PokemonDetailsDialog
                         pokemon={selectedPokemon}
                         item={selectedPokemon.item}
                         format={format}

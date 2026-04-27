@@ -1,5 +1,9 @@
 import type { PokemonSpecies } from "@/lib/data-sources/dex";
 import { HAZARD_MOVES, PIVOT_MOVES, REMOVAL_MOVES } from "@/lib/builder/template-heuristics";
+import {
+  STRATEGIC_ROLE_DESCRIPTION_KEYS,
+  getStrategicRoleLabel,
+} from "@/lib/strategic-role-label";
 import { toID } from "@/lib/utils";
 
 interface StrategicRoleInput {
@@ -10,23 +14,6 @@ interface StrategicRoleInput {
   broadRole?: string;
   otherTeamSpeeds?: number[];
 }
-
-const STRATEGIC_ROLE_DESCRIPTION_KEYS: Record<string, string> = {
-  "Trick Room Setter": "role.trickRoomSetter",
-  "Trick Room Sweeper": "role.trickRoomSweeper",
-  "Tailwind Setter": "role.tailwindSetter",
-  "Rain Setter": "role.rainSetter",
-  "Sun Setter": "role.sunSetter",
-  "Sand Setter": "role.sandSetter",
-  "Hazard Lead": "role.hazardLead",
-  "Hazard Setter": "role.hazardSetter",
-  "Hazard Control": "role.hazardControl",
-  Pivot: "role.pivot",
-  Support: "role.support",
-  Wall: "role.wall",
-  Tank: "role.tank",
-  Sweeper: "role.sweeper",
-};
 
 export function inferPrimaryStrategicRole({
   species,
@@ -112,13 +99,7 @@ export function inferPrimaryStrategicRole({
   return broadRole;
 }
 
-export function getStrategicRoleLabel(
-  role: string | undefined,
-  t: (key: string) => string
-): string | undefined {
-  if (!role) return undefined;
-  return role.startsWith("role.") ? t(role) : role;
-}
+export { getStrategicRoleLabel };
 
 export function getStrategicRoleDescription(
   role: string | undefined,
