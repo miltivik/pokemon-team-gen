@@ -19,10 +19,6 @@ export default function Gen9OUGuidePage() {
     return (
         <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
-                <section className="flex w-full justify-center">
-                    <AdHero />
-                </section>
-
                 <header className="max-w-3xl space-y-4 text-center">
                     <div className="inline-flex items-center justify-center rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
                         <Trophy className="mr-2 h-4 w-4" />
@@ -35,6 +31,10 @@ export default function Gen9OUGuidePage() {
                         {t("guides.gen9ouDesc")}
                     </p>
                 </header>
+
+                <section className="flex w-full justify-center">
+                    <AdHero />
+                </section>
 
                 <div className="flex justify-center">
                     <Link href="/configurar?format=gen9ou">

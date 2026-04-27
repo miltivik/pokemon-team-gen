@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { analytics } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
-import { getCombinedStats, type CombinedPokemonData } from "@/lib/pikalytics";
+import type { CombinedPokemonData } from "@/lib/pikalytics";
 import { FORMATS, type FormatId } from "@/config/formats";
 import { COLOR_THEMES, FORMAT_GUIDES, type PlaystyleIcon } from "@/config/format-guides";
 
@@ -74,30 +74,44 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
     useEffect(() => {
         analytics.viewGuides(format);
 
+        const controller = new AbortController();
+
         async function fetchData() {
             try {
                 setLoading(true);
-                const data = await getCombinedStats(format);
+                const response = await fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, {
+                    cache: "no-store",
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch guide stats for ${format}`);
+                }
+
+                const payload = (await response.json()) as { combined: CombinedPokemonData[] };
                 setPokemonStats(
-                    data.filter(hasRenderableName).sort((a, b) => b.usage - a.usage).slice(0, 15)
+                    payload.combined.filter(hasRenderableName).sort((a, b) => b.usage - a.usage).slice(0, 15)
                 );
             } catch (error) {
+                if (error instanceof DOMException && error.name === "AbortError") {
+                    return;
+                }
                 console.error("Failed to fetch combined stats", error);
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             }
         }
 
         void fetchData();
+
+        return () => controller.abort();
     }, [format]);
 
     return (
         <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
-                <section className="flex w-full justify-center">
-                    <AdHero />
-                </section>
-
                 <header className="max-w-3xl space-y-4 text-center">
                     <div className="inline-flex items-center justify-center rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
                         <Trophy className="mr-2 h-4 w-4" />
@@ -110,6 +124,10 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
                         {formatDescription}
                     </p>
                 </header>
+
+                <section className="flex w-full justify-center">
+                    <AdHero />
+                </section>
 
                 <div className="flex justify-center">
                     <Link href={`/configurar?format=${format}`}>

@@ -1,5 +1,5 @@
 
-import { getClientSmogonStats, classifyTier, SmogonMonData } from "@/lib/client-smogon-stats";
+import { getClientSmogonStats, classifyTier, type SmogonMonData } from "@/lib/client-smogon-stats";
 import { getProperItemName, getProperAbilityName } from "@/lib/showdown-data";
 
 export interface MetaOverviewData {

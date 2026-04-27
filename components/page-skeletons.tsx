@@ -116,10 +116,6 @@ export function ExportPageSkeleton() {
 export function ConfigurarPageSkeleton() {
   return (
     <ShellFrame>
-      <section className="w-full flex justify-center">
-        <AdHero />
-      </section>
-
       <header className="flex min-h-28 w-full flex-col items-center justify-center space-y-4 text-center">
         <SkeletonBlock className="h-10 w-64 max-w-full" />
         <SkeletonBlock className="h-5 w-72 max-w-full" />
@@ -128,6 +124,10 @@ export function ConfigurarPageSkeleton() {
           <SkeletonPill className="h-8 w-28" />
         </div>
       </header>
+
+      <section className="w-full flex justify-center">
+        <AdHero />
+      </section>
 
       <section className="w-full flex justify-center py-4">
         <AdBanner />

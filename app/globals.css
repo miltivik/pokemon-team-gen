@@ -200,8 +200,18 @@ html {
 }
 
 /* Keep ad shells stable even when AdSense returns no fill */
+.ad-slot-wrapper {
+  flex-shrink: 0;
+}
+
 .ad-slot {
   contain: layout paint style;
+}
+
+.ad-slot > ins.adsbygoogle {
+  display: block !important;
+  height: 100% !important;
+  width: 100% !important;
 }
 
 ins.adsbygoogle[data-ad-status="unfilled"] {

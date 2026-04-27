@@ -1,4 +1,4 @@
-import { getPokemonData, type PokedexEntry } from "@/lib/showdown-data";
+import pokemonNumbersRaw from "@/data/pokemon-numbers.json";
 import { toID } from "@/lib/utils";
 
 type PokemonIdentityLike = {
@@ -6,14 +6,24 @@ type PokemonIdentityLike = {
   baseSpecies?: string;
 };
 
-function resolvePokemonIdentity(
-  pokemon: string | PokemonIdentityLike
-): PokemonIdentityLike | PokedexEntry | undefined {
+const pokemonNumbers = pokemonNumbersRaw as Record<string, number>;
+const canonicalNameByNumber = new Map<number, string>();
+
+for (const [name, number] of Object.entries(pokemonNumbers)) {
+  if (!canonicalNameByNumber.has(number)) {
+    canonicalNameByNumber.set(number, name);
+  }
+}
+
+function resolvePokemonIdentity(pokemon: string | PokemonIdentityLike): PokemonIdentityLike {
   if (typeof pokemon !== "string") {
     return pokemon;
   }
 
-  return getPokemonData(pokemon) ?? { name: pokemon };
+  const number = pokemonNumbers[pokemon];
+  return {
+    name: number ? canonicalNameByNumber.get(number) ?? pokemon : pokemon,
+  };
 }
 
 export function getCanonicalSpeciesName(

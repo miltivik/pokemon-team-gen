@@ -1,5 +1,5 @@
-import { FORMATS, FormatId, GameType, getGenFromFormat } from "@/config/formats";
-import { Role } from "@/lib/showdown-data";
+import { FORMATS, type FormatId, type GameType, getGenFromFormat } from "@/config/formats";
+import type { Role } from "@/lib/showdown-data";
 
 export type TemplateId =
     | 'balanced' | 'offense' | 'bulkyoffense' | 'stall' | 'semistall'

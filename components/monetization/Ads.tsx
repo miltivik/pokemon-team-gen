@@ -152,13 +152,13 @@ function AdSlot({
 
   return (
     <div
-      className={`ad-slot-wrapper transition-all duration-300 ${outerClassName ?? ""}`}
+      className={`ad-slot-wrapper ${outerClassName ?? ""}`}
       data-ad-wrapper
       data-ad-placement={placement}
       data-ad-unfilled={isUnfilled ? "true" : undefined}
     >
       <div
-        className={`ad-slot relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900/60 transition-all duration-300 ${shellClassName}`}
+        className={`ad-slot relative overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-900/60 ${shellClassName}`}
         data-ad-shell
         data-ad-placement={placement}
       >

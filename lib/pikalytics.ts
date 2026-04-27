@@ -233,19 +233,22 @@ function hasValidPokemonName(name: string | undefined) {
 }
 
 export async function getCombinedStats(
-  format: string
+  format: string,
+  initialSmogonData?: Record<string, SmogonMonData>
 ): Promise<CombinedPokemonData[]> {
-  let smogonData: Record<string, SmogonMonData> = {};
+  let smogonData: Record<string, SmogonMonData> = initialSmogonData ?? {};
   let pikalyticsData: PikalyticsData = {
     format,
     pokemon: {},
     lastUpdated: new Date().toISOString(),
   };
 
-  try {
-    smogonData = await getClientSmogonStats(format);
-  } catch (error) {
-    console.error("Failed to fetch Smogon stats:", error);
+  if (!initialSmogonData) {
+    try {
+      smogonData = await getClientSmogonStats(format);
+    } catch (error) {
+      console.error("Failed to fetch Smogon stats:", error);
+    }
   }
 
   try {

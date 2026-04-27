@@ -1,10 +1,10 @@
 import type { NormalizedMonData, NormalizedSmogonData } from '../data-sources/smogon-types';
-import { PokemonSpecies } from '../data-sources/dex';
+import type { PokemonSpecies } from '../data-sources/dex';
 import { getEffectiveness } from '../type-chart';
 import { toID } from '../utils';
-import { Template } from '@/config/templates';
-import { Role } from '../showdown-data';
-import { FORMATS, FormatId } from '@/config/formats';
+import type { Template } from '@/config/templates';
+import type { Role } from '../showdown-data';
+import { FORMATS, type FormatId } from '@/config/formats';
 import type { SetBundle } from './set-optimizer';
 import { getCompetitiveFormatProfile } from '@/lib/competitive-format-profile';
 import { getTournamentPriorCandidateSignals } from '@/lib/tournament-priors';

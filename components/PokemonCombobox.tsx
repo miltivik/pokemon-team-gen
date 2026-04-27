@@ -16,11 +16,52 @@ interface PokemonComboboxProps {
     className?: string;
 }
 
+const POKEMON_SEARCH_INDEX = getAllPokemonNames().map((name) => ({
+    name,
+    normalizedName: name.toLowerCase(),
+}));
+
+function getPokemonSearchResults(query: string, limit = 50) {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) return [];
+
+    let exactMatch: string | undefined;
+    const prefixMatches: string[] = [];
+    const containsMatches: string[] = [];
+
+    for (const pokemon of POKEMON_SEARCH_INDEX) {
+        if (pokemon.normalizedName === normalizedQuery) {
+            exactMatch = pokemon.name;
+            continue;
+        }
+
+        if (pokemon.normalizedName.startsWith(normalizedQuery)) {
+            if (prefixMatches.length < limit) {
+                prefixMatches.push(pokemon.name);
+            }
+            continue;
+        }
+
+        if (
+            pokemon.normalizedName.includes(normalizedQuery) &&
+            prefixMatches.length + containsMatches.length < limit
+        ) {
+            containsMatches.push(pokemon.name);
+        }
+    }
+
+    return [
+        ...(exactMatch ? [exactMatch] : []),
+        ...prefixMatches,
+        ...containsMatches,
+    ].slice(0, limit);
+}
+
 export function PokemonCombobox({ value, onChange, placeholder, className }: PokemonComboboxProps) {
     const { t } = useTranslation();
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState(value || "");
-    const [allPokemon] = React.useState<string[]>(() => getAllPokemonNames());
+    const deferredQuery = React.useDeferredValue(query);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -31,26 +72,8 @@ export function PokemonCombobox({ value, onChange, placeholder, className }: Pok
 
     // Filter pokemon based on query
     const filteredPokemon = React.useMemo(() => {
-        if (!query) return [];
-        const lowerQuery = query.toLowerCase();
-        
-        // If query matches a pokemon exactly, show it first
-        // Otherwise show matches
-        return allPokemon
-            .filter(name => name.toLowerCase().includes(lowerQuery))
-            .sort((a, b) => {
-                const aLower = a.toLowerCase();
-                const bLower = b.toLowerCase();
-                // Exact match first
-                if (aLower === lowerQuery) return -1;
-                if (bLower === lowerQuery) return 1;
-                // Starts with query second
-                if (aLower.startsWith(lowerQuery) && !bLower.startsWith(lowerQuery)) return -1;
-                if (!aLower.startsWith(lowerQuery) && bLower.startsWith(lowerQuery)) return 1;
-                return 0;
-            })
-            .slice(0, 50); // Limit results
-    }, [query, allPokemon]);
+        return getPokemonSearchResults(deferredQuery);
+    }, [deferredQuery]);
 
     // Handle click outside to close
     React.useEffect(() => {

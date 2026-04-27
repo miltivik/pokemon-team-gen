@@ -184,7 +184,7 @@ export function useScrollTracker(pageName: string) {
     useEffect(() => {
         if (typeof window === "undefined") return;
 
-        window.addEventListener("scroll", trackScroll);
+        window.addEventListener("scroll", trackScroll, { passive: true });
         return () => window.removeEventListener("scroll", trackScroll);
     }, [trackScroll]);
 }

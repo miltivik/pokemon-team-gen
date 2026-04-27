@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n";
 import { formatPercentage } from "@/lib/format-percent";
-import { getMetaAnalysis, type MetaOverviewData } from "@/lib/meta-analysis";
-import { getCombinedStats, type CombinedPokemonData } from "@/lib/pikalytics";
+import type { MetaOverviewData } from "@/lib/meta-analysis";
+import type { CombinedPokemonData } from "@/lib/pikalytics";
 import { AlertTriangle, BarChart3, Package, Shield, Sparkles, Swords } from "lucide-react";
 import { PokemonStatCard } from "./PokemonStatCard";
 
@@ -90,13 +90,39 @@ export function MetaOverview({ format }: MetaOverviewProps) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        Promise.all([getMetaAnalysis(format), getCombinedStats(format)])
-            .then(([meta, combined]) => {
-                setData(meta);
-                setCombinedData(combined);
+        const controller = new AbortController();
+
+        fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, {
+            cache: "no-store",
+            signal: controller.signal,
+        })
+            .then(async (response) => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch meta overview for ${format}`);
+                }
+
+                return response.json() as Promise<{
+                    meta: MetaOverviewData;
+                    combined: CombinedPokemonData[];
+                }>;
             })
-            .catch(console.error)
-            .finally(() => setLoading(false));
+            .then((payload) => {
+                setData(payload.meta);
+                setCombinedData(payload.combined);
+            })
+            .catch((error) => {
+                if (error instanceof DOMException && error.name === "AbortError") {
+                    return;
+                }
+                console.error(error);
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            });
+
+        return () => controller.abort();
     }, [format]);
 
     const topThreats = useMemo(

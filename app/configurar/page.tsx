@@ -165,10 +165,6 @@ export default function ConfigurarPage() {
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
-                <section className="w-full flex justify-center">
-                    <AdHero />
-                </section>
-
                 <header className="flex min-h-28 flex-col items-center justify-center space-y-4 text-center">
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {t("form.title")}
@@ -189,6 +185,10 @@ export default function ConfigurarPage() {
                         )}
                     </div>
                 </header>
+
+                <section className="w-full flex justify-center">
+                    <AdHero />
+                </section>
 
                 <section className="w-full flex justify-center py-4">
                     <AdBanner />

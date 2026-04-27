@@ -36,10 +36,12 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
+            const nextIsScrolled = window.scrollY > 20;
+            setIsScrolled((current) => current === nextIsScrolled ? current : nextIsScrolled);
         };
 
-        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 

@@ -47,6 +47,16 @@ export const DEFAULT_TEAM_STATE: TeamStorageSnapshot = {
     generationOptions: null,
 };
 
+export function writeTeamPresenceCookie(hasTeam: boolean) {
+    if (typeof document === "undefined") {
+        return;
+    }
+
+    document.cookie = hasTeam
+        ? `${TEAM_PRESENCE_COOKIE_KEY}=1; Path=/; SameSite=Lax`
+        : `${TEAM_PRESENCE_COOKIE_KEY}=; Path=/; Max-Age=0; SameSite=Lax`;
+}
+
 export function readStoredTeamState(): TeamStorageSnapshot {
     if (typeof window === "undefined") {
         return DEFAULT_TEAM_STATE;
@@ -72,10 +82,13 @@ export function writeStoredTeamState(state: TeamStorageSnapshot) {
         return;
     }
 
-    window.sessionStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(state));
-    document.cookie = state.team.length > 0
-        ? `${TEAM_PRESENCE_COOKIE_KEY}=1; Path=/; SameSite=Lax`
-        : `${TEAM_PRESENCE_COOKIE_KEY}=; Path=/; Max-Age=0; SameSite=Lax`;
+    try {
+        window.sessionStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+        console.warn("Failed to persist team state", error);
+    }
+
+    writeTeamPresenceCookie(state.team.length > 0);
 }
 
 function normalizeBaseStats(value: unknown) {
@@ -244,7 +257,11 @@ export function writeSavedTeamsToStorage(teams: SavedTeamRecord[]) {
         .filter((record): record is SavedTeamRecord => Boolean(record))
         .slice(0, SAVED_TEAMS_LIMIT);
 
-    window.localStorage.setItem(SAVED_TEAMS_KEY, JSON.stringify(sanitizedTeams));
+    try {
+        window.localStorage.setItem(SAVED_TEAMS_KEY, JSON.stringify(sanitizedTeams));
+    } catch (error) {
+        console.warn("Failed to persist saved teams", error);
+    }
 }
 
 export function saveTeamToSavedTeams(input: Pick<TeamStorageSnapshot, "team" | "format" | "generationOptions">) {

@@ -28,6 +28,10 @@ export async function getClientSmogonStats(
 
   const payload = (await response.json()) as NormalizedSmogonData;
 
+  return toClientSmogonStats(payload);
+}
+
+export function toClientSmogonStats(payload: NormalizedSmogonData): Record<string, SmogonMonData> {
   return Object.fromEntries(
     Object.entries(payload.pokemon || {})
       .filter(([, mon]) => hasValidMonName(mon))

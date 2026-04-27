@@ -1,4 +1,4 @@
-import translationsEsRaw from "../data/translations-es.json";
+import translationsEsRaw from "../data/translations-es-labels.json";
 
 type NameTranslationMap = Record<string, { name?: string }>;
 

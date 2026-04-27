@@ -88,10 +88,6 @@ export default function TierListPage() {
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
             <main className="container mx-auto px-4 py-8 flex flex-col items-center gap-8">
-                <section className="w-full flex justify-center">
-                    <AdHero />
-                </section>
-
                 <header className="text-center space-y-4">
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {t("tierList.title")}
@@ -100,6 +96,10 @@ export default function TierListPage() {
                         {t("tierList.description")}
                     </p>
                 </header>
+
+                <section className="w-full flex justify-center">
+                    <AdHero />
+                </section>
 
                 <div className="flex flex-wrap gap-2 justify-center">
                     {FORMAT_OPTIONS.map((opt) => (

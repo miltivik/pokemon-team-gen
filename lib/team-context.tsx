@@ -2,7 +2,14 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { FormatId } from "@/config/formats";
-import { DEFAULT_TEAM_STATE, readStoredTeamState, writeStoredTeamState, type GameplanData, type TeamStorageSnapshot } from "@/lib/team-storage";
+import {
+    DEFAULT_TEAM_STATE,
+    readStoredTeamState,
+    writeStoredTeamState,
+    writeTeamPresenceCookie,
+    type GameplanData,
+    type TeamStorageSnapshot,
+} from "@/lib/team-storage";
 import {
     cloneGenerationOptions,
     getGenerationOptionsFormat,
@@ -52,7 +59,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const storedState = readStoredTeamState();
         stateRef.current = storedState;
-        writeStoredTeamState(storedState);
+        writeTeamPresenceCookie(storedState.team.length > 0);
         // This hydration step intentionally replays sessionStorage after mount.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setState(storedState);
