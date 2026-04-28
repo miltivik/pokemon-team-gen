@@ -9,7 +9,6 @@ import Script from "next/script";
  */
 const CONFIG = {
   adsense: {
-    // ID de publisher fijo según lo proporcionado
     publisherId: "ca-pub-7981415143867065",
   },
   ezoic: {
@@ -18,11 +17,15 @@ const CONFIG = {
   kofi: {
     kofiId: process.env.NEXT_PUBLIC_KOFI_ID || "",
   },
+  infolinks: {
+    pid: "3445165",
+    wsid: "0",
+  },
 };
 
 /**
  * Componente para cargar scripts de monetización
- * Soporta Google AdSense y Ezoic
+ * Soporta Google AdSense, Ezoic e Infolinks
  */
 export function MonetizationScripts() {
   return (
@@ -40,6 +43,23 @@ export function MonetizationScripts() {
           src={`https://www.googletagmanager.com/gtag/js?id=${CONFIG.ezoic.ezoicId}`}
         />
       )}
+
+      {/* Infolinks */}
+      <Script
+        id="infolinks-init"
+        strategy="lazyOnload"
+        dangerouslySetInnerHTML={{
+          __html: `
+            var infolinks_pid = ${CONFIG.infolinks.pid};
+            var infolinks_wsid = ${CONFIG.infolinks.wsid};
+          `,
+        }}
+      />
+      <Script
+        id="infolinks-main"
+        strategy="lazyOnload"
+        src="https://resources.infolinks.com/js/infolinks_main.js"
+      />
     </>
   );
 }
