@@ -9,6 +9,7 @@ export function ThemeSwitcher() {
     const { theme, setTheme } = useTheme();
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Required for next-themes hydration
         setMounted(true);
     }, []);
 

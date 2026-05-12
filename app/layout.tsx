@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Providers } from "../components/Providers";
-import { MonetizationScripts } from "../components/monetization/Ads";
+import { ConsentAwareScripts } from "../components/ConsentAwareScripts";
+import { CookieConsent } from "../components/CookieConsent";
 import { AnalyticsTracker } from "../components/AnalyticsTracker";
+import { WebVitalsTracker } from "../components/WebVitalsTracker";
 import { KoFiButton } from "../components/monetization/Ads";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
@@ -22,7 +23,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://pokemon-team-generator.vercel.app'),
+  metadataBase: new URL('https://poketeambuilder.com'),
   title: {
     default: 'Pokemon Team Generator',
     template: '%s | Pokemon Team Generator',
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     alternateLocale: 'es_ES',
-    url: 'https://pokemon-team-generator.vercel.app',
+    url: 'https://poketeambuilder.com',
     siteName: 'Pokemon Team Generator',
     title: 'Pokemon Team Generator - Crea Equipos Competitivos',
     description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más.',
@@ -80,7 +81,7 @@ export const metadata: Metadata = {
     creator: '@poketeamgen',
   },
   alternates: {
-    canonical: 'https://pokemon-team-generator.vercel.app',
+    canonical: 'https://poketeambuilder.com',
   },
   category: 'gaming',
   classification: 'Gaming Tools',
@@ -119,7 +120,7 @@ export default async function RootLayout({
     '@type': 'WebApplication',
     name: 'Pokemon Team Generator',
     description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más.',
-    url: 'https://pokemon-team-generator.vercel.app',
+    url: 'https://poketeambuilder.com',
     applicationCategory: 'Game',
     operatingSystem: 'Web Browser',
     offers: {
@@ -140,8 +141,6 @@ export default async function RootLayout({
     ],
   };
 
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
-
   return (
     <html lang={initialLang} suppressHydrationWarning>
       <head>
@@ -149,48 +148,20 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google AdSense */}
-        <Script
-          id="adsense"
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7981415143867065"
-          crossOrigin="anonymous"
-          strategy="lazyOnload"
-        />
-        {/* Google Analytics 4 — only loads when NEXT_PUBLIC_GA_ID is set */}
-        {gaId && (
-          <>
-            <Script
-              id="ga4-script"
-              strategy="afterInteractive"
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-            />
-            <Script
-              id="ga4-config"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${gaId}', { page_path: window.location.pathname });
-                `,
-              }}
-            />
-          </>
-        )}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50 dark:bg-black`}
       >
-        <MonetizationScripts />
+        <ConsentAwareScripts />
         <AnalyticsTracker />
+        <WebVitalsTracker />
         <KoFiButton />
         <Providers initialLang={initialLang}>
            <Navbar />
            {children}
            <Footer />
         </Providers>
+        <CookieConsent />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Script from "next/script";
 import Link from "next/link";
 import {
     BookOpen,
@@ -28,6 +29,25 @@ const playstyleIcons = {
     wind: Wind,
 };
 
+const FAQ_ITEMS = [
+  {
+    question: "What is VGC and how is it different from singles?",
+    answer: "VGC (Video Game Championships) is the official competitive doubles format. Unlike singles, you bring 6 Pokemon and choose 4 for each battle, with simultaneous turns and positioning playing a crucial role.",
+  },
+  {
+    question: "What is the current VGC regulation?",
+    answer: "VGC 2026 Regulation F allows Pokemon from the Paldea dex, Kitakami dex, and Terarium dex. Certain legendary and mythical Pokemon are restricted. Check our team generator for the current legal Pokemon list.",
+  },
+  {
+    question: "What are the best strategies in VGC?",
+    answer: "Popular VGC strategies include Trick Room, Tailwind, Rain, Sun, and Balance cores. Speed control is essential — most games are decided by who controls the speed tiers.",
+  },
+  {
+    question: "How do I start playing VGC competitively?",
+    answer: "Start by understanding the doubles format and speed mechanics. Build a team around a clear strategy using our VGC team generator, then practice on Pokemon Showdown or in-game Ranked Battles.",
+  },
+];
+
 export default function VGCGuidePage() {
     const { t, lang } = useTranslation();
 
@@ -37,8 +57,26 @@ export default function VGCGuidePage() {
 
     const guideData = FORMAT_GUIDES.vgc;
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: item.answer,
+            },
+        })),
+    };
+
     return (
         <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
+            <Script
+                id="faq-jsonld-vgc"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
                 <header className="max-w-3xl space-y-4 text-center">
                     <div className="inline-flex items-center justify-center rounded-full bg-violet-100 px-3 py-1 text-sm font-semibold text-violet-700 dark:bg-violet-950/40 dark:text-violet-300">

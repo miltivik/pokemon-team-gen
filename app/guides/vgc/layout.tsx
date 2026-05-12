@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "VGC Guide, Regulation F Teams and Doubles Strategy",
@@ -21,5 +22,15 @@ export default function VGCLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", item: "/" },
+          { name: "VGC Guide", item: "/guides/vgc" },
+        ]}
+      />
+      {children}
+    </>
+  );
 }

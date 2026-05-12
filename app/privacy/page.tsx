@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
                     Privacy Policy
                 </h1>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
-                    Last updated: March 13, 2026
+                    Last updated: May 5, 2026
                 </p>
 
                 <div className="prose prose-zinc dark:prose-invert max-w-none space-y-6">
@@ -67,7 +67,17 @@ export default function PrivacyPolicyPage() {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">5. Cookies</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">5. Cookie Consent</h2>
+                        <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                            When you first visit our Service, we display a cookie consent banner that allows you to choose whether to accept or reject non-essential cookies. Essential cookies (such as language and theme preferences) are always active because they are necessary for the website to function.
+                        </p>
+                        <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
+                            If you choose &quot;Reject Non-Essential&quot;, we will not load analytics or advertising scripts, including Google AdSense and Google Analytics 4. You can change your preference at any time by clearing your browser&apos;s localStorage for poketeambuilder.com and refreshing the page.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">6. Cookies</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mb-3">
                             Our Service uses the following types of cookies:
                         </p>
@@ -79,7 +89,7 @@ export default function PrivacyPolicyPage() {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">6. Third-Party Services</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">7. Third-Party Services</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mb-3">
                             Our Service may contain links to third-party websites or use data from external sources:
                         </p>
@@ -91,21 +101,21 @@ export default function PrivacyPolicyPage() {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">7. Data Security</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">8. Data Security</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
                             We value your trust in providing us your information, and we strive to use commercially acceptable means of protecting it. However, no method of transmission over the Internet or method of electronic storage is 100% secure, and we cannot guarantee its absolute security.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">8. Children&apos;s Privacy</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">9. Children&apos;s Privacy</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
                             Our Service is intended for general audiences and does not knowingly collect personally identifiable information from children under 13 years of age. If you are a parent or guardian and believe that your child has provided us with personal data, please contact us so that we can take the necessary actions.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">9. Your Rights</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">10. Your Rights</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mb-3">
                             Depending on your location, you may have the following rights regarding your personal data:
                         </p>
@@ -114,19 +124,20 @@ export default function PrivacyPolicyPage() {
                             <li>The right to request correction of inaccurate data</li>
                             <li>The right to request deletion of your data</li>
                             <li>The right to opt out of personalized advertising</li>
+                            <li>The right to withdraw or change your cookie consent at any time</li>
                             <li>The right to data portability</li>
                         </ul>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">10. Changes to This Policy</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">11. Changes to This Policy</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
                             We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date. We advise you to review this Privacy Policy periodically for any changes.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">11. Contact Us</h2>
+                        <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">12. Contact Us</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
                             If you have any questions about this Privacy Policy, please contact us through our{" "}
                             <Link href="/contact" className="text-blue-600 dark:text-blue-400 hover:underline">

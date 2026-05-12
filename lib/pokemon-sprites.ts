@@ -132,7 +132,7 @@ export function getPokemonSpriteUrl(
     variant: PokemonSpriteVariant = "artwork"
 ): string {
     const name = typeof pokemon === "string" ? pokemon : pokemon?.name ?? "";
-    let num =
+    const num =
         typeof pokemon === "string"
             ? pokemonNumbers[name] ?? 0
             : pokemon?.num ?? pokemonNumbers[name] ?? 0;

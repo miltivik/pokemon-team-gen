@@ -113,3 +113,24 @@ export function getStrategicRoleDescription(
 
   return key ? t(key) : undefined;
 }
+
+export function getStrategicRoleHowToPlay(
+  role: string | undefined,
+  t: (key: string) => string
+): string | undefined {
+  if (!role) return undefined;
+
+  const key = role.startsWith("role.")
+    ? role
+    : STRATEGIC_ROLE_DESCRIPTION_KEYS[role];
+
+  if (!key) return undefined;
+
+  const descKey = `${key}.desc`;
+  const desc = t(descKey);
+
+  // If translation falls back to the key itself, the description doesn't exist
+  if (desc === descKey) return undefined;
+
+  return desc;
+}

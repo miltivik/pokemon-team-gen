@@ -448,10 +448,33 @@ export function ExploreSection() {
     const { t } = useTranslation();
     const exploreLinks = [
         {
+            href: "/pokemon",
+            titleKey: "home.explore.pokemon",
+            descriptionKey: "home.explore.pokemonDesc",
+            labelKey: "home.explore.labelPokemon",
+            fallbackTitle: "Pokemon Profiles",
+            fallbackDescription: "Browse competitive Pokemon with stats, abilities and movesets.",
+            fallbackLabel: "Pokedex",
+            accentClass: "border-red-200/70 bg-red-50/60 text-red-700 dark:border-red-900/60 dark:bg-red-950/20 dark:text-red-300",
+        },
+        {
+            href: "/teams",
+            titleKey: "home.explore.teams",
+            descriptionKey: "home.explore.teamsDesc",
+            labelKey: "home.explore.labelTeams",
+            fallbackTitle: "Team Archetypes",
+            fallbackDescription: "Explore Rain, Hyper Offense, Stall, Trick Room and more strategies.",
+            fallbackLabel: "Strategies",
+            accentClass: "border-violet-200/70 bg-violet-50/60 text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/20 dark:text-violet-300",
+        },
+        {
             href: "/guides/gen9-ou",
             titleKey: "home.explore.guides",
             descriptionKey: "home.explore.guidesDesc",
             labelKey: "home.explore.labelGuides",
+            fallbackTitle: "Guides",
+            fallbackDescription: "Learn the metagame with Gen 9 OU and VGC guides.",
+            fallbackLabel: "Guides",
             accentClass: "border-orange-200/70 bg-orange-50/60 text-orange-700 dark:border-orange-900/60 dark:bg-orange-950/20 dark:text-orange-300",
         },
         {
@@ -459,6 +482,9 @@ export function ExploreSection() {
             titleKey: "home.explore.tier",
             descriptionKey: "home.explore.tierDesc",
             labelKey: "home.explore.labelTier",
+            fallbackTitle: "Tier List",
+            fallbackDescription: "Check viability rankings and usage stats for every format.",
+            fallbackLabel: "Rankings",
             accentClass: "border-emerald-200/70 bg-emerald-50/60 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/20 dark:text-emerald-300",
         },
         {
@@ -466,6 +492,9 @@ export function ExploreSection() {
             titleKey: "home.explore.about",
             descriptionKey: "home.explore.aboutDesc",
             labelKey: "home.explore.labelAbout",
+            fallbackTitle: "About",
+            fallbackDescription: "Learn more about Pokemon Team Generator and how it works.",
+            fallbackLabel: "Info",
             accentClass: "border-cyan-200/70 bg-cyan-50/60 text-cyan-700 dark:border-cyan-900/60 dark:bg-cyan-950/20 dark:text-cyan-300",
         },
     ];
@@ -480,21 +509,26 @@ export function ExploreSection() {
             </h2>
 
             <div className="mt-8 grid gap-6 md:grid-cols-3" role="list">
-                {exploreLinks.map((item) => (
-                    <Link key={item.href} href={item.href} prefetch={false} role="listitem">
-                        <div className="h-full rounded-[1.5rem] border border-zinc-200/80 bg-white/80 p-6 transition-all hover:-translate-y-1 hover:shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/60">
-                            <div className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-[0.18em] ${item.accentClass}`}>
-                                {t(item.labelKey)}
+                {exploreLinks.map((item) => {
+                    const label = t(item.labelKey) === item.labelKey ? item.fallbackLabel : t(item.labelKey);
+                    const title = t(item.titleKey) === item.titleKey ? item.fallbackTitle : t(item.titleKey);
+                    const description = t(item.descriptionKey) === item.descriptionKey ? item.fallbackDescription : t(item.descriptionKey);
+                    return (
+                        <Link key={item.href} href={item.href} prefetch={false} role="listitem">
+                            <div className="h-full rounded-[1.5rem] border border-zinc-200/80 bg-white/80 p-6 transition-all hover:-translate-y-1 hover:shadow-md dark:border-zinc-800/80 dark:bg-zinc-900/60">
+                                <div className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-[0.18em] ${item.accentClass}`}>
+                                    {label}
+                                </div>
+                                <h3 className="mt-4 text-lg font-bold text-zinc-900 dark:text-white">
+                                    {title}
+                                </h3>
+                                <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                                    {description}
+                                </p>
                             </div>
-                            <h3 className="mt-4 text-lg font-bold text-zinc-900 dark:text-white">
-                                {t(item.titleKey)}
-                            </h3>
-                            <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                                {t(item.descriptionKey)}
-                            </p>
-                        </div>
-                    </Link>
-                ))}
+                        </Link>
+                    );
+                })}
             </div>
         </section>
     );

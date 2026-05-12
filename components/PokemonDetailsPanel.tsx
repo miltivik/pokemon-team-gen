@@ -24,7 +24,8 @@ import type {
     TeamBuildPreset,
 } from "@/lib/team-guide";
 import { ItemIcon } from "@/components/ItemIcon";
-import type { Role } from "@/lib/showdown-data";
+import { getMoveData, type Role } from "@/lib/showdown-data";
+import { inferPrimaryStrategicRole, getStrategicRoleLabel, getStrategicRoleHowToPlay } from "@/lib/strategic-role";
 
 const ALGORITHM_PRESET_ID = "__algorithm__";
 
@@ -147,8 +148,7 @@ function fetchPokemonDetails(
     ability?: string,
     evs?: string,
     role?: Role,
-    pokemonAbilities?: Record<string, string>,
-    signal?: AbortSignal
+    pokemonAbilities?: Record<string, string>
 ): Promise<PokemonDetailsResponse> {
     const cacheKey = getCacheKey(name, format, lang, moves, item, ability, pokemonAbilities, evs, role);
 
@@ -160,7 +160,6 @@ function fetchPokemonDetails(
         const response = await fetch("/api/pokemon-details", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            signal,
             body: JSON.stringify({
                 name,
                 format,
@@ -264,16 +263,19 @@ function buildFallbackDetails(
             desc: "",
             selected: ability === pokemon.ability,
         })),
-        moves: moveNames.map((moveName) => ({
-            name: moveName,
-            label: moveName,
-            type: "Normal",
-            category: "Status",
-            basePower: null,
-            accuracy: null,
-            pp: 0,
-            desc: "",
-        })),
+        moves: moveNames.map((moveName) => {
+            const moveData = getMoveData(moveName);
+            return {
+                name: moveName,
+                label: moveData?.name || moveName,
+                type: moveData?.type || "Normal",
+                category: moveData?.category || "Status",
+                basePower: moveData?.basePower ?? null,
+                accuracy: moveData?.accuracy ?? null,
+                pp: moveData?.pp ?? 0,
+                desc: moveData?.shortDesc || moveData?.desc || "",
+            };
+        }),
         availableRolePresets: [],
         smogonUrl: "",
         currentRole: requestedRole,
@@ -419,7 +421,6 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         data: null,
         error: null,
     });
-    const abortControllerRef = useRef<AbortController | null>(null);
     const presetAbortControllerRef = useRef<AbortController | null>(null);
 
     const displayItem = pokemon.item || item;
@@ -431,6 +432,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         () => getCacheKey(pokemon.name, format || "", lang, moveNames, displayItem, pokemon.ability, pokemon.abilities as Record<string, string> | undefined, displayEvs, requestedRole),
         [pokemon.name, format, lang, moveNames, displayItem, pokemon.ability, pokemon.abilities, displayEvs, requestedRole]
     );
+
+
     const fallbackDetails = useMemo(
         () => buildFallbackDetails(pokemon, requestedRole, t, displayItem),
         [pokemon, requestedRole, t, displayItem]
@@ -446,7 +449,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
     );
 
     const algorithmPreset = useMemo<TeamBuildPreset>(() => {
-        const strategicRoleLabel = activeDetails.algorithmLabel || t("details.algorithmRecommendation");
+        const rawLabel = activeDetails.algorithmLabel || t("details.algorithmRecommendation");
+        const strategicRoleLabel = rawLabel.startsWith("role.") ? t(rawLabel) : rawLabel;
         return pokemon.buildPresets?.[ALGORITHM_PRESET_ID] ?? {
             id: ALGORITHM_PRESET_ID,
             label: strategicRoleLabel,
@@ -463,9 +467,19 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         };
     }, [activeDetails.algorithmLabel, currentRole, displayEvs, displayItem, displayNature, moveNames, pokemon.ability, pokemon.analysis?.howToPlay, pokemon.analysis?.role, pokemon.buildPresets, pokemon.teraType, t]);
 
+    const inferredStrategicRole = inferPrimaryStrategicRole({
+        species: pokemon.baseStats ? { baseStats: pokemon.baseStats } : undefined,
+        moves: moveNames,
+        ability: pokemon.ability,
+        broadRole: currentRole,
+    });
+    const inferredStrategicRoleLabel = getStrategicRoleLabel(inferredStrategicRole, t);
+    const strategicRoleHowToPlay = getStrategicRoleHowToPlay(inferredStrategicRole, t);
+
     const memberSummary =
         pokemon.analysis?.summary ||
         pokemon.analysis?.howToPlay ||
+        strategicRoleHowToPlay ||
         t(getRoleDescriptionKey(currentRole));
 
     const preserveTips = pokemon.analysis?.preserve ?? [];
@@ -474,7 +488,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
     const decisionRules = pokemon.analysis?.decisionRules ?? [];
     const primaryFunctionLabel =
         pokemon.analysis?.primaryFunction ||
-        activeDetails.algorithmLabel ||
+        (activeDetails.algorithmLabel?.startsWith("role.") ? t(activeDetails.algorithmLabel) : activeDetails.algorithmLabel) ||
+        inferredStrategicRoleLabel ||
         t(getRoleDescriptionKey(currentRole));
 
     const presetOptions = useMemo<PresetOption[]>(() => {
@@ -494,9 +509,10 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
 
         availableRolePresets.forEach((rolePreset) => {
             if (!options.has(rolePreset)) {
+                const label = rolePreset.startsWith("role.") ? t(rolePreset) : rolePreset;
                 options.set(rolePreset, {
                     id: rolePreset,
-                    label: rolePreset,
+                    label,
                 });
             }
         });
@@ -525,15 +541,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         selectedPresetId === ALGORITHM_PRESET_ID && pokemon.analysis?.howToPlay
             ? t(pokemon.analysis.howToPlay).replace("Synergy Tip:", `${t("analysis.synergyTip")}:`)
             : selectedPresetId === ALGORITHM_PRESET_ID
-                ? activeDetails.algorithmLabel || memberSummary
+                ? strategicRoleHowToPlay || activeDetails.algorithmLabel || memberSummary
                 : memberSummary;
-
-    useEffect(() => {
-        return () => {
-            abortControllerRef.current?.abort();
-            presetAbortControllerRef.current?.abort();
-        };
-    }, []);
 
     useEffect(() => {
         if (!open) {
@@ -541,11 +550,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         }
 
         let ignore = false;
-        abortControllerRef.current?.abort();
-        const abortController = new AbortController();
-        abortControllerRef.current = abortController;
-
         const langParam = lang === "en" ? "en" : "es";
+
         fetchPokemonDetails(
             pokemon.name,
             format || "",
@@ -555,8 +561,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
             pokemon.ability,
             displayEvs,
             requestedRole,
-            pokemon.abilities as Record<string, string> | undefined,
-            abortController.signal
+            pokemon.abilities as Record<string, string> | undefined
         )
             .then((data) => {
                 if (!ignore) {
@@ -567,8 +572,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                     });
                 }
             })
-            .catch((err) => {
-                if (ignore || err.name === "AbortError") return;
+            .catch(() => {
+                if (ignore) return;
                 setDetailsState({
                     requestKey,
                     data: null,
@@ -578,7 +583,6 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
 
         return () => {
             ignore = true;
-            abortController.abort();
         };
     }, [open, requestKey, pokemon.name, format, lang, moveNames, displayItem, pokemon.ability, displayEvs, requestedRole, pokemon.abilities]);
 
@@ -608,7 +612,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                     role: preset.analysisRole,
                     nature: preset.nature ?? displayNature ?? "Serious",
                     evs: preset.evs ?? displayEvs,
-                    howToPlay: preset.analysisHowToPlay,
+                    howToPlay: preset.analysisHowToPlay ?? pokemon.analysis?.howToPlay,
                     summary: preset.analysisHowToPlay ?? pokemon.analysis?.summary,
                 },
             });
@@ -633,7 +637,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                     role: preset.analysisRole ?? preset.label,
                     nature: preset.nature ?? displayNature ?? "Serious",
                     evs: preset.evs ?? displayEvs,
-                    howToPlay: preset.analysisHowToPlay,
+                    howToPlay: preset.analysisHowToPlay ?? pokemon.analysis?.howToPlay,
                     summary: preset.analysisHowToPlay ?? pokemon.analysis?.summary,
                 },
             });
@@ -683,8 +687,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                         role: presetId,
                         nature: presetSet.nature,
                         evs: presetSet.evs,
-                        howToPlay: undefined,
-                        summary: undefined,
+                        howToPlay: pokemon.analysis?.howToPlay,
+                        summary: pokemon.analysis?.summary,
                     },
                 });
             })
@@ -701,6 +705,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-5xl border-zinc-200 bg-zinc-50 p-0 text-zinc-950 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50">
+                <DialogTitle className="sr-only">{pokemon.name}</DialogTitle>
                 <DialogDescription className="sr-only">Details for {pokemon.name}</DialogDescription>
 
                 <div className="relative overflow-hidden rounded-t-xl bg-zinc-900 px-6 py-5 text-white">
@@ -735,7 +740,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                                             Gen {activeDetails.generation || "?"}
                                         </Badge>
                                     </div>
-                                    <DialogTitle className="mb-2 text-3xl font-black capitalize">{pokemon.name}</DialogTitle>
+                                    <h2 className="mb-2 text-3xl font-black capitalize">{pokemon.name}</h2>
                                     <div className="flex flex-wrap gap-2">
                                         {(pokemon.types || []).map((type) => (
                                             <Badge key={type} className={`${getTypeColorClass(type)} border-0 text-white`}>
@@ -779,7 +784,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                                             </SelectContent>
                                         </Select>
                                     ) : (
-                                        <Badge variant="outline">{selectedPresetId === ALGORITHM_PRESET_ID ? algorithmPreset.label : selectedPresetId}</Badge>
+                                        <Badge variant="outline">{selectedPresetId === ALGORITHM_PRESET_ID ? algorithmPreset.label : selectedPresetId.startsWith("role.") ? t(selectedPresetId) : selectedPresetId}</Badge>
                                     )}
                                 </div>
                                 <p className="text-sm font-medium leading-relaxed text-zinc-700 dark:text-zinc-300">{strategicDescription}</p>

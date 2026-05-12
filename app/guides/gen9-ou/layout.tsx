@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "Gen 9 OU Guide, Meta Picks and Team Building Tips",
@@ -21,5 +22,15 @@ export default function Gen9OULayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", item: "/" },
+          { name: "Gen 9 OU Guide", item: "/guides/gen9-ou" },
+        ]}
+      />
+      {children}
+    </>
+  );
 }

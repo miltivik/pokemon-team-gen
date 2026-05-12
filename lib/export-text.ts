@@ -1,6 +1,7 @@
 const COMMON_ITEMS = ["Leftovers", "Life Orb", "Choice Scarf", "Choice Band", "Choice Specs"];
 const COMMON_NATURES = ["Adamant", "Jolly", "Modest", "Timid", "Bold", "Calm"];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getExportText(team: any[]): string {
     return team
         .map((pokemon: any) => {
@@ -12,7 +13,8 @@ export function getExportText(team: any[]): string {
 
             let moveNames: string[] = [];
             if (pokemon.moves && pokemon.moves.length > 0 && typeof pokemon.moves[0] !== "string") {
-                moveNames = pokemon.moves.map((move: any) => move.name);
+                moveNames = pokemon.moves.map((move: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    any) => move.name);
             } else if (pokemon.moves && pokemon.moves.length > 0) {
                 moveNames = pokemon.moves;
             } else {
@@ -25,6 +27,7 @@ export function getExportText(team: any[]): string {
                     evsText = pokemon.evs ? `EVs: ${pokemon.evs}` : evsText;
                 } else if (typeof pokemon.evs === "object") {
                     const evEntries = Object.entries(
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         pokemon.evs as Record<string, number>
                     ).filter(([, value]) => value > 0);
 

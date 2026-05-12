@@ -1,0 +1,11 @@
+# Security.txt for poketeambuilder.com
+# https://securitytxt.org/
+
+# How to report a security vulnerability
+Contact: mailto:security@poketeambuilder.com
+
+# Preferred languages for security reports
+Preferred-Languages: en, es
+
+# Expiration date for this security.txt file
+Expires: 2027-05-05T17:46:00.000Z

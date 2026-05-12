@@ -168,8 +168,20 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let body: Record<string, unknown>;
+  let text = "";
   try {
-    const body = await request.json();
+    text = await request.text();
+    if (!text || text.trim().length === 0) {
+      return NextResponse.json({ error: "Empty request body" }, { status: 400 });
+    }
+    body = JSON.parse(text);
+  } catch (parseError) {
+    console.error("POST /api/pokemon-details: Invalid JSON body", text, parseError);
+    return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
+  }
+
+  try {
     const {
       name,
       format = "",
@@ -180,7 +192,7 @@ export async function POST(request: NextRequest) {
       evs,
       role,
       abilities: pokemonAbilities,
-    } = body as PokemonDetailsParams & {
+    } = body as unknown as PokemonDetailsParams & {
       moves?: string[];
       abilities?: Record<string, string>;
       evs?: string;
@@ -219,7 +231,11 @@ export async function POST(request: NextRequest) {
     const availableRolePresets = getAvailableRolePresets(name, format);
 
     const strategicRoleLabel = getStrategicRoleLabel(currentRole, (key: string) => key);
-    const algorithmLabel = strategicRoleLabel || (lang === "es" ? "Recomendación del algoritmo" : "Algorithm recommendation");
+    // If the label resolved to a raw translation key, fall back to the readable role name
+    const algorithmLabel =
+      (strategicRoleLabel && !strategicRoleLabel.startsWith("role."))
+        ? strategicRoleLabel
+        : (currentRole || (lang === "es" ? "Recomendación del algoritmo" : "Algorithm recommendation"));
 
     const smogonUrl = getSmogonDetailsUrl(name, format);
 

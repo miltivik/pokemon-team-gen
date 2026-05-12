@@ -9,7 +9,9 @@
 import setsData from '@/data/gen9-sets.json';
 import pokedexData from '@/data/pokedex.json';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sets: Record<string, any> = setsData;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pokedex: Record<string, any> = pokedexData;
 
 /**

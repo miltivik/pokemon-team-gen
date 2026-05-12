@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Image from "next/image";
 import { getItemSpriteUrls } from "@/lib/items";
 
@@ -10,10 +10,6 @@ interface ItemIconProps {
     size?: number;
 }
 
-/**
- * SVG fallback icon for items when no sprite is available.
- * This is a simple bag/backpack icon to represent items.
- */
 function ItemFallbackIcon({ size }: { size: number }) {
     return (
         <svg
@@ -34,15 +30,9 @@ function ItemFallbackIcon({ size }: { size: number }) {
     );
 }
 
-export function ItemIcon({ item, className = "", size = 24 }: ItemIconProps) {
-    const urls = useMemo(() => getItemSpriteUrls(item), [item]);
+function ItemImage({ item, urls, size, className }: { item: string; urls: string[]; size: number; className: string }) {
     const [srcIndex, setSrcIndex] = useState(0);
     const [allFailed, setAllFailed] = useState(false);
-
-    useEffect(() => {
-        setSrcIndex(0);
-        setAllFailed(false);
-    }, [item, urls]);
 
     const handleError = useCallback(() => {
         if (srcIndex < urls.length - 1) {
@@ -52,12 +42,6 @@ export function ItemIcon({ item, className = "", size = 24 }: ItemIconProps) {
         }
     }, [srcIndex, urls.length]);
 
-    // No item
-    if (!item || item.toLowerCase() === 'nothing' || item.toLowerCase() === 'no item') {
-        return null;
-    }
-
-    // All sources exhausted - show fallback icon
     if (allFailed || srcIndex >= urls.length) {
         return (
             <div
@@ -82,5 +66,23 @@ export function ItemIcon({ item, className = "", size = 24 }: ItemIconProps) {
                 draggable={false}
             />
         </div>
+    );
+}
+
+export function ItemIcon({ item, className = "", size = 24 }: ItemIconProps) {
+    const urls = useMemo(() => getItemSpriteUrls(item), [item]);
+
+    if (!item || item.toLowerCase() === 'nothing' || item.toLowerCase() === 'no item') {
+        return null;
+    }
+
+    return (
+        <ItemImage
+            key={`${item}-${urls[0]}`}
+            item={item}
+            urls={urls}
+            size={size}
+            className={className}
+        />
     );
 }

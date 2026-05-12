@@ -20,11 +20,11 @@ export default function BestPokemonGen9OUArticle() {
             name: "Pokemon Team Generator",
             logo: {
                 "@type": "ImageObject",
-                url: "https://pokemon-team-generator.vercel.app/icons/logo-dark-nobg.png",
+                url: "https://poketeambuilder.com/icons/logo-dark-nobg.png",
             },
         },
-        image: "https://pokemon-team-generator.vercel.app/og-image.png",
-        mainEntityOfPage: "https://pokemon-team-generator.vercel.app/blog/best-pokemon-gen9-ou",
+        image: "https://poketeambuilder.com/og-image.png",
+        mainEntityOfPage: "https://poketeambuilder.com/blog/best-pokemon-gen9-ou",
     };
 
     return (

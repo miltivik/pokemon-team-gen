@@ -198,6 +198,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
     }, [team.length]);
 
     useEffect(() => {
+        mountedRef.current = true;
         return () => {
             mountedRef.current = false;
         };

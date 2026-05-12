@@ -20,11 +20,11 @@ export default function HowToBuildCompetitiveTeamArticle() {
             name: "Pokemon Team Generator",
             logo: {
                 "@type": "ImageObject",
-                url: "https://pokemon-team-generator.vercel.app/icons/logo-dark-nobg.png",
+                url: "https://poketeambuilder.com/icons/logo-dark-nobg.png",
             },
         },
-        image: "https://pokemon-team-generator.vercel.app/og-image.png",
-        mainEntityOfPage: "https://pokemon-team-generator.vercel.app/blog/how-to-build-competitive-team",
+        image: "https://poketeambuilder.com/og-image.png",
+        mainEntityOfPage: "https://poketeambuilder.com/blog/how-to-build-competitive-team",
     };
 
     return (

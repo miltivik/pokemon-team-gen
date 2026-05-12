@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useTranslation } from "@/lib/i18n";
+import { CookieSettingsModal } from "@/components/CookieSettings";
 
 export function Footer() {
     const { t, lang } = useTranslation();
+    const [showCookieSettings, setShowCookieSettings] = useState(false);
     const currentYear = new Date().getFullYear();
     const copy = {
         brandName: "PokeTeamBuilder",
@@ -19,6 +22,7 @@ export function Footer() {
         legal: lang === "es" ? "Legal" : "Legal",
         privacy: lang === "es" ? "Politica de privacidad" : "Privacy Policy",
         terms: lang === "es" ? "Terminos del servicio" : "Terms of Service",
+        cookies: lang === "es" ? "Configuracion de cookies" : "Cookie Settings",
         contact: lang === "es" ? "Contacto" : "Contact",
         disclaimer:
             lang === "es"
@@ -137,6 +141,14 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <button
+                                    onClick={() => setShowCookieSettings(true)}
+                                    className="text-left text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {copy.cookies}
+                                </button>
+                            </li>
+                            <li>
                                 <Link
                                     href="/about"
                                     className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
@@ -156,6 +168,10 @@ export function Footer() {
                         </p>
                     </div>
                 </div>
+
+                {showCookieSettings && (
+                    <CookieSettingsModal onClose={() => setShowCookieSettings(false)} />
+                )}
             </div>
         </footer>
     );

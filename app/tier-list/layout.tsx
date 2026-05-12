@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "Pokemon Tier List and Viability Rankings",
@@ -21,5 +22,15 @@ export default function TierListLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", item: "/" },
+          { name: "Tier List", item: "/tier-list" },
+        ]}
+      />
+      {children}
+    </>
+  );
 }

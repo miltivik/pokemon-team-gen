@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
   title: "Competitive Pokemon Blog, Guides and Team Building Tips",
@@ -33,5 +34,15 @@ export default function BlogLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", item: "/" },
+          { name: "Blog", item: "/blog" },
+        ]}
+      />
+      {children}
+    </>
+  );
 }

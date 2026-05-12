@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import Script from "next/script";
 
 /**
  * Configuración de monetización
@@ -24,44 +23,12 @@ const CONFIG = {
 };
 
 /**
- * Componente para cargar scripts de monetización
- * Soporta Google AdSense, Ezoic e Infolinks
+ * Componente para cargar scripts de monetización.
+ * @deprecated La carga de scripts de terceros ahora se maneja mediante
+ * {@link ConsentAwareScripts} en app/layout.tsx, que respeta el consentimiento de cookies.
  */
 export function MonetizationScripts() {
-  return (
-    <>
-      {/*
-        Nota: El script de Google AdSense ahora está directamente en el <head> de app/layout.tsx
-        para facilitar y garantizar la verificación por parte del bot de AdSense.
-      */}
-
-      {/* Cargar Ezoic (si está configurado) */}
-      {CONFIG.ezoic.ezoicId && (
-        <Script
-          id="ezoic-init"
-          strategy="lazyOnload"
-          src={`https://www.googletagmanager.com/gtag/js?id=${CONFIG.ezoic.ezoicId}`}
-        />
-      )}
-
-      {/* Infolinks */}
-      <Script
-        id="infolinks-init"
-        strategy="lazyOnload"
-        dangerouslySetInnerHTML={{
-          __html: `
-            var infolinks_pid = ${CONFIG.infolinks.pid};
-            var infolinks_wsid = ${CONFIG.infolinks.wsid};
-          `,
-        }}
-      />
-      <Script
-        id="infolinks-main"
-        strategy="lazyOnload"
-        src="https://resources.infolinks.com/js/infolinks_main.js"
-      />
-    </>
-  );
+  return null;
 }
 
 // Extender el tipo Window para adsbygoogle

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AdHero, AdBanner } from "@/components/monetization/Ads";
 import { TierListLoadingSkeleton } from "@/components/page-skeletons";
+import Image from "next/image";
 import { useTranslation } from "@/lib/i18n";
 import { analytics } from "@/lib/analytics";
 import { getClientSmogonStats, classifyTier, TierRank, SmogonMonData } from "@/lib/client-smogon-stats";
@@ -134,16 +136,20 @@ export default function TierListPage() {
                                             "sprite"
                                         );
 
+                                        const slug = mon.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
                                         return (
-                                            <div key={mon.name} className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:shadow-md transition-shadow">
+                                            <Link
+                                                key={mon.name}
+                                                href={`/pokemon/${slug}`}
+                                                className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:shadow-md transition-shadow hover:border-blue-300 dark:hover:border-blue-700"
+                                            >
                                                 <div className="w-10 h-10 relative flex-shrink-0">
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
+                                                    <Image
                                                         src={spriteUrl}
                                                         alt={mon.name}
-                                                        className="w-full h-full object-contain pixelated"
-                                                        loading="lazy"
-                                                        decoding="async"
+                                                        fill
+                                                        sizes="40px"
+                                                        className="object-contain pixelated"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col min-w-0">
@@ -154,7 +160,7 @@ export default function TierListPage() {
                                                         {formatPercentage(mon.usage, { fromRatio: true })}
                                                     </span>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         );
                                     })}
                                 </div>

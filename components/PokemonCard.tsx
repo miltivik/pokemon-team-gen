@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import type { PokedexEntry, MoveData } from "@/lib/showdown-data";
+import { getMoveData, getProperMoveName } from "@/lib/showdown-data";
 import type {
     GeneratedTeamMember,
     PokemonAnalysis,
@@ -53,11 +54,15 @@ interface PokemonCardProps {
 }
 
 function getMoveName(move: MoveData | string) {
-    return typeof move === "string" ? move : move.name;
+    if (typeof move !== "string") return move.name;
+    const data = getMoveData(move);
+    return data?.name ?? getProperMoveName(move);
 }
 
 function getMoveType(move: MoveData | string) {
-    return typeof move === "string" ? undefined : move.type;
+    if (typeof move !== "string") return move.type;
+    const data = getMoveData(move);
+    return data?.type;
 }
 
 function getRole(stats: PokedexEntry["baseStats"]) {
@@ -219,11 +224,12 @@ export function PokemonCard({ pokemon, onSelect, onPrefetchDetails }: PokemonCar
                                                         TYPE_BG_COLORS[moveType.toLowerCase()] || "#999",
                                                 }}
                                             >
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img
+                                                <Image
                                                     src={`/icons/types/${moveType.toLowerCase()}.svg`}
                                                     alt=""
-                                                    style={{ height: 10, width: 10, objectFit: "contain" }}
+                                                    width={10}
+                                                    height={10}
+                                                    className="object-contain"
                                                 />
                                             </span>
                                         ) : (

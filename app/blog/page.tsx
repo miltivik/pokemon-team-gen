@@ -5,12 +5,30 @@ import { useTranslation } from "@/lib/i18n";
 
 const articles = [
     {
+        slug: "best-rain-team-gen9-ou",
+        title: "Best Rain Team Pokemon for Gen 9 OU",
+        description: "Discover the best Rain team Pokemon in Gen 9 OU. From Drizzle setters to Swift Swim sweepers, build a dominant weather team.",
+        date: "May 3, 2026",
+        readTime: "7 min read",
+        emoji: "🌧️",
+        tags: ["Gen 9 OU", "Weather", "Rain"],
+    },
+    {
+        slug: "top-vgc-2026-pokemon",
+        title: "Top VGC 2026 Pokemon and Team Cores",
+        description: "Explore the strongest Pokemon and cores dominating VGC 2026 Regulation F. From Flutter Mane to Incineroar, build winning teams.",
+        date: "May 3, 2026",
+        readTime: "8 min read",
+        emoji: "🏆",
+        tags: ["VGC", "Doubles", "Meta"],
+    },
+    {
         slug: "best-pokemon-gen9-ou",
         title: "Top 10 Best Pokémon for Gen 9 OU in 2026",
         description: "A deep dive into the most dominant Pokémon in the Gen 9 OU metagame, including sets, counters, and teambuilding tips.",
         date: "March 10, 2026",
         readTime: "8 min read",
-        emoji: "🏆",
+        emoji: "🥇",
         tags: ["Gen 9 OU", "Competitive", "Strategy"],
     },
     {

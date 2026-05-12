@@ -1,9 +1,0 @@
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Allow: /
-
-# Block server-side API endpoints from indexing (not blocking JS assets)
-Disallow: /api/
-
-# Sitemap
-Sitemap: https://pokemon-team-generator.vercel.app/sitemap.xml
