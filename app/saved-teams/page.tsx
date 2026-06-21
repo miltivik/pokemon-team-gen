@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/saved-teams",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
     title: "Saved Teams",
     description:

@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/analisis",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
     title: "Team Analysis and Strategy",
     description:

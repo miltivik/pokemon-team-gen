@@ -123,7 +123,7 @@ export function ConsentAwareScripts() {
 
   return (
     <>
-      <AdSenseLoader />
+      {hasAdvertising && <AdSenseLoader />}
       {hasAnalytics && <GA4Loader />}
       {hasAdvertising && <InfolinksLoader />}
       {hasAdvertising && <EzoicLoader />}

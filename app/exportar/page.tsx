@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/exportar",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
     title: "Export to Pokemon Showdown",
     description:

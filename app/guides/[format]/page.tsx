@@ -80,7 +80,6 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
             try {
                 setLoading(true);
                 const response = await fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, {
-                    cache: "no-store",
                     signal: controller.signal,
                 });
 

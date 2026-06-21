@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from "web-vitals";
-import { getConsent } from "@/lib/consent";
+import { hasConsent } from "@/lib/consent";
 
 function sendToAnalytics({ name, value, rating }: { name: string; value: number; rating: string }) {
   // Send to Google Analytics 4 if available
@@ -28,7 +28,7 @@ function sendToAnalytics({ name, value, rating }: { name: string; value: number;
 
 export function WebVitalsTracker() {
   useEffect(() => {
-    if (getConsent() !== "granted") return;
+    if (!hasConsent("analytics")) return;
 
     onLCP(sendToAnalytics);
     onINP(sendToAnalytics);

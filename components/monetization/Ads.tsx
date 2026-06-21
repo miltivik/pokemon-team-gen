@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
+import { hasConsent } from "@/lib/consent";
 
 /**
  * Configuración de monetización
@@ -27,10 +28,6 @@ const CONFIG = {
  * @deprecated La carga de scripts de terceros ahora se maneja mediante
  * {@link ConsentAwareScripts} en app/layout.tsx, que respeta el consentimiento de cookies.
  */
-export function MonetizationScripts() {
-  return null;
-}
-
 // Extender el tipo Window para adsbygoogle
 declare global {
   interface Window {
@@ -72,6 +69,19 @@ function useDeferredAdMount(delayMs: number = 1200) {
   return mounted;
 }
 
+function useAdvertisingConsent() {
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    const update = () => setAllowed(hasConsent("advertising"));
+    update();
+    window.addEventListener("consentChanged", update);
+    return () => window.removeEventListener("consentChanged", update);
+  }, []);
+
+  return allowed;
+}
+
 interface AdSlotProps {
   placement: string;
   slot: string;
@@ -96,12 +106,14 @@ function AdSlot({
   fullWidthResponsive,
 }: AdSlotProps) {
   const mounted = useDeferredAdMount();
+  const hasAdvertising = useAdvertisingConsent();
+  const hasConfiguredSlot = slot.trim().length > 0 && !slot.startsWith("123456789");
   const pushedRef = useRef(false);
   const adRef = useRef<HTMLModElement | null>(null);
   const [isUnfilled, setIsUnfilled] = useState(false);
 
   useEffect(() => {
-    if (!mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
+    if (!hasAdvertising || !hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
       return;
     }
 
@@ -111,11 +123,11 @@ function AdSlot({
     } catch (error) {
       console.error("AdSense error:", error);
     }
-  }, [mounted]);
+  }, [hasAdvertising, hasConfiguredSlot, mounted]);
 
   useEffect(() => {
     const adElement = adRef.current;
-    if (!mounted || !adElement || !CONFIG.adsense.publisherId) {
+    if (!hasConfiguredSlot || !mounted || !adElement || !CONFIG.adsense.publisherId) {
       return;
     }
 
@@ -135,7 +147,9 @@ function AdSlot({
     return () => {
       observer.disconnect();
     };
-  }, [mounted, placement, slot]);
+  }, [hasConfiguredSlot, mounted, placement, slot]);
+
+  if (!hasConfiguredSlot) return null;
 
   return (
     <div
@@ -198,19 +212,6 @@ export function AdBanner() {
 /**
  * Rectángulo (300x250) - Sidebar
  */
-export function AdRectangle() {
-  return (
-    <AdSlot
-      placement="sidebar-rectangle"
-      slot="1234567891"
-      fallbackLabel="Espacio publicitario"
-      outerClassName="w-[300px]"
-      shellClassName="h-[250px] w-[300px]"
-      slotClassName="h-full w-full"
-    />
-  );
-}
-
 /**
  * Placement superior estable para zonas above-the-fold
  */

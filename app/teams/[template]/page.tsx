@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { TEMPLATES, TemplateId, getCompatibleTemplates } from "@/config/templates";
+import { TEMPLATES, TemplateId } from "@/config/templates";
 import { FORMATS, FormatId } from "@/config/formats";
 import { getArchetypeStrategy } from "@/lib/archetype-strategies";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";

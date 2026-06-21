@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useAnalytics } from "../lib/analytics";
-import { getConsent } from "@/lib/consent";
+import { hasConsent } from "@/lib/consent";
 
 export function AnalyticsTracker() {
-    const [hasConsent, setHasConsent] = useState(false);
+    const [analyticsAllowed, setAnalyticsAllowed] = useState(false);
 
     useEffect(() => {
-        const check = () => setHasConsent(getConsent() === "granted");
+        const check = () => setAnalyticsAllowed(hasConsent("analytics"));
         check();
         window.addEventListener("consentChanged", check);
         return () => window.removeEventListener("consentChanged", check);
     }, []);
 
-    if (!hasConsent) return null;
+    if (!analyticsAllowed) return null;
 
     return <AnalyticsTrackerInner />;
 }

@@ -8,6 +8,8 @@ import { SmogonDataSource } from "@/lib/data-sources/smogon";
 import { getProperAbilityName, getProperItemName } from "@/lib/showdown-data";
 import { getCombinedStats } from "@/lib/pikalytics";
 
+export const revalidate = 3600;
+
 function buildMetaOverview(stats: Record<string, SmogonMonData>) {
   const mons = Object.values(stats).sort((a, b) => b.usage - a.usage);
   const topThreats = mons.slice(0, 5);
@@ -72,7 +74,10 @@ export async function GET(request: NextRequest) {
       getCombinedStats(format, smogonStats),
     ]);
 
-    return NextResponse.json({ meta, combined });
+    return NextResponse.json(
+      { meta, combined },
+      { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } }
+    );
   } catch (error) {
     console.error("Error in meta-overview API:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

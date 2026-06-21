@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslation } from "@/lib/i18n";
 
 export default function PrivacyPolicyPage() {
-    const { t } = useTranslation();
-
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
             <main className="container mx-auto px-4 py-12 max-w-3xl">

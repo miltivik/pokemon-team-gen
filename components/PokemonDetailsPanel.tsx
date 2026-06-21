@@ -24,10 +24,11 @@ import type {
     TeamBuildPreset,
 } from "@/lib/team-guide";
 import { ItemIcon } from "@/components/ItemIcon";
-import { getMoveData, type Role } from "@/lib/showdown-data";
-import { inferPrimaryStrategicRole, getStrategicRoleLabel, getStrategicRoleHowToPlay } from "@/lib/strategic-role";
+import { STRATEGIC_ROLE_DESCRIPTION_KEYS, getStrategicRoleLabel } from "@/lib/strategic-role-label";
 
 const ALGORITHM_PRESET_ID = "__algorithm__";
+
+type Role = "Support" | "Wall" | "Tank" | "Sweeper";
 
 interface MoveDetail {
     name: string;
@@ -218,6 +219,24 @@ function getMoveNames(moves?: Array<{ name: string } | string>) {
     return (moves ?? []).map((move) => (typeof move === "string" ? move : move.name));
 }
 
+function formatMoveName(move: string) {
+    return move.replace(/[-_]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function getStrategicRoleHowToPlay(
+    role: string | undefined,
+    t: (key: string) => string
+): string | undefined {
+    if (!role) return undefined;
+
+    const key = role.startsWith("role.") ? role : STRATEGIC_ROLE_DESCRIPTION_KEYS[role];
+    if (!key) return undefined;
+
+    const descKey = `${key}.desc`;
+    const desc = t(descKey);
+    return desc === descKey ? undefined : desc;
+}
+
 function getAbilitySlotLabel(slot: string, lang: string) {
     switch (slot) {
         case "0":
@@ -264,16 +283,15 @@ function buildFallbackDetails(
             selected: ability === pokemon.ability,
         })),
         moves: moveNames.map((moveName) => {
-            const moveData = getMoveData(moveName);
             return {
                 name: moveName,
-                label: moveData?.name || moveName,
-                type: moveData?.type || "Normal",
-                category: moveData?.category || "Status",
-                basePower: moveData?.basePower ?? null,
-                accuracy: moveData?.accuracy ?? null,
-                pp: moveData?.pp ?? 0,
-                desc: moveData?.shortDesc || moveData?.desc || "",
+                label: formatMoveName(moveName),
+                type: "Normal",
+                category: "Status",
+                basePower: null,
+                accuracy: null,
+                pp: 0,
+                desc: "",
             };
         }),
         availableRolePresets: [],
@@ -467,12 +485,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         };
     }, [activeDetails.algorithmLabel, currentRole, displayEvs, displayItem, displayNature, moveNames, pokemon.ability, pokemon.analysis?.howToPlay, pokemon.analysis?.role, pokemon.buildPresets, pokemon.teraType, t]);
 
-    const inferredStrategicRole = inferPrimaryStrategicRole({
-        species: pokemon.baseStats ? { baseStats: pokemon.baseStats } : undefined,
-        moves: moveNames,
-        ability: pokemon.ability,
-        broadRole: currentRole,
-    });
+    const inferredStrategicRole = pokemon.analysis?.primaryFunction || pokemon.analysis?.role || currentRole;
     const inferredStrategicRoleLabel = getStrategicRoleLabel(inferredStrategicRole, t);
     const strategicRoleHowToPlay = getStrategicRoleHowToPlay(inferredStrategicRole, t);
 
@@ -518,7 +531,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         });
 
         return Array.from(options.values());
-    }, [algorithmPreset.label, availableRolePresets, pokemon.buildPresets]);
+    }, [algorithmPreset.label, availableRolePresets, pokemon.buildPresets, t]);
 
     const presetOptionIds = useMemo(
         () => new Set(presetOptions.map((preset) => preset.id)),

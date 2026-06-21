@@ -838,18 +838,6 @@ export class SetOptimizer {
       .map(([abilityId]) => Abilities[abilityId]?.name || abilityId);
   }
 
-  private selectAbility(
-    stats: NormalizedMonData,
-    pokemon: PokemonSpecies,
-    options: OptimizerOptions
-  ): string {
-    return (
-      this.getAbilityCandidates(stats, pokemon, options, 1)[0] ??
-      Object.values(pokemon.abilities)[0] ??
-      "No Ability"
-    );
-  }
-
   private getAbilityContextScore(bundle: SetBundle) {
     const abilityId = toID(bundle.ability);
     if (!abilityId) {

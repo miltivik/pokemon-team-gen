@@ -2,8 +2,6 @@
 
 import { useMemo } from "react";
 import Image from "next/image";
-import type { PokedexEntry, MoveData } from "@/lib/showdown-data";
-import { getMoveData, getProperMoveName } from "@/lib/showdown-data";
 import type {
     GeneratedTeamMember,
     PokemonAnalysis,
@@ -39,9 +37,20 @@ const TYPE_BG_COLORS: Record<string, string> = {
 
 const EMPTY_STATS = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 
-type PokemonCardPokemon = Partial<GeneratedTeamMember> & Partial<PokedexEntry> & {
+interface MovePreview {
     name: string;
-    moves?: Array<MoveData | string>;
+    type?: string;
+}
+
+type BaseStats = typeof EMPTY_STATS;
+
+type PokemonCardPokemon = Partial<GeneratedTeamMember> & {
+    name: string;
+    num?: number;
+    types?: string[];
+    baseStats?: BaseStats;
+    abilities?: Record<string, string>;
+    moves?: Array<MovePreview | string>;
     analysis?: PokemonAnalysis;
     selectedBuildPresetId?: string;
     buildPresets?: Record<string, TeamBuildPreset>;
@@ -53,19 +62,21 @@ interface PokemonCardProps {
     onPrefetchDetails?: () => void;
 }
 
-function getMoveName(move: MoveData | string) {
+function formatMoveName(move: string) {
+    return move.replace(/[-_]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function getMoveName(move: MovePreview | string) {
     if (typeof move !== "string") return move.name;
-    const data = getMoveData(move);
-    return data?.name ?? getProperMoveName(move);
+    return formatMoveName(move);
 }
 
-function getMoveType(move: MoveData | string) {
+function getMoveType(move: MovePreview | string) {
     if (typeof move !== "string") return move.type;
-    const data = getMoveData(move);
-    return data?.type;
+    return undefined;
 }
 
-function getRole(stats: PokedexEntry["baseStats"]) {
+function getRole(stats: BaseStats) {
     const { atk, spa, spe, def, spd } = stats;
 
     if (spe > 100 && (atk > 100 || spa > 100)) return "Sweeper";

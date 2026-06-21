@@ -7,7 +7,7 @@ import { getPokemonSummary, getAllPokemonNames } from "@/lib/pokemon-summary";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole } from "@/lib/competitive-sets";
 import { getSmogonUrl } from "@/lib/pokemon-tier";
-import { getPokemonData, getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole } from "@/lib/showdown-data";
+import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole } from "@/lib/showdown-data";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 interface PokemonPageProps {
@@ -125,7 +125,6 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
     notFound();
   }
 
-  const pokedexEntry = getPokemonData(finalName);
   const spriteUrl = getPokemonSpriteUrl(finalName, "artwork");
   const roles = getAvailableRoles(finalName, "ou");
   const smogonUrl = getSmogonUrl(finalName, "gen9ou");

@@ -28,7 +28,7 @@ interface TrendingTeam {
     pokemon: string[];
 }
 
-function getTrendingTeams(t: (key: string) => string): TrendingTeam[] {
+function getTrendingTeams(): TrendingTeam[] {
     return [
         {
             href: "/configurar?template=bulkyoffense&format=gen9ou",
@@ -104,8 +104,7 @@ function HomePokemonSprite({
 }
 
 export function HeroSection() {
-    const { t, lang } = useTranslation();
-    const trendingTeams = getTrendingTeams(t);
+    const { t } = useTranslation();
 
     return (
         <section className="w-full max-w-5xl pt-6 sm:pt-10">
@@ -380,7 +379,7 @@ export function FeaturesSection() {
 
 export function TrendingTeamsSection() {
     const { t, lang } = useTranslation();
-    const trendingTeams = getTrendingTeams(t);
+    const trendingTeams = getTrendingTeams();
 
     return (
         <section className="w-full max-w-5xl py-10 text-center" aria-labelledby="trending-title">

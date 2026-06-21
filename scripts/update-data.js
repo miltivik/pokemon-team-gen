@@ -5,8 +5,7 @@ const https = require('https');
 const DATA_DIR = path.join(__dirname, '../data');
 const URLS = {
     'pokedex.json': 'https://play.pokemonshowdown.com/data/pokedex.json',
-    'learnsets.json': 'https://play.pokemonshowdown.com/data/learnsets.json',
-    'formats.js': 'https://play.pokemonshowdown.com/data/formats.js'
+    'learnsets.json': 'https://play.pokemonshowdown.com/data/learnsets.json'
 };
 
 if (!fs.existsSync(DATA_DIR)) {

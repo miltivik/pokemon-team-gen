@@ -92,10 +92,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
     useEffect(() => {
         const controller = new AbortController();
 
-        fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, {
-            cache: "no-store",
-            signal: controller.signal,
-        })
+        fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, { signal: controller.signal })
             .then(async (response) => {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch meta overview for ${format}`);

@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/equipo",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
     title: "Your Generated Pokemon Team",
     description:

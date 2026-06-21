@@ -76,8 +76,6 @@ export async function POST(req: NextRequest) {
             fixedMembers = [fijo.trim()];
         }
 
-        console.log(`Generating dynamic team for format: ${format}, type: ${tipo}, fixed: ${fixedMembers?.join(', ')}, template: ${safeTemplateId}, lang: ${lang}`);
-
         const result = await generateDynamicTeam({
             format,
             type: tipo,

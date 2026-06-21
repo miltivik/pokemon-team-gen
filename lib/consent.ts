@@ -22,7 +22,9 @@ export function getConsent(): ConsentState {
   if (typeof window === "undefined") return "pending";
   const stored = localStorage.getItem(CONSENT_KEY);
   if (stored === "granted" || stored === "denied") return stored;
-  return "pending";
+  const consent = getGranularConsent();
+  if (!consent.timestamp) return "pending";
+  return consent.analytics || consent.advertising || consent.preferences ? "granted" : "denied";
 }
 
 export function getGranularConsent(): GranularConsent {
