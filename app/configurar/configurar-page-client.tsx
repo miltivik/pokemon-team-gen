@@ -159,7 +159,12 @@ export default function ConfigurarPageClient() {
     };
 
     if (!isHydrated) {
-        return <ConfigurarPageSkeleton />;
+        return (
+            <ConfigurarPageSkeleton
+                title={t("form.title")}
+                description={t("form.description")}
+            />
+        );
     }
 
     return (

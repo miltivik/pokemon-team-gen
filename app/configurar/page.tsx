@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { ConfigurarPageSkeleton } from "@/components/page-skeletons";
 import ConfigurarPageClient from "./configurar-page-client";
 
 export const metadata: Metadata = {
@@ -31,5 +33,9 @@ export const metadata: Metadata = {
 };
 
 export default function ConfigurarPage() {
-  return <ConfigurarPageClient />;
+  return (
+    <Suspense fallback={<ConfigurarPageSkeleton />}>
+      <ConfigurarPageClient />
+    </Suspense>
+  );
 }

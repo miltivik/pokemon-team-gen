@@ -113,12 +113,20 @@ export function ExportPageSkeleton() {
   );
 }
 
-export function ConfigurarPageSkeleton() {
+export function ConfigurarPageSkeleton({
+  title = "Generator Settings",
+  description = "Configure your team preferences",
+}: {
+  title?: string;
+  description?: string;
+} = {}) {
   return (
     <ShellFrame>
       <header className="flex min-h-28 w-full flex-col items-center justify-center space-y-4 text-center">
-        <SkeletonBlock className="h-10 w-64 max-w-full" />
-        <SkeletonBlock className="h-5 w-72 max-w-full" />
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          {title}
+        </h1>
+        <p className="text-lg text-zinc-600 dark:text-zinc-400">{description}</p>
         <div className="flex min-h-8 items-center justify-center gap-2">
           <SkeletonPill className="h-8 w-20" />
           <SkeletonPill className="h-8 w-28" />
