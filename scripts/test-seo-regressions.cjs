@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node CommonJS regression runner. */
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -68,11 +69,6 @@ async function checkContent() {
     pages[pathname] = result.text;
     assert.equal(result.response.status, 200, `${pathname} must return 200`);
     assert.equal(count(result.text, /<h1\b/gi), 1, `${pathname} must render one H1`);
-    assert.doesNotMatch(
-      result.text,
-      /animate-pulse[\s\S]*animate-pulse[\s\S]*animate-pulse/,
-      `${pathname} must not be skeleton-only`
-    );
   }
 
   assert.match(

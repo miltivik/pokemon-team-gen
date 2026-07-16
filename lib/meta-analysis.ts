@@ -1,75 +1,90 @@
-
-import { getClientSmogonStats, classifyTier, type SmogonMonData } from "@/lib/client-smogon-stats";
-import { getProperItemName, getProperAbilityName } from "@/lib/showdown-data";
+import {
+  classifyTier,
+  toClientSmogonStats,
+  type SmogonMonData,
+} from "@/lib/client-smogon-stats";
+import { SmogonDataSource } from "@/lib/data-sources/smogon";
+import { getCombinedStats, type CombinedPokemonData } from "@/lib/pikalytics";
+import { getProperAbilityName, getProperItemName } from "@/lib/showdown-data";
 
 export interface MetaOverviewData {
-    topThreats: SmogonMonData[];
-    tierGroups: Record<string, SmogonMonData[]>;
-    topItems: { name: string; usage: number }[];
-    topAbilities: { name: string; usage: number }[];
-    loading: boolean;
+  topThreats: SmogonMonData[];
+  tierGroups: Record<string, SmogonMonData[]>;
+  topItems: { name: string; usage: number }[];
+  topAbilities: { name: string; usage: number }[];
+  loading: false;
 }
 
-export async function getMetaAnalysis(format: string): Promise<MetaOverviewData> {
-    const stats = await getClientSmogonStats(format);
-    const mons = Object.values(stats).sort((a, b) => b.usage - a.usage);
+export interface MetaOverviewPayload {
+  meta: MetaOverviewData;
+  combined: CombinedPokemonData[];
+}
 
-    // 1. Top Threats (Top 5 por uso)
-    const topThreats = mons.slice(0, 5);
+export function buildMetaOverview(stats: Record<string, SmogonMonData>): MetaOverviewData {
+  const mons = Object.values(stats).sort((a, b) => b.usage - a.usage);
+  const topThreats = mons.slice(0, 5);
+  const tierGroups: Record<string, SmogonMonData[]> = {};
+  const itemUsageMap: Record<string, number> = {};
+  const abilityUsageMap: Record<string, number> = {};
+  const top50 = mons.slice(0, 50);
+  const totalUsage = top50.reduce((sum, mon) => sum + mon.usage, 0);
+  const safeTotalUsage = totalUsage || 1;
 
-    // 2. Agrupación por Tiers Dinámica
-    const tierGroups: Record<string, SmogonMonData[]> = {};
-    mons.forEach(mon => {
-        const tier = classifyTier(mon.usage);
-        if (!tierGroups[tier]) tierGroups[tier] = [];
-        tierGroups[tier].push(mon);
-    });
+  for (const mon of mons) {
+    const tier = classifyTier(mon.usage);
+    if (!tierGroups[tier]) tierGroups[tier] = [];
+    tierGroups[tier].push(mon);
+  }
 
-    // 3. Cálculo de Items Globales (Aproximación ponderada)
-    const itemUsageMap: Record<string, number> = {};
-    const abilityUsageMap: Record<string, number> = {};
+  for (const mon of top50) {
+    const totalItemCount = Object.values(mon.items || {}).reduce((sum, count) => sum + count, 0);
+    if (totalItemCount > 0) {
+      for (const [item, count] of Object.entries(mon.items || {})) {
+        itemUsageMap[item] = (itemUsageMap[item] || 0) + (count / totalItemCount) * mon.usage;
+      }
+    }
 
-    // Analizar top 50 para rendimiento y relevancia (el meta lo definen los top mons)
-    const top50 = mons.slice(0, 50);
-    const totalUsage = top50.reduce((acc, mon) => acc + mon.usage, 0);
-    const safeTotalUsage = totalUsage || 1;
+    const totalAbilityCount = Object.values(mon.abilities || {}).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+    if (totalAbilityCount > 0) {
+      for (const [ability, count] of Object.entries(mon.abilities || {})) {
+        abilityUsageMap[ability] =
+          (abilityUsageMap[ability] || 0) + (count / totalAbilityCount) * mon.usage;
+      }
+    }
+  }
 
-    top50.forEach(mon => {
-        // Items
-        if (mon.items) {
-            const totalItemCount = Object.values(mon.items).reduce((sum, count) => sum + count, 0);
-            if (totalItemCount > 0) {
-                Object.entries(mon.items).forEach(([item, count]) => {
-                    // Contribución al meta = uso del pokemon * uso del item en ese pokemon (como ratio 0-1)
-                    const rate = count / totalItemCount;
-                    const globalImpact = rate * mon.usage;
-                    itemUsageMap[item] = (itemUsageMap[item] || 0) + globalImpact;
-                });
-            }
-        }
+  const topItems = Object.entries(itemUsageMap)
+    .sort(([, leftUsage], [, rightUsage]) => rightUsage - leftUsage)
+    .slice(0, 5)
+    .map(([name, usage]) => ({ name: getProperItemName(name), usage: usage / safeTotalUsage }));
 
-        // Abilities
-        if (mon.abilities) {
-            const totalAbilityCount = Object.values(mon.abilities).reduce((sum, count) => sum + count, 0);
-            if (totalAbilityCount > 0) {
-                Object.entries(mon.abilities).forEach(([ability, count]) => {
-                    const rate = count / totalAbilityCount;
-                    const globalImpact = rate * mon.usage;
-                    abilityUsageMap[ability] = (abilityUsageMap[ability] || 0) + globalImpact;
-                });
-            }
-        }
-    });
+  const topAbilities = Object.entries(abilityUsageMap)
+    .sort(([, leftUsage], [, rightUsage]) => rightUsage - leftUsage)
+    .slice(0, 5)
+    .map(([name, usage]) => ({ name: getProperAbilityName(name), usage: usage / safeTotalUsage }));
 
-    const topItems = Object.entries(itemUsageMap)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([name, usage]) => ({ name: getProperItemName(name), usage: usage / safeTotalUsage })); // Normalizar relativo al top 50
+  return { topThreats, tierGroups, topItems, topAbilities, loading: false };
+}
 
-    const topAbilities = Object.entries(abilityUsageMap)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([name, usage]) => ({ name: getProperAbilityName(name), usage: usage / safeTotalUsage }));
+export async function getMetaOverview(format: string): Promise<MetaOverviewPayload | null> {
+  const normalizedStats = await SmogonDataSource.getStats(format);
+  if (!normalizedStats) return null;
 
-    return { topThreats, tierGroups, topItems, topAbilities, loading: false };
+  const smogonStats = toClientSmogonStats(normalizedStats);
+  const [meta, combined] = await Promise.all([
+    Promise.resolve(buildMetaOverview(smogonStats)),
+    getCombinedStats(format, smogonStats),
+  ]);
+
+  return { meta, combined };
+}
+
+export async function getTierOverview(format: string): Promise<MetaOverviewData | null> {
+  const normalizedStats = await SmogonDataSource.getStats(format);
+  if (!normalizedStats) return null;
+
+  return buildMetaOverview(toClientSmogonStats(normalizedStats));
 }
