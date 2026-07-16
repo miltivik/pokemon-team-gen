@@ -9,8 +9,8 @@ function slugify(name: string): string {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://poketeambuilder.com";
-  const sharedUpdatedAt = new Date("2026-03-24T00:00:00.000Z");
-  const now = new Date("2026-05-03T00:00:00.000Z");
+  const sharedUpdatedAt = new Date("2026-07-16T00:00:00.000Z");
+  const now = sharedUpdatedAt;
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {

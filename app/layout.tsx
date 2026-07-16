@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "../components/Providers";
@@ -10,7 +9,9 @@ import { WebVitalsTracker } from "../components/WebVitalsTracker";
 import { KoFiButton } from "../components/monetization/Ads";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
-import { LANGUAGE_COOKIE_KEY, resolveLang } from "@/lib/i18n-shared";
+
+const ENGLISH_DESCRIPTION =
+  "Generate competitive Pokemon teams for Pokemon Showdown across Gen 9 OU, UU, RU, NU and legacy VGC formats, with optimized movesets and strategy.";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,16 +29,15 @@ export const metadata: Metadata = {
     default: 'Pokemon Team Generator',
     template: '%s | Pokemon Team Generator',
   },
-  description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más. Crea tu equipo con movesets óptimos y estrategias de juego.',
+  description: ENGLISH_DESCRIPTION,
   keywords: [
     'pokemon team generator',
-    'crear equipo pokemon',
-    'pokemon competitivo',
     'pokemon showdown team builder',
     'gen 9 ou team generator',
-    'equipos pokemon smogon',
+    'competitive pokemon teams',
+    'smogon team generator',
     'pokemon team maker',
-    'generador equipos pokemon',
+    'vgc team generator',
   ],
   authors: [{ name: 'Pokemon Team Generator' }],
   creator: 'Pokemon Team Generator',
@@ -62,8 +62,8 @@ export const metadata: Metadata = {
     alternateLocale: 'es_ES',
     url: 'https://poketeambuilder.com',
     siteName: 'Pokemon Team Generator',
-    title: 'Pokemon Team Generator - Crea Equipos Competitivos',
-    description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más.',
+    title: 'Pokemon Team Generator - Build Competitive Teams',
+    description: ENGLISH_DESCRIPTION,
     images: [
       {
         url: '/og-image.png',
@@ -75,8 +75,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pokemon Team Generator - Crea Equipos Competitivos',
-    description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más.',
+    title: 'Pokemon Team Generator - Build Competitive Teams',
+    description: ENGLISH_DESCRIPTION,
     images: ['/og-image.png'],
     creator: '@poketeamgen',
   },
@@ -108,18 +108,16 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const initialLang = resolveLang(cookieStore.get(LANGUAGE_COOKIE_KEY)?.value);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'Pokemon Team Generator',
-    description: 'Genera equipos Pokemon competitivos para Pokemon Showdown. Soporta Gen 9 OU, VGC, UU, RU, NU y más.',
+    description: ENGLISH_DESCRIPTION,
     url: 'https://poketeambuilder.com',
     applicationCategory: 'Game',
     operatingSystem: 'Web Browser',
@@ -133,16 +131,16 @@ export default async function RootLayout({
       name: 'Pokemon Team Generator',
     },
     features: [
-      'Generador de equipos Pokemon competitivos',
-      'Soporte para Gen 9 OU, VGC, UU, RU, NU',
-      'Exportar a Pokemon Showdown',
-      'Estrategias de juego (early, mid, late game)',
-      'Interfaz en español e inglés',
+      'Competitive Pokemon team generator',
+      'Support for Gen 9 OU, UU, RU, NU and legacy VGC formats',
+      'One-click Pokemon Showdown export',
+      'Early, mid and late-game strategy guidance',
+      'English and Spanish interface',
     ],
   };
 
   return (
-    <html lang={initialLang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -156,7 +154,7 @@ export default async function RootLayout({
         <AnalyticsTracker />
         <WebVitalsTracker />
         <KoFiButton />
-        <Providers initialLang={initialLang}>
+        <Providers>
            <Navbar />
            {children}
            <Footer />

@@ -1,7 +1,14 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
-import { createLangCookie, DEFAULT_LANG, type Lang, translateFromMap } from "@/lib/i18n-shared";
+import {
+    createLangCookie,
+    DEFAULT_LANG,
+    LANGUAGE_COOKIE_KEY,
+    resolveLang,
+    type Lang,
+    translateFromMap,
+} from "@/lib/i18n-shared";
 
 const translations: Record<Lang, Record<string, string>> = {
     en: {
@@ -1204,11 +1211,11 @@ const I18nContext = createContext<I18nContextType>({
 
 interface LanguageProviderProps {
     children: ReactNode;
-    initialLang?: Lang;
 }
 
-export function LanguageProvider({ children, initialLang = DEFAULT_LANG }: LanguageProviderProps) {
-    const [lang, setLang] = useState<Lang>(initialLang);
+export function LanguageProvider({ children }: LanguageProviderProps) {
+    const [lang, setLang] = useState<Lang>(DEFAULT_LANG);
+    const [restored, setRestored] = useState(false);
 
     const t = useCallback(
         (key: string, params?: Record<string, string>) => {
@@ -1218,8 +1225,27 @@ export function LanguageProvider({ children, initialLang = DEFAULT_LANG }: Langu
     );
 
     useEffect(() => {
+        const cookieLang = resolveLang(
+            document.cookie
+                .split("; ")
+                .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE_KEY}=`))
+                ?.split("=")[1]
+        );
+
+        const frame = window.requestAnimationFrame(() => {
+            setLang(cookieLang);
+            setRestored(true);
+        });
+
+        return () => window.cancelAnimationFrame(frame);
+    }, []);
+
+    useEffect(() => {
+        if (!restored) return;
+
+        document.documentElement.lang = lang;
         document.cookie = createLangCookie(lang);
-    }, [lang]);
+    }, [lang, restored]);
 
     return (
         <I18nContext.Provider value={{ lang, setLang, t }}>
