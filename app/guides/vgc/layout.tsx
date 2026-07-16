@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "VGC Guide, Regulation F Teams and Doubles Strategy",
+  title: "VGC Doubles Guide and Legacy Regulation F Strategy",
   description:
-    "Improve at VGC with regulation guides, doubles strategy, top Pokemon, speed control tips, and team building ideas based on competitive data.",
+    "Learn general VGC doubles strategy with speed control and team building tips, plus clearly labeled archived Regulation F data.",
   keywords: [
     "vgc guide",
     "best vgc teams",
     "pokemon doubles strategy",
-    "regulation f guide",
+    "legacy regulation f guide",
     "pikalytics vgc",
   ],
   alternates: {

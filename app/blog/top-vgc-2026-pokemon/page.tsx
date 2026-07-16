@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/blog/top-vgc-2026-pokemon",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
     title: "Top VGC 2026 Pokemon and Team Cores",
     description:

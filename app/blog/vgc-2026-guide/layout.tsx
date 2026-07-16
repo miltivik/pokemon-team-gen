@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/blog/vgc-2026-guide",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
     title: "VGC 2026 Guide, Teams and Meta Strategies",
     description:

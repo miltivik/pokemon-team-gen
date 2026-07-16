@@ -13,15 +13,6 @@ const articles = [
         tags: ["Gen 9 OU", "Weather", "Rain"],
     },
     {
-        slug: "top-vgc-2026-pokemon",
-        title: "Top VGC 2026 Pokemon and Team Cores",
-        description: "Explore the strongest Pokemon and cores dominating VGC 2026 Regulation F. From Flutter Mane to Incineroar, build winning teams.",
-        date: "May 3, 2026",
-        readTime: "8 min read",
-        emoji: "🏆",
-        tags: ["VGC", "Doubles", "Meta"],
-    },
-    {
         slug: "best-pokemon-gen9-ou",
         title: "Top 10 Best Pokémon for Gen 9 OU in 2026",
         description: "A deep dive into the most dominant Pokémon in the Gen 9 OU metagame, including sets, counters, and teambuilding tips.",
@@ -38,15 +29,6 @@ const articles = [
         readTime: "10 min read",
         emoji: "🧠",
         tags: ["Beginner", "Teambuilding", "Guide"],
-    },
-    {
-        slug: "vgc-2026-guide",
-        title: "VGC 2026 Meta Guide: Top Strategies and Teams",
-        description: "The VGC doubles format demands a different approach. Learn about Trick Room, weather teams, and the top cores dominating tournament play.",
-        date: "March 5, 2026",
-        readTime: "9 min read",
-        emoji: "🎮",
-        tags: ["VGC", "Doubles", "Tournament"],
     },
 ];
 

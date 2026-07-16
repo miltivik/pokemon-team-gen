@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/blog/top-vgc-2026-pokemon",
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

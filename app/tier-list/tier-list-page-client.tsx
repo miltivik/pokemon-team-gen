@@ -23,7 +23,7 @@ const FORMAT_OPTIONS = [
   { id: "gen9uu", name: "Gen 9 UU", nameEs: "Gen 9 UU" },
   { id: "gen9ubers", name: "Gen 9 Ubers", nameEs: "Gen 9 Ubers" },
   { id: "gen9monotype", name: "Monotype", nameEs: "Monotype" },
-  { id: "gen9vgc2026f", name: "VGC 2026", nameEs: "VGC 2026" },
+  { id: "gen9vgc2026f", name: "VGC Reg F (Legacy)", nameEs: "VGC Reg F (Histórico)" },
 ];
 
 const TIER_ORDER: TierRank[] = ["S", "A+", "A", "A-", "B+", "B", "B-", "C", "D"];

@@ -56,12 +56,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/blog/top-vgc-2026-pokemon`,
-      lastModified: new Date("2026-05-03T00:00:00.000Z"),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/blog/best-pokemon-gen9-ou`,
       lastModified: new Date("2026-03-10T00:00:00.000Z"),
       changeFrequency: "monthly",
@@ -70,12 +64,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/blog/how-to-build-competitive-team`,
       lastModified: new Date("2026-03-08T00:00:00.000Z"),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/blog/vgc-2026-guide`,
-      lastModified: new Date("2026-03-05T00:00:00.000Z"),
       changeFrequency: "monthly",
       priority: 0.8,
     },

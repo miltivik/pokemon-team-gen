@@ -94,6 +94,9 @@ async function checkVgc() {
   const { text: sitemap } = await get("/sitemap.xml");
   assert.doesNotMatch(sitemap, /blog\/(top-vgc-2026-pokemon|vgc-2026-guide)/);
 
+  const { text: blog } = await get("/blog");
+  assert.doesNotMatch(blog, /blog\/(top-vgc-2026-pokemon|vgc-2026-guide)/);
+
   for (const pathname of ["/blog/top-vgc-2026-pokemon", "/blog/vgc-2026-guide"]) {
     const { text } = await get(pathname);
     assert.match(text, /<meta[^>]+name="robots"[^>]+content="noindex, follow"/);

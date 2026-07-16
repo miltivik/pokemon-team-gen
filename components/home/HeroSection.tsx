@@ -63,7 +63,7 @@ function getTrendingTeams(): TrendingTeam[] {
         {
             href: "/configurar?template=weatheroffense&format=gen9vgc2026f",
             titleKey: "vgcWeather",
-            badge: "VGC 2026",
+            badge: "VGC Reg F · Legacy",
             label: "VGC",
             labelClass: "bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300",
             titleClass: "group-hover:text-orange-600 dark:group-hover:text-orange-400",

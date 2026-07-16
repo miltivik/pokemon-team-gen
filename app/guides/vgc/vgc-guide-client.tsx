@@ -36,8 +36,8 @@ const FAQ_ITEMS = [
     answer: "VGC (Video Game Championships) is the official competitive doubles format. Unlike singles, you bring 6 Pokemon and choose 4 for each battle, with simultaneous turns and positioning playing a crucial role.",
   },
   {
-    question: "What is the current VGC regulation?",
-    answer: "VGC 2026 Regulation F allows Pokemon from the Paldea dex, Kitakami dex, and Terarium dex. Certain legendary and mythical Pokemon are restricted. Check our team generator for the current legal Pokemon list.",
+    question: "Does this guide use live tournament rules?",
+    answer: "No. The team preset and usage data on this page are a legacy Regulation F reference. Verify the latest official rules before entering a tournament.",
   },
   {
     question: "What are the best strategies in VGC?",
@@ -89,10 +89,15 @@ export default function VGCGuideClient({
                         {t("guides.vgcGuideTitle")}
                     </div>
                     <h1 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
-                        VGC 2026 Reg F
+                        VGC Regulation F (Legacy)
                     </h1>
                     <p className="text-lg text-zinc-600 dark:text-zinc-400">
                         {t("guides.vgcGuideDesc")}
+                    </p>
+                    <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+                        {lang === "es"
+                            ? "Datos históricos de Regulation F. Verifica las reglas oficiales vigentes antes de competir."
+                            : "Legacy Regulation F data. Verify the latest official rules before competing."}
                     </p>
                 </header>
 
