@@ -15,7 +15,7 @@ import {
 import { formatPercentage } from "@/lib/format-percent";
 import { useTranslation } from "@/lib/i18n";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
-import { getPokemonSummary } from "@/lib/pokemon-summary";
+import { getPokemonSlug, getPokemonSummary } from "@/lib/pokemon-summary";
 import { analytics } from "@/lib/analytics";
 
 const FORMAT_OPTIONS = [
@@ -156,10 +156,7 @@ export default function TierListPageClient({ initialTierData }: TierListPageClie
                       pokemonData ? { ...pokemonData, name: mon.name } : mon.name,
                       "sprite"
                     );
-                    const slug = mon.name
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]+/g, "-")
-                      .replace(/^-|-$/g, "");
+                    const slug = getPokemonSlug(mon.name);
 
                     return (
                       <Link

@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { getPokemonSummary, getAllPokemonNames } from "@/lib/pokemon-summary";
+import {
+  getAllPokemonNames,
+  getPokemonDisplayName,
+  getPokemonSlug,
+  getPokemonSummary,
+} from "@/lib/pokemon-summary";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole } from "@/lib/competitive-sets";
 import { getSmogonUrl } from "@/lib/pokemon-tier";
@@ -14,31 +19,19 @@ interface PokemonPageProps {
   params: Promise<{ name: string }>;
 }
 
-function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
-
-function unslugify(slug: string, candidates: string[]): string | undefined {
-  const normalized = slug.toLowerCase().replace(/-/g, "").replace(/[^a-z0-9]/g, "");
-  return candidates.find((n) => slugify(n) === slug || n.toLowerCase().replace(/[^a-z0-9]/g, "") === normalized);
-}
-
 export async function generateStaticParams() {
   const allNames = getAllPokemonNames();
   // Filter to Pokémon with competitive data to avoid generating thousands of thin pages
   const competitiveNames = allNames.filter((name) => hasCompetitiveData(name));
   // Cap at 300 most relevant to keep build time reasonable
   const limited = competitiveNames.slice(0, 300);
-  return limited.map((name) => ({ name: slugify(name) }));
+  return limited.map((name) => ({ name: getPokemonSlug(name) }));
 }
 
 export async function generateMetadata({ params }: PokemonPageProps): Promise<Metadata> {
   const { name } = await params;
-  const allNames = getAllPokemonNames();
-  const displayName = unslugify(name, allNames) || decodeURIComponent(name).replace(/-/g, " ");
-  const summary = getPokemonSummary(displayName);
-  const properName = summary ? displayName : getAllPokemonNames().find((n) => n.toLowerCase() === displayName.toLowerCase());
-  const finalName = properName || displayName;
+  const finalName = getPokemonDisplayName(name) || decodeURIComponent(name).replace(/-/g, " ");
+  const canonicalSlug = getPokemonSlug(finalName);
 
   return {
     title: `${finalName} - Stats, Movesets and Competitive Analysis`,
@@ -51,12 +44,12 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
       "gen 9 ou",
     ],
     alternates: {
-      canonical: `/pokemon/${name}`,
+      canonical: `/pokemon/${canonicalSlug}`,
     },
     openGraph: {
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
       description: `Explore ${finalName}'s base stats, abilities, competitive movesets and viability in Gen 9 OU, VGC and more.`,
-      url: `/pokemon/${name}`,
+      url: `/pokemon/${canonicalSlug}`,
       type: "article",
     },
     twitter: {
@@ -114,11 +107,16 @@ function TypeBadge({ type }: { type: string }) {
 
 export default async function PokemonPage({ params }: PokemonPageProps) {
   const { name } = await params;
-  const allNames = getAllPokemonNames();
-  const displayName = unslugify(name, allNames) || decodeURIComponent(name).replace(/-/g, " ");
-  const summary = getPokemonSummary(displayName);
-  const properName = summary ? displayName : getAllPokemonNames().find((n) => n.toLowerCase() === displayName.toLowerCase());
-  const finalName = properName || displayName;
+  const finalName = getPokemonDisplayName(name);
+
+  if (!finalName) {
+    notFound();
+  }
+
+  const canonicalSlug = getPokemonSlug(finalName);
+  if (name !== canonicalSlug) {
+    permanentRedirect(`/pokemon/${canonicalSlug}`);
+  }
 
   const finalSummary = getPokemonSummary(finalName);
   if (!finalSummary) {
@@ -141,7 +139,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
       name: "Pokemon Team Generator",
       logo: { "@type": "ImageObject", url: "https://poketeambuilder.com/icons/logo-dark-nobg.png" },
     },
-    mainEntityOfPage: `https://poketeambuilder.com/pokemon/${name}`,
+    mainEntityOfPage: `https://poketeambuilder.com/pokemon/${canonicalSlug}`,
   };
 
   return (
@@ -149,7 +147,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
       <BreadcrumbJsonLd
         items={[
           { name: "Home", item: "/" },
-          { name: finalName, item: `/pokemon/${name}` },
+          { name: finalName, item: `/pokemon/${canonicalSlug}` },
         ]}
       />
       <script

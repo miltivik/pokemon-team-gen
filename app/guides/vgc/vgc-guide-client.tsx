@@ -89,7 +89,7 @@ export default function VGCGuideClient({
                         {t("guides.vgcGuideTitle")}
                     </div>
                     <h1 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
-                        VGC Regulation F (Legacy)
+                        VGC Doubles Team Building Guide
                     </h1>
                     <p className="text-lg text-zinc-600 dark:text-zinc-400">
                         {t("guides.vgcGuideDesc")}

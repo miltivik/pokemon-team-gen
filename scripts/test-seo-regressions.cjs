@@ -16,6 +16,10 @@ function count(html, pattern) {
   return [...html.matchAll(pattern)].length;
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 async function checkPseo() {
   const competitiveSource = fs.readFileSync(path.join(root, "lib/competitive-sets.ts"), "utf8");
   assert.match(
@@ -24,14 +28,32 @@ async function checkPseo() {
     "hasCompetitiveData must reuse getPokemonSets"
   );
 
-  for (const pathname of [
-    "/pokemon/garchomp",
-    "/pokemon/great-tusk",
-    "/pokemon/ogerpon-wellspring",
-  ]) {
-    const { response } = await get(pathname);
+  const expectedProfiles = new Map([
+    ["/pokemon/garchomp", "Garchomp"],
+    ["/pokemon/flutter-mane", "Flutter Mane"],
+    ["/pokemon/great-tusk", "Great Tusk"],
+    ["/pokemon/ogerpon-wellspring", "Ogerpon-Wellspring"],
+  ]);
+
+  for (const [pathname, displayName] of expectedProfiles) {
+    const { response, text } = await get(pathname);
     assert.equal(response.status, 200, `${pathname} must return 200`);
+    assert.match(
+      text,
+      new RegExp(`<h1[^>]*>\\s*${escapeRegExp(displayName)}\\s*</h1>`),
+      `${pathname} must render its proper display name`
+    );
+    assert.match(text, /Competitive Roles/, `${pathname} must render competitive data`);
   }
+
+  const legacySlug = await get("/pokemon/greattusk");
+  assert.ok(
+    (legacySlug.response.status === 308 &&
+      legacySlug.response.headers.get("location") === "/pokemon/great-tusk") ||
+      (legacySlug.response.status === 200 &&
+        /http-equiv="refresh" content="0;url=\/pokemon\/great-tusk"/.test(legacySlug.text)),
+    "legacy compound slugs must use Next.js permanent redirect semantics"
+  );
 
   const { response, text } = await get("/sitemap.xml");
   assert.equal(response.status, 200, "/sitemap.xml must return 200");
@@ -40,6 +62,18 @@ async function checkPseo() {
   ].map((match) => match[1]);
   assert.equal(pokemonUrls.length, 300, "sitemap must contain 300 Pokemon profiles");
   assert.equal(new Set(pokemonUrls).size, 300, "Pokemon sitemap URLs must be unique");
+  assert.ok(
+    pokemonUrls.includes("https://poketeambuilder.com/pokemon/flutter-mane"),
+    "sitemap must use the canonical Flutter Mane slug"
+  );
+  assert.ok(
+    pokemonUrls.includes("https://poketeambuilder.com/pokemon/great-tusk"),
+    "sitemap must use the canonical Great Tusk slug"
+  );
+  assert.ok(
+    !pokemonUrls.includes("https://poketeambuilder.com/pokemon/greattusk"),
+    "sitemap must not publish legacy compound slugs"
+  );
 }
 
 async function checkMetadata() {

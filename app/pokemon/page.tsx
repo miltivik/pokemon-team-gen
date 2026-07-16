@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { getAllPokemonNames } from "@/lib/pokemon-summary";
+import { getAllPokemonNames, getPokemonSlug } from "@/lib/pokemon-summary";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData } from "@/lib/competitive-sets";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
@@ -33,10 +33,6 @@ export const metadata: Metadata = {
   },
 };
 
-function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
-
 export default function PokemonIndexPage() {
   const allNames = getAllPokemonNames();
   const competitiveNames = allNames.filter((name) => hasCompetitiveData(name));
@@ -66,7 +62,7 @@ export default function PokemonIndexPage() {
             return (
               <Link
                 key={name}
-                href={`/pokemon/${slugify(name)}`}
+              href={`/pokemon/${getPokemonSlug(name)}`}
                 className="flex flex-col items-center gap-2 p-3 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all"
               >
                 <div className="relative w-12 h-12">

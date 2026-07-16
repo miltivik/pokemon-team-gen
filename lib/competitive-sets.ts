@@ -21,6 +21,22 @@ type PokemonCompetitiveSets = Record<string, TierSetMap>;
 
 const sets = setsData as Record<string, PokemonCompetitiveSets>;
 
+function normalizePokemonName(name: string) {
+    return name
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+}
+
+const normalizedSets = Object.entries(sets).reduce<Record<string, PokemonCompetitiveSets>>(
+    (acc, [name, pokemonSets]) => {
+        acc[normalizePokemonName(name)] = pokemonSets;
+        return acc;
+    },
+    {}
+);
+
 export interface CompetitiveSet {
     pokemon: string;
     setName: string;
@@ -44,17 +60,7 @@ function normalizeEvs(evs?: Record<string, number | undefined>) {
 }
 
 function getPokemonSets(displayName: string) {
-    let pokemonSets = sets[displayName];
-
-    if (!pokemonSets) {
-        const lowerName = displayName.toLowerCase();
-        const foundKey = Object.keys(sets).find((key) => key.toLowerCase() === lowerName);
-        if (foundKey) {
-            pokemonSets = sets[foundKey];
-        }
-    }
-
-    return pokemonSets as PokemonCompetitiveSets | undefined;
+    return sets[displayName] ?? normalizedSets[normalizePokemonName(displayName)];
 }
 
 function getTierCandidates(formatTier: string = "ou"): string[] {

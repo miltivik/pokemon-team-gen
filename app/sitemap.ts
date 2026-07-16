@@ -1,11 +1,7 @@
 import { MetadataRoute } from "next";
-import { getAllPokemonNames } from "@/lib/pokemon-summary";
+import { getAllPokemonNames, getPokemonSlug } from "@/lib/pokemon-summary";
 import { hasCompetitiveData } from "@/lib/competitive-sets";
 import { TEMPLATES } from "@/config/templates";
-
-function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://poketeambuilder.com";
@@ -116,7 +112,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const limitedPokemon = competitiveNames.slice(0, 300);
 
   const pokemonRoutes: MetadataRoute.Sitemap = limitedPokemon.map((name) => ({
-    url: `${baseUrl}/pokemon/${slugify(name)}`,
+    url: `${baseUrl}/pokemon/${getPokemonSlug(name)}`,
     lastModified: now,
     changeFrequency: "weekly",
     priority: 0.7,

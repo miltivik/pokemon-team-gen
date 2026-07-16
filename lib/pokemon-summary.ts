@@ -1,4 +1,5 @@
 import pokemonSummariesRaw from "../data/pokemon-summaries.json";
+import pokedexRaw from "../data/pokedex.json";
 
 type BaseStats = {
     hp: number;
@@ -17,9 +18,14 @@ export interface PokemonSummary {
 }
 
 const pokemonSummaries = pokemonSummariesRaw as Record<string, PokemonSummary>;
+const pokedex = pokedexRaw as Record<string, { name?: string }>;
 
 function normalizePokemonName(name: string) {
-    return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return name
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
 }
 
 const normalizedNameMap = Object.entries(pokemonSummaries).reduce<Record<string, PokemonSummary>>(
@@ -30,10 +36,33 @@ const normalizedNameMap = Object.entries(pokemonSummaries).reduce<Record<string,
     {}
 );
 
-const allPokemonNames = Object.keys(pokemonSummaries).sort((a, b) => a.localeCompare(b));
+const displayNameMap = Object.keys(pokemonSummaries).reduce<Record<string, string>>(
+    (acc, id) => {
+        const displayName = pokedex[id]?.name || id;
+        acc[normalizePokemonName(displayName)] = displayName;
+        return acc;
+    },
+    {}
+);
+
+const allPokemonNames = Object.values(displayNameMap).sort((a, b) => a.localeCompare(b));
 
 export function getPokemonSummary(name: string): PokemonSummary | undefined {
     return pokemonSummaries[name] ?? normalizedNameMap[normalizePokemonName(name)];
+}
+
+export function getPokemonDisplayName(name: string): string | undefined {
+    return displayNameMap[normalizePokemonName(name)];
+}
+
+export function getPokemonSlug(name: string): string {
+    return name
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[’']/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
 }
 
 export function getAllPokemonNames() {
