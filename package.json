@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:generations": "node scripts/test-generation-matrix.cjs",
+    "test:seo": "node scripts/test-seo-regressions.cjs",
     "test:styles": "node scripts/test-style-matrix.cjs",
     "test:types": "node scripts/test-type-matrix.cjs"
   },
