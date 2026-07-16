@@ -50,3 +50,4 @@ smogon_*.txt
 ~* 
 *.log 
 .cache/
+.worktrees/
