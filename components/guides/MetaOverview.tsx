@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n";
 import { formatPercentage } from "@/lib/format-percent";
-import type { MetaOverviewData } from "@/lib/meta-analysis";
+import type { MetaOverviewData, MetaOverviewPayload } from "@/lib/meta-analysis";
 import type { CombinedPokemonData } from "@/lib/pikalytics";
 import { AlertTriangle, BarChart3, Package, Shield, Sparkles, Swords } from "lucide-react";
 import { PokemonStatCard } from "./PokemonStatCard";
 
 interface MetaOverviewProps {
     format: string;
+    initialData?: MetaOverviewPayload | null;
 }
 
 function hasRenderableCombinedData(entry: CombinedPokemonData) {
@@ -83,13 +84,19 @@ function MetaOverviewSkeleton() {
     );
 }
 
-export function MetaOverview({ format }: MetaOverviewProps) {
+export function MetaOverview({ format, initialData }: MetaOverviewProps) {
     const { t, lang } = useTranslation();
-    const [data, setData] = useState<MetaOverviewData | null>(null);
-    const [combinedData, setCombinedData] = useState<CombinedPokemonData[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<MetaOverviewData | null>(initialData?.meta ?? null);
+    const [combinedData, setCombinedData] = useState<CombinedPokemonData[]>(
+        initialData?.combined ?? []
+    );
+    const [loading, setLoading] = useState(initialData === undefined);
 
     useEffect(() => {
+        if (initialData?.combined.some(hasRenderableCombinedData)) {
+            return;
+        }
+
         const controller = new AbortController();
 
         fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, { signal: controller.signal })
@@ -120,9 +127,9 @@ export function MetaOverview({ format }: MetaOverviewProps) {
             });
 
         return () => controller.abort();
-    }, [format]);
+    }, [format, initialData]);
 
-    const topThreats = useMemo(
+    const combinedThreats = useMemo(
         () => combinedData.filter(hasRenderableCombinedData).slice(0, 6),
         [combinedData]
     );
@@ -132,7 +139,19 @@ export function MetaOverview({ format }: MetaOverviewProps) {
     }
 
     if (!data) {
-        return null;
+        return (
+            <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+                <CardContent className="py-10 text-center">
+                    <AlertTriangle className="mx-auto mb-3 h-8 w-8 text-amber-500" />
+                    <p className="font-semibold text-zinc-800 dark:text-zinc-200">
+                        Live competitive data is temporarily unavailable.
+                    </p>
+                    <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                        The strategy guide below remains available.
+                    </p>
+                </CardContent>
+            </Card>
+        );
     }
 
     return (
@@ -187,10 +206,28 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                         {t("guides.topThreats")}
                     </h3>
                 </div>
-                {topThreats.length > 0 ? (
+                {combinedThreats.length > 0 ? (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {topThreats.map((mon, index) => (
+                        {combinedThreats.map((mon, index) => (
                             <PokemonStatCard key={`${mon.name}-${index}`} data={mon} rank={index + 1} />
+                        ))}
+                    </div>
+                ) : data.topThreats.length > 0 ? (
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {data.topThreats.slice(0, 6).map((mon, index) => (
+                            <Card
+                                key={mon.name}
+                                className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                            >
+                                <CardContent className="flex items-center justify-between gap-3 py-4">
+                                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                                        {index + 1}. {mon.name}
+                                    </span>
+                                    <Badge variant="secondary">
+                                        {formatPercentage(mon.usage, { fromRatio: true })}
+                                    </Badge>
+                                </CardContent>
+                            </Card>
                         ))}
                     </div>
                 ) : (
@@ -257,7 +294,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                 </CardContent>
             </Card>
 
-            {topThreats.length > 0 && (
+            {combinedThreats.length > 0 && (
                 <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -266,7 +303,7 @@ export function MetaOverview({ format }: MetaOverviewProps) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-3 md:grid-cols-3">
-                        {topThreats.slice(0, 3).map((entry) => (
+                        {combinedThreats.slice(0, 3).map((entry) => (
                             <div
                                 key={`${entry.name}-insight`}
                                 className="rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950/50"
