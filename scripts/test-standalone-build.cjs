@@ -53,7 +53,10 @@ try {
     "chunk"
   );
 } finally {
-  fs.rmSync(fixture, { recursive: true, force: true });
+  const resolvedFixture = path.resolve(fixture);
+  assert.equal(path.dirname(resolvedFixture), path.resolve(os.tmpdir()));
+  assert.ok(path.basename(resolvedFixture).startsWith("pokemon-standalone-"));
+  fs.rmSync(resolvedFixture, { recursive: true, force: true });
 }
 
 console.log("PASS standalone");
