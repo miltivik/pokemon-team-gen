@@ -46,6 +46,12 @@ async function checkPseo() {
     assert.match(text, /Competitive Roles/, `${pathname} must render competitive data`);
   }
 
+  for (const pathname of ["/pokemon/abra", "/pokemon/abomasnow-mega"]) {
+    const { text } = await get(pathname);
+    assert.match(text, /<meta[^>]+name="robots"[^>]+content="noindex"/, `${pathname} must be noindex`);
+    assert.doesNotMatch(text, /<link[^>]+rel="canonical"/, `${pathname} must not self-canonicalize`);
+  }
+
   const legacySlug = await get("/pokemon/greattusk");
   assert.ok(
     (legacySlug.response.status === 308 &&

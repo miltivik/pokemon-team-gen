@@ -30,7 +30,16 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PokemonPageProps): Promise<Metadata> {
   const { name } = await params;
-  const finalName = getPokemonDisplayName(name) || decodeURIComponent(name).replace(/-/g, " ");
+  const finalName = getPokemonDisplayName(name);
+
+  if (!finalName || !hasCompetitiveData(finalName)) {
+    return {
+      title: "Pokemon Profile Not Available",
+      robots: { index: false, follow: true },
+      alternates: { canonical: null },
+    };
+  }
+
   const canonicalSlug = getPokemonSlug(finalName);
 
   return {
@@ -109,7 +118,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   const { name } = await params;
   const finalName = getPokemonDisplayName(name);
 
-  if (!finalName) {
+  if (!finalName || !hasCompetitiveData(finalName)) {
     notFound();
   }
 
