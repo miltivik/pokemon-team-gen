@@ -69,7 +69,7 @@ function normalizeLeadData(text: string) {
 const cache: Map<string, NormalizedSmogonData> = new Map();
 const cacheTime: Map<string, number> = new Map();
 const inFlightFetches: Map<string, Promise<NormalizedSmogonData | null>> = new Map();
-const CACHE_TTL = 1000 * 60 * 60 * 6;
+const CACHE_TTL = 1000 * 60 * 60;
 const STALE_CACHE_TTL = 1000 * 60 * 60 * 24 * 35;
 const BASE_URL = "https://www.smogon.com/stats";
 const RATINGS = [1760, 1695, 1500, 0];

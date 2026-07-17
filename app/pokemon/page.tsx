@@ -9,27 +9,27 @@ import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 export const metadata: Metadata = {
   title: "Competitive Pokemon Profiles and Stats",
   description:
-    "Browse competitive Pokemon profiles with base stats, abilities, movesets and viability rankings for Gen 9 OU, VGC and more.",
+    "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets from Smogon set data.",
   keywords: [
     "pokemon stats",
     "competitive pokemon",
     "pokemon movesets",
     "pokemon viability",
-    "gen 9 ou pokemon",
+    "pokemon showdown movesets",
   ],
   alternates: {
     canonical: "/pokemon",
   },
   openGraph: {
     title: "Competitive Pokemon Profiles and Stats",
-    description: "Browse competitive Pokemon profiles with base stats, abilities and movesets.",
+    description: "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets.",
     url: "/pokemon",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Competitive Pokemon Profiles and Stats",
-    description: "Browse competitive Pokemon profiles with base stats, abilities and movesets.",
+    description: "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets.",
   },
 };
 
@@ -52,7 +52,7 @@ export default function PokemonIndexPage() {
             Competitive Pokemon Profiles
           </h1>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Browse base stats, abilities, movesets and competitive viability for every Pokemon in Gen 9 OU and VGC.
+            Browse base stats, abilities and available competitive roles and movesets for Pokemon with Smogon set data.
           </p>
         </header>
 

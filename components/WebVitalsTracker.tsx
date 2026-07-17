@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from "web-vitals";
 import { hasConsent } from "@/lib/consent";
 
+let trackingStarted = false;
+
 function sendToAnalytics({ name, value, rating }: { name: string; value: number; rating: string }) {
   if (!hasConsent("analytics")) return;
 
@@ -29,13 +31,20 @@ function sendToAnalytics({ name, value, rating }: { name: string; value: number;
 
 export function WebVitalsTracker() {
   useEffect(() => {
-    if (!hasConsent("analytics")) return;
+    const startTracking = () => {
+      if (trackingStarted || !hasConsent("analytics")) return;
+      trackingStarted = true;
 
-    onLCP(sendToAnalytics);
-    onINP(sendToAnalytics);
-    onCLS(sendToAnalytics);
-    onTTFB(sendToAnalytics);
-    onFCP(sendToAnalytics);
+      onLCP(sendToAnalytics);
+      onINP(sendToAnalytics);
+      onCLS(sendToAnalytics);
+      onTTFB(sendToAnalytics);
+      onFCP(sendToAnalytics);
+    };
+
+    startTracking();
+    window.addEventListener("consentChanged", startTracking);
+    return () => window.removeEventListener("consentChanged", startTracking);
   }, []);
 
   return null;

@@ -24,8 +24,8 @@ async function checkPseo() {
   const competitiveSource = fs.readFileSync(path.join(root, "lib/competitive-sets.ts"), "utf8");
   assert.match(
     competitiveSource,
-    /return !!getPokemonSets\(displayName\)/,
-    "hasCompetitiveData must reuse getPokemonSets"
+    /return getAvailableRoles\(displayName\)\.length > 0/,
+    "published profiles must have roles that the page can render"
   );
 
   const expectedProfiles = new Map([
@@ -74,6 +74,21 @@ async function checkPseo() {
     !pokemonUrls.includes("https://poketeambuilder.com/pokemon/greattusk"),
     "sitemap must not publish legacy compound slugs"
   );
+
+  for (let offset = 0; offset < pokemonUrls.length; offset += 25) {
+    const profiles = await Promise.all(
+      pokemonUrls.slice(offset, offset + 25).map(async (url) => ({
+        pathname: new URL(url).pathname,
+        result: await get(new URL(url).pathname),
+      }))
+    );
+
+    for (const { pathname, result } of profiles) {
+      assert.equal(result.response.status, 200, `${pathname} must return 200`);
+      assert.match(result.text, /Competitive Roles/, `${pathname} must render competitive roles`);
+      assert.match(result.text, /Competitive Movesets/, `${pathname} must render competitive movesets`);
+    }
+  }
 }
 
 async function checkMetadata() {
@@ -97,6 +112,16 @@ async function checkConfigurar() {
 }
 
 async function checkContent() {
+  const tierSource = fs.readFileSync(
+    path.join(root, "app/tier-list/tier-list-page-client.tsx"),
+    "utf8"
+  );
+  assert.match(
+    tierSource,
+    /const \[loading, setLoading\] = useState\(false\)/,
+    "empty server tier data must render the fallback before hydration"
+  );
+
   const pages = {};
   for (const pathname of ["/tier-list", "/guides/gen9-ou", "/guides/vgc"]) {
     const result = await get(pathname);
@@ -140,6 +165,11 @@ async function checkVgc() {
 async function checkCachePolicy() {
   const source = fs.readFileSync(path.join(root, "lib/data-sources/smogon.ts"), "utf8");
   assert.doesNotMatch(source, /cache:\s*["']no-store["']/, "Smogon fetches must not force ISR pages dynamic");
+  assert.match(
+    source,
+    /const CACHE_TTL = 1000 \* 60 \* 60;/,
+    "the application cache must honor the one-hour freshness contract"
+  );
   assert.equal(
     count(source, /next:\s*{\s*revalidate:\s*3600\s*}/g),
     3,
@@ -191,6 +221,11 @@ async function checkAdsenseReadiness() {
     webVitals,
     /function sendToAnalytics\([^)]*\)\s*{\s*if \(!hasConsent\("analytics"\)\) return;/,
     "Web Vitals must check current analytics consent at send time"
+  );
+  assert.match(
+    webVitals,
+    /addEventListener\("consentChanged"/,
+    "Web Vitals must activate when analytics consent changes after mount"
   );
   assert.match(privacy, /Google Privacy\s*&amp;\s*messaging|Google Privacy and messaging/);
   assert.match(privacy, /Last updated: July 17, 2026/);

@@ -68,7 +68,7 @@ export default function TierListPageClient({ initialTierData }: TierListPageClie
   const skipInitialFetch = useRef(hasInitialData);
   const [format, setFormat] = useState("gen9ou");
   const [tierData, setTierData] = useState(initialTierData);
-  const [loading, setLoading] = useState(!hasInitialData);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     analytics.viewTierList();

@@ -35,27 +35,27 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
 
   return {
     title: `${finalName} - Stats, Movesets and Competitive Analysis`,
-    description: `Explore ${finalName}'s base stats, abilities, competitive movesets and viability in Gen 9 OU, VGC and more. Build better Pokemon Showdown teams.`,
+    description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets for Pokemon Showdown team building.`,
     keywords: [
       `${finalName.toLowerCase()} pokemon`,
       `${finalName.toLowerCase()} moveset`,
       `${finalName.toLowerCase()} competitive`,
       "pokemon showdown",
-      "gen 9 ou",
+      "pokemon showdown movesets",
     ],
     alternates: {
       canonical: `/pokemon/${canonicalSlug}`,
     },
     openGraph: {
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
-      description: `Explore ${finalName}'s base stats, abilities, competitive movesets and viability in Gen 9 OU, VGC and more.`,
+      description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
       url: `/pokemon/${canonicalSlug}`,
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
-      description: `Explore ${finalName}'s base stats, abilities, competitive movesets and viability in Gen 9 OU, VGC and more.`,
+      description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
     },
   };
 }
@@ -131,7 +131,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: `${finalName} - Stats, Movesets and Competitive Analysis`,
-    description: `Explore ${finalName}'s base stats, abilities, competitive movesets and viability in Gen 9 OU, VGC and more.`,
+    description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
     image: spriteUrl,
     author: { "@type": "Organization", name: "Pokemon Team Generator" },
     publisher: {
@@ -182,7 +182,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
               {finalName}
             </h1>
             <p className="text-zinc-600 dark:text-zinc-400 max-w-xl">
-              #{String(finalSummary.num).padStart(3, "0")} — Base stats, abilities and competitive viability for Gen 9 OU and VGC.
+              #{String(finalSummary.num).padStart(3, "0")} — Base stats, abilities and available competitive roles and movesets.
             </p>
             <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
               <Link href={`/configurar?fixedPokemon=${encodeURIComponent(finalName)}`}>
@@ -247,7 +247,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
               ))}
             </div>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-4">
-              Based on Smogon Gen 9 usage data. Roles vary by format and tier.
+              Based on available Smogon competitive set data. Roles vary by format and tier.
             </p>
           </section>
         )}
@@ -261,7 +261,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
             Build a Team Around {finalName}
           </h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 max-w-lg mx-auto">
-            Use our team generator to create a competitive team featuring {finalName} with optimal movesets, items and EV spreads.
+            Use our team generator to create a competitive team featuring {finalName} with available moveset, item and EV spread data.
           </p>
           <Link href={`/configurar?fixedPokemon=${encodeURIComponent(finalName)}`}>
             <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6">
@@ -355,7 +355,7 @@ function PokemonMovesetsSection({ name, roles }: { name: string; roles: string[]
         ))}
       </div>
       <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-4">
-        Movesets are sourced from Smogon Gen 9 data. Move alternatives and item variations may exist depending on the specific team needs.
+        Movesets are sourced from available Smogon competitive set data. Alternatives may vary by format, tier and team needs.
       </p>
     </section>
   );

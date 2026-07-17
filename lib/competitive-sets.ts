@@ -257,5 +257,5 @@ export function getCompetitiveSetByRole(
  * Checks if a Pokémon has any Smogon sets data available.
  */
 export function hasCompetitiveData(displayName: string): boolean {
-    return !!getPokemonSets(displayName);
+    return getAvailableRoles(displayName).length > 0;
 }
