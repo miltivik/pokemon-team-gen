@@ -11,13 +11,13 @@ export function CookieConsent() {
   const [showSettings, setShowSettings] = useState(false);
   const [consent, setConsentState] = useState<GranularConsent>({
     analytics: false,
-    advertising: false,
     preferences: false,
     timestamp: 0,
   });
 
   useEffect(() => {
     const stored = getGranularConsent();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Consent is browser-only state read after hydration.
     setConsentState(stored);
     const isPending = stored.timestamp === 0;
     setVisible(isPending);
@@ -69,7 +69,7 @@ export function CookieConsent() {
               We value your privacy
             </h2>
             <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
-              We use cookies to enhance your experience, serve personalized ads, and analyze our traffic.{" "}
+              Choose whether to allow analytics and preference storage. Advertising choices are managed separately by Google Privacy &amp; messaging where required.{" "}
               <Link href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
                 Learn more in our Privacy Policy
               </Link>
@@ -77,7 +77,7 @@ export function CookieConsent() {
             </p>
 
             <div className="mb-6 space-y-3">
-              {(["analytics", "advertising", "preferences"] as ConsentCategory[]).map((category) => (
+              {(["analytics", "preferences"] as ConsentCategory[]).map((category) => (
                 <div key={category} className="flex items-center justify-between rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
                   <div className="flex-1">
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">
@@ -107,13 +107,13 @@ export function CookieConsent() {
                 onClick={handleRejectAll}
                 className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
               >
-                Reject All
+                Reject Optional
               </button>
               <button
                 onClick={handleAcceptAll}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
               >
-                Accept All
+                Accept Optional
               </button>
             </div>
           </>
@@ -123,7 +123,7 @@ export function CookieConsent() {
               Cookie Settings
             </h2>
             <div className="mb-6 space-y-4">
-              {(["analytics", "advertising", "preferences"] as ConsentCategory[]).map((category) => (
+              {(["analytics", "preferences"] as ConsentCategory[]).map((category) => (
                 <div key={category} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
                   <div className="mb-2 flex items-center justify-between">
                     <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">

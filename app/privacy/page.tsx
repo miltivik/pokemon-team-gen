@@ -53,6 +53,9 @@ export default function PrivacyPolicyPage() {
                             We use Google AdSense to display advertisements on our Service. Google AdSense uses cookies to serve ads based on your prior visits to our website or other websites. Google&apos;s use of advertising cookies enables it and its partners to serve ads to you based on your visit to our Service and/or other sites on the Internet.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
+                            Where required, Google Privacy &amp; messaging manages your advertising consent choices. Advertising cookies are governed by the choice you make through Google&apos;s consent message.
+                        </p>
+                        <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
                             You may opt out of personalized advertising by visiting{" "}
                             <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
                                 Google Ads Settings
@@ -66,10 +69,10 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">5. Cookie Consent</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                            When you first visit our Service, we display a cookie consent banner that allows you to choose whether to accept or reject non-essential cookies. Essential cookies (such as language and theme preferences) are always active because they are necessary for the website to function.
+                            Our local cookie banner controls analytics and preference storage only. Essential storage needed for the website to function remains active.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
-                            If you choose &quot;Reject Non-Essential&quot;, we will not load analytics or advertising scripts, including Google AdSense and Google Analytics 4. You can change your preference at any time by clearing your browser&apos;s localStorage for poketeambuilder.com and refreshing the page.
+                            Choosing &quot;Reject Optional&quot; prevents Google Analytics 4 from loading, but it does not replace your separate Google advertising choice. You can change your local preference at any time by clearing your browser&apos;s localStorage for poketeambuilder.com and refreshing the page.
                         </p>
                     </section>
 
@@ -81,7 +84,7 @@ export default function PrivacyPolicyPage() {
                         <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300">
                             <li><strong>Essential Cookies:</strong> Required for the basic functionality of the website, such as remembering your language preference and theme choice.</li>
                             <li><strong>Analytics Cookies:</strong> Help us understand how visitors interact with our Service by collecting and reporting information anonymously.</li>
-                            <li><strong>Advertising Cookies:</strong> Used by Google AdSense to deliver relevant advertisements and track ad performance.</li>
+                            <li><strong>Advertising Cookies:</strong> Used by Google AdSense subject to the choice managed by Google Privacy &amp; messaging where required.</li>
                         </ul>
                     </section>
 

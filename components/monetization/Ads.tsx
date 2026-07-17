@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { hasConsent } from "@/lib/consent";
 
 /**
  * Configuración de monetización
@@ -11,15 +10,8 @@ const CONFIG = {
   adsense: {
     publisherId: "ca-pub-7981415143867065",
   },
-  ezoic: {
-    ezoicId: process.env.NEXT_PUBLIC_EZOIC_ID || "",
-  },
   kofi: {
     kofiId: process.env.NEXT_PUBLIC_KOFI_ID || "",
-  },
-  infolinks: {
-    pid: "3445165",
-    wsid: "0",
   },
 };
 
@@ -69,19 +61,6 @@ function useDeferredAdMount(delayMs: number = 1200) {
   return mounted;
 }
 
-function useAdvertisingConsent() {
-  const [allowed, setAllowed] = useState(false);
-
-  useEffect(() => {
-    const update = () => setAllowed(hasConsent("advertising"));
-    update();
-    window.addEventListener("consentChanged", update);
-    return () => window.removeEventListener("consentChanged", update);
-  }, []);
-
-  return allowed;
-}
-
 interface AdSlotProps {
   placement: string;
   slot: string;
@@ -106,14 +85,13 @@ function AdSlot({
   fullWidthResponsive,
 }: AdSlotProps) {
   const mounted = useDeferredAdMount();
-  const hasAdvertising = useAdvertisingConsent();
   const hasConfiguredSlot = slot.trim().length > 0 && !slot.startsWith("123456789");
   const pushedRef = useRef(false);
   const adRef = useRef<HTMLModElement | null>(null);
   const [isUnfilled, setIsUnfilled] = useState(false);
 
   useEffect(() => {
-    if (!hasAdvertising || !hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
+    if (!hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
       return;
     }
 
@@ -123,7 +101,7 @@ function AdSlot({
     } catch (error) {
       console.error("AdSense error:", error);
     }
-  }, [hasAdvertising, hasConfiguredSlot, mounted]);
+  }, [hasConfiguredSlot, mounted]);
 
   useEffect(() => {
     const adElement = adRef.current;

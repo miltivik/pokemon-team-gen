@@ -2,30 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
-import { getGranularConsent, hasConsent, type ConsentCategory } from "@/lib/consent";
-
-function useConsent() {
-  const [consent, setConsent] = useState({
-    analytics: false,
-    advertising: false,
-    preferences: false,
-    timestamp: 0,
-  });
-
-  useEffect(() => {
-    const update = () => setConsent(getGranularConsent());
-    update();
-    window.addEventListener("consentChanged", update);
-    return () => window.removeEventListener("consentChanged", update);
-  }, []);
-
-  return consent;
-}
+import { hasConsent, type ConsentCategory } from "@/lib/consent";
 
 function useCategoryConsent(category: ConsentCategory) {
   const [hasCatConsent, setHasCatConsent] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Consent is browser-only state read after hydration.
     setHasCatConsent(hasConsent(category));
     const handleConsentChange = () => setHasCatConsent(hasConsent(category));
     window.addEventListener("consentChanged", handleConsentChange);
@@ -76,57 +59,11 @@ export function GA4Loader() {
   );
 }
 
-export function InfolinksLoader() {
-  const hasAdvertising = useCategoryConsent("advertising");
-  if (!hasAdvertising) return null;
-
-  return (
-    <>
-      <Script
-        id="infolinks-init"
-        strategy="lazyOnload"
-        dangerouslySetInnerHTML={{
-          __html: `
-            var infolinks_pid = 3445165;
-            var infolinks_wsid = 0;
-          `,
-        }}
-      />
-      <Script
-        id="infolinks-main"
-        strategy="lazyOnload"
-        src="https://resources.infolinks.com/js/infolinks_main.js"
-      />
-    </>
-  );
-}
-
-export function EzoicLoader() {
-  const hasAdvertising = useCategoryConsent("advertising");
-  const ezoicId = process.env.NEXT_PUBLIC_EZOIC_ID;
-
-  if (!hasAdvertising || !ezoicId) return null;
-
-  return (
-    <Script
-      id="ezoic-init"
-      strategy="lazyOnload"
-      src={`https://www.googletagmanager.com/gtag/js?id=${ezoicId}`}
-    />
-  );
-}
-
 export function ConsentAwareScripts() {
-  const consent = useConsent();
-  const hasAnalytics = consent.analytics;
-  const hasAdvertising = consent.advertising;
-
   return (
     <>
-      {hasAdvertising && <AdSenseLoader />}
-      {hasAnalytics && <GA4Loader />}
-      {hasAdvertising && <InfolinksLoader />}
-      {hasAdvertising && <EzoicLoader />}
+      <AdSenseLoader />
+      <GA4Loader />
     </>
   );
 }

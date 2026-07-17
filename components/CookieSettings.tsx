@@ -12,13 +12,13 @@ interface CookieSettingsProps {
 export function CookieSettings({ onClose }: CookieSettingsProps) {
   const [consent, setConsentState] = useState<GranularConsent>({
     analytics: false,
-    advertising: false,
     preferences: false,
     timestamp: 0,
   });
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Consent is browser-only state read after hydration.
     setConsentState(getGranularConsent());
   }, []);
 
@@ -46,7 +46,7 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
       </p>
 
       <div className="mb-6 space-y-4">
-        {(["analytics", "advertising", "preferences"] as ConsentCategory[]).map((category) => (
+        {(["analytics", "preferences"] as ConsentCategory[]).map((category) => (
           <div key={category} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
             <div className="mb-2 flex items-center justify-between">
               <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">

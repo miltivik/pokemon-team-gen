@@ -147,6 +147,25 @@ async function checkCachePolicy() {
   );
 }
 
+async function checkAdsenseReadiness() {
+  const scripts = fs.readFileSync(path.join(root, "components/ConsentAwareScripts.tsx"), "utf8");
+  const ads = fs.readFileSync(path.join(root, "components/monetization/Ads.tsx"), "utf8");
+  const consent = fs.readFileSync(path.join(root, "lib/consent.ts"), "utf8");
+  const banner = fs.readFileSync(path.join(root, "components/CookieConsent.tsx"), "utf8");
+  const settings = fs.readFileSync(path.join(root, "components/CookieSettings.tsx"), "utf8");
+  const privacy = fs.readFileSync(path.join(root, "app/privacy/page.tsx"), "utf8");
+  const envExample = fs.readFileSync(path.join(root, ".env.local.example"), "utf8");
+
+  assert.match(scripts, /<AdSenseLoader\s*\/>/, "AdSense must load so Google CMP can render");
+  assert.doesNotMatch(scripts, /hasAdvertising|Infolinks|Ezoic/, "only AdSense may own advertising runtime");
+  assert.doesNotMatch(ads, /hasConsent\(["']advertising["']\)|ezoic|infolinks/i);
+  assert.doesNotMatch(consent, /["']advertising["']\s*\||advertising:\s*boolean|advertising:\s*(true|false)/);
+  assert.doesNotMatch(banner + settings, /["']advertising["']/);
+  assert.match(privacy, /Google Privacy\s*&amp;\s*messaging|Google Privacy and messaging/);
+  assert.doesNotMatch(privacy, /will not load analytics or advertising scripts/i);
+  assert.doesNotMatch(envExample, /Ezoic|Combina ambas redes/i);
+}
+
 const checks = {
   pseo: checkPseo,
   metadata: checkMetadata,
@@ -154,6 +173,7 @@ const checks = {
   content: checkContent,
   vgc: checkVgc,
   cache: checkCachePolicy,
+  adsense: checkAdsenseReadiness,
 };
 
 async function main() {

@@ -1,19 +1,17 @@
 const CONSENT_KEY = "ptb_cookie_consent";
 
-export type ConsentCategory = "analytics" | "advertising" | "preferences";
+export type ConsentCategory = "analytics" | "preferences";
 
 export type ConsentState = "granted" | "denied" | "pending";
 
 export interface GranularConsent {
   analytics: boolean;
-  advertising: boolean;
   preferences: boolean;
   timestamp: number;
 }
 
 const DEFAULT_CONSENT: GranularConsent = {
   analytics: false,
-  advertising: false,
   preferences: false,
   timestamp: 0,
 };
@@ -24,7 +22,7 @@ export function getConsent(): ConsentState {
   if (stored === "granted" || stored === "denied") return stored;
   const consent = getGranularConsent();
   if (!consent.timestamp) return "pending";
-  return consent.analytics || consent.advertising || consent.preferences ? "granted" : "denied";
+  return consent.analytics || consent.preferences ? "granted" : "denied";
 }
 
 export function getGranularConsent(): GranularConsent {
@@ -36,7 +34,6 @@ export function getGranularConsent(): GranularConsent {
     if (typeof parsed === "object" && parsed !== null) {
       return {
         analytics: Boolean(parsed.analytics),
-        advertising: Boolean(parsed.advertising),
         preferences: Boolean(parsed.preferences),
         timestamp: Number(parsed.timestamp) || 0,
       };
@@ -45,10 +42,10 @@ export function getGranularConsent(): GranularConsent {
     // Invalid JSON, return default
   }
   if (stored === "granted") {
-    return { analytics: true, advertising: true, preferences: true, timestamp: Date.now() };
+    return { analytics: true, preferences: true, timestamp: Date.now() };
   }
   if (stored === "denied") {
-    return { analytics: false, advertising: false, preferences: false, timestamp: Date.now() };
+    return { analytics: false, preferences: false, timestamp: Date.now() };
   }
   return DEFAULT_CONSENT;
 }
@@ -63,7 +60,6 @@ export function setConsent(state: ConsentState): void {
   if (state === "granted") {
     const consent: GranularConsent = {
       analytics: true,
-      advertising: true,
       preferences: true,
       timestamp: Date.now(),
     };
@@ -71,7 +67,6 @@ export function setConsent(state: ConsentState): void {
   } else if (state === "denied") {
     const consent: GranularConsent = {
       analytics: false,
-      advertising: false,
       preferences: false,
       timestamp: Date.now(),
     };
@@ -90,7 +85,7 @@ export function setGranularConsent(consent: GranularConsent): void {
 }
 
 export function getConsentCategories(): ConsentCategory[] {
-  return ["analytics", "advertising", "preferences"];
+  return ["analytics", "preferences"];
 }
 
 export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; description: string; cookies: string[] }> = {
@@ -98,11 +93,6 @@ export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; desc
     name: "Analytics",
     description: "Help us understand how visitors interact with our website.",
     cookies: ["_ga", "_gid", "_gat", "_utma", "_utmb", "_utmc"],
-  },
-  advertising: {
-    name: "Advertising",
-    description: "Used to deliver personalized ads and measure ad performance.",
-    cookies: ["IDE", "test_cookie", "fr", "tr", "spin", "infolinks_pid"],
   },
   preferences: {
     name: "Preferences",
