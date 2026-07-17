@@ -80,7 +80,9 @@ Verification will run the regression test against a production build, inspect se
 - Manual placeholder slots do not mount.
 - Privacy copy matches the implementation.
 - Existing SEO regression checks pass.
-- Production build succeeds.
+- The standalone regression check passes.
+- Production build copies `public` and `.next/static` into `.next/standalone`.
+- The supported `.next/standalone/server.js` runtime serves CSS, JavaScript, fonts, favicon, and `ads.txt`.
 
 ## External release gate
 
@@ -90,5 +92,5 @@ Before requesting AdSense review, the operator must:
 2. Enable Auto Ads and exclude the five empty or interaction-heavy routes listed above.
 3. Deploy the verified commit through Dokploy.
 4. Configure a permanent `www` to apex redirect with a valid certificate.
-5. Verify the public sitemap, profile responses, legacy VGC `noindex`, `ads.txt`, and CMP message.
+5. Verify `https://www.poketeambuilder.com/` has valid TLS and returns 301/308 with the apex `Location`; verify the public sitemap, profile responses, legacy VGC `noindex`, CMP message, one CSS and one JavaScript URL under `/_next/static/` returning 200, and `ads.txt` returning 200 with `pub-7981415143867065`.
 6. Request review only after AdSense reports the site connection and `ads.txt` as valid.

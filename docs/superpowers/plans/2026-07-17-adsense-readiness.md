@@ -319,7 +319,9 @@ git commit -m "fix(adsense): prepare google cmp consent flow"
 ### Task 3: Verify the production artifact and prepare external handoff
 
 **Files:**
-- Modify only if a preceding regression exposes a scoped defect.
+- Modify: `package.json`
+- Create: `scripts/prepare-standalone.cjs`
+- Test: `scripts/test-standalone-build.cjs`
 - Test: `scripts/test-seo-regressions.cjs`
 
 **Interfaces:**
@@ -332,20 +334,23 @@ git commit -m "fix(adsense): prepare google cmp consent flow"
 npm run test:generations
 npm run test:styles
 npm run test:types
+npm run test:standalone
 npx tsc --noEmit --noUnusedLocals --noUnusedParameters --allowUnreachableCode false --pretty false
-npx eslint scripts/test-seo-regressions.cjs components/ConsentAwareScripts.tsx components/monetization/Ads.tsx components/CookieConsent.tsx components/CookieSettings.tsx lib/consent.ts app/privacy/page.tsx lib/data-sources/smogon.ts
+npx eslint scripts/test-seo-regressions.cjs scripts/test-standalone-build.cjs scripts/prepare-standalone.cjs components/ConsentAwareScripts.tsx components/monetization/Ads.tsx components/CookieConsent.tsx components/CookieSettings.tsx lib/consent.ts app/privacy/page.tsx lib/data-sources/smogon.ts
 npm run build
 ```
 
-Expected: build, styles, types, TypeScript, and changed-file ESLint pass. If the known generation matrix failure remains, confirm it is the same pre-existing Gen 7 Doubles OU Mega legality case and not a changed path.
+Expected: standalone wiring, build, styles, types, TypeScript, and changed-file ESLint pass. If the known generation matrix failure remains, confirm it is the same pre-existing Gen 7 Doubles OU Mega legality case and not a changed path.
 
 - [ ] **Step 2: Start the production build on port 3007**
 
 ```powershell
-npm start -- -p 3007
+$env:PORT = '3007'
+$env:HOSTNAME = '127.0.0.1'
+npm start
 ```
 
-Expected: server reaches `Ready`. Keep the server output available for inspection.
+Expected: `.next/standalone/server.js` reaches `Ready`. Keep the server output available for inspection.
 
 - [ ] **Step 3: Run all HTTP regression checks**
 
@@ -366,11 +371,20 @@ $locs = [regex]::Matches($sitemap, '<loc>(.*?)</loc>')
 "pokemon=$(($locs | ForEach-Object { $_.Groups[1].Value } | Where-Object { $_ -match '/pokemon/[^/]+$' }).Count)"
 curl.exe -sS -o NUL -w "great-tusk=%{http_code}`n" http://127.0.0.1:3007/pokemon/great-tusk
 curl.exe -sS -I http://127.0.0.1:3007/ | Select-String 'HTTP/|Cache-Control'
-$home = (Invoke-WebRequest -Uri 'http://127.0.0.1:3007/' -UseBasicParsing).Content
-"adsense=$([regex]::Matches($home, 'ca-pub-7981415143867065').Count)"
+$homeHtml = (Invoke-WebRequest -Uri 'http://127.0.0.1:3007/' -UseBasicParsing).Content
+"adsense=$([regex]::Matches($homeHtml, 'ca-pub-7981415143867065').Count)"
+$cssPath = [regex]::Match($homeHtml, 'href="([^"]+\.css[^"]*)"').Groups[1].Value
+$jsPath = [regex]::Match($homeHtml, 'src="([^"]+\.js[^"]*)"').Groups[1].Value
+$fontPath = [regex]::Match($homeHtml, 'href="([^"]+\.woff2[^"]*)"').Groups[1].Value
+curl.exe -sS -o NUL -w "css=%{http_code}`n" "http://127.0.0.1:3007$cssPath"
+curl.exe -sS -o NUL -w "js=%{http_code}`n" "http://127.0.0.1:3007$jsPath"
+curl.exe -sS -o NUL -w "font=%{http_code}`n" "http://127.0.0.1:3007$fontPath"
+curl.exe -sS -o NUL -w "favicon=%{http_code}`n" http://127.0.0.1:3007/favicon.ico
+$adsText = (Invoke-WebRequest -Uri 'http://127.0.0.1:3007/ads.txt' -UseBasicParsing).Content
+if ($adsText -notmatch 'pub-7981415143867065') { throw 'ads.txt publisher missing' }
 ```
 
-Expected: `total=330`, `pokemon=300`, `great-tusk=200`, a public cache header, and at least one AdSense publisher marker.
+Expected: `total=330`, `pokemon=300`, `great-tusk=200`, a public cache header, at least one AdSense publisher marker, CSS/JS/font/favicon `200`, and `ads.txt` containing `pub-7981415143867065`.
 
 - [ ] **Step 5: Inspect server output for the original regression**
 
@@ -394,5 +408,5 @@ External steps, in order:
 2. AdSense: enable Auto Ads and exclude `/equipo`, `/analisis`, `/exportar`, `/saved-teams`, and `/configurar`.
 3. Git/Dokploy: merge or fast-forward the verified branch to the deployed branch and rebuild the application.
 4. Dokploy/Cloudflare: add `www.poketeambuilder.com`, issue a valid certificate, and set a permanent `www` to apex redirect.
-5. Public verification: confirm sitemap counts, profile `200`, legacy VGC `noindex`, `ads.txt`, and Google CMP.
+5. Public verification: confirm `https://www.poketeambuilder.com/` has valid TLS and returns 301/308 with `Location: https://poketeambuilder.com/`; confirm sitemap counts, profile `200`, legacy VGC `noindex`, Google CMP, one CSS and one JS URL under `/_next/static/` returning `200`, and `ads.txt` returning `200` with `pub-7981415143867065`.
 6. AdSense: request review only after the site connection and `ads.txt` are reported valid.

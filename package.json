@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "postbuild": "node scripts/prepare-standalone.cjs",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "test:generations": "node scripts/test-generation-matrix.cjs",
     "test:seo": "node scripts/test-seo-regressions.cjs",
+    "test:standalone": "node scripts/test-standalone-build.cjs",
     "test:styles": "node scripts/test-style-matrix.cjs",
     "test:types": "node scripts/test-type-matrix.cjs"
   },
