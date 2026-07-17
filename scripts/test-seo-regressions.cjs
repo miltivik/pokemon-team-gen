@@ -153,16 +153,50 @@ async function checkAdsenseReadiness() {
   const consent = fs.readFileSync(path.join(root, "lib/consent.ts"), "utf8");
   const banner = fs.readFileSync(path.join(root, "components/CookieConsent.tsx"), "utf8");
   const settings = fs.readFileSync(path.join(root, "components/CookieSettings.tsx"), "utf8");
+  const analytics = fs.readFileSync(path.join(root, "lib/analytics.tsx"), "utf8");
+  const webVitals = fs.readFileSync(path.join(root, "components/WebVitalsTracker.tsx"), "utf8");
   const privacy = fs.readFileSync(path.join(root, "app/privacy/page.tsx"), "utf8");
   const envExample = fs.readFileSync(path.join(root, ".env.local.example"), "utf8");
+  const design = fs.readFileSync(path.join(root, "docs/superpowers/specs/2026-07-17-adsense-readiness-design.md"), "utf8");
+  const plan = fs.readFileSync(path.join(root, "docs/superpowers/plans/2026-07-17-adsense-readiness.md"), "utf8");
 
   assert.match(scripts, /<AdSenseLoader\s*\/>/, "AdSense must load so Google CMP can render");
   assert.doesNotMatch(scripts, /hasAdvertising|Infolinks|Ezoic/, "only AdSense may own advertising runtime");
   assert.doesNotMatch(ads, /hasConsent\(["']advertising["']\)|ezoic|infolinks/i);
   assert.doesNotMatch(consent, /["']advertising["']\s*\||advertising:\s*boolean|advertising:\s*(true|false)/);
   assert.doesNotMatch(banner + settings, /["']advertising["']/);
+  assert.doesNotMatch(consent, /["']preferences["']\s*\||preferences:\s*boolean|preferences:\s*(true|false)/);
+  assert.doesNotMatch(banner + settings, /["']preferences["']|preference storage/i);
+  assert.match(
+    consent,
+    /gtag\("consent",\s*"update",\s*{\s*analytics_storage:/,
+    "local analytics changes must update Google Consent Mode"
+  );
+  assert.equal(
+    count(consent, /updateAnalyticsConsent\(/g),
+    3,
+    "both local consent setters must update Google Consent Mode"
+  );
+  assert.match(
+    analytics,
+    /function trackPageView\([^)]*\)\s*{\s*if \(!hasConsent\("analytics"\)\) return;/,
+    "pageviews must check current analytics consent"
+  );
+  assert.match(
+    analytics,
+    /function trackEvent\([^)]*\)\s*{\s*if \(!hasConsent\("analytics"\)\) return;/,
+    "events must check current analytics consent"
+  );
+  assert.match(
+    webVitals,
+    /function sendToAnalytics\([^)]*\)\s*{\s*if \(!hasConsent\("analytics"\)\) return;/,
+    "Web Vitals must check current analytics consent at send time"
+  );
   assert.match(privacy, /Google Privacy\s*&amp;\s*messaging|Google Privacy and messaging/);
+  assert.match(privacy, /Last updated: July 17, 2026/);
+  assert.match(privacy, /local cookie banner controls analytics only/i);
   assert.doesNotMatch(privacy, /will not load analytics or advertising scripts/i);
+  assert.doesNotMatch(design + plan, /\bpreferences\b/i);
   assert.doesNotMatch(envExample, /Ezoic|Combina ambas redes/i);
 }
 

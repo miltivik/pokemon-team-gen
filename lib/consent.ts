@@ -1,20 +1,27 @@
 const CONSENT_KEY = "ptb_cookie_consent";
 
-export type ConsentCategory = "analytics" | "preferences";
+export type ConsentCategory = "analytics";
 
 export type ConsentState = "granted" | "denied" | "pending";
 
 export interface GranularConsent {
   analytics: boolean;
-  preferences: boolean;
   timestamp: number;
 }
 
 const DEFAULT_CONSENT: GranularConsent = {
   analytics: false,
-  preferences: false,
   timestamp: 0,
 };
+
+function updateAnalyticsConsent(granted: boolean): void {
+  const gtag = window.gtag;
+  if (typeof gtag === "function") {
+    gtag("consent", "update", {
+      analytics_storage: granted ? "granted" : "denied",
+    });
+  }
+}
 
 export function getConsent(): ConsentState {
   if (typeof window === "undefined") return "pending";
@@ -22,7 +29,7 @@ export function getConsent(): ConsentState {
   if (stored === "granted" || stored === "denied") return stored;
   const consent = getGranularConsent();
   if (!consent.timestamp) return "pending";
-  return consent.analytics || consent.preferences ? "granted" : "denied";
+  return consent.analytics ? "granted" : "denied";
 }
 
 export function getGranularConsent(): GranularConsent {
@@ -34,7 +41,6 @@ export function getGranularConsent(): GranularConsent {
     if (typeof parsed === "object" && parsed !== null) {
       return {
         analytics: Boolean(parsed.analytics),
-        preferences: Boolean(parsed.preferences),
         timestamp: Number(parsed.timestamp) || 0,
       };
     }
@@ -42,10 +48,10 @@ export function getGranularConsent(): GranularConsent {
     // Invalid JSON, return default
   }
   if (stored === "granted") {
-    return { analytics: true, preferences: true, timestamp: Date.now() };
+    return { analytics: true, timestamp: Date.now() };
   }
   if (stored === "denied") {
-    return { analytics: false, preferences: false, timestamp: Date.now() };
+    return { analytics: false, timestamp: Date.now() };
   }
   return DEFAULT_CONSENT;
 }
@@ -57,35 +63,26 @@ export function hasConsent(category: ConsentCategory): boolean {
 
 export function setConsent(state: ConsentState): void {
   if (typeof window === "undefined") return;
-  if (state === "granted") {
-    const consent: GranularConsent = {
-      analytics: true,
-      preferences: true,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
-  } else if (state === "denied") {
-    const consent: GranularConsent = {
-      analytics: false,
-      preferences: false,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
-  } else {
+  const analytics = state === "granted";
+  if (state === "pending") {
     localStorage.removeItem(CONSENT_KEY);
+  } else {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify({ analytics, timestamp: Date.now() }));
   }
+  updateAnalyticsConsent(analytics);
   window.dispatchEvent(new Event("consentChanged"));
 }
 
 export function setGranularConsent(consent: GranularConsent): void {
   if (typeof window === "undefined") return;
-  consent.timestamp = Date.now();
-  localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
+  const storedConsent = { ...consent, timestamp: Date.now() };
+  localStorage.setItem(CONSENT_KEY, JSON.stringify(storedConsent));
+  updateAnalyticsConsent(storedConsent.analytics);
   window.dispatchEvent(new Event("consentChanged"));
 }
 
 export function getConsentCategories(): ConsentCategory[] {
-  return ["analytics", "preferences"];
+  return ["analytics"];
 }
 
 export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; description: string; cookies: string[] }> = {
@@ -93,10 +90,5 @@ export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; desc
     name: "Analytics",
     description: "Help us understand how visitors interact with our website.",
     cookies: ["_ga", "_gid", "_gat", "_utma", "_utmb", "_utmc"],
-  },
-  preferences: {
-    name: "Preferences",
-    description: "Remember your settings and preferences for future visits.",
-    cookies: ["language", "theme", "timezone"],
   },
 };

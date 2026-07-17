@@ -4,14 +4,14 @@
 
 **Goal:** Make the SEO recovery branch safe to deploy for an AdSense review by aligning server caching, using AdSense as the only ad network, and delegating advertising consent to Google CMP.
 
-**Architecture:** Keep `SmogonDataSource` as the shared data path and replace its uncached fetches with the existing one-hour revalidation policy. Keep the local consent system only for analytics and preferences, load AdSense independently so Google CMP can establish TCF consent, and delete unused competing ad-network loaders.
+**Architecture:** Keep `SmogonDataSource` as the shared data path and replace its uncached fetches with the existing one-hour revalidation policy. Keep the local consent system only for analytics, load AdSense independently so Google CMP can establish TCF consent, and delete unused competing ad-network loaders.
 
 **Tech Stack:** Next.js 16 App Router, React 19, TypeScript 5, Node.js regression runner, Google AdSense Privacy & messaging.
 
 ## Global Constraints
 
 - Do not add dependencies or new cache abstractions.
-- Google CMP owns advertising consent; local consent owns only analytics and preferences.
+- Google CMP owns advertising consent; local consent owns only analytics.
 - AdSense is the only advertising provider loaded by application code.
 - Do not add real manual slot IDs; placeholder units must remain disabled.
 - Do not automate Dokploy, Cloudflare, or AdSense account changes from this repository.
@@ -136,8 +136,8 @@ git commit -m "fix(seo): align smogon fetches with isr"
 - Test: `scripts/test-seo-regressions.cjs`
 
 **Interfaces:**
-- Consumes: `hasConsent("analytics")`, `hasConsent("preferences")`, the `ConsentAwareScripts` root-layout mount, and Google AdSense publisher `ca-pub-7981415143867065`.
-- Produces: `ConsentCategory = "analytics" | "preferences"`, an unconditional AdSense loader for Google CMP, analytics-gated GA4, and no Infolinks/Ezoic runtime path.
+- Consumes: `hasConsent("analytics")`, the `ConsentAwareScripts` root-layout mount, and Google AdSense publisher `ca-pub-7981415143867065`.
+- Produces: `ConsentCategory = "analytics"`, an unconditional AdSense loader for Google CMP, analytics-gated GA4, and no Infolinks/Ezoic runtime path.
 
 - [ ] **Step 1: Add the failing monetization-policy regression check**
 
@@ -180,16 +180,15 @@ npm run test:seo -- --check=adsense
 
 Expected: FAIL with `AdSense must load so Google CMP can render` or `only AdSense may own advertising runtime`.
 
-- [ ] **Step 3: Reduce the local consent model to analytics and preferences**
+- [ ] **Step 3: Reduce the local consent model to analytics**
 
 In `lib/consent.ts`, use this public shape:
 
 ```ts
-export type ConsentCategory = "analytics" | "preferences";
+export type ConsentCategory = "analytics";
 
 export interface GranularConsent {
   analytics: boolean;
-  preferences: boolean;
   timestamp: number;
 }
 ```
@@ -197,14 +196,14 @@ export interface GranularConsent {
 Remove `advertising` from `DEFAULT_CONSENT`, parsed values, legacy granted/denied values, `setConsent`, `getConsentCategories`, and `CONSENT_CATEGORY_INFO`. `getConsent()` must resolve the local state with:
 
 ```ts
-return consent.analytics || consent.preferences ? "granted" : "denied";
+return consent.analytics ? "granted" : "denied";
 ```
 
 Use this category list:
 
 ```ts
 export function getConsentCategories(): ConsentCategory[] {
-  return ["analytics", "preferences"];
+  return ["analytics"];
 }
 ```
 
@@ -215,7 +214,6 @@ In `components/CookieConsent.tsx` and `components/CookieSettings.tsx`:
 ```ts
 const [consent, setConsentState] = useState<GranularConsent>({
   analytics: false,
-  preferences: false,
   timestamp: 0,
 });
 ```
@@ -223,13 +221,13 @@ const [consent, setConsentState] = useState<GranularConsent>({
 Replace both category arrays with:
 
 ```ts
-(["analytics", "preferences"] as ConsentCategory[])
+(["analytics"] as ConsentCategory[])
 ```
 
 Replace the introductory banner copy with:
 
 ```tsx
-Choose whether to allow analytics and preference storage. Advertising choices are managed separately by Google Privacy &amp; messaging where required.{" "}
+Choose whether to allow analytics. Language and theme storage are essential. Advertising choices are managed separately by Google Privacy &amp; messaging where required.{" "}
 ```
 
 Rename the two main buttons to `Reject Optional` and `Accept Optional` so they do not claim to control advertising.
@@ -281,7 +279,7 @@ Do not change the placeholder-slot guard.
 In `app/privacy/page.tsx`, state that:
 
 - Google Privacy & messaging manages advertising consent where required;
-- the local banner controls analytics and preferences only;
+- the local banner controls analytics only;
 - rejecting optional local cookies prevents GA4 but does not replace Google's advertising choice;
 - advertising cookies are governed by the Google CMP choice.
 

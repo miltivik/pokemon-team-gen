@@ -11,7 +11,6 @@ export function CookieConsent() {
   const [showSettings, setShowSettings] = useState(false);
   const [consent, setConsentState] = useState<GranularConsent>({
     analytics: false,
-    preferences: false,
     timestamp: 0,
   });
 
@@ -69,7 +68,7 @@ export function CookieConsent() {
               We value your privacy
             </h2>
             <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
-              Choose whether to allow analytics and preference storage. Advertising choices are managed separately by Google Privacy &amp; messaging where required.{" "}
+              Choose whether to allow analytics. Language and theme storage are essential. Advertising choices are managed separately by Google Privacy &amp; messaging where required.{" "}
               <Link href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
                 Learn more in our Privacy Policy
               </Link>
@@ -77,7 +76,7 @@ export function CookieConsent() {
             </p>
 
             <div className="mb-6 space-y-3">
-              {(["analytics", "preferences"] as ConsentCategory[]).map((category) => (
+              {(["analytics"] as ConsentCategory[]).map((category) => (
                 <div key={category} className="flex items-center justify-between rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
                   <div className="flex-1">
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">
@@ -123,7 +122,7 @@ export function CookieConsent() {
               Cookie Settings
             </h2>
             <div className="mb-6 space-y-4">
-              {(["analytics", "preferences"] as ConsentCategory[]).map((category) => (
+              {(["analytics"] as ConsentCategory[]).map((category) => (
                 <div key={category} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
                   <div className="mb-2 flex items-center justify-between">
                     <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
@@ -155,7 +154,7 @@ export function CookieConsent() {
                 onClick={() => handleSaveSettings(consent)}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
               >
-                Save Preferences
+                Save Analytics Choice
               </button>
             </div>
           </>

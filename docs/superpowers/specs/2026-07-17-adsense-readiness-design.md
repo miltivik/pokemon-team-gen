@@ -10,7 +10,7 @@ This change covers only repository behavior that can be verified locally:
 
 - align Smogon fetch caching with the one-hour ISR policy used by the tier list and guides;
 - make AdSense the only advertising network loaded by the application;
-- let Google CMP own advertising consent while the existing banner retains analytics and preference choices;
+- let Google CMP own advertising consent while the existing banner retains the analytics choice;
 - keep placeholder manual ad units disabled and rely on Auto Ads initially;
 - update the privacy policy to describe the resulting behavior;
 - add regression coverage for the cache and monetization rules.
@@ -33,14 +33,11 @@ AdSense will be the only advertising provider in application code. The existing 
 
 ### Consent ownership
 
-Google CMP will own advertising consent and the TCF signal. The local consent model and banner will retain only:
-
-- `analytics`, controlling GA4 and Web Vitals;
-- `preferences`, controlling optional preference storage.
+Google CMP will own advertising consent and the TCF signal. The local consent model and banner will retain only `analytics`, controlling GA4 and Web Vitals. Language and theme persistence are essential storage and remain outside the optional consent model.
 
 Legacy stored consent objects may contain an `advertising` property. Readers will ignore that extra property; no migration routine is needed.
 
-The custom banner must not claim that it controls AdSense. The privacy policy will state that Google Privacy & messaging manages advertising consent where required, while the local settings control analytics and preferences.
+The custom banner must not claim that it controls AdSense. The privacy policy will state that Google Privacy & messaging manages advertising consent where required, while the local settings control analytics only.
 
 ### Ad placement
 
@@ -50,7 +47,7 @@ No real manual slot IDs will be added. This avoids enabling ads on empty team st
 
 1. The initial HTML includes the AdSense account marker and AdSense loader.
 2. Google CMP applies the region-specific advertising consent policy and TCF signal.
-3. The local banner asks only for analytics and preference choices.
+3. The local banner asks only for the analytics choice.
 4. GA4 and Web Vitals read local analytics consent.
 5. Auto Ads serves only on dashboard-approved content pages.
 
@@ -78,7 +75,7 @@ Verification will run the regression test against a production build, inspect se
 - No `cache: "no-store"` remains in `lib/data-sources/smogon.ts`.
 - Tier list and guide requests do not produce static-to-dynamic errors.
 - Application code loads no Infolinks or Ezoic scripts.
-- The local consent UI contains analytics and preferences, not advertising.
+- The local consent UI contains analytics only, not advertising.
 - AdSense is present independently of local consent so Google CMP can render.
 - Manual placeholder slots do not mount.
 - Privacy copy matches the implementation.

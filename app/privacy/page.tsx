@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
                     Privacy Policy
                 </h1>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
-                    Last updated: May 5, 2026
+                    Last updated: July 17, 2026
                 </p>
 
                 <div className="prose prose-zinc dark:prose-invert max-w-none space-y-6">
@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300">
                             <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our Service, including pages visited, time spent on pages, and features used. This data is collected through analytics tools and is used solely to improve user experience.</li>
-                            <li><strong>Local Storage Data:</strong> Your saved Pokémon teams and preferences (language, theme) are stored locally in your browser using localStorage. This data never leaves your device and is not transmitted to our servers.</li>
+                            <li><strong>Essential Local Storage Data:</strong> Your saved Pokémon teams, language, and theme are stored locally in your browser so the Service can remember them. This data never leaves your device and is not transmitted to our servers.</li>
                             <li><strong>Cookies and Similar Technologies:</strong> We use cookies and similar tracking technologies for analytics and advertising purposes. See Section 5 for more details.</li>
                         </ul>
                     </section>
@@ -69,10 +69,10 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">5. Cookie Consent</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                            Our local cookie banner controls analytics and preference storage only. Essential storage needed for the website to function remains active.
+                            Our local cookie banner controls analytics only. Language and theme storage is essential and remains active.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
-                            Choosing &quot;Reject Optional&quot; prevents Google Analytics 4 from loading, but it does not replace your separate Google advertising choice. You can change your local preference at any time by clearing your browser&apos;s localStorage for poketeambuilder.com and refreshing the page.
+                            Choosing &quot;Reject Optional&quot; prevents Google Analytics 4 from loading, but it does not replace your separate Google advertising choice. You can change your analytics choice at any time by clearing your browser&apos;s localStorage for poketeambuilder.com and refreshing the page.
                         </p>
                     </section>
 

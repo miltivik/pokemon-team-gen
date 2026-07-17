@@ -5,6 +5,7 @@
 
 import { useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
+import { hasConsent } from "@/lib/consent";
 
 type EventParams = Record<string, string | number | boolean>;
 
@@ -12,6 +13,7 @@ interface Gtag {
     (command: "config", targetId: string, params?: EventParams): void;
     (command: "event", eventName: string, params?: EventParams): void;
     (command: "js", date: Date): void;
+    (command: "consent", action: "update", params: { analytics_storage: "granted" | "denied" }): void;
 }
 
 declare global {
@@ -33,6 +35,7 @@ function getGtag() {
 
 // Track page views
 export function trackPageView(pagePath: string, pageTitle: string) {
+    if (!hasConsent("analytics")) return;
     const gtag = getGtag();
     if (!GA_ID || !gtag) {
         return;
@@ -46,6 +49,7 @@ export function trackPageView(pagePath: string, pageTitle: string) {
 
 // Track custom events
 export function trackEvent(eventName: string, params?: EventParams) {
+    if (!hasConsent("analytics")) return;
     const gtag = getGtag();
     if (!gtag) {
         return;
