@@ -137,12 +137,23 @@ async function checkVgc() {
   }
 }
 
+async function checkCachePolicy() {
+  const source = fs.readFileSync(path.join(root, "lib/data-sources/smogon.ts"), "utf8");
+  assert.doesNotMatch(source, /cache:\s*["']no-store["']/, "Smogon fetches must not force ISR pages dynamic");
+  assert.equal(
+    count(source, /next:\s*{\s*revalidate:\s*3600\s*}/g),
+    3,
+    "all three Smogon upstream fetches must use one-hour revalidation"
+  );
+}
+
 const checks = {
   pseo: checkPseo,
   metadata: checkMetadata,
   configurar: checkConfigurar,
   content: checkContent,
   vgc: checkVgc,
+  cache: checkCachePolicy,
 };
 
 async function main() {

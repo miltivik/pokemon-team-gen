@@ -191,7 +191,7 @@ export class SmogonDataSource {
         try {
           const headRes = await fetch(baselineUrl, {
             method: "HEAD",
-            cache: "no-store",
+            next: { revalidate: 3600 },
           });
           if (!headRes.ok) continue;
         } catch {
@@ -201,7 +201,7 @@ export class SmogonDataSource {
         for (const rating of RATINGS) {
           const url = `${BASE_URL}/${month}/chaos/${candidate.slug}-${rating}.json`;
           try {
-            const res = await fetch(url, { cache: "no-store" });
+            const res = await fetch(url, { next: { revalidate: 3600 } });
             if (!res.ok) continue;
 
             const data = JSON.parse(await res.text()) as ChaosData;
@@ -246,7 +246,7 @@ export class SmogonDataSource {
     for (const rating of RATINGS) {
       const url = `${BASE_URL}/${month}/leads/${formatSlug}-${rating}.txt`;
       try {
-        const res = await fetch(url, { cache: "no-store" });
+        const res = await fetch(url, { next: { revalidate: 3600 } });
         if (!res.ok) continue;
 
         const text = await res.text();
