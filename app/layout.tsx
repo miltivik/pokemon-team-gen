@@ -25,10 +25,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://poketeambuilder.com'),
-  title: {
-    default: 'Pokemon Team Generator',
-    template: '%s | Pokemon Team Generator',
-  },
+  title: 'Pokemon Team Generator',
   description: ENGLISH_DESCRIPTION,
   keywords: [
     'pokemon team generator',

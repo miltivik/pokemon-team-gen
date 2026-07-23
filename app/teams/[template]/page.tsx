@@ -46,11 +46,13 @@ export async function generateMetadata({ params }: TeamArchetypePageProps): Prom
       description,
       url: `/teams/${template}`,
       type: "article",
+      images: ["/og-image.png"],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: ["/og-image.png"],
     },
   };
 }
@@ -91,6 +93,7 @@ export default async function TeamArchetypePage({ params }: TeamArchetypePagePro
       <BreadcrumbJsonLd
         items={[
           { name: "Home", item: "/" },
+          { name: "Team Archetypes", item: "/teams" },
           { name: `${templateData.label} Teams`, item: `/teams/${template}` },
         ]}
       />

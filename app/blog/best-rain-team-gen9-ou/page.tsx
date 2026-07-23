@@ -22,12 +22,14 @@ export const metadata: Metadata = {
       "Discover the best Rain team Pokemon in Gen 9 OU. From Drizzle setters to Swift Swim sweepers.",
     url: "/blog/best-rain-team-gen9-ou",
     type: "article",
+    images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Best Rain Team Pokemon for Gen 9 OU",
     description:
       "Discover the best Rain team Pokemon in Gen 9 OU. From Drizzle setters to Swift Swim sweepers.",
+    images: ["/og-image.png"],
   },
 };
 

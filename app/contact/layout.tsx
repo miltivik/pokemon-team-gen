@@ -19,11 +19,14 @@ export const metadata: Metadata = {
       "Contact Pokemon Team Generator for feedback, bug reports, feature requests, or questions about competitive Pokemon teams and Pokemon Showdown support.",
     url: "/contact",
     type: "website",
+    images: ["/og-image.png"],
   },
   twitter: {
+    card: "summary_large_image",
     title: "Contact Pokemon Team Generator",
     description:
       "Contact Pokemon Team Generator for feedback, bug reports, feature requests, or questions about competitive Pokemon teams and Pokemon Showdown support.",
+    images: ["/og-image.png"],
   },
 };
 

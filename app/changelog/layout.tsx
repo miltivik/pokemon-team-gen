@@ -19,11 +19,14 @@ export const metadata: Metadata = {
       "Track Pokemon Team Generator updates, new features, SEO improvements, competitive format support, and major releases for the team builder.",
     url: "/changelog",
     type: "website",
+    images: ["/og-image.png"],
   },
   twitter: {
+    card: "summary_large_image",
     title: "Pokemon Team Generator Changelog and Updates",
     description:
       "Track Pokemon Team Generator updates, new features, SEO improvements, competitive format support, and major releases for the team builder.",
+    images: ["/og-image.png"],
   },
 };
 

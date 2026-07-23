@@ -22,11 +22,13 @@ export const metadata: Metadata = {
     description: "Explore competitive Pokemon team archetypes and strategies.",
     url: "/teams",
     type: "website",
+    images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Team Archetypes and Strategies",
     description: "Explore competitive Pokemon team archetypes and strategies.",
+    images: ["/og-image.png"],
   },
 };
 

@@ -25,11 +25,13 @@ export const metadata: Metadata = {
     description: "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets.",
     url: "/pokemon",
     type: "website",
+    images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Competitive Pokemon Profiles and Stats",
     description: "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -37,6 +39,7 @@ export default function PokemonIndexPage() {
   const allNames = getAllPokemonNames();
   const competitiveNames = allNames.filter((name) => hasCompetitiveData(name));
   const featured = competitiveNames.slice(0, 60);
+  const directory = competitiveNames.slice(60);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
@@ -82,6 +85,25 @@ export default function PokemonIndexPage() {
             );
           })}
         </div>
+
+        {directory.length > 0 && (
+          <section className="mt-12">
+            <h2 className="mb-4 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+              All Competitive Pokemon
+            </h2>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 md:grid-cols-4">
+              {directory.map((name) => (
+                <Link
+                  key={name}
+                  href={`/pokemon/${getPokemonSlug(name)}`}
+                  className="text-sm text-blue-700 hover:underline dark:text-blue-300"
+                >
+                  {name}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

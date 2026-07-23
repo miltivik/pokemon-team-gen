@@ -15,6 +15,21 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/guides/vgc",
   },
+  openGraph: {
+    title: "VGC Doubles Guide and Legacy Regulation F Strategy",
+    description:
+      "Learn general VGC doubles strategy with speed control and team building tips, plus clearly labeled archived Regulation F data.",
+    url: "/guides/vgc",
+    type: "article",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VGC Doubles Guide and Legacy Regulation F Strategy",
+    description:
+      "Learn general VGC doubles strategy with speed control and team building tips, plus clearly labeled archived Regulation F data.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function VGCLayout({

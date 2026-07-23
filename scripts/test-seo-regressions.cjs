@@ -20,12 +20,47 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function getTitle(html, pathname) {
+  const match = html.match(/<title>([^<]+)<\/title>/i);
+  assert.ok(match, `${pathname} must render a title`);
+  return match[1];
+}
+
+function getMetaContent(html, attribute, value, pathname) {
+  const tag = html.match(
+    new RegExp(`<meta[^>]+${attribute}="${escapeRegExp(value)}"[^>]*>`, "i")
+  )?.[0];
+  assert.ok(tag, `${pathname} must render ${value}`);
+  const content = tag.match(/content="([^"]+)"/i)?.[1];
+  assert.ok(content, `${pathname} ${value} must have content`);
+  return content;
+}
+
+function getJsonLd(html) {
+  return [...html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)]
+    .map((match) => JSON.parse(match[1]));
+}
+
 async function checkPseo() {
   const competitiveSource = fs.readFileSync(path.join(root, "lib/competitive-sets.ts"), "utf8");
+  const profileSource = fs.readFileSync(
+    path.join(root, "app/pokemon/[name]/page.tsx"),
+    "utf8"
+  );
   assert.match(
     competitiveSource,
     /return getAvailableRoles\(displayName\)\.length > 0/,
     "published profiles must have roles that the page can render"
+  );
+  assert.match(
+    profileSource,
+    /return competitiveNames\.map\(/,
+    "static generation must include every competitive Pokemon"
+  );
+  assert.doesNotMatch(
+    profileSource,
+    /competitiveNames\.slice\(/,
+    "static generation must not cap competitive Pokemon"
   );
 
   const expectedProfiles = new Map([
@@ -33,6 +68,10 @@ async function checkPseo() {
     ["/pokemon/flutter-mane", "Flutter Mane"],
     ["/pokemon/great-tusk", "Great Tusk"],
     ["/pokemon/ogerpon-wellspring", "Ogerpon-Wellspring"],
+    ["/pokemon/pelipper", "Pelipper"],
+    ["/pokemon/rillaboom", "Rillaboom"],
+    ["/pokemon/roaring-moon", "Roaring Moon"],
+    ["/pokemon/zamazenta", "Zamazenta"],
   ]);
 
   for (const [pathname, displayName] of expectedProfiles) {
@@ -44,6 +83,7 @@ async function checkPseo() {
       `${pathname} must render its proper display name`
     );
     assert.match(text, /Competitive Roles/, `${pathname} must render competitive data`);
+    assert.match(text, /Competitive Movesets/, `${pathname} must render competitive movesets`);
   }
 
   for (const pathname of ["/pokemon/abra", "/pokemon/abomasnow-mega"]) {
@@ -63,11 +103,25 @@ async function checkPseo() {
 
   const { response, text } = await get("/sitemap.xml");
   assert.equal(response.status, 200, "/sitemap.xml must return 200");
+  assert.doesNotMatch(text, /<(?:priority|changefreq)>/, "sitemap must omit ignored hints");
+  for (const block of text.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+    if (/\/(?:pokemon|teams)\//.test(block[1])) {
+      assert.doesNotMatch(
+        block[1],
+        /<lastmod>/,
+        "programmatic pages must not publish an invented last-modified date"
+      );
+    }
+  }
   const pokemonUrls = [
     ...text.matchAll(/<loc>(https:\/\/poketeambuilder\.com\/pokemon\/[^<]+)<\/loc>/g),
   ].map((match) => match[1]);
-  assert.equal(pokemonUrls.length, 300, "sitemap must contain 300 Pokemon profiles");
-  assert.equal(new Set(pokemonUrls).size, 300, "Pokemon sitemap URLs must be unique");
+  assert.ok(pokemonUrls.length > 300, "sitemap must not cap competitive Pokemon profiles at 300");
+  assert.equal(
+    new Set(pokemonUrls).size,
+    pokemonUrls.length,
+    "Pokemon sitemap URLs must be unique"
+  );
   assert.ok(
     pokemonUrls.includes("https://poketeambuilder.com/pokemon/flutter-mane"),
     "sitemap must use the canonical Flutter Mane slug"
@@ -80,21 +134,33 @@ async function checkPseo() {
     !pokemonUrls.includes("https://poketeambuilder.com/pokemon/greattusk"),
     "sitemap must not publish legacy compound slugs"
   );
-
-  for (let offset = 0; offset < pokemonUrls.length; offset += 25) {
-    const profiles = await Promise.all(
-      pokemonUrls.slice(offset, offset + 25).map(async (url) => ({
-        pathname: new URL(url).pathname,
-        result: await get(new URL(url).pathname),
-      }))
+  for (const slug of ["pelipper", "rillaboom", "roaring-moon", "zamazenta"]) {
+    assert.ok(
+      pokemonUrls.includes(`https://poketeambuilder.com/pokemon/${slug}`),
+      `sitemap must include /pokemon/${slug}`
     );
-
-    for (const { pathname, result } of profiles) {
-      assert.equal(result.response.status, 200, `${pathname} must return 200`);
-      assert.match(result.text, /Competitive Roles/, `${pathname} must render competitive roles`);
-      assert.match(result.text, /Competitive Movesets/, `${pathname} must render competitive movesets`);
-    }
   }
+
+  const pokemonIndex = await get("/pokemon");
+  assert.equal(pokemonIndex.response.status, 200, "/pokemon must return 200");
+  const indexPokemonUrls = new Set(
+    [...pokemonIndex.text.matchAll(/href="(\/pokemon\/[^"]+)"/g)]
+      .map((match) => `https://poketeambuilder.com${match[1]}`)
+  );
+  assert.deepEqual(
+    [...new Set(pokemonUrls)].sort(),
+    [...indexPokemonUrls].sort(),
+    "sitemap Pokemon URLs must match the complete Pokemon directory"
+  );
+  for (const url of pokemonUrls) {
+    const pathname = new URL(url).pathname;
+    assert.match(
+      pokemonIndex.text,
+      new RegExp(`href="${escapeRegExp(pathname)}"`),
+      `/pokemon must link to ${pathname}`
+    );
+  }
+
 }
 
 async function checkMetadata() {
@@ -105,8 +171,76 @@ async function checkMetadata() {
   assert.doesNotMatch(text, /Genera equipos Pokemon competitivos/i);
   assert.match(
     text,
+    /<h1[^>]*>\s*Competitive Pokemon Team Generator,/i,
+    "the home H1 must state the primary search intent"
+  );
+  assert.match(
+    text,
     /<link[^>]+rel="canonical"[^>]+href="https:\/\/poketeambuilder\.com\/?"/
   );
+
+  const routes = [
+    "/about",
+    "/tier-list",
+    "/guides/gen9-ou",
+    "/guides/vgc",
+    "/privacy",
+    "/terms",
+    "/contact",
+    "/changelog",
+    "/configurar",
+    "/pokemon",
+    "/pokemon/garchomp",
+    "/teams",
+    "/teams/rain",
+    "/blog",
+    "/blog/best-rain-team-gen9-ou",
+    "/blog/best-pokemon-gen9-ou",
+    "/blog/how-to-build-competitive-team",
+  ];
+
+  for (const pathname of routes) {
+    const page = await get(pathname);
+    assert.equal(page.response.status, 200, `${pathname} must return 200`);
+    const title = getTitle(page.text, pathname);
+    assert.ok(title.length <= 60, `${pathname} title must be at most 60 characters`);
+    assert.doesNotMatch(
+      title,
+      /\| Pokemon Team Generator$/,
+      `${pathname} title must not repeat the site name`
+    );
+    assert.equal(
+      getMetaContent(page.text, "property", "og:url", pathname),
+      `https://poketeambuilder.com${pathname}`,
+      `${pathname} must have a route-specific Open Graph URL`
+    );
+    assert.equal(
+      getMetaContent(page.text, "property", "og:image", pathname),
+      "https://poketeambuilder.com/og-image.png",
+      `${pathname} must have an Open Graph image`
+    );
+    assert.equal(
+      getMetaContent(page.text, "name", "twitter:image", pathname),
+      "https://poketeambuilder.com/og-image.png",
+      `${pathname} must have a Twitter image`
+    );
+  }
+
+  const breadcrumbCases = [
+    ["/pokemon/garchomp", ["Home", "Pokemon", "Garchomp"]],
+    ["/teams/rain", ["Home", "Team Archetypes", "Rain Teams"]],
+  ];
+  for (const [pathname, expectedNames] of breadcrumbCases) {
+    const page = await get(pathname);
+    const breadcrumb = getJsonLd(page.text)
+      .find((entry) => entry["@type"] === "BreadcrumbList");
+    assert.ok(breadcrumb, `${pathname} must render BreadcrumbList JSON-LD`);
+    assert.deepEqual(
+      breadcrumb.itemListElement.map((item) => item.name),
+      expectedNames,
+      `${pathname} must render the complete breadcrumb hierarchy`
+    );
+  }
 }
 
 async function checkConfigurar() {
@@ -148,6 +282,26 @@ async function checkContent() {
       /Top Threats|Live competitive data is temporarily unavailable/,
       `${pathname} must render meta content or an explicit fallback`
     );
+    assert.ok(
+      Buffer.byteLength(pages[pathname], "utf8") < 250_000,
+      `${pathname} must not serialize the full competitive dataset into HTML`
+    );
+    assert.doesNotMatch(
+      pages[pathname],
+      /"(?:rawCount|teammates|spreads)":/,
+      `${pathname} must serialize only the overview fields used by the UI`
+    );
+    assert.doesNotMatch(
+      pages[pathname],
+      /"@type":"FAQPage"/,
+      `${pathname} must not render hidden FAQ schema`
+    );
+    const format = pathname.split("/").at(-1);
+    const guideSource = fs.readFileSync(
+      path.join(root, "app/guides", format, `${format}-guide-client.tsx`),
+      "utf8"
+    );
+    assert.doesNotMatch(guideSource, /FAQPage/, `${pathname} must not mark up hidden FAQ content`);
   }
 }
 

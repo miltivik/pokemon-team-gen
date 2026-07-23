@@ -14,6 +14,21 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/tier-list",
   },
+  openGraph: {
+    title: "Pokemon Tier List and Viability Rankings",
+    description:
+      "Explore Pokemon tier lists, viability rankings, and usage stats for Gen 9 OU, UU, Ubers, Monotype, and archived VGC formats.",
+    url: "/tier-list",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pokemon Tier List and Viability Rankings",
+    description:
+      "Explore Pokemon tier lists, viability rankings, and usage stats for Gen 9 OU, UU, Ubers, Monotype, and archived VGC formats.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function TierListLayout({

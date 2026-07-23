@@ -23,9 +23,7 @@ export async function generateStaticParams() {
   const allNames = getAllPokemonNames();
   // Filter to Pokémon with competitive data to avoid generating thousands of thin pages
   const competitiveNames = allNames.filter((name) => hasCompetitiveData(name));
-  // Cap at 300 most relevant to keep build time reasonable
-  const limited = competitiveNames.slice(0, 300);
-  return limited.map((name) => ({ name: getPokemonSlug(name) }));
+  return competitiveNames.map((name) => ({ name: getPokemonSlug(name) }));
 }
 
 export async function generateMetadata({ params }: PokemonPageProps): Promise<Metadata> {
@@ -60,11 +58,13 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
       description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
       url: `/pokemon/${canonicalSlug}`,
       type: "article",
+      images: ["/og-image.png"],
     },
     twitter: {
       card: "summary_large_image",
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
       description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
+      images: ["/og-image.png"],
     },
   };
 }
@@ -156,6 +156,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
       <BreadcrumbJsonLd
         items={[
           { name: "Home", item: "/" },
+          { name: "Pokemon", item: "/pokemon" },
           { name: finalName, item: `/pokemon/${canonicalSlug}` },
         ]}
       />

@@ -20,11 +20,14 @@ export const metadata: Metadata = {
       "Learn how to build a competitive Pokemon team step by step, from format choice and team roles to coverage, speed tiers, and win conditions.",
     url: "/blog/how-to-build-competitive-team",
     type: "article",
+    images: ["/og-image.png"],
   },
   twitter: {
+    card: "summary_large_image",
     title: "How to Build a Competitive Pokemon Team",
     description:
       "Learn how to build a competitive Pokemon team step by step, from format choice and team roles to coverage, speed tiers, and win conditions.",
+    images: ["/og-image.png"],
   },
 };
 

@@ -20,11 +20,14 @@ export const metadata: Metadata = {
       "See the best Pokemon for Gen 9 OU in 2026, why they dominate the metagame, and how to build stronger Pokemon Showdown teams around them.",
     url: "/blog/best-pokemon-gen9-ou",
     type: "article",
+    images: ["/og-image.png"],
   },
   twitter: {
+    card: "summary_large_image",
     title: "Best Pokemon for Gen 9 OU in 2026",
     description:
       "See the best Pokemon for Gen 9 OU in 2026, why they dominate the metagame, and how to build stronger Pokemon Showdown teams around them.",
+    images: ["/og-image.png"],
   },
 };
 

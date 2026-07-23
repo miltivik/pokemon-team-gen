@@ -52,7 +52,7 @@ const homeCopy: Record<Lang, Record<HomeCopyKey, string>> = {
     en: {
         "app.skipToContent": "Skip to main content",
         "app.aiPowered": "Data-driven generation",
-        "app.titleNew": "Your Next Winning Team, Built with Meta Data",
+        "app.titleNew": "Competitive Pokemon Team Generator, Built with Meta Data",
         "app.subtitleNew": "We analyze the current Smogon and VGC meta to generate synergistic, balanced teams ready to export to Pokemon Showdown.",
         "app.startGeneratingNew": "Generate My First Team",
         "app.freeNoReg": "Its free. No registration required.",
@@ -100,7 +100,7 @@ const homeCopy: Record<Lang, Record<HomeCopyKey, string>> = {
     es: {
         "app.skipToContent": "Saltar al contenido principal",
         "app.aiPowered": "Generación basada en datos",
-        "app.titleNew": "Tu próximo equipo ganador, construido con datos del meta",
+        "app.titleNew": "Generador de equipos Pokémon competitivos, basado en datos del meta",
         "app.subtitleNew": "Analizamos el meta actual de Smogon y VGC para generar equipos sinérgicos, equilibrados y listos para exportar a Pokémon Showdown.",
         "app.startGeneratingNew": "Generar mi primer equipo",
         "app.freeNoReg": "Es gratis. Sin registro.",

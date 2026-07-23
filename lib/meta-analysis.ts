@@ -8,8 +8,8 @@ import { getCombinedStats, type CombinedPokemonData } from "@/lib/pikalytics";
 import { getProperAbilityName, getProperItemName } from "@/lib/showdown-data";
 
 export interface MetaOverviewData {
-  topThreats: SmogonMonData[];
-  tierGroups: Record<string, SmogonMonData[]>;
+  topThreats: { name: string; usage: number }[];
+  tierGroups: Record<string, { name: string; usage: number }[]>;
   topItems: { name: string; usage: number }[];
   topAbilities: { name: string; usage: number }[];
   loading: false;
@@ -22,8 +22,8 @@ export interface MetaOverviewPayload {
 
 export function buildMetaOverview(stats: Record<string, SmogonMonData>): MetaOverviewData {
   const mons = Object.values(stats).sort((a, b) => b.usage - a.usage);
-  const topThreats = mons.slice(0, 5);
-  const tierGroups: Record<string, SmogonMonData[]> = {};
+  const topThreats = mons.slice(0, 5).map(({ name, usage }) => ({ name, usage }));
+  const tierGroups: Record<string, { name: string; usage: number }[]> = {};
   const itemUsageMap: Record<string, number> = {};
   const abilityUsageMap: Record<string, number> = {};
   const top50 = mons.slice(0, 50);
@@ -33,7 +33,7 @@ export function buildMetaOverview(stats: Record<string, SmogonMonData>): MetaOve
   for (const mon of mons) {
     const tier = classifyTier(mon.usage);
     if (!tierGroups[tier]) tierGroups[tier] = [];
-    tierGroups[tier].push(mon);
+    tierGroups[tier].push({ name: mon.name, usage: mon.usage });
   }
 
   for (const mon of top50) {

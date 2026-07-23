@@ -13,6 +13,21 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/about",
   },
+  openGraph: {
+    title: "How Pokemon Team Generator Works",
+    description:
+      "Learn how Pokemon Team Generator builds competitive teams using Smogon and Pikalytics data, format rules, synergy checks, and Pokemon Showdown-ready exports.",
+    url: "/about",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "How Pokemon Team Generator Works",
+    description:
+      "Learn how Pokemon Team Generator builds competitive teams using Smogon and Pikalytics data, format rules, synergy checks, and Pokemon Showdown-ready exports.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function AboutLayout({

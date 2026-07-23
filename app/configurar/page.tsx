@@ -23,12 +23,14 @@ export const metadata: Metadata = {
       "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more.",
     url: "/configurar",
     type: "website",
+    images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Generate Competitive Pokemon Teams",
     description:
       "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more.",
+    images: ["/og-image.png"],
   },
 };
 

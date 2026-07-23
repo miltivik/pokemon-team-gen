@@ -21,11 +21,14 @@ export const metadata: Metadata = {
       "Read competitive Pokemon guides, Gen 9 OU rankings, VGC strategy articles, and practical team building tips for Pokemon Showdown.",
     url: "/blog",
     type: "website",
+    images: ["/og-image.png"],
   },
   twitter: {
+    card: "summary_large_image",
     title: "Competitive Pokemon Blog, Guides and Team Building Tips",
     description:
       "Read competitive Pokemon guides, Gen 9 OU rankings, VGC strategy articles, and practical team building tips for Pokemon Showdown.",
+    images: ["/og-image.png"],
   },
 };
 

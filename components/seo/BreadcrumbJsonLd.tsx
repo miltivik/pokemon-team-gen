@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 interface BreadcrumbItem {
   name: string;
   item: string;
@@ -18,7 +16,7 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   };
 
   return (
-    <Script
+    <script
       id="breadcrumb-jsonld"
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
