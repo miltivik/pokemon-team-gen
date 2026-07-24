@@ -79,9 +79,10 @@ export default function DynamicGuidePage({ params }: { params: Promise<{ format:
         async function fetchData() {
             try {
                 setLoading(true);
-                const response = await fetch(`/api/meta-overview?format=${encodeURIComponent(format)}`, {
-                    signal: controller.signal,
-                });
+                const response = await fetch(
+                    `/api/meta-overview?format=${encodeURIComponent(format)}&limit=15`,
+                    { signal: controller.signal }
+                );
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch guide stats for ${format}`);

@@ -27,6 +27,7 @@ const FORMAT_OPTIONS = [
 ];
 
 const TIER_ORDER: TierRank[] = ["S", "A+", "A", "A-", "B+", "B", "B-", "C", "D"];
+const VISIBLE_TIER_CARDS = 8;
 
 const TIER_THRESHOLDS: Partial<Record<TierRank, number>> = {
   S: 15,
@@ -150,7 +151,7 @@ export default function TierListPageClient({ initialTierData }: TierListPageClie
                   </span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {tierData[tier].map((mon) => {
+                  {tierData[tier].slice(0, VISIBLE_TIER_CARDS).map((mon) => {
                     const pokemonData = getPokemonSummary(mon.name);
                     const spriteUrl = getPokemonSpriteUrl(
                       pokemonData ? { ...pokemonData, name: mon.name } : mon.name,
@@ -188,6 +189,26 @@ export default function TierListPageClient({ initialTierData }: TierListPageClie
                     );
                   })}
                 </div>
+                {tierData[tier].length > VISIBLE_TIER_CARDS && (
+                  <details className="rounded-lg border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+                    <summary className="cursor-pointer font-semibold text-zinc-700 dark:text-zinc-200">
+                      {isSpanish
+                        ? `Ver ${tierData[tier].length - VISIBLE_TIER_CARDS} Pokémon más`
+                        : `Show ${tierData[tier].length - VISIBLE_TIER_CARDS} more Pokemon`}
+                    </summary>
+                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                      {tierData[tier].slice(VISIBLE_TIER_CARDS).map((mon) => (
+                        <Link
+                          key={mon.name}
+                          href={`/pokemon/${getPokemonSlug(mon.name)}`}
+                          className="text-sm text-blue-700 underline-offset-4 hover:underline dark:text-blue-300"
+                        >
+                          {mon.name} {formatPercentage(mon.usage, { fromRatio: true })}
+                        </Link>
+                      ))}
+                    </div>
+                  </details>
+                )}
               </div>
             ))
           ) : (

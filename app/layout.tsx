@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://poketeambuilder.com'),
-  title: 'Pokemon Team Generator',
+  title: 'Competitive Pokemon Team Generator',
   description: ENGLISH_DESCRIPTION,
   keywords: [
     'pokemon team generator',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     alternateLocale: 'es_ES',
     url: 'https://poketeambuilder.com',
     siteName: 'Pokemon Team Generator',
-    title: 'Pokemon Team Generator - Build Competitive Teams',
+    title: 'Competitive Pokemon Team Generator',
     description: ENGLISH_DESCRIPTION,
     images: [
       {
@@ -72,13 +72,18 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pokemon Team Generator - Build Competitive Teams',
+    title: 'Competitive Pokemon Team Generator',
     description: ENGLISH_DESCRIPTION,
     images: ['/og-image.png'],
     creator: '@poketeamgen',
   },
   alternates: {
     canonical: 'https://poketeambuilder.com',
+    languages: {
+      en: 'https://poketeambuilder.com',
+      es: 'https://poketeambuilder.com/es',
+      'x-default': 'https://poketeambuilder.com',
+    },
   },
   category: 'gaming',
   classification: 'Gaming Tools',

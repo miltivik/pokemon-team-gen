@@ -167,6 +167,11 @@ async function checkMetadata() {
   const { response, text } = await get("/");
   assert.equal(response.status, 200);
   assert.match(text, /<html[^>]+lang="en"/);
+  assert.equal(
+    getTitle(text, "/"),
+    "Competitive Pokemon Team Generator",
+    "home title must match the primary search intent"
+  );
   assert.match(text, /Generate competitive Pokemon teams/i);
   assert.doesNotMatch(text, /Genera equipos Pokemon competitivos/i);
   assert.match(
@@ -178,6 +183,45 @@ async function checkMetadata() {
     text,
     /<link[^>]+rel="canonical"[^>]+href="https:\/\/poketeambuilder\.com\/?"/
   );
+  for (const [lang, href] of [
+    ["en", "https://poketeambuilder.com"],
+    ["es", "https://poketeambuilder.com/es"],
+    ["x-default", "https://poketeambuilder.com"],
+  ]) {
+    assert.match(
+      text,
+      new RegExp(`<link[^>]+rel="alternate"[^>]+hrefLang="${lang}"[^>]+href="${href}/?"`, "i"),
+      `/ must link to its ${lang} alternate`
+    );
+  }
+
+  const spanishHome = await get("/es");
+  assert.equal(spanishHome.response.status, 200, "/es must return 200");
+  assert.match(spanishHome.text, /<main[^>]+lang="es"/, "/es content must declare Spanish");
+  assert.match(
+    spanishHome.text,
+    /Generador de equipos (?:Pokémon|Pok&#xE9;mon) competitivos/i,
+    "/es must render genuine Spanish content"
+  );
+  assert.match(
+    spanishHome.text,
+    /<link[^>]+rel="canonical"[^>]+href="https:\/\/poketeambuilder\.com\/es"/,
+    "/es must self-canonicalize"
+  );
+  for (const [lang, href] of [
+    ["en", "https://poketeambuilder.com"],
+    ["es", "https://poketeambuilder.com/es"],
+    ["x-default", "https://poketeambuilder.com"],
+  ]) {
+    assert.match(
+      spanishHome.text,
+      new RegExp(`<link[^>]+rel="alternate"[^>]+hrefLang="${lang}"[^>]+href="${href}/?"`, "i"),
+      `/es must link to its ${lang} alternate`
+    );
+  }
+
+  const sitemap = await get("/sitemap.xml");
+  assert.match(sitemap.text, /<loc>https:\/\/poketeambuilder\.com\/es<\/loc>/);
 
   const routes = [
     "/about",
@@ -275,6 +319,15 @@ async function checkContent() {
     /href="\/pokemon\/|Live usage data is temporarily unavailable/,
     "/tier-list must render Pokemon links or an explicit server fallback"
   );
+  assert.ok(
+    Buffer.byteLength(pages["/tier-list"], "utf8") < 500_000,
+    "/tier-list must keep its server HTML below 500 KB"
+  );
+  assert.ok(
+    new Set([...pages["/tier-list"].matchAll(/href="(\/pokemon\/[^"]+)"/g)].map((match) => match[1]))
+      .size > 200,
+    "/tier-list must preserve its crawlable Pokemon directory"
+  );
 
   for (const pathname of ["/guides/gen9-ou", "/guides/vgc"]) {
     assert.match(
@@ -285,6 +338,11 @@ async function checkContent() {
     assert.ok(
       Buffer.byteLength(pages[pathname], "utf8") < 250_000,
       `${pathname} must not serialize the full competitive dataset into HTML`
+    );
+    assert.match(
+      pages[pathname],
+      /Meta Snapshot/,
+      `${pathname} must server-render the compact meta snapshot`
     );
     assert.doesNotMatch(
       pages[pathname],
@@ -303,6 +361,13 @@ async function checkContent() {
     );
     assert.doesNotMatch(guideSource, /FAQPage/, `${pathname} must not mark up hidden FAQ content`);
   }
+
+  const compactMeta = await get("/api/meta-overview?format=gen9ou&limit=6");
+  assert.equal(compactMeta.response.status, 200, "compact meta API request must return 200");
+  assert.ok(
+    JSON.parse(compactMeta.text).combined.length <= 6,
+    "meta API must honor the requested result limit"
+  );
 }
 
 async function checkVgc() {

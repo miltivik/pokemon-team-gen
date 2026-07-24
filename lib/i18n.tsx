@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from "react";
 import {
     createLangCookie,
@@ -1214,6 +1215,7 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
+    const pathname = usePathname();
     const [lang, setLang] = useState<Lang>(DEFAULT_LANG);
     const [restored, setRestored] = useState(false);
 
@@ -1225,12 +1227,14 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     );
 
     useEffect(() => {
-        const cookieLang = resolveLang(
-            document.cookie
-                .split("; ")
-                .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE_KEY}=`))
-                ?.split("=")[1]
-        );
+        const cookieLang = pathname === "/es" || pathname.startsWith("/es/")
+            ? "es"
+            : resolveLang(
+                document.cookie
+                    .split("; ")
+                    .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE_KEY}=`))
+                    ?.split("=")[1]
+            );
 
         const frame = window.requestAnimationFrame(() => {
             setLang(cookieLang);
@@ -1238,7 +1242,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
         });
 
         return () => window.cancelAnimationFrame(frame);
-    }, []);
+    }, [pathname]);
 
     useEffect(() => {
         if (!restored) return;

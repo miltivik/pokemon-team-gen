@@ -69,7 +69,10 @@ export function buildMetaOverview(stats: Record<string, SmogonMonData>): MetaOve
   return { topThreats, tierGroups, topItems, topAbilities, loading: false };
 }
 
-export async function getMetaOverview(format: string): Promise<MetaOverviewPayload | null> {
+export async function getMetaOverview(
+  format: string,
+  combinedLimit = 15
+): Promise<MetaOverviewPayload | null> {
   const normalizedStats = await SmogonDataSource.getStats(format);
   if (!normalizedStats) return null;
 
@@ -79,7 +82,7 @@ export async function getMetaOverview(format: string): Promise<MetaOverviewPaylo
     getCombinedStats(format, smogonStats),
   ]);
 
-  return { meta, combined };
+  return { meta, combined: combined.slice(0, combinedLimit) };
 }
 
 export async function getTierOverview(format: string): Promise<MetaOverviewData | null> {
