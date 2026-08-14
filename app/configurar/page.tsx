@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { ConfigurarPageSkeleton } from "@/components/page-skeletons";
 import ConfigurarPageClient from "./configurar-page-client";
@@ -36,8 +37,15 @@ export const metadata: Metadata = {
 
 export default function ConfigurarPage() {
   return (
-    <Suspense fallback={<ConfigurarPageSkeleton />}>
-      <ConfigurarPageClient />
-    </Suspense>
+    <>
+      <p className="container mx-auto px-4 pt-4 text-center text-sm text-blue-600 dark:text-blue-400">
+        <Link href="/pokemon-showdown-team-builder" className="underline-offset-4 hover:underline">
+          Learn how to use the Pokemon Showdown team builder
+        </Link>
+      </p>
+      <Suspense fallback={<ConfigurarPageSkeleton />}>
+        <ConfigurarPageClient />
+      </Suspense>
+    </>
   );
 }

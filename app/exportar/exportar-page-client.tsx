@@ -155,7 +155,7 @@ export function ExportarPageClient({ expectsTeam }: ExportarPageClientProps) {
                 <div className="w-full max-w-4xl border-t border-zinc-200 pt-8 dark:border-zinc-800">
                     <h3 className="mb-4 text-center text-lg font-bold dark:text-white">{t("export.exploreMore")}</h3>
                     <div className="flex flex-wrap justify-center gap-3">
-                        <Link href={`/guides/${format === "gen9vgc2026f" ? "vgc" : "gen9-ou"}`}>
+                        <Link href={`/guides/${format === "gen9vgc2026f" || format === "gen9vgc2026regi" ? "vgc" : "gen9-ou"}`}>
                             <Button variant="outline" size="sm" className="gap-2">
                                 <BookOpen className="h-4 w-4" />
                                 {t("export.readGuide")}

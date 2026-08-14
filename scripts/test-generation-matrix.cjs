@@ -18,7 +18,7 @@ const { getCompetitiveFormatProfile } = jiti(
 const { generateDynamicTeam } = jiti(path.join(rootDir, "lib/dynamic-builder.ts"));
 const { isAllowedInFormat } = jiti(path.join(rootDir, "lib/format-rules.ts"));
 const { getCanonicalSpeciesId } = jiti(path.join(rootDir, "lib/pokemon-forms.ts"));
-const { isLegendaryOrParadoxSpecies } = jiti(
+const { isLegendaryOrParadoxSpecies, isRestrictedLegendarySpecies, isMythicalSpecies } = jiti(
   path.join(rootDir, "lib/pokemon-classification.ts")
 );
 const { isAvailableInGen } = jiti(path.join(rootDir, "lib/showdown-data.ts"));
@@ -80,11 +80,41 @@ function collectTeamIssues(result, format, requestedType, excludeLegendaries) {
   const expectedTeamSize = FORMATS[format].maxTeamSize;
   const gen = getGenFromFormat(format);
   const enforceFormatRules = shouldEnforceFormatRules(format);
+  const formatProfile = getCompetitiveFormatProfile(format);
   const canonicalIds = new Set();
   const issues = [];
 
   if (result.team.length !== expectedTeamSize) {
     issues.push(`team-size:${result.team.length}/${expectedTeamSize}`);
+  }
+
+  if (formatProfile.isVgc) {
+    if (FORMATS[format].gameType !== "doubles") {
+      issues.push("vgc-not-doubles");
+    }
+    const restrictedCount = result.team.filter((member) =>
+      isRestrictedLegendarySpecies(member.name)
+    ).length;
+    if (
+      formatProfile.maxRestrictedPokemon !== undefined &&
+      restrictedCount > formatProfile.maxRestrictedPokemon
+    ) {
+      issues.push(`restricted-count:${restrictedCount}`);
+    }
+    const mythical = result.team.filter((member) => isMythicalSpecies(member.name));
+    if (mythical.length > 0) {
+      issues.push(`mythical-banned:${mythical.map((member) => member.name).join(",")}`);
+    }
+  }
+
+  if (formatProfile.enforceItemClause) {
+    const itemIds = result.team.map((member) => String(member.item || "").toLowerCase());
+    const duplicateItems = itemIds.filter(
+      (item, index) => itemIds.indexOf(item) !== index
+    );
+    if (duplicateItems.length > 0) {
+      issues.push(`item-clause:${[...new Set(duplicateItems)].join(",")}`);
+    }
   }
 
   for (const member of result.team) {

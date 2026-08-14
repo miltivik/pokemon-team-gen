@@ -62,7 +62,7 @@ async function fetchVictoryRoadMeta(resolvedFormat: string) {
 
 export async function GET(request: NextRequest) {
   const requestedFormat =
-    request.nextUrl.searchParams.get("format") || "gen9vgc2026f";
+    request.nextUrl.searchParams.get("format") || "gen9vgc2026regi";
   const resolvedFormat = requestedFormat.startsWith("vgc")
     ? requestedFormat
     : getPrimaryProviderSlug(requestedFormat, "victoryroad");

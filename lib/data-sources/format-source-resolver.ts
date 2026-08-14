@@ -23,6 +23,12 @@ export interface ResolvedFormatPlan {
 
 const PROVIDER_OVERRIDES: Record<SourceProvider, Record<string, ResolvedFormatCandidate[]>> = {
   smogon: {
+    gen9vgc2026regi: [
+      { slug: "gen9vgc2026regi", reason: "mapped" },
+      { slug: "gen9vgc2025regg", reason: "historical_regulation" },
+      { slug: "gen9vgc2025regh", reason: "historical_regulation" },
+      { slug: "gen9vgc2024regg", reason: "historical_regulation" },
+    ],
     gen9vgc2026f: [
       { slug: "gen9vgc2026regf", reason: "mapped" },
       { slug: "gen9vgc2025regh", reason: "historical_regulation" },
@@ -33,6 +39,10 @@ const PROVIDER_OVERRIDES: Record<SourceProvider, Record<string, ResolvedFormatCa
   },
   pikalytics: {
     gen9monotype: [{ slug: "gen9mono", reason: "mapped" }],
+    gen9vgc2026regi: [
+      { slug: "gen9vgc2026regi", reason: "mapped" },
+      { slug: "gen9vgc2025regg", reason: "historical_regulation" },
+    ],
     gen9vgc2026f: [
       { slug: "gen9vgc2026regf", reason: "mapped" },
       { slug: "gen9vgc2025regh", reason: "historical_regulation" },
@@ -41,6 +51,10 @@ const PROVIDER_OVERRIDES: Record<SourceProvider, Record<string, ResolvedFormatCa
     gen9doublesou: [{ slug: "gen9vgc2026regf", reason: "mapped" }],
   },
   victoryroad: {
+    gen9vgc2026regi: [
+      { slug: "vgc2026regi", reason: "mapped" },
+      { slug: "vgc2025regg", reason: "historical_regulation" },
+    ],
     gen9vgc2026f: [
       { slug: "vgc2026regf", reason: "mapped" },
       { slug: "vgc2025regh", reason: "historical_regulation" },
@@ -58,6 +72,11 @@ const PROVIDER_OVERRIDES: Record<SourceProvider, Record<string, ResolvedFormatCa
     gen9doublesou: [{ slug: "doublesou", reason: "mapped" }],
     gen9nationaldex: [{ slug: "nationaldex", reason: "mapped" }],
     gen9nationaldexubers: [{ slug: "nationaldexubers", reason: "mapped" }],
+    gen9vgc2026regi: [
+      // Showdown exposes this as gen9vgc2026regi, while the bundled Regulation I sets are stored under vgc2025.
+      { slug: "vgc2025", reason: "mapped" },
+      { slug: "doublesou", reason: "same_game_fallback" },
+    ],
     gen9vgc2026f: [
       { slug: "vgc2025", reason: "historical_regulation" },
       { slug: "doublesou", reason: "same_game_fallback" },

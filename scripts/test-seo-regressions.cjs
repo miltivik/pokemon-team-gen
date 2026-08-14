@@ -36,6 +36,14 @@ function getMetaContent(html, attribute, value, pathname) {
   return content;
 }
 
+function assertMetaDescriptionLength(html, pathname) {
+  const description = getMetaContent(html, "name", "description", pathname);
+  assert.ok(
+    description.length >= 150 && description.length <= 160,
+    `${pathname} meta description must be 150-160 characters (got ${description.length})`
+  );
+}
+
 function getJsonLd(html) {
   return [...html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)]
     .map((match) => JSON.parse(match[1]));
@@ -91,6 +99,19 @@ async function checkPseo() {
     assert.match(text, /<meta[^>]+name="robots"[^>]+content="noindex"/, `${pathname} must be noindex`);
     assert.doesNotMatch(text, /<link[^>]+rel="canonical"/, `${pathname} must not self-canonicalize`);
   }
+
+  const profile = await get("/pokemon/garchomp");
+  const profileLd = getJsonLd(profile.text).find((entry) => entry["@type"] === "WebPage");
+  assert.ok(profileLd, "Pokemon profiles must render WebPage JSON-LD");
+  assert.ok(
+    profileLd.about && profileLd.about["@type"] === "Thing",
+    "Pokemon profiles must annotate the species as a Thing, not an editorial Article"
+  );
+  assert.doesNotMatch(
+    profile.text,
+    /"@type":"Article"/,
+    "Pokemon profiles must not be marked up as editorial Articles"
+  );
 
   const legacySlug = await get("/pokemon/greattusk");
   assert.ok(
@@ -179,6 +200,10 @@ async function checkMetadata() {
     /<h1[^>]*>\s*Competitive Pokemon Team Generator,/i,
     "the home H1 must state the primary search intent"
   );
+  assert.ok(
+    count(text, /href="\/pokemon-showdown-team-builder"/g) >= 2,
+    "home must link to the Showdown builder from content and the footer"
+  );
   assert.match(
     text,
     /<link[^>]+rel="canonical"[^>]+href="https:\/\/poketeambuilder\.com\/?"/
@@ -228,6 +253,7 @@ async function checkMetadata() {
     "/tier-list",
     "/guides/gen9-ou",
     "/guides/vgc",
+    "/pokemon-showdown-team-builder",
     "/privacy",
     "/terms",
     "/contact",
@@ -268,6 +294,9 @@ async function checkMetadata() {
       "https://poketeambuilder.com/og-image.png",
       `${pathname} must have a Twitter image`
     );
+    if (pathname === "/pokemon-showdown-team-builder") {
+      assertMetaDescriptionLength(page.text, pathname);
+    }
   }
 
   const breadcrumbCases = [
@@ -285,6 +314,15 @@ async function checkMetadata() {
       `${pathname} must render the complete breadcrumb hierarchy`
     );
   }
+
+  const rainPage = await get("/teams/rain");
+  const rainArticle = getJsonLd(rainPage.text).find((entry) => entry["@type"] === "Article");
+  assert.ok(rainArticle, "/teams/rain must render Article JSON-LD");
+  assert.equal(
+    rainArticle.dateModified,
+    "2026-08-13",
+    "archetype Articles must carry an explicit, static update date"
+  );
 }
 
 async function checkConfigurar() {
@@ -293,6 +331,10 @@ async function checkConfigurar() {
   assert.equal(count(text, /<h1\b/gi), 1, "/configurar must render one H1");
   assert.match(text, /Generator Settings/);
   assert.match(text, /Configure your team preferences/);
+  assert.ok(
+    count(text, /href="\/pokemon-showdown-team-builder"/g) >= 2,
+    "/configurar must link to the Showdown builder contextually and from the footer"
+  );
 }
 
 async function checkContent() {
@@ -372,10 +414,98 @@ async function checkContent() {
 
 async function checkVgc() {
   const { text: guide } = await get("/guides/vgc");
-  assert.doesNotMatch(guide, /current VGC regulation|Regulation F allows/i);
-  assert.match(guide, /legacy/i);
+  assert.equal(count(guide, /<h1\b/gi), 1, "/guides/vgc must render one H1");
+  assert.match(
+    guide,
+    /Reg I|Regulation I/i,
+    "/guides/vgc must reference the current Regulation I format"
+  );
+  assert.match(
+    guide,
+    /Showdown/i,
+    "/guides/vgc must reference Pokemon Showdown"
+  );
+  assert.match(
+    guide,
+    /Pokemon Champions/i,
+    "/guides/vgc must distinguish the official Pokemon Champions circuit"
+  );
+  assert.doesNotMatch(
+    guide,
+    /current VGC regulation|Regulation F allows/i,
+    "/guides/vgc must not present Regulation F as the current format"
+  );
+  assert.match(
+    guide,
+    /legacy/i,
+    "/guides/vgc must label Regulation F as legacy"
+  );
+  assert.match(
+    getTitle(guide, "/guides/vgc"),
+    /Reg I/,
+    "the VGC guide title must name Regulation I"
+  );
+  assertMetaDescriptionLength(guide, "/guides/vgc");
+  assert.ok(
+    count(guide, /href="\/pokemon-showdown-team-builder"/g) >= 2,
+    "/guides/vgc must link to the Showdown builder contextually and from the footer"
+  );
+
+  const { response: landingResponse, text: landing } = await get(
+    "/pokemon-showdown-team-builder"
+  );
+  assert.equal(landingResponse.status, 200, "landing must return 200");
+  assert.equal(count(landing, /<h1\b/gi), 1, "landing must render one H1");
+  assert.match(
+    landing,
+    /<h1[^>]*>\s*Pokemon Showdown Team Builder\s*<\/h1>/,
+    "landing H1 must state the primary search intent"
+  );
+  assert.match(
+    landing,
+    /<link[^>]+rel="canonical"[^>]+href="https:\/\/poketeambuilder\.com\/pokemon-showdown-team-builder"/,
+    "landing must self-canonicalize"
+  );
+  assert.equal(
+    getMetaContent(
+      landing,
+      "property",
+      "og:url",
+      "/pokemon-showdown-team-builder"
+    ),
+    "https://poketeambuilder.com/pokemon-showdown-team-builder",
+    "landing must have a route-specific Open Graph URL"
+  );
+  assert.match(
+    landing,
+    /href="\/configurar"/,
+    "landing must include a CTA to the interactive builder"
+  );
+  const landingJsonLd = getJsonLd(landing);
+  const faq = landingJsonLd.find((entry) => entry["@type"] === "FAQPage");
+  assert.ok(faq, "landing must render FAQPage JSON-LD");
+  assert.ok(
+    Array.isArray(faq.mainEntity) && faq.mainEntity.length >= 3,
+    "FAQPage must include the visible questions"
+  );
+  const webPage = landingJsonLd.find((entry) => entry["@type"] === "WebPage");
+  assert.ok(webPage, "landing must render WebPage JSON-LD");
+  const breadcrumb = landingJsonLd.find(
+    (entry) => entry["@type"] === "BreadcrumbList"
+  );
+  assert.ok(breadcrumb, "landing must render BreadcrumbList JSON-LD");
+  assert.match(
+    landing,
+    /What is a Pokemon Showdown team builder\?/,
+    "FAQ content must be visible in the page, not only in schema"
+  );
 
   const { text: sitemap } = await get("/sitemap.xml");
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/poketeambuilder\.com\/pokemon-showdown-team-builder<\/loc>/,
+    "sitemap must include the landing page"
+  );
   assert.doesNotMatch(sitemap, /blog\/(top-vgc-2026-pokemon|vgc-2026-guide)/);
 
   const { text: blog } = await get("/blog");

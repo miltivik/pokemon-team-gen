@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/about` },
     { url: `${baseUrl}/guides/gen9-ou` },
     { url: `${baseUrl}/guides/vgc` },
+    { url: `${baseUrl}/pokemon-showdown-team-builder` },
     { url: `${baseUrl}/blog` },
     {
       url: `${baseUrl}/blog/best-rain-team-gen9-ou`,

@@ -11,6 +11,8 @@ export interface CompetitiveFormatProfile {
   requireRecommendedModes: boolean;
   forbiddenAbilityIds: string[];
   forbiddenTags: string[];
+  /** Maximum number of Restricted Legendary Pokemon per team (VGC regulations). */
+  maxRestrictedPokemon?: number;
   fallbackSpeciesPool: string[];
 }
 
@@ -45,6 +47,39 @@ const GEN9_DOUBLES_FALLBACK_POOL = [
   "Sneasler",
   "Jumpluff",
   "Talonflame",
+];
+
+const GEN9_VGC_REG_I_FALLBACK_POOL = [
+  "Incineroar",
+  "Rillaboom",
+  "Amoonguss",
+  "Flutter Mane",
+  "Ogerpon-Wellspring",
+  "Urshifu-Rapid-Strike",
+  "Tornadus",
+  "Whimsicott",
+  "Gholdengo",
+  "Archaludon",
+  "Farigiraf",
+  "Indeedee-F",
+  "Pelipper",
+  "Torkoal",
+  "Kingambit",
+  "Iron Hands",
+  "Primarina",
+  "Chi-Yu",
+  "Raging Bolt",
+  "Miraidon",
+  "Koraidon",
+  "Calyrex-Ice",
+  "Calyrex-Shadow",
+  "Zacian",
+  "Kyogre",
+  "Groudon",
+  "Terapagos",
+  "Dondozo",
+  "Tatsugiri",
+  "Landorus",
 ];
 
 const GEN9_VGC_REG_F_FALLBACK_POOL = [
@@ -262,6 +297,15 @@ export function getCompetitiveFormatProfile(
         id: "gen9doublesou",
         forbiddenAbilityIds: ["commander", "shadowtag"],
         fallbackSpeciesPool: GEN9_DOUBLES_FALLBACK_POOL,
+      });
+    case "gen9vgc2026regi":
+      return buildDoublesProfile(format, {
+        id: "gen9vgc2026regi",
+        isVgc: true,
+        enforceItemClause: true,
+        forbiddenTags: ["Mythical"],
+        maxRestrictedPokemon: 2,
+        fallbackSpeciesPool: GEN9_VGC_REG_I_FALLBACK_POOL,
       });
     case "gen9vgc2026f":
       return buildDoublesProfile(format, {

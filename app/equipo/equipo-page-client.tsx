@@ -515,7 +515,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                         {t("team.exploreMore")}
                     </h3>
                     <div className="flex flex-wrap justify-center gap-3">
-                        <Link href={`/guides/${format === "gen9vgc2026f" ? "vgc" : "gen9-ou"}`}>
+                        <Link href={`/guides/${format === "gen9vgc2026f" || format === "gen9vgc2026regi" ? "vgc" : "gen9-ou"}`}>
                             <Button variant="outline" size="sm">
                                 <BookOpen className="h-4 w-4" />
                                 {t("team.readGuide")}

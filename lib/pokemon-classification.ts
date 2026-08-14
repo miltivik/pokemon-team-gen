@@ -53,6 +53,34 @@ function hasExcludedTags(tags?: string[]) {
   return tags?.some((tag) => EXCLUDED_TAGS.has(tag)) ?? false;
 }
 
+export function isRestrictedLegendarySpecies(name: string): boolean {
+  const pokemon = getPokemonData(name);
+  if (!pokemon) return false;
+
+  if (pokemon.tags?.includes("Restricted Legendary")) return true;
+
+  if (pokemon.baseSpecies) {
+    const baseSpecies = getPokemonData(pokemon.baseSpecies);
+    if (baseSpecies?.tags?.includes("Restricted Legendary")) return true;
+  }
+
+  return false;
+}
+
+export function isMythicalSpecies(name: string): boolean {
+  const pokemon = getPokemonData(name);
+  if (!pokemon) return false;
+
+  if (pokemon.tags?.includes("Mythical")) return true;
+
+  if (pokemon.baseSpecies) {
+    const baseSpecies = getPokemonData(pokemon.baseSpecies);
+    if (baseSpecies?.tags?.includes("Mythical")) return true;
+  }
+
+  return false;
+}
+
 export function isLegendaryOrParadoxSpecies(name: string): boolean {
   const pokemon = getPokemonData(name);
   if (!pokemon) return false;

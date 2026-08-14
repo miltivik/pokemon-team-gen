@@ -188,6 +188,13 @@ const TYPE_MATRIX = [
     excludeLegendaries: true,
   },
   {
+    id: "vgc-regi-water",
+    format: "gen9vgc2026regi",
+    templateId: "balanced",
+    type: "water",
+    excludeLegendaries: true,
+  },
+  {
     id: "vgc-regf-offline-legal-pool",
     format: "gen9vgc2026f",
     templateId: "balanced",

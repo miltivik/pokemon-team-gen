@@ -51,15 +51,27 @@ export default function VGCGuideClient({
                         {t("guides.vgcGuideTitle")}
                     </div>
                     <h1 className="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl">
-                        VGC Doubles Team Building Guide
+                        VGC 2026 Reg I Team Building Guide for Pokemon Showdown
                     </h1>
                     <p className="text-lg text-zinc-600 dark:text-zinc-400">
                         {t("guides.vgcGuideDesc")}
                     </p>
-                    <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+                    <div className="space-y-3 text-left">
+                        <p className="rounded-xl border border-blue-300 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-900 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-200">
+                            {lang === "es"
+                                ? "Reglas de VGC 2026 Regulation I en Pokemon Showdown: maximo dos Pokemon restringidos, clausula de objetos unicos y prohibicion de Pokemon miticos."
+                                : "VGC 2026 Regulation I rules on Pokemon Showdown: up to two restricted legendaries, a unique items clause, and no mythical Pokemon."}
+                        </p>
+                        <p className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+                            {lang === "es"
+                                ? "Pokemon Champions usa una linea competitiva distinta: el circuito oficial ya migro a Champions y sus regulaciones actuales (Regulation M) no deben confundirse con este formato de Showdown."
+                                : "Pokemon Champions runs a different competitive line: the official circuit has moved to Champions and its current regulations (Regulation M) should not be confused with this Showdown format."}
+                        </p>
+                    </div>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
                         {lang === "es"
-                            ? "Datos históricos de Regulation F. Verifica las reglas oficiales vigentes antes de competir."
-                            : "Legacy Regulation F data. Verify the latest official rules before competing."}
+                            ? "Regulation F sigue disponible como formato historico."
+                            : "Regulation F remains available as a legacy format."}
                     </p>
                 </header>
 
@@ -164,6 +176,12 @@ export default function VGCGuideClient({
                         <Button variant="outline" className="gap-2">
                             <Trophy className="h-4 w-4" />
                             {t("guides.fullTierList")}
+                        </Button>
+                    </Link>
+                    <Link href="/pokemon-showdown-team-builder">
+                        <Button variant="outline" className="gap-2">
+                            <Rocket className="h-4 w-4" />
+                            {t("seo.vgcShowdownBuilderLink")}
                         </Button>
                     </Link>
                 </div>

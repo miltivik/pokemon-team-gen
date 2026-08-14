@@ -14,7 +14,7 @@ export async function generateMetadata({
     : rawFormat === "gen9-ou"
       ? "Gen 9 OU"
       : rawFormat === "vgc"
-        ? `VGC ${CURRENT_VGC_FORMAT === "gen9vgc2026f" ? "Regulation F (Legacy)" : "Guide"}`
+        ? `VGC ${CURRENT_VGC_FORMAT === "gen9vgc2026regi" ? "2026 Reg I (Showdown)" : "Guide"}`
         : rawFormat.replace(/-/g, " ");
   const isCuratedGuide = rawFormat === "gen9-ou" || rawFormat === "vgc";
 

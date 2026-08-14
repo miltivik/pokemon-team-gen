@@ -79,6 +79,7 @@ export default async function TeamArchetypePage({ params }: TeamArchetypePagePro
     "@type": "Article",
     headline: `${templateData.label} Team Archetype Guide`,
     description: `Learn how to build a ${templateData.label} team in competitive Pokemon.`,
+    dateModified: "2026-08-13",
     author: { "@type": "Organization", name: "Pokemon Team Generator" },
     publisher: {
       "@type": "Organization",

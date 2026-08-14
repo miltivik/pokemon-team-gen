@@ -62,6 +62,14 @@ export function Footer() {
                             </li>
                             <li>
                                 <Link
+                                    href="/pokemon-showdown-team-builder"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {t("home.explore.showdownBuilder")}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     href="/saved-teams"
                                     className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
                                 >

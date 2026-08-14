@@ -11,7 +11,7 @@ import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 
 const ENGLISH_DESCRIPTION =
-  "Generate competitive Pokemon teams for Pokemon Showdown across Gen 9 OU, UU, RU, NU and legacy VGC formats, with optimized movesets and strategy.";
+  "Generate competitive Pokemon teams for Pokemon Showdown across Gen 9 OU, UU, RU, NU, VGC 2026 Reg I and legacy formats, with optimized movesets and strategy.";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -134,7 +134,7 @@ export default function RootLayout({
     },
     features: [
       'Competitive Pokemon team generator',
-      'Support for Gen 9 OU, UU, RU, NU and legacy VGC formats',
+      'Support for Gen 9 OU, UU, RU, NU, VGC 2026 Reg I and legacy VGC formats',
       'One-click Pokemon Showdown export',
       'Early, mid and late-game strategy guidance',
       'English and Spanish interface',

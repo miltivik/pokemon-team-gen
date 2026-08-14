@@ -18,6 +18,7 @@ import {
 } from "@/lib/team-guide";
 import { getMoveData } from "@/lib/showdown-data";
 import { getTournamentPriorModeCoverage } from "@/lib/tournament-priors";
+import { isRestrictedLegendarySpecies } from "@/lib/pokemon-classification";
 import { toID } from "@/lib/utils";
 
 interface TeamValidationOptions {
@@ -530,6 +531,13 @@ export function validateTeamForTemplate(
           (member) => !isAllowedInFormat(member.name, options.format as FormatId)
         )
       : [];
+  const maxRestricted = formatProfile.maxRestrictedPokemon;
+  const restrictedCount =
+    maxRestricted === undefined
+      ? 0
+      : team.filter((member) => isRestrictedLegendarySpecies(member.name)).length;
+  const restrictedCountExceeded =
+    maxRestricted !== undefined && restrictedCount > maxRestricted;
   const recommendedModesCheck = validateRecommendedModes(
     team,
     guide,
@@ -572,6 +580,9 @@ export function validateTeamForTemplate(
       `illegal-members:${illegalMembers.map((member) => member.name).join(",")}`
     );
   }
+  if (restrictedCountExceeded) {
+    issues.push(`restricted-count:${restrictedCount}>${maxRestricted}`);
+  }
   issues.push(...recommendedModesCheck.issues);
 
   const archetypeAlignment = getArchetypeAlignmentScore(guide, options.templateId);
@@ -590,6 +601,7 @@ export function validateTeamForTemplate(
   const itemClausePenalty =
     formatProfile.enforceItemClause && signals.duplicateItems > 0 ? 0.18 : 0;
   const illegalMemberPenalty = illegalMembers.length > 0 ? 0.24 : 0;
+  const restrictedCountPenalty = restrictedCountExceeded ? 0.24 : 0;
   const doublesHazardPenalty = signals.isDoubles && signals.hazards > 0 ? 0.18 : 0;
 
   const score = Math.max(
@@ -604,6 +616,7 @@ export function validateTeamForTemplate(
         forbiddenPenalty * 0.25 -
         itemClausePenalty -
         illegalMemberPenalty -
+        restrictedCountPenalty -
         doublesHazardPenalty
     )
   );

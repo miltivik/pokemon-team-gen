@@ -70,6 +70,7 @@ export default function AboutPage() {
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                 {[
                                     "Gen 9 OU",
+                                    "Gen 9 VGC 2026 Reg I",
                                     "Gen 9 VGC Reg F (Legacy)",
                                     "Gen 9 UU",
                                     "Gen 9 RU",

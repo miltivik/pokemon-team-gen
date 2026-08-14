@@ -32,7 +32,7 @@ import {
 import { getVGCArchetypes } from "@/lib/victory-road";
 import { isAllowedInFormat } from "@/lib/format-rules";
 import { getCanonicalSpeciesId } from "@/lib/pokemon-forms";
-import { isLegendaryOrParadoxSpecies } from "@/lib/pokemon-classification";
+import { isLegendaryOrParadoxSpecies, isRestrictedLegendarySpecies } from "@/lib/pokemon-classification";
 import {
   getTournamentPriorDiagnostics,
   getTournamentPriorSelectionPlan,
@@ -108,6 +108,7 @@ interface TeamTrackingState {
   teamAbilities: Set<string>;
   teamItems: Set<string>;
   teamCanonicalIds: Set<string>;
+  restrictedCount: number;
 }
 
 interface RepairSwapCandidate extends CandidateTeamBuild {
@@ -564,6 +565,7 @@ function createEmptyTeamTrackingState(): TeamTrackingState {
     teamAbilities: new Set<string>(),
     teamItems: new Set<string>(),
     teamCanonicalIds: new Set<string>(),
+    restrictedCount: 0,
   };
 }
 
@@ -577,11 +579,15 @@ function rebuildTeamTrackingState(
   tracking.teamAbilities.clear();
   tracking.teamItems.clear();
   tracking.teamCanonicalIds.clear();
+  tracking.restrictedCount = 0;
 
   team.forEach((member, index) => {
     const species = teamSpecies[index];
     if (species) {
       tracking.teamCanonicalIds.add(getCanonicalSpeciesId(species));
+      if (isRestrictedLegendarySpecies(species.name)) {
+        tracking.restrictedCount += 1;
+      }
     }
 
     member.moves.forEach((move) => {
@@ -826,7 +832,8 @@ function findBestRepairSwap(options: {
           tracking.teamCanonicalIds,
           tracking.teamItems,
           suggestion.species,
-          options.formatProfile
+          options.formatProfile,
+          tracking.restrictedCount
         )
       ) {
         continue;
@@ -1073,7 +1080,8 @@ function tryFinalizeTeamSets(options: {
         tracking.teamCanonicalIds,
         tracking.teamItems,
         species,
-        options.formatProfile
+        options.formatProfile,
+        tracking.restrictedCount
       )
     ) {
       return member;
@@ -1494,6 +1502,7 @@ function buildCandidateTeam(options: {
   const teamCanonicalIds = new Set<string>();
   const fixedCanonicalIds = new Set<string>();
   const processedFixedCanonicalIds = new Set<string>();
+  let teamRestrictedCount = 0;
   const optimizer = new SetOptimizer(data);
   const trySelectViableSuggestion = (
     suggestions: ReturnType<WeightedScoringEngine["suggestMembers"]>
@@ -1521,7 +1530,8 @@ function buildCandidateTeam(options: {
           teamCanonicalIds,
           teamItems,
           selected.species,
-          formatProfile
+          formatProfile,
+          teamRestrictedCount
         )
       ) {
         return { selected, set };
@@ -1597,7 +1607,14 @@ function buildCandidateTeam(options: {
         format,
       });
       if (
-        !isResolvedSetViable(set, teamCanonicalIds, teamItems, species, formatProfile)
+        !isResolvedSetViable(
+          set,
+          teamCanonicalIds,
+          teamItems,
+          species,
+          formatProfile,
+          teamRestrictedCount
+        )
       ) {
         optimizer.clearCache();
         continue;
@@ -1608,6 +1625,9 @@ function buildCandidateTeam(options: {
       teamSpecies.push(species);
       teamCanonicalIds.add(canonicalId);
       fixedCanonicalIds.add(canonicalId);
+      if (isRestrictedLegendarySpecies(species.name)) {
+        teamRestrictedCount += 1;
+      }
       set.moves.forEach((move) => {
         const moveId = toID(move);
         teamMoves.add(moveId);
@@ -1710,6 +1730,9 @@ function buildCandidateTeam(options: {
     team.push(member);
     teamSpecies.push(selected.species);
     teamCanonicalIds.add(getCanonicalSpeciesId(selected.species));
+    if (isRestrictedLegendarySpecies(selected.species.name)) {
+      teamRestrictedCount += 1;
+    }
     set.moves.forEach((move) => {
       const moveId = toID(move);
       teamMoves.add(moveId);
@@ -1768,7 +1791,8 @@ function isResolvedSetViable(
   teamCanonicalIds: Set<string>,
   teamItems: Set<string>,
   species: PokemonSpecies,
-  formatProfile: CompetitiveFormatProfile
+  formatProfile: CompetitiveFormatProfile,
+  teamRestrictedCount = 0
 ) {
   if (teamCanonicalIds.has(getCanonicalSpeciesId(species))) {
     return false;
@@ -1781,6 +1805,15 @@ function isResolvedSetViable(
   if (
     formatProfile.enforceItemClause &&
     teamItems.has(set.item)
+  ) {
+    return false;
+  }
+
+  const maxRestricted = formatProfile.maxRestrictedPokemon;
+  if (
+    maxRestricted !== undefined &&
+    teamRestrictedCount >= maxRestricted &&
+    isRestrictedLegendarySpecies(species.name)
   ) {
     return false;
   }

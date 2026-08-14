@@ -15,7 +15,7 @@ const HERO_PREVIEW_POKEMON = [
     "Ting-Lu",
 ];
 
-const SUPPORTED_FORMATS = ["gen9ou", "gen9vgc2026f", "gen9uu", "gen9monotype", "gen8ou"];
+const SUPPORTED_FORMATS = ["gen9ou", "gen9vgc2026regi", "gen9uu", "gen9monotype", "gen8ou"];
 
 interface TrendingTeam {
     href: string;
@@ -61,14 +61,14 @@ function getTrendingTeams(): TrendingTeam[] {
             pokemon: ["Pelipper", "Barraskewda", "Archaludon", "Swampert", "Tornadus-Therian", "Raging Bolt"],
         },
         {
-            href: "/configurar?template=weatheroffense&format=gen9vgc2026f",
+            href: "/configurar?template=weatheroffense&format=gen9vgc2026regi",
             titleKey: "vgcWeather",
-            badge: "VGC Reg F · Legacy",
+            badge: "VGC 2026 Reg I",
             label: "VGC",
             labelClass: "bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300",
             titleClass: "group-hover:text-orange-600 dark:group-hover:text-orange-400",
             cardClass: "hover:border-orange-500 hover:shadow-orange-500/10",
-            pokemon: ["Torkoal", "Flutter Mane", "Incineroar", "Chi-Yu", "Venusaur", "Raging Bolt"],
+            pokemon: ["Torkoal", "Flutter Mane", "Incineroar", "Chi-Yu", "Venusaur", "Groudon"],
         },
     ];
 }
@@ -446,6 +446,16 @@ export function TrendingTeamsSection() {
 export function ExploreSection() {
     const { t } = useTranslation();
     const exploreLinks = [
+        {
+            href: "/pokemon-showdown-team-builder",
+            titleKey: "home.explore.showdownBuilder",
+            descriptionKey: "home.explore.showdownBuilderDesc",
+            labelKey: "home.explore.labelShowdownBuilder",
+            fallbackTitle: "Showdown Team Builder",
+            fallbackDescription: "Build and export competitive teams for Pokemon Showdown.",
+            fallbackLabel: "Showdown",
+            accentClass: "border-blue-200/70 bg-blue-50/60 text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/20 dark:text-blue-300",
+        },
         {
             href: "/pokemon",
             titleKey: "home.explore.pokemon",

@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
       description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
       url: `/pokemon/${canonicalSlug}`,
-      type: "article",
+      type: "website",
       images: ["/og-image.png"],
     },
     twitter: {
@@ -138,17 +138,26 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: `${finalName} - Stats, Movesets and Competitive Analysis`,
+    "@type": "WebPage",
+    name: `${finalName} - Stats, Movesets and Competitive Analysis`,
     description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
-    image: spriteUrl,
-    author: { "@type": "Organization", name: "Pokemon Team Generator" },
-    publisher: {
-      "@type": "Organization",
-      name: "Pokemon Team Generator",
-      logo: { "@type": "ImageObject", url: "https://poketeambuilder.com/icons/logo-dark-nobg.png" },
+    url: `https://poketeambuilder.com/pokemon/${canonicalSlug}`,
+    inLanguage: "en",
+    about: {
+      "@type": "Thing",
+      name: finalName,
+      additionalType: "https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon",
     },
-    mainEntityOfPage: `https://poketeambuilder.com/pokemon/${canonicalSlug}`,
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Pokemon Team Generator",
+      url: "https://poketeambuilder.com",
+    },
+    image: spriteUrl,
+    mainEntity: {
+      "@type": "Thing",
+      name: finalName,
+    },
   };
 
   return (

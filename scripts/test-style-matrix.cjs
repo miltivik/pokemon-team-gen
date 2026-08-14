@@ -215,6 +215,16 @@ const STYLE_MATRIX = [
     fixture: "vgc-prior-trickroom-sparse",
   },
   {
+    id: "vgc-regi-balanced",
+    format: "gen9vgc2026regi",
+    templateId: "balanced",
+    allowedArchetypes: ["balanced", "bulkyoffense", "tailwind", "trickroom"],
+    minValidationScore: 0.6,
+    minPassRate: 0.75,
+    maxMissingSupport: 2,
+    requireRecommendedModes: true,
+  },
+  {
     id: "dou-balanced",
     format: "gen9doublesou",
     templateId: "balanced",
