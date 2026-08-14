@@ -2,7 +2,7 @@
  * Format Rules - Tier-based Pokemon filtering
  */
 
-import { FormatId } from "@/config/formats";
+import { getGenFromFormat, FormatId } from "@/config/formats";
 import { getCompetitiveFormatProfile } from "@/lib/competitive-format-profile";
 import { getCompetitiveSetsFormatKey } from "@/lib/data-sources/format-source-resolver";
 import pokedexData from "@/data/pokedex.json";
@@ -74,10 +74,14 @@ export function isAllowedInFormat(
 
   const tier = data.tier as string | undefined;
   if (!tier) return false;
-  if (tier === "Illegal" || tier.startsWith("CAP")) return false;
   if (data.isNonstandard === "Custom") return false;
 
   const formatProfile = getCompetitiveFormatProfile(formatId);
+  const isHistoricalDoubles =
+    getGenFromFormat(formatId) < 9 && formatProfile.isDoubles;
+  if ((tier === "Illegal" && !isHistoricalDoubles) || tier.startsWith("CAP")) {
+    return false;
+  }
   const speciesTags = Array.isArray(data.tags) ? data.tags : [];
   if (
     formatProfile.forbiddenTags.some((tag) => speciesTags.includes(tag))

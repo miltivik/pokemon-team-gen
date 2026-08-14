@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+const assert = require("node:assert/strict");
 const path = require("path");
 
 const rootDir = path.resolve(__dirname, "..");
@@ -24,6 +25,22 @@ const { isLegendaryOrParadoxSpecies, isRestrictedLegendarySpecies, isMythicalSpe
 const { isAvailableInGen } = jiti(path.join(rootDir, "lib/showdown-data.ts"));
 
 const DEFAULT_MONOTYPE = "water";
+
+function assertHistoricalFormatRules() {
+  for (const species of ["Naganadel", "Wobbuffet"]) {
+    assert.equal(
+      isAllowedInFormat(species, "gen8doublesou"),
+      true,
+      `${species} should remain valid in historical Gen 8 Doubles OU`
+    );
+  }
+
+  assert.equal(
+    isAllowedInFormat("Naganadel", "gen9doublesou"),
+    false,
+    "Naganadel should remain invalid in current Gen 9 Doubles OU"
+  );
+}
 
 function parseArgs(argv) {
   const args = {
@@ -254,6 +271,7 @@ function printResult(result) {
 }
 
 async function main() {
+  assertHistoricalFormatRules();
   const args = parseArgs(process.argv.slice(2));
   const formats = getSelectedFormats(args);
 
