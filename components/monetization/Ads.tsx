@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
+import { ADSENSE_PUBLISHER_ID, ADSENSE_SLOTS } from "@/lib/adsense";
 
 /**
  * Configuración de monetización
  */
 const CONFIG = {
   adsense: {
-    publisherId: "ca-pub-7981415143867065",
+    publisherId: ADSENSE_PUBLISHER_ID,
+    slots: ADSENSE_SLOTS,
   },
   kofi: {
     kofiId: process.env.NEXT_PUBLIC_KOFI_ID || "",
@@ -85,7 +87,7 @@ function AdSlot({
   fullWidthResponsive,
 }: AdSlotProps) {
   const mounted = useDeferredAdMount();
-  const hasConfiguredSlot = slot.trim().length > 0 && !slot.startsWith("123456789");
+  const hasConfiguredSlot = slot.trim().length > 0;
   const pushedRef = useRef(false);
   const adRef = useRef<HTMLModElement | null>(null);
   const [isUnfilled, setIsUnfilled] = useState(false);
@@ -176,7 +178,7 @@ export function AdBanner() {
   return (
     <AdSlot
       placement="banner"
-      slot="1234567890"
+      slot={CONFIG.adsense.slots.banner}
       fallbackLabel="Espacio publicitario"
       outerClassName="w-full"
       shellClassName="w-full max-w-[728px] h-[90px]"
@@ -197,7 +199,7 @@ export function AdHero() {
   return (
     <AdSlot
       placement="hero"
-      slot="1234567893"
+      slot={CONFIG.adsense.slots.display}
       fallbackLabel="Espacio publicitario destacado"
       outerClassName="w-full"
       shellClassName="w-full max-w-[970px] h-[250px] lg:h-[280px]"
@@ -213,7 +215,7 @@ export function AdInlineDisplay() {
   return (
     <AdSlot
       placement="inline-content"
-      slot="1234567893"
+      slot={CONFIG.adsense.slots.display}
       fallbackLabel="Espacio publicitario en contenido"
       outerClassName="w-full my-8 flex justify-center"
       shellClassName="w-full max-w-[970px] h-[250px] md:h-[280px]"

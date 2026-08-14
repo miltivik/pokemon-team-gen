@@ -24,10 +24,10 @@ export interface PokedexEntry {
     // Add other fields from pokedex.json if needed
 }
 
-export interface Learnset {
-    [pokemon: string]: {
-        [move: string]: string[];
-    };
+export interface LearnsetEntry {
+    learnset?: Record<string, string[]>;
+    eventData?: unknown[];
+    [key: string]: unknown;
 }
 
 export interface MoveData {
@@ -40,21 +40,27 @@ export interface MoveData {
     name: string;
     pp: number;
     priority: number;
-    flags: Record<string, any>;
+    flags: Record<string, unknown>;
     type: string;
 }
 
 // Type assertion for raw imports to match interfaces
-const pokedex: Record<string, PokedexEntry> = pokedexRaw as any;
-const learnsets: Record<string, any> = learnsetsRaw as any;
-const moves: Record<string, MoveData> = movesRaw as any;
-const abilities: Record<string, { name: string; desc: string; shortDesc: string }> = abilitiesRaw as any;
-const items: Record<string, { name: string; desc: string; shortDesc: string }> = itemsRaw as any;
+const pokedex: Record<string, PokedexEntry> = pokedexRaw as unknown as Record<string, PokedexEntry>;
+const learnsets: Record<string, LearnsetEntry> = learnsetsRaw as unknown as Record<string, LearnsetEntry>;
+const moves: Record<string, MoveData> = movesRaw as unknown as Record<string, MoveData>;
+const abilities: Record<string, { name: string; desc: string; shortDesc: string }> =
+    abilitiesRaw as unknown as Record<string, { name: string; desc: string; shortDesc: string }>;
+const items: Record<string, { name: string; desc: string; shortDesc: string }> =
+    itemsRaw as unknown as Record<string, { name: string; desc: string; shortDesc: string }>;
 const translationsEs: {
     moves: Record<string, { name: string; desc?: string }>;
     abilities: Record<string, { name: string; desc?: string }>;
     items: Record<string, { name: string; desc?: string }>;
-} = translationsEsRaw as any;
+} = translationsEsRaw as unknown as {
+    moves: Record<string, { name: string; desc?: string }>;
+    abilities: Record<string, { name: string; desc?: string }>;
+    items: Record<string, { name: string; desc?: string }>;
+};
 const learnsetMoveIdsCache = new Map<string, string[]>();
 const learnableMovesCache = new Map<string, MoveData[]>();
 const UNSUPPORTED_NONSTANDARD_FOR_TEAM_BUILDER = new Set([
@@ -553,66 +559,6 @@ export function getTypeColor(type: string): string {
         dark: 'bg-zinc-700',
     };
     return colors[type.toLowerCase()] || 'bg-zinc-400';
-}
-
-const COMMON_ITEMS = [
-    "Leftovers", "Life Orb", "Choice Scarf", "Choice Band", "Choice Specs",
-    "Focus Sash", "Heavy-Duty Boots", "Assault Vest", "Rocky Helmet", "Sitrus Berry"
-];
-
-const COMMON_NATURES = [
-    "Adamant", "Jolly", "Modest", "Timid", "Bold", "Calm", "Impish", "Careful"
-];
-
-export function getExportText(team: any[]): string {
-    return team.map(p => {
-        // Use the pre-assigned item from team generation, or fall back to random
-        const item = p.item || COMMON_ITEMS[Math.floor(Math.random() * COMMON_ITEMS.length)];
-        const nature = p.nature || COMMON_NATURES[Math.floor(Math.random() * COMMON_NATURES.length)];
-        const ability = p.ability || p.abilities?.['0'] || "Process";
-
-        // If p already has styled moves (MoveData[]), use them. Else fetch random strings.
-        let moveNames: string[] = [];
-        if (p.moves && p.moves.length > 0 && typeof p.moves[0] !== 'string') {
-            moveNames = p.moves.map((m: any) => m.name);
-        } else if (p.moves && p.moves.length > 0) {
-            moveNames = p.moves;
-        } else {
-            // Generate if not present
-            const mData = getRandomMovesWithDetails(p.name);
-            moveNames = mData.length > 0 ? mData.map(m => m.name) : ["Tackle"];
-        }
-
-        let evsText = "EVs: 252 Atk / 4 SpD / 252 Spe";
-        if (p.evs) {
-            // Handle both string and object formats for EVs
-            if (typeof p.evs === 'string') {
-                // Already formatted as string (e.g., "252 Atk / 4 SpD / 252 Spe")
-                evsText = p.evs ? `EVs: ${p.evs}` : evsText;
-            } else if (typeof p.evs === 'object') {
-                // Object format (e.g., { hp: 252, atk: 0, def: 0, spa: 0, spd: 4, spe: 252 })
-                const evEntries = Object.entries(p.evs as Record<string, number>).filter(([_, val]) => (val as number) > 0);
-                if (evEntries.length > 0) {
-                    evsText = "EVs: " + evEntries
-                        .map(([stat, val]) => `${val} ${stat === 'spa' ? 'SpA' : stat === 'spd' ? 'SpD' : stat === 'spe' ? 'Spe' : stat === 'atk' ? 'Atk' : stat === 'def' ? 'Def' : 'HP'}`)
-                        .join(' / ');
-                }
-            }
-        }
-
-        let teraText = "";
-        if (p.teraType) {
-            teraText = `Tera Type: ${p.teraType}\n`;
-        } else if (p.types && p.types.length > 0) {
-            teraText = `Tera Type: ${p.types[0]}\n`;
-        }
-
-        return `${p.name} @ ${item}
-Ability: ${ability}
-${teraText}${evsText}
-${nature} Nature
-${moveNames.map((m: string) => `- ${m}`).join('\n')}`;
-    }).join('\n\n');
 }
 
 export type Role = 'Sweeper' | 'Wall' | 'Tank' | 'Support';

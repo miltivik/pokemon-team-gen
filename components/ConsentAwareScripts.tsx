@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Script from "next/script";
 import { hasConsent, type ConsentCategory } from "@/lib/consent";
+import { ADSENSE_PUBLISHER_ID } from "@/lib/adsense";
 
 function useCategoryConsent(category: ConsentCategory) {
   const [hasCatConsent, setHasCatConsent] = useState(false);
@@ -23,7 +24,7 @@ function AdSenseLoader() {
     <Script
       id="adsense"
       async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7981415143867065"
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
       crossOrigin="anonymous"
       strategy="afterInteractive"
     />

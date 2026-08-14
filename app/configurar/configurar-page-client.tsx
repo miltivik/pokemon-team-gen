@@ -20,6 +20,7 @@ import { useTeam } from "@/lib/team-context";
 import type { GameplanData } from "@/lib/team-storage";
 import {
     cloneGenerationOptions,
+    getFixedMembersFromSearchParams,
     getGenerationOptionsFixedMembers,
     getGenerationOptionsFormat,
     getGenerationOptionsType,
@@ -109,10 +110,13 @@ export default function ConfigurarPageClient() {
     );
 
     const initialFixedPokemon = useMemo(() => {
-        const fixedMembers = getGenerationOptionsFixedMembers(storedGenerationOptions);
+        const queryFixedMembers = getFixedMembersFromSearchParams(searchParams);
+        const fixedMembers = queryFixedMembers.length > 0
+            ? queryFixedMembers
+            : getGenerationOptionsFixedMembers(storedGenerationOptions);
         const maxMembers = FORMATS[initialFormat ?? format].maxTeamSize;
         return fixedMembers.slice(0, maxMembers);
-    }, [format, initialFormat, storedGenerationOptions]);
+    }, [format, initialFormat, searchParams, storedGenerationOptions]);
 
     const formSeedKey = useMemo(
         () =>

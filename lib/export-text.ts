@@ -1,10 +1,21 @@
+export interface ExportableTeamMember {
+    name: string;
+    item?: string;
+    nature?: string;
+    ability?: string;
+    abilities?: Record<string, string>;
+    moves?: Array<string | { name: string }>;
+    evs?: string | Record<string, number>;
+    teraType?: string;
+    types?: string[];
+}
+
 const COMMON_ITEMS = ["Leftovers", "Life Orb", "Choice Scarf", "Choice Band", "Choice Specs"];
 const COMMON_NATURES = ["Adamant", "Jolly", "Modest", "Timid", "Bold", "Calm"];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getExportText(team: any[]): string {
+export function getExportText(team: ExportableTeamMember[]): string {
     return team
-        .map((pokemon: any) => {
+        .map((pokemon) => {
             const item =
                 pokemon.item || COMMON_ITEMS[Math.floor(Math.random() * COMMON_ITEMS.length)];
             const nature =
@@ -13,10 +24,11 @@ export function getExportText(team: any[]): string {
 
             let moveNames: string[] = [];
             if (pokemon.moves && pokemon.moves.length > 0 && typeof pokemon.moves[0] !== "string") {
-                moveNames = pokemon.moves.map((move: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    any) => move.name);
+                moveNames = pokemon.moves.map((move) =>
+                    typeof move === "string" ? move : move.name
+                );
             } else if (pokemon.moves && pokemon.moves.length > 0) {
-                moveNames = pokemon.moves;
+                moveNames = pokemon.moves as string[];
             } else {
                 moveNames = ["Tackle"];
             }
@@ -25,11 +37,10 @@ export function getExportText(team: any[]): string {
             if (pokemon.evs) {
                 if (typeof pokemon.evs === "string") {
                     evsText = pokemon.evs ? `EVs: ${pokemon.evs}` : evsText;
-                } else if (typeof pokemon.evs === "object") {
-                    const evEntries = Object.entries(
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        pokemon.evs as Record<string, number>
-                    ).filter(([, value]) => value > 0);
+                } else {
+                    const evEntries = Object.entries(pokemon.evs).filter(
+                        ([, value]) => value > 0
+                    );
 
                     if (evEntries.length > 0) {
                         evsText =

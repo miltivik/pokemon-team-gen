@@ -9,6 +9,7 @@ import { WebVitalsTracker } from "../components/WebVitalsTracker";
 import { KoFiButton } from "../components/monetization/Ads";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
+import { ADSENSE_PUBLISHER_ID } from "@/lib/adsense";
 
 const ENGLISH_DESCRIPTION =
   "Generate competitive Pokemon teams for Pokemon Showdown across Gen 9 OU, UU, RU, NU, VGC 2026 Reg I and legacy formats, with optimized movesets and strategy.";
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
     },
   },
   other: {
-    'google-adsense-account': 'ca-pub-7981415143867065',
+    'google-adsense-account': ADSENSE_PUBLISHER_ID,
   },
   openGraph: {
     type: 'website',

@@ -5,12 +5,14 @@ import { sanitizeTemplateForFormat, TemplateId } from '@/config/templates';
 import { getMoveData, getPokemonData } from '@/lib/showdown-data';
 import { z } from 'zod';
 import { FormatId } from '@/config/formats';
+import { resolveFixedMembers } from '@/lib/team-generation-options';
 
 const generateTeamSchema = z.object({
     format: z.string().optional().default('gen9ou'),
     tipo: z.string().nullable().optional(),
     fijo: z.string().nullable().optional(),
     fijos: z.array(z.string()).nullable().optional(),
+    fixedMembers: z.array(z.string()).nullable().optional(),
     excludeLegendaries: z.boolean().optional().default(false),
     templateId: z.string().optional().default('balanced'),
     lang: z.enum(['en', 'es']).optional().default('en'),
@@ -62,19 +64,26 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const { format, tipo, excludeLegendaries, fijo, fijos, templateId, lang } = parsed.data;
+        const {
+            format,
+            tipo,
+            excludeLegendaries,
+            fijo,
+            fijos,
+            fixedMembers: canonicalFixedMembers,
+            templateId,
+            lang,
+        } = parsed.data;
         const safeTemplateId = sanitizeTemplateForFormat(
             templateId as TemplateId | undefined,
             format as FormatId
         );
 
-        // Support both old string format and new array format
-        let fixedMembers: string[] | null = null;
-        if (Array.isArray(fijos) && fijos.length > 0) {
-            fixedMembers = fijos;
-        } else if (typeof fijo === 'string' && fijo.trim()) {
-            fixedMembers = [fijo.trim()];
-        }
+        const fixedMembers = resolveFixedMembers({
+            fixedMembers: canonicalFixedMembers,
+            fijos,
+            fijo,
+        });
 
         const result = await generateDynamicTeam({
             format,

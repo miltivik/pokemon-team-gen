@@ -97,7 +97,7 @@ const SUPPORT_PACKAGE_CHECKS: Record<
   "lead-pressure": (signals) =>
     signals.hazards > 0 || signals.screenMoves > 0 || signals.speedControlUsers > 0,
   "screens-or-hazards": (signals) =>
-    signals.screenMoves >= 2 || signals.hazards >= 2,
+    signals.screenMoves >= 2 || signals.hazards >= 1,
   "midgame-bulk": (signals) => signals.bulkyMons >= 2,
   protect: (signals) => !signals.isDoubles || signals.protectUsers >= 2,
   positioning: (signals) => signals.pivots > 0 || signals.redirectionUsers > 0,

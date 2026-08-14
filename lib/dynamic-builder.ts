@@ -805,10 +805,9 @@ function findBestRepairSwap(options: {
       suggestions,
       rng: options.rng,
     });
-    const evaluationQueue = prioritizedSuggestions.slice(
-      0,
-      needsExpandedHazardSearch ? 10 : 8
-    );
+    const evaluationQueue = needsExpandedHazardSearch
+      ? prioritizedSuggestions
+      : prioritizedSuggestions.slice(0, 8);
     const shortlistedCandidates: Array<{
       suggestion: (typeof evaluationQueue)[number];
       set: OptimizedSet;

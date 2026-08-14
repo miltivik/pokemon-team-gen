@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import { FORMATS, FormatId, getGenFromFormat } from "../config/formats";
 import {
     TemplateId,
@@ -137,7 +138,7 @@ export function TeamForm({
     return (
         <Card className="w-full max-w-2xl bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-sm pt-6">
             <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6" aria-busy={isLoading}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label htmlFor="format">{t("form.format")}</Label>
@@ -279,8 +280,16 @@ export function TeamForm({
                     </div>
 
                     <Button type="submit" disabled={isLoading} className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold">
+                        {isLoading && (
+                            <Loader2 className="mr-2 inline-block h-4 w-4 animate-spin" aria-hidden="true" />
+                        )}
                         {isLoading ? t("form.generating") : t("form.generate")}
                     </Button>
+                    {isLoading && (
+                        <p role="status" className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+                            {t("form.generating")}
+                        </p>
+                    )}
                 </form>
             </CardContent>
         </Card>
