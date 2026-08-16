@@ -18,7 +18,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "es_419",
+    locale: "es_ES",
+    alternateLocale: "en_US",
     url: "https://poketeambuilder.com/es",
     title: "Generador de Equipos Pokémon Competitivos",
     description: SPANISH_DESCRIPTION,
@@ -48,7 +49,7 @@ export default function SpanishHomePage() {
           {t("app.subtitleNew")}
         </p>
         <Link
-          href="/configurar"
+          href="/es/configurar"
           className="mt-8 inline-flex min-h-12 items-center justify-center rounded-full bg-blue-600 px-8 font-bold text-white hover:bg-blue-700"
         >
           {t("app.startGeneratingNew")}
@@ -106,7 +107,7 @@ export default function SpanishHomePage() {
         <p className="mt-4 text-zinc-600 dark:text-zinc-300">{t("home.bottomCtaDesc")}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link
-            href="/configurar"
+            href="/es/configurar"
             className="rounded-full bg-blue-600 px-7 py-3 font-bold text-white hover:bg-blue-700"
           >
             {t("app.startGeneratingNew")}

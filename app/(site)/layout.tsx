@@ -1,32 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Providers } from "../components/Providers";
-import { ConsentAwareScripts } from "../components/ConsentAwareScripts";
-import { CookieConsent } from "../components/CookieConsent";
-import { AnalyticsTracker } from "../components/AnalyticsTracker";
-import { WebVitalsTracker } from "../components/WebVitalsTracker";
-import { KoFiButton } from "../components/monetization/Ads";
-import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer";
+import { SiteShell } from "@/components/SiteShell";
 import { ADSENSE_PUBLISHER_ID } from "@/lib/adsense";
+import "../globals.css";
 
 const ENGLISH_DESCRIPTION =
   "Generate competitive Pokemon teams for Pokemon Showdown across Gen 9 OU, UU, RU, NU, VGC 2026 Reg I and legacy formats, with optimized movesets and strategy.";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://poketeambuilder.com'),
-  title: 'Competitive Pokemon Team Generator',
+  title: 'Pokemon Team Generator for Showdown — Gen 9 OU & VGC | PokeTeamBuilder',
   description: ENGLISH_DESCRIPTION,
   keywords: [
     'pokemon team generator',
@@ -60,7 +42,7 @@ export const metadata: Metadata = {
     alternateLocale: 'es_ES',
     url: 'https://poketeambuilder.com',
     siteName: 'Pokemon Team Generator',
-    title: 'Competitive Pokemon Team Generator',
+    title: 'Pokemon Team Generator for Showdown — Gen 9 OU & VGC | PokeTeamBuilder',
     description: ENGLISH_DESCRIPTION,
     images: [
       {
@@ -73,7 +55,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Competitive Pokemon Team Generator',
+    title: 'Pokemon Team Generator for Showdown — Gen 9 OU & VGC | PokeTeamBuilder',
     description: ENGLISH_DESCRIPTION,
     images: ['/og-image.png'],
     creator: '@poketeamgen',
@@ -111,7 +93,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -122,6 +104,7 @@ export default function RootLayout({
     name: 'Pokemon Team Generator',
     description: ENGLISH_DESCRIPTION,
     url: 'https://poketeambuilder.com',
+    inLanguage: 'en',
     applicationCategory: 'Game',
     operatingSystem: 'Web Browser',
     offers: {
@@ -143,27 +126,8 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50 dark:bg-black`}
-      >
-        <ConsentAwareScripts />
-        <AnalyticsTracker />
-        <WebVitalsTracker />
-        <KoFiButton />
-        <Providers>
-           <Navbar />
-           {children}
-           <Footer />
-        </Providers>
-        <CookieConsent />
-      </body>
-    </html>
+    <SiteShell lang="en" jsonLd={jsonLd}>
+      {children}
+    </SiteShell>
   );
 }

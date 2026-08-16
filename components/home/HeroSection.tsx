@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
+import { getPokemonSlug } from "@/lib/pokemon-summary";
 
 const HERO_PREVIEW_POKEMON = [
     "Great Tusk",
@@ -19,6 +20,7 @@ const SUPPORTED_FORMATS = ["gen9ou", "gen9vgc2026regi", "gen9uu", "gen9monotype"
 
 interface TrendingTeam {
     href: string;
+    template: string;
     titleKey: string;
     badge: string;
     label: string;
@@ -32,6 +34,7 @@ function getTrendingTeams(): TrendingTeam[] {
     return [
         {
             href: "/configurar?template=bulkyoffense&format=gen9ou",
+            template: "bulkyoffense",
             titleKey: "bulkyOffense",
             badge: "Gen 9 OU",
             label: "BO",
@@ -42,6 +45,7 @@ function getTrendingTeams(): TrendingTeam[] {
         },
         {
             href: "/configurar?template=offense&format=gen9ou",
+            template: "offense",
             titleKey: "hyperOffense",
             badge: "Gen 9 OU",
             label: "HO",
@@ -52,6 +56,7 @@ function getTrendingTeams(): TrendingTeam[] {
         },
         {
             href: "/configurar?template=rain&format=gen9ou",
+            template: "rain",
             titleKey: "rainTeam",
             badge: "Gen 9 OU",
             label: "RN",
@@ -62,6 +67,7 @@ function getTrendingTeams(): TrendingTeam[] {
         },
         {
             href: "/configurar?template=weatheroffense&format=gen9vgc2026regi",
+            template: "weatheroffense",
             titleKey: "vgcWeather",
             badge: "VGC 2026 Reg I",
             label: "VGC",
@@ -394,48 +400,61 @@ export function TrendingTeamsSection() {
                 {trendingTeams.map((team) => {
                     const title = TRENDING_TEAM_TITLES[team.titleKey]?.[lang] || team.titleKey;
                     return (
-                        <Link
+                        <div
                             key={team.href}
-                            href={team.href}
-                            prefetch={false}
-                            className="group block text-left"
+                            className="group relative flex h-full flex-col rounded-[1.75rem] border border-zinc-200 bg-white p-5 text-left transition-all hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900/80"
                             role="listitem"
                         >
-                            <div
-                                className={`flex h-full flex-col rounded-[1.75rem] border border-zinc-200 bg-white p-5 transition-all hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900/80 ${team.cardClass}`}
-                            >
-                                <div className="mb-4 flex items-start justify-between gap-4">
-                                    <div>
-                                        <h3 className={`font-bold text-zinc-900 transition-colors dark:text-white ${team.titleClass}`}>
-                                            {title}
-                                        </h3>
-                                        <span className="mt-1 inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                                            {team.badge}
-                                        </span>
-                                    </div>
-                                    <span className={`rounded-full px-2 py-1 text-xs font-black uppercase tracking-[0.18em] ${team.labelClass}`}>
-                                        {team.label}
+                            <Link
+                                href={`/teams/${team.template}`}
+                                prefetch={false}
+                                className="absolute inset-0 rounded-[1.75rem]"
+                                aria-label={`${title} archetype guide`}
+                            />
+
+                            <div className="mb-4 flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 className={`font-bold text-zinc-900 transition-colors dark:text-white ${team.titleClass}`}>
+                                        {title}
+                                    </h3>
+                                    <span className="mt-1 inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                                        {team.badge}
                                     </span>
                                 </div>
-
-                                <div className="mt-auto flex pt-3">
-                                    {team.pokemon.map((pokemon, index) => (
-                                        <div
-                                            key={pokemon}
-                                            className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-zinc-100 drop-shadow-sm first:ml-0 dark:border-zinc-900 dark:bg-zinc-800"
-                                            style={{ marginLeft: index === 0 ? 0 : -14, zIndex: 10 - index }}
-                                        >
-                                            <HomePokemonSprite
-                                                name={pokemon}
-                                                size={48}
-                                                sizes="48px"
-                                                className="h-full w-full scale-110 object-contain"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
+                                <span className={`rounded-full px-2 py-1 text-xs font-black uppercase tracking-[0.18em] ${team.labelClass}`}>
+                                    {team.label}
+                                </span>
                             </div>
-                        </Link>
+
+                            <div className="mt-auto flex pt-3">
+                                {team.pokemon.map((pokemon, index) => (
+                                    <Link
+                                        key={pokemon}
+                                        href={`/pokemon/${getPokemonSlug(pokemon)}`}
+                                        prefetch={false}
+                                        title={pokemon}
+                                        aria-label={`${pokemon} profile`}
+                                        className="relative z-10 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-zinc-100 drop-shadow-sm transition-transform hover:scale-110 first:ml-0 dark:border-zinc-900 dark:bg-zinc-800"
+                                        style={{ marginLeft: index === 0 ? 0 : -14, zIndex: 10 - index }}
+                                    >
+                                        <HomePokemonSprite
+                                            name={pokemon}
+                                            size={48}
+                                            sizes="48px"
+                                            className="h-full w-full scale-110 object-contain"
+                                        />
+                                    </Link>
+                                ))}
+                            </div>
+
+                            <Link
+                                href={team.href}
+                                prefetch={false}
+                                className="relative z-10 mt-3 text-xs font-semibold text-blue-600 hover:underline dark:text-blue-400"
+                            >
+                                {lang === "es" ? "Generar este equipo →" : "Build this team →"}
+                            </Link>
+                        </div>
                     );
                 })}
             </div>

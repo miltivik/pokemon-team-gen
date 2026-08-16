@@ -3,9 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TEMPLATES, TemplateId } from "@/config/templates";
+import { TEMPLATE_CORES } from "@/config/template-cores";
 import { FORMATS, FormatId } from "@/config/formats";
+import { hasCompetitiveData } from "@/lib/competitive-sets";
 import { getArchetypeStrategy } from "@/lib/archetype-strategies";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
+import { LinkedPokemonGrid } from "@/components/seo/LinkedPokemonGrid";
 
 interface TeamArchetypePageProps {
   params: Promise<{ template: string }>;
@@ -74,6 +77,10 @@ export default async function TeamArchetypePage({ params }: TeamArchetypePagePro
 
   const strategy = getArchetypeStrategy(template as TemplateId);
 
+  const corePokemon = (TEMPLATE_CORES[template] || []).filter((name) =>
+    hasCompetitiveData(name)
+  );
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -117,6 +124,18 @@ export default async function TeamArchetypePage({ params }: TeamArchetypePagePro
             Learn how to build and play a <strong>{templateData.label}</strong> team in competitive Pokemon formats. Understand the required roles, core Pokemon, and strategic gameplan.
           </p>
         </header>
+
+        {corePokemon.length > 0 && (
+          <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Core Pokemon for {templateData.label} Teams
+            </h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+              Pokemon that typically anchor a {templateData.label.toLowerCase()} core in current Gen 9 play. Open any profile for stats, movesets and teammates.
+            </p>
+            <LinkedPokemonGrid pokemon={corePokemon} />
+          </section>
+        )}
 
         <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
           <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Recommended Roles</h2>

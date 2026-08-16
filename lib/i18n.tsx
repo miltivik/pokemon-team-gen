@@ -1222,11 +1222,12 @@ const I18nContext = createContext<I18nContextType>({
 
 interface LanguageProviderProps {
     children: ReactNode;
+    initialLang?: Lang;
 }
 
-export function LanguageProvider({ children }: LanguageProviderProps) {
+export function LanguageProvider({ children, initialLang }: LanguageProviderProps) {
     const pathname = usePathname();
-    const [lang, setLang] = useState<Lang>(DEFAULT_LANG);
+    const [lang, setLang] = useState<Lang>(initialLang ?? DEFAULT_LANG);
     const [restored, setRestored] = useState(false);
 
     const t = useCallback(

@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: baseUrl },
     { url: `${baseUrl}/es` },
+    { url: `${baseUrl}/es/configurar` },
     { url: `${baseUrl}/tier-list` },
     { url: `${baseUrl}/about` },
     { url: `${baseUrl}/guides/gen9-ou` },

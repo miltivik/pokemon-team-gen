@@ -13,7 +13,9 @@ import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole } from "@/lib/competitive-sets";
 import { getSmogonUrl } from "@/lib/pokemon-tier";
 import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole } from "@/lib/showdown-data";
+import { getChecksFor, getTeammatesFor } from "@/lib/related-pokemon";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
+import { LinkedPokemonGrid } from "@/components/seo/LinkedPokemonGrid";
 
 interface PokemonPageProps {
   params: Promise<{ name: string }>;
@@ -135,6 +137,8 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   const spriteUrl = getPokemonSpriteUrl(finalName, "artwork");
   const roles = getAvailableRoles(finalName, "ou");
   const smogonUrl = getSmogonUrl(finalName, "gen9ou");
+  const teammates = await getTeammatesFor(finalName);
+  const checks = getChecksFor(finalName);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -274,6 +278,30 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
         <PokemonMovesetsSection name={finalName} roles={roles} />
 
         <PokemonNotableMovesSection name={finalName} />
+
+        {teammates.length > 0 && (
+          <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Best Teammates for {finalName}
+            </h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+              Pokemon that most frequently share teams with {finalName} in current Gen 9 OU usage data.
+            </p>
+            <LinkedPokemonGrid pokemon={teammates} />
+          </section>
+        )}
+
+        {checks.length > 0 && (
+          <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+              Pokemon that Check {finalName}
+            </h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+              Strong Pokemon whose STAB attacks exploit the type weaknesses of {finalName}.
+            </p>
+            <LinkedPokemonGrid pokemon={checks} />
+          </section>
+        )}
 
         <section className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-2xl border border-blue-200 dark:border-blue-800 p-6 text-center">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">

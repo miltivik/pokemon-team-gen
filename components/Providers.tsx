@@ -7,12 +7,13 @@ import { Toaster } from "@/components/ui/sonner";
 
 interface ProvidersProps {
     children: React.ReactNode;
+    initialLang?: "en" | "es";
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({ children, initialLang }: ProvidersProps) {
     return (
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <LanguageProvider>
+            <LanguageProvider initialLang={initialLang}>
                 <TeamProvider>
                     {children}
                 </TeamProvider>

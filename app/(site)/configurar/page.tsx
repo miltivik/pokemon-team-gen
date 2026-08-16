@@ -5,7 +5,7 @@ import { ConfigurarPageSkeleton } from "@/components/page-skeletons";
 import ConfigurarPageClient from "./configurar-page-client";
 
 export const metadata: Metadata = {
-  title: "Generate Competitive Pokemon Teams",
+  title: "Team Generator Settings — Formats, Archetypes & Strategies | PokeTeamBuilder",
   description:
     "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more. Choose formats, templates and strategies.",
   keywords: [
@@ -17,9 +17,14 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: "/configurar",
+    languages: {
+      en: "/configurar",
+      es: "/es/configurar",
+      "x-default": "/configurar",
+    },
   },
   openGraph: {
-    title: "Generate Competitive Pokemon Teams",
+    title: "Team Generator Settings — Formats, Archetypes & Strategies",
     description:
       "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more.",
     url: "/configurar",
@@ -28,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Generate Competitive Pokemon Teams",
+    title: "Team Generator Settings — Formats, Archetypes & Strategies",
     description:
       "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more.",
     images: ["/og-image.png"],

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     BookOpen,
     Home,
@@ -29,6 +29,7 @@ interface NavbarProps {
 export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
     const { t, lang, setLang } = useTranslation();
     const pathname = usePathname();
+    const router = useRouter();
     const [guidesOpen, setGuidesOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -263,7 +264,19 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                         <ThemeSwitcher />
 
                         <button
-                            onClick={() => setLang(lang === "en" ? "es" : "en")}
+                            onClick={() => {
+                                const nextLang = lang === "en" ? "es" : "en";
+                                setLang(nextLang);
+
+                                const search = typeof window !== "undefined" ? window.location.search : "";
+                                if (nextLang === "es") {
+                                    if (pathname === "/") router.push(`/es${search}`);
+                                    else if (pathname === "/configurar") router.push(`/es/configurar${search}`);
+                                } else {
+                                    if (pathname === "/es") router.push(`/${search}`);
+                                    else if (pathname === "/es/configurar") router.push(`/configurar${search}`);
+                                }
+                            }}
                             className="flex items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                             aria-label={languageToggleLabel}
                         >

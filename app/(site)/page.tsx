@@ -9,6 +9,7 @@ import {
     ExploreSection,
     BottomCtaSection,
 } from "@/components/home/HeroSection";
+import { PopularPokemonSection } from "@/components/home/PopularPokemonSection";
 
 export default function Home() {
     return (
@@ -33,6 +34,8 @@ export default function Home() {
                 </section>
 
                 <TrendingTeamsSection />
+
+                <PopularPokemonSection />
 
                 <ExploreSection />
 
