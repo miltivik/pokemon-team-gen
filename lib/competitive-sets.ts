@@ -259,3 +259,59 @@ export function getCompetitiveSetByRole(
 export function hasCompetitiveData(displayName: string): boolean {
     return getAvailableRoles(displayName).length > 0;
 }
+
+/**
+ * Lists the raw Smogon format keys a Pokémon has sets for (e.g. "ou",
+ * "vgc2025", "monotype"). Returns every format in the database — filter
+ * against CORE_FORMATS (config/format-labels.ts) for display purposes.
+ */
+export function getAvailableFormats(displayName: string): string[] {
+    const pokemonSets = getPokemonSets(displayName);
+    if (!pokemonSets) return [];
+    return Object.keys(pokemonSets);
+}
+
+export interface CompetitiveMoveUsage {
+    name: string;
+    count: number;
+}
+
+/**
+ * Deterministic union of every move used across ALL of a Pokémon's sets in
+ * ALL formats, with the number of sets each move appears in. Slot
+ * alternatives (string[]) are all included — they are real set picks.
+ * Ordered by set frequency, then alphabetically.
+ */
+export function getCompetitiveMoveNames(displayName: string): CompetitiveMoveUsage[] {
+    const pokemonSets = getPokemonSets(displayName);
+    if (!pokemonSets) return [];
+
+    const counts = new Map<string, CompetitiveMoveUsage>();
+    const track = (moveName: string) => {
+        const trimmed = moveName.trim();
+        if (!trimmed) return;
+        const key = normalizePokemonName(trimmed);
+        const entry = counts.get(key);
+        if (entry) {
+            entry.count += 1;
+        } else {
+            counts.set(key, { name: trimmed, count: 1 });
+        }
+    };
+
+    for (const tierSets of Object.values(pokemonSets)) {
+        for (const raw of Object.values(tierSets)) {
+            for (const slot of raw.moves || []) {
+                if (Array.isArray(slot)) {
+                    slot.forEach(track);
+                } else {
+                    track(slot);
+                }
+            }
+        }
+    }
+
+    return Array.from(counts.values()).sort(
+        (a, b) => b.count - a.count || a.name.localeCompare(b.name)
+    );
+}

@@ -10,9 +10,10 @@ import {
   getPokemonSummary,
 } from "@/lib/pokemon-summary";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
-import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole } from "@/lib/competitive-sets";
+import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole, getAvailableFormats, getCompetitiveMoveNames } from "@/lib/competitive-sets";
+import { CORE_FORMATS } from "@/config/format-labels";
 import { getSmogonUrl } from "@/lib/pokemon-tier";
-import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole } from "@/lib/showdown-data";
+import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole, getMoveData } from "@/lib/showdown-data";
 import { getChecksFor, getTeammatesFor } from "@/lib/related-pokemon";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { LinkedPokemonGrid } from "@/components/seo/LinkedPokemonGrid";
@@ -139,6 +140,10 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   const smogonUrl = getSmogonUrl(finalName, "gen9ou");
   const teammates = await getTeammatesFor(finalName);
   const checks = getChecksFor(finalName);
+  const coreFormats = getAvailableFormats(finalName)
+    .map((key) => ({ key, info: CORE_FORMATS[key] }))
+    .filter((entry): entry is { key: string; info: NonNullable<typeof entry.info> } => Boolean(entry.info))
+    .sort((a, b) => a.info.order - b.info.order);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -275,6 +280,38 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           </section>
         )}
 
+        {coreFormats.length > 0 && (
+          <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Competitive Formats</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+              {finalName} has verified Smogon sets in {coreFormats.length} competitive format{coreFormats.length === 1 ? "" : "s"}:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {coreFormats.map(({ key, info }) =>
+                info.href ? (
+                  <Link
+                    key={key}
+                    href={info.href}
+                    className="px-3 py-1.5 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium border border-blue-100 dark:border-blue-900 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                  >
+                    {info.label}
+                  </Link>
+                ) : (
+                  <span
+                    key={key}
+                    className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-lg text-sm font-medium border border-zinc-200 dark:border-zinc-700"
+                  >
+                    {info.label}
+                  </span>
+                )
+              )}
+            </div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-4">
+              Linked formats can be used directly in the team generator.
+            </p>
+          </section>
+        )}
+
         <PokemonMovesetsSection name={finalName} roles={roles} />
 
         <PokemonNotableMovesSection name={finalName} />
@@ -354,6 +391,15 @@ function PokemonCompetitiveDescription({ name, summary }: { name: string; summar
     description += `. It provides valuable utility through support moves, enabling its teammates to shine.`;
   }
 
+  const coreFormatList = getAvailableFormats(name)
+    .map((key) => CORE_FORMATS[key])
+    .filter((info): info is NonNullable<typeof info> => Boolean(info))
+    .sort((a, b) => a.order - b.order);
+  if (coreFormatList.length > 0) {
+    const topLabels = coreFormatList.slice(0, 2).map((info) => info.label).join(" and ");
+    description += ` It appears in verified competitive sets across ${coreFormatList.length} formats, including ${topLabels}.`;
+  }
+
   return (
     <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
       <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">Competitive Overview</h2>
@@ -414,10 +460,20 @@ function statLabel(key: string): string {
 }
 
 function PokemonNotableMovesSection({ name }: { name: string }) {
-  const moves = getLearnableMovesWithDetails(name);
-  if (moves.length === 0) return null;
+  // Primary source: moves that appear in verified Smogon sets across all of
+  // this Pokemon's formats, ranked by how many sets use them. Filler (BP
+  // filter over the learnset) only kicks in for thin set data.
+  const SET_MOVE_LIMIT = 12;
+  const TOTAL_LIMIT = 16;
 
-  // Pick notable moves: strongest attacks per category + key utility moves
+  const setMoveEntries = getCompetitiveMoveNames(name)
+    .map(({ name: moveName }) => ({ moveName, data: getMoveData(moveName) }))
+    .slice(0, SET_MOVE_LIMIT);
+
+  const includedIds = new Set(
+    setMoveEntries.map(({ moveName }) => moveName.toLowerCase().replace(/[^a-z0-9]/g, ""))
+  );
+
   const utilityMoveIds = new Set([
     "stealthrock", "spikes", "toxicspikes", "stickyweb", "defog", "rapidspin",
     "wish", "healbell", "aromatherapy", "roost", "recover", "synthesis",
@@ -428,38 +484,49 @@ function PokemonNotableMovesSection({ name }: { name: string }) {
     "knockoff", "trick", "toxic", "rest", "sleeptalk",
   ]);
 
-  const notable = moves.filter((m) => {
-    const id = m.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-    if (utilityMoveIds.has(id)) return true;
-    if (m.basePower >= 80 && m.category !== "Status") return true;
-    if (m.basePower >= 60 && m.category !== "Status" && m.accuracy === true) return true; // reliable attacks
-    return false;
-  }).slice(0, 16);
+  const learnable = getLearnableMovesWithDetails(name);
+  const filler = learnable
+    .filter((m) => !includedIds.has(m.name.toLowerCase().replace(/[^a-z0-9]/g, "")))
+    .filter((m) => {
+      const id = m.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (utilityMoveIds.has(id)) return true;
+      if (m.basePower >= 80 && m.category !== "Status") return true;
+      if (m.basePower >= 60 && m.category !== "Status" && m.accuracy === true) return true; // reliable attacks
+      return false;
+    })
+    .map((m) => ({ moveName: m.name, data: m }))
+    .slice(0, Math.max(0, TOTAL_LIMIT - setMoveEntries.length));
 
-  if (notable.length === 0) return null;
+  const entries = [...setMoveEntries, ...filler];
+
+  if (entries.length === 0) return null;
 
   return (
     <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
       <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Notable Moves</h2>
       <div className="grid gap-2 sm:grid-cols-2">
-        {notable.map((move) => (
-          <div key={move.name} className="flex items-center justify-between p-2 bg-zinc-50 dark:bg-zinc-950/50 rounded-lg border border-zinc-100 dark:border-zinc-800">
-            <div>
-              <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{move.name}</span>
-              <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-400">{move.category}</span>
+        {entries.map(({ moveName, data }) => (
+          <div key={moveName} className="flex items-center justify-between gap-2 p-2 bg-zinc-50 dark:bg-zinc-950/50 rounded-lg border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{moveName}</span>
+              {data && (
+                <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300">
+                  {data.type}
+                </span>
+              )}
             </div>
-            <div className="text-xs text-zinc-500 dark:text-zinc-400">
-              {move.category === "Status" ? (
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 shrink-0">
+              {!data ? null : data.category === "Status" ? (
                 <span>Status</span>
               ) : (
-                <span>{move.basePower} bp · {typeof move.accuracy === "boolean" ? "—" : `${move.accuracy}%`} acc</span>
+                <span>{data.basePower} bp</span>
               )}
             </div>
           </div>
         ))}
       </div>
       <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-4">
-        A selection of notable attacks and utility moves {name} can learn. Full movepool may vary by generation and transfer compatibility.
+        Ranked by usage in verified Smogon competitive sets{filler.length > 0 ? ", with additional learnset highlights" : ""}. Full movepool may vary by generation and transfer compatibility.
       </p>
     </section>
   );
