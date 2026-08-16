@@ -9,12 +9,18 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/"],
       },
       {
+        // AI answer engines: allowed so ChatGPT Search and Perplexity can
+        // access, cite and recommend the tool (see SEO audit discussion).
         userAgent: "GPTBot",
-        disallow: "/",
+        allow: "/",
       },
       {
         userAgent: "ChatGPT-User",
-        disallow: "/",
+        allow: "/",
+      },
+      {
+        userAgent: "PerplexityBot",
+        allow: "/",
       },
       {
         userAgent: "Google-Extended",
@@ -22,10 +28,6 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "CCBot",
-        disallow: "/",
-      },
-      {
-        userAgent: "PerplexityBot",
         disallow: "/",
       },
       {
