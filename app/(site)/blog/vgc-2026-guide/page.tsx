@@ -3,6 +3,10 @@
 import Link from "next/link";
 import Script from "next/script";
 
+function slug(name: string) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 export default function VGC2026GuideArticle() {
     const articleJsonLd = {
         "@context": "https://schema.org",
@@ -84,8 +88,8 @@ export default function VGC2026GuideArticle() {
                             In doubles, whoever moves first often wins. Speed control is the single most important strategic consideration. There are several ways to control speed:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 my-4">
-                            <li><strong>Trick Room:</strong> Reverses the speed order so slower Pokémon move first. Dedicated Trick Room teams often use Pokémon like Porygon2, Dusclops, or Uxie as setters alongside slow powerhouses like Torkoal or Glastrier.</li>
-                            <li><strong>Tailwind:</strong> Doubles your team&apos;s Speed for four turns. Common setters include Whimsicott (with Prankster), Tornadus, and Murkrow.</li>
+                            <li><strong>Trick Room:</strong> Reverses the speed order so slower Pokémon move first. Dedicated Trick Room teams often use Pokémon like Porygon2, Dusclops, or Uxie as setters alongside slow powerhouses like <Link href={`/pokemon/${slug("Torkoal")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Torkoal</Link> or Glastrier.</li>
+                            <li><strong>Tailwind:</strong> Doubles your team&apos;s Speed for four turns. Common setters include Whimsicott (with Prankster), <Link href={`/pokemon/${slug("Tornadus")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Tornadus</Link>, and Murkrow.</li>
                             <li><strong>Icy Wind / Electroweb:</strong> Speed-lowering spread moves that shift the pace of battle in your favor. These are especially useful on balance teams.</li>
                             <li><strong>Thunder Wave / Scary Face:</strong> Single-target speed control for more targeted disruption.</li>
                         </ul>
@@ -125,23 +129,23 @@ export default function VGC2026GuideArticle() {
                         </h2>
                         <div className="space-y-4 my-6">
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🔥 Incineroar</h4>
+                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🔥 <Link href={`/pokemon/${slug("Incineroar")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Incineroar</Link></h4>
                                 <p className="text-sm mt-1">The king of VGC support. Intimidate to lower Attack, Fake Out for free turns, Parting Shot for pivoting. Appears on over 40% of teams in most formats.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🌿 Rillaboom</h4>
+                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🌿 <Link href={`/pokemon/${slug("Rillaboom")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Rillaboom</Link></h4>
                                 <p className="text-sm mt-1">Grassy Surge sets Grassy Terrain, weakening Earthquake and providing passive recovery. Grassy Glide gives it priority in terrain. One of the best offensive support Pokémon.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">💨 Tornadus</h4>
+                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">💨 <Link href={`/pokemon/${slug("Tornadus")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Tornadus</Link></h4>
                                 <p className="text-sm mt-1">Prankster Tailwind, Taunt, and Rain Dance support. Flexible and fast, with access to Bleakwind Storm for offensive presence.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🍄 Amoonguss</h4>
+                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🍄 <Link href={`/pokemon/${slug("Amoonguss")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Amoonguss</Link></h4>
                                 <p className="text-sm mt-1">The ultimate Trick Room companion. Spore puts opponents to sleep, Rage Powder redirects attacks, and Regenerator keeps it healthy throughout the game.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🐉 Flutter Mane</h4>
+                                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">🐉 <Link href={`/pokemon/${slug("Flutter Mane")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Flutter Mane</Link></h4>
                                 <p className="text-sm mt-1">Blistering Speed and Special Attack make it one of the deadliest sweepers when it is available. Dazzling Gleam and Shadow Ball provide excellent spread coverage.</p>
                             </div>
                         </div>
@@ -154,9 +158,9 @@ export default function VGC2026GuideArticle() {
                         </p>
                         <ul className="list-disc pl-6 space-y-3 my-4">
                             <li><strong>Hyper Offense (Tailwind / Fast):</strong> Set Tailwind early and overwhelm opponents with powerful attacks before they can adjust. Requires good lead matchup knowledge.</li>
-                            <li><strong>Trick Room:</strong> Build around slow, powerful Pokémon and reverse the speed order. Requires dedicated setters and slow sweepers.</li>
+                            <li><strong><Link href="/teams/trickroom" className="text-blue-600 dark:text-blue-400 hover:underline">Trick Room</Link>:</strong> Build around slow, powerful Pokémon and reverse the speed order. Requires dedicated setters and slow sweepers.</li>
                             <li><strong>Goodstuffs / Balance:</strong> A flexible team of individually strong Pokémon that can handle a variety of matchups. The most common and versatile archetype.</li>
-                            <li><strong>Weather:</strong> Sun, Rain, Sand, or Snow teams that leverage weather-boosted attacks and abilities. Sun (Torkoal + Eruption) and Rain (Pelipper + Swift Swim sweepers) are the most popular.</li>
+                            <li><strong><Link href="/teams/weatheroffense" className="text-blue-600 dark:text-blue-400 hover:underline">Weather</Link>:</strong> Sun, Rain, Sand, or Snow teams that leverage weather-boosted attacks and abilities. Sun (Torkoal + Eruption) and Rain (Pelipper + Swift Swim sweepers) are the most popular.</li>
                         </ul>
 
                         <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-8 mb-4">
@@ -185,6 +189,9 @@ export default function VGC2026GuideArticle() {
                             >
                                 Generate a VGC Team →
                             </Link>
+                            <p className="text-xs mt-3 text-zinc-600 dark:text-zinc-400">
+                                Or explore <Link href="/teams/trickroom" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Trick Room</Link> and <Link href="/teams/tailwind" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Tailwind</Link> archetype guides first.
+                            </p>
                         </div>
                     </div>
                 </article>

@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: "Page Not Found",
   description:
     "The page you are looking for does not exist. Explore our Pokemon team generator, tier list, and competitive guides.",
+  // Explicit noindex overrides the layout's "index, follow" when this
+  // boundary renders; Next.js additionally injects its own automatic
+  // "noindex" meta on notFound() responses (not removable). Two consistent
+  // noindex tags beat a conflicting index/noindex pair.
   robots: {
     index: false,
     follow: true,

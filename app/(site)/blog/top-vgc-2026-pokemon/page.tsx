@@ -150,7 +150,7 @@ export default function TopVgcPokemonArticle() {
               <Link href={`/pokemon/${slug("Torkoal")}`} className="text-blue-600 dark:text-blue-400 hover:underline">
                 Torkoal
               </Link>{" "}
-              is the face of Trick Room and sun cores in VGC 2026. With Drought and access to Eruption, it provides massive spread damage under sun. It pairs perfectly with Jumpluff for fast Sleep Powder and speed control, creating one of the most popular cores in the format.
+              is the face of <Link href="/teams/trickroom" className="text-blue-600 dark:text-blue-400 hover:underline">Trick Room</Link> and sun cores in VGC 2026. With Drought and access to Eruption, it provides massive spread damage under sun. It pairs perfectly with Jumpluff for fast Sleep Powder and speed control, creating one of the most popular cores in the format.
             </p>
 
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-8 mb-4">

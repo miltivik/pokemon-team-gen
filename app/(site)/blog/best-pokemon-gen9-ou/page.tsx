@@ -3,6 +3,10 @@
 import Link from "next/link";
 import Script from "next/script";
 
+function slug(name: string) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 export default function BestPokemonGen9OUArticle() {
     const articleJsonLd = {
         "@context": "https://schema.org",
@@ -71,17 +75,17 @@ export default function BestPokemonGen9OUArticle() {
                             1. Gholdengo — The Hazard Guardian
                         </h2>
                         <p>
-                            Gholdengo has been a staple of Gen 9 OU since day one, and for good reason. Its signature ability, Good as Gold, makes it immune to all status moves, which means it cannot be Toxiced, Burned, or phazed by moves like Whirlwind. This makes it arguably the best Stealth Rock and Spikes blocker in the tier, since it prevents Defog users from clearing hazards by threatening them out.
+                            <Link href={`/pokemon/${slug("Gholdengo")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Gholdengo</Link> has been a staple of Gen 9 OU since day one, and for good reason. Its signature ability, Good as Gold, makes it immune to all status moves, which means it cannot be Toxiced, Burned, or phazed by moves like Whirlwind. This makes it arguably the best Stealth Rock and Spikes blocker in the tier, since it prevents Defog users from clearing hazards by threatening them out.
                         </p>
                         <p>
-                            Offensively, Gholdengo hits hard with a base 133 Special Attack and access to Make It Rain, a devastating Steel-type special move. Common sets include Choice Specs for raw power and Air Balloon variants for extra ground immunity. When teambuilding, Gholdengo pairs excellently with hazard setters like Garchomp and Landorus-Therian — you set hazards, and Gholdengo prevents them from being removed.
+                            Offensively, Gholdengo hits hard with a base 133 Special Attack and access to Make It Rain, a devastating Steel-type special move. Common sets include Choice Specs for raw power and Air Balloon variants for extra ground immunity. When teambuilding, Gholdengo pairs excellently with hazard setters like <Link href={`/pokemon/${slug("Garchomp")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Garchomp</Link> and Landorus-Therian — you set hazards, and Gholdengo prevents them from being removed.
                         </p>
 
                         <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-8 mb-4">
                             2. Great Tusk — The Utility Swiss Army Knife
                         </h2>
                         <p>
-                            Great Tusk is the backbone of countless OU teams thanks to its incredible versatility. It can set Stealth Rock, Rapid Spin hazards away, check physical attackers with its bulk, and deal massive damage with Headlong Rush and Close Combat. The combination of Ground and Fighting coverage lets it threaten most defensive cores while maintaining utility.
+                            <Link href={`/pokemon/${slug("Great Tusk")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Great Tusk</Link> is the backbone of countless OU teams thanks to its incredible versatility. It can set Stealth Rock, Rapid Spin hazards away, check physical attackers with its bulk, and deal massive damage with Headlong Rush and Close Combat. The combination of Ground and Fighting coverage lets it threaten most defensive cores while maintaining utility.
                         </p>
                         <p>
                             What makes Great Tusk exceptional is role compression. In a format where team slots are precious, having a Pokémon that can spin hazards, set rocks, and threaten KOs all in one slot is invaluable. Booster Energy sets with the Protosynthesis ability allow it to boost key stats situationally, making it unpredictable and dangerous.
@@ -91,7 +95,7 @@ export default function BestPokemonGen9OUArticle() {
                             3. Dragapult — The Speed Demon
                         </h2>
                         <p>
-                            With a blistering 142 base Speed, Dragapult is one of the fastest Pokémon in the entire tier. Its versatility is what truly sets it apart — it can run physical sets with Dragon Darts and Phantom Force, special sets with Shadow Ball and Draco Meteor, or even support sets with Hex, Will-O-Wisp, and Thunder Wave. This unpredictability makes it extremely difficult to prepare for.
+                            With a blistering 142 base Speed, <Link href={`/pokemon/${slug("Dragapult")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Dragapult</Link> is one of the fastest Pokémon in the entire tier. Its versatility is what truly sets it apart — it can run physical sets with Dragon Darts and Phantom Force, special sets with Shadow Ball and Draco Meteor, or even support sets with Hex, Will-O-Wisp, and Thunder Wave. This unpredictability makes it extremely difficult to prepare for.
                         </p>
                         <p>
                             Dragapult is also one of the best users of Terastallization in the tier. A Tera Fairy Dragapult suddenly dodges its Dragon weakness while gaining STAB on coverage moves with Tera Blast. Its ability to pivot and disrupt makes it a top-tier threat on offensive and balance teams alike.
@@ -101,7 +105,7 @@ export default function BestPokemonGen9OUArticle() {
                             4. Kingambit — The Wincon Machine
                         </h2>
                         <p>
-                            Kingambit is one of the most feared late-game sweepers in Gen 9 OU. Its Supreme Overlord ability boosts its Attack and Special Attack for every fainted party member, which means in the late game it can reach absolutely monstrous power levels. Combine that with Sucker Punch for priority and Swords Dance for setup opportunities, and you have a Pokémon that can end games on its own.
+                            <Link href={`/pokemon/${slug("Kingambit")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Kingambit</Link> is one of the most feared late-game sweepers in Gen 9 OU. Its Supreme Overlord ability boosts its Attack and Special Attack for every fainted party member, which means in the late game it can reach absolutely monstrous power levels. Combine that with Sucker Punch for priority and Swords Dance for setup opportunities, and you have a Pokémon that can end games on its own.
                         </p>
                         <p>
                             The key to using Kingambit effectively is understanding when to bring it in. It should not be your lead — it is a closer. Keep it healthy throughout the match, eliminate its checks (primarily Fighting-types and faster special attackers), and when two or three of your Pokémon have fainted, send Kingambit in to clean up. It is one of the best reasons to run a Fighting-type answer on every team.
@@ -111,7 +115,7 @@ export default function BestPokemonGen9OUArticle() {
                             5. Iron Valiant — The Mixed Attacker
                         </h2>
                         <p>
-                            Iron Valiant combines an aggressive stat spread with excellent coverage to threaten both physical and special walls. Its access to Close Combat, Moonblast, Thunderbolt, and Knock Off means almost nothing can safely switch in. Booster Energy sets with Speed boosts allow it to outpace the majority of the tier, functioning as a devastating wallbreaker.
+                            <Link href={`/pokemon/${slug("Iron Valiant")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Iron Valiant</Link> combines an aggressive stat spread with excellent coverage to threaten both physical and special walls. Its access to Close Combat, Moonblast, Thunderbolt, and Knock Off means almost nothing can safely switch in. Booster Energy sets with Speed boosts allow it to outpace the majority of the tier, functioning as a devastating wallbreaker.
                         </p>
                         <p>
                             The challenge with Iron Valiant is its frailty. It does not take hits well, so prediction is key. It excels on hyper-offensive teams where preserving momentum is the primary gameplan. Pair it with strong pivots like Slowking-Galar or Rotom-Wash to generate safe switch-in opportunities.
@@ -124,11 +128,11 @@ export default function BestPokemonGen9OUArticle() {
                             Rounding out the top 10, we see several Pokémon that glue teams together:
                         </p>
                         <ul className="list-disc pl-6 space-y-3 my-4">
-                            <li><strong>Garganacl</strong> — The premier physical wall with Salt Cure chip damage and recovery in Recover. It handles most physical attackers in the tier and provides a win condition through gradual chip.</li>
-                            <li><strong>Heatran</strong> — Excellent special wall and hazard setter. Flash Fire gives it critical Fire immunities, and it checks many top threats including Gholdengo and Iron Valiant.</li>
-                            <li><strong>Landorus-Therian</strong> — The eternal glue Pokémon. Intimidate, U-turn, and Stealth Rock make it the best defensive pivot for offensive teams.</li>
-                            <li><strong>Slowking-Galar</strong> — A bulky special pivot with Regenerator and Future Sight. It enables offensive partners by forcing switches and applying delayed pressure.</li>
-                            <li><strong>Zamazenta</strong> — An incredible defensive Pokémon with Body Press, Iron Defense, and great natural bulk. It centralizes team composition around fighting checks.</li>
+                            <li><strong><Link href={`/pokemon/${slug("Garganacl")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Garganacl</Link></strong> — The premier physical wall with Salt Cure chip damage and recovery in Recover. It handles most physical attackers in the tier and provides a win condition through gradual chip.</li>
+                            <li><strong><Link href={`/pokemon/${slug("Heatran")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Heatran</Link></strong> — Excellent special wall and hazard setter. Flash Fire gives it critical Fire immunities, and it checks many top threats including Gholdengo and Iron Valiant.</li>
+                            <li><strong><Link href={`/pokemon/${slug("Landorus-Therian")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Landorus-Therian</Link></strong> — The eternal glue Pokémon. Intimidate, U-turn, and Stealth Rock make it the best defensive pivot for offensive teams.</li>
+                            <li><strong><Link href={`/pokemon/${slug("Slowking-Galar")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Slowking-Galar</Link></strong> — A bulky special pivot with Regenerator and Future Sight. It enables offensive partners by forcing switches and applying delayed pressure.</li>
+                            <li><strong><Link href={`/pokemon/${slug("Zamazenta")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Zamazenta</Link></strong> — An incredible defensive Pokémon with Body Press, Iron Defense, and great natural bulk. It centralizes team composition around fighting checks.</li>
                         </ul>
 
                         <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-8 mb-4">
@@ -157,6 +161,9 @@ export default function BestPokemonGen9OUArticle() {
                             >
                                 Generate a Gen 9 OU Team →
                             </Link>
+                            <p className="text-xs mt-3 text-zinc-600 dark:text-zinc-400">
+                                Or browse our <Link href="/teams" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">team archetype guides</Link> for proven cores and strategies.
+                            </p>
                         </div>
                     </div>
                 </article>

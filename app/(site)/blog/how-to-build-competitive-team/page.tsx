@@ -3,6 +3,10 @@
 import Link from "next/link";
 import Script from "next/script";
 
+function slug(name: string) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 export default function HowToBuildCompetitiveTeamArticle() {
     const articleJsonLd = {
         "@context": "https://schema.org",
@@ -99,23 +103,23 @@ export default function HowToBuildCompetitiveTeamArticle() {
                         <div className="my-6 space-y-4">
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                                 <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">🗡️ Wallbreaker</h3>
-                                <p className="text-sm">A high-power attacker designed to punch through defensive Pokémon. Examples: Iron Valiant, Roaring Moon.</p>
+                                <p className="text-sm">A high-power attacker designed to punch through defensive Pokémon. Examples: <Link href={`/pokemon/${slug("Iron Valiant")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Iron Valiant</Link>, <Link href={`/pokemon/${slug("Roaring Moon")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Roaring Moon</Link>.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                                 <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">⚡ Revenge Killer</h3>
-                                <p className="text-sm">A fast Pokémon (often holding Choice Scarf) that comes in after a KO to take out weakened threats. Examples: Dragapult, Scarf Iron Valiant.</p>
+                                <p className="text-sm">A fast Pokémon (often holding Choice Scarf) that comes in after a KO to take out weakened threats. Examples: <Link href={`/pokemon/${slug("Dragapult")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Dragapult</Link>, Scarf Iron Valiant.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                                 <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">🛡️ Defensive Pivot</h3>
-                                <p className="text-sm">A bulky Pokémon that absorbs hits and pivots out with U-turn or Teleport. Examples: Slowking-Galar, Landorus-T.</p>
+                                <p className="text-sm">A bulky Pokémon that absorbs hits and pivots out with U-turn or Teleport. Examples: <Link href={`/pokemon/${slug("Slowking-Galar")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Slowking-Galar</Link>, <Link href={`/pokemon/${slug("Landorus-Therian")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Landorus-T</Link>.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                                 <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">🏗️ Hazard Setter/Remover</h3>
-                                <p className="text-sm">Stealth Rock, Spikes, and Toxic Spikes are crucial. You need a setter and a remover (Rapid Spin or Defog). Example: Great Tusk does both.</p>
+                                <p className="text-sm">Stealth Rock, Spikes, and Toxic Spikes are crucial. You need a setter and a remover (Rapid Spin or Defog). Example: <Link href={`/pokemon/${slug("Great Tusk")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Great Tusk</Link> does both.</p>
                             </div>
                             <div className="p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
                                 <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">🧹 Sweeper / Win Condition</h3>
-                                <p className="text-sm">The Pokémon that closes out the game after checks are removed. Often a setup sweeper with Swords Dance or Dragon Dance. Example: Kingambit.</p>
+                                <p className="text-sm">The Pokémon that closes out the game after checks are removed. Often a setup sweeper with Swords Dance or Dragon Dance. Example: <Link href={`/pokemon/${slug("Kingambit")}`} className="text-blue-600 dark:text-blue-400 hover:underline">Kingambit</Link>.</p>
                             </div>
                         </div>
 
@@ -189,6 +193,9 @@ export default function HowToBuildCompetitiveTeamArticle() {
                             >
                                 Generate My Team →
                             </Link>
+                            <p className="text-xs mt-3 text-zinc-600 dark:text-zinc-400">
+                                Or start from a proven structure — browse our <Link href="/teams" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">team archetype guides</Link>.
+                            </p>
                         </div>
                     </div>
                 </article>
