@@ -12,6 +12,7 @@ import {
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole, getAvailableFormats, getCompetitiveMoveNames } from "@/lib/competitive-sets";
 import { CORE_FORMATS } from "@/config/format-labels";
+import { CURATED_POKEMON } from "@/config/curated-pokemon";
 import { getSmogonUrl } from "@/lib/pokemon-tier";
 import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole, getMoveData } from "@/lib/showdown-data";
 import { getChecksFor, getTeammatesFor } from "@/lib/related-pokemon";
@@ -227,6 +228,8 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
 
         <PokemonCompetitiveDescription name={finalName} summary={finalSummary} />
 
+        <HowToUseSection name={finalName} />
+
         <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
           <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Base Stats</h2>
           <div className="space-y-3 max-w-md">
@@ -403,7 +406,32 @@ function PokemonCompetitiveDescription({ name, summary }: { name: string; summar
   return (
     <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
       <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">Competitive Overview</h2>
-      <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">{description}</p>
+      <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+        {CURATED_POKEMON[name]?.summary ?? description}
+      </p>
+    </section>
+  );
+}
+
+function HowToUseSection({ name }: { name: string }) {
+  const curated = CURATED_POKEMON[name];
+  if (!curated) return null;
+
+  return (
+    <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
+      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">How to Use {name}</h2>
+      <ul className="space-y-2 mb-5">
+        {curated.whenToUse.map((tip) => (
+          <li key={tip} className="flex gap-2.5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 shrink-0" aria-hidden="true" />
+            <span>{tip}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-900">
+        <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300 mb-1">Watch out for</h3>
+        <p className="text-sm text-amber-900/80 dark:text-amber-200/80 leading-relaxed">{curated.watchOut}</p>
+      </div>
     </section>
   );
 }
