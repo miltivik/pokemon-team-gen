@@ -1,4 +1,5 @@
 const CONSENT_KEY = "ptb_cookie_consent";
+const REGION_COOKIE = "ptb_region";
 
 export type ConsentCategory = "analytics" | "advertising";
 
@@ -25,8 +26,23 @@ function updateAnalyticsConsent(granted: boolean): void {
   }
 }
 
+/**
+ * Whether the visitor is in a region where cookie consent is legally
+ * required (EEA, UK, Switzerland). Resolved from the geo cookie set by
+ * middleware from Cloudflare/Vercel request headers. Unknown regions
+ * default to consent-required (privacy-conservative).
+ */
+export function isConsentRequiredRegion(): boolean {
+  if (typeof window === "undefined") return true;
+  const match = document.cookie
+    .split("; ")
+    .find((entry) => entry.startsWith(`${REGION_COOKIE}=`));
+  return match ? decodeURIComponent(match.split("=")[1]) === "eu" : true;
+}
+
 export function getConsent(): ConsentState {
   if (typeof window === "undefined") return "pending";
+  if (!isConsentRequiredRegion()) return "granted";
   const consent = getGranularConsent();
   if (!consent.timestamp) return "pending";
   return consent.analytics || consent.advertising ? "granted" : "denied";
@@ -64,6 +80,9 @@ export function getGranularConsent(): GranularConsent {
 }
 
 export function hasConsent(category: ConsentCategory): boolean {
+  // Outside consent-required regions (EEA/UK/CH) no opt-in is needed, so
+  // ads and analytics serve without the banner.
+  if (!isConsentRequiredRegion()) return true;
   const consent = getGranularConsent();
   return consent[category] === true;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getGranularConsent, getConsentCategories, setConsent, setGranularConsent, CONSENT_CATEGORY_INFO, type ConsentCategory } from "@/lib/consent";
+import { getGranularConsent, getConsentCategories, isConsentRequiredRegion, setConsent, setGranularConsent, CONSENT_CATEGORY_INFO, type ConsentCategory } from "@/lib/consent";
 import type { GranularConsent } from "@/lib/consent";
 import { Switch } from "@/components/ui/switch";
 
@@ -20,7 +20,7 @@ export function CookieConsent() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Consent is browser-only state read after hydration.
     setConsentState(stored);
     const isPending = stored.timestamp === 0;
-    setVisible(isPending);
+    setVisible(isPending && isConsentRequiredRegion());
   }, []);
 
   useEffect(() => {
