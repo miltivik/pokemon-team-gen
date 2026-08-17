@@ -1,16 +1,18 @@
 const CONSENT_KEY = "ptb_cookie_consent";
 
-export type ConsentCategory = "analytics";
+export type ConsentCategory = "analytics" | "advertising";
 
 export type ConsentState = "granted" | "denied" | "pending";
 
 export interface GranularConsent {
   analytics: boolean;
+  advertising: boolean;
   timestamp: number;
 }
 
 const DEFAULT_CONSENT: GranularConsent = {
   analytics: false,
+  advertising: false,
   timestamp: 0,
 };
 
@@ -25,11 +27,9 @@ function updateAnalyticsConsent(granted: boolean): void {
 
 export function getConsent(): ConsentState {
   if (typeof window === "undefined") return "pending";
-  const stored = localStorage.getItem(CONSENT_KEY);
-  if (stored === "granted" || stored === "denied") return stored;
   const consent = getGranularConsent();
   if (!consent.timestamp) return "pending";
-  return consent.analytics ? "granted" : "denied";
+  return consent.analytics || consent.advertising ? "granted" : "denied";
 }
 
 export function getGranularConsent(): GranularConsent {
@@ -39,8 +39,13 @@ export function getGranularConsent(): GranularConsent {
   try {
     const parsed = JSON.parse(stored);
     if (typeof parsed === "object" && parsed !== null) {
+      // GDPR migration: consent stored before the "advertising" category
+      // existed was never informed about ad purposes, so it cannot cover
+      // them. Treat it as absent — the banner will ask again.
+      if (!("advertising" in parsed)) return DEFAULT_CONSENT;
       return {
         analytics: Boolean(parsed.analytics),
+        advertising: Boolean(parsed.advertising),
         timestamp: Number(parsed.timestamp) || 0,
       };
     }
@@ -48,10 +53,12 @@ export function getGranularConsent(): GranularConsent {
     // Invalid JSON, return default
   }
   if (stored === "granted") {
-    return { analytics: true, timestamp: Date.now() };
+    // Legacy all-accepted string from before granular consent: same GDPR
+    // reasoning, ask again for the new advertising purpose.
+    return DEFAULT_CONSENT;
   }
   if (stored === "denied") {
-    return { analytics: false, timestamp: Date.now() };
+    return { analytics: false, advertising: false, timestamp: Date.now() };
   }
   return DEFAULT_CONSENT;
 }
@@ -63,17 +70,19 @@ export function hasConsent(category: ConsentCategory): boolean {
 
 export function setConsent(state: ConsentState): void {
   if (typeof window === "undefined") return;
-  const analytics = state === "granted";
   if (state === "pending") {
     localStorage.removeItem(CONSENT_KEY);
-  } else {
-    localStorage.setItem(CONSENT_KEY, JSON.stringify({ analytics, timestamp: Date.now() }));
+    window.dispatchEvent(new Event("consentChanged"));
+    return;
   }
-  updateAnalyticsConsent(analytics);
-  window.dispatchEvent(new Event("consentChanged"));
+  const granted = state === "granted";
+  setGranularConsent({
+    analytics: granted,
+    advertising: granted,
+  });
 }
 
-export function setGranularConsent(consent: GranularConsent): void {
+export function setGranularConsent(consent: Omit<GranularConsent, "timestamp">): void {
   if (typeof window === "undefined") return;
   const storedConsent = { ...consent, timestamp: Date.now() };
   localStorage.setItem(CONSENT_KEY, JSON.stringify(storedConsent));
@@ -82,7 +91,7 @@ export function setGranularConsent(consent: GranularConsent): void {
 }
 
 export function getConsentCategories(): ConsentCategory[] {
-  return ["analytics"];
+  return ["analytics", "advertising"];
 }
 
 export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; description: string; cookies: string[] }> = {
@@ -90,5 +99,11 @@ export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; desc
     name: "Analytics",
     description: "Help us understand how visitors interact with our website.",
     cookies: ["_ga", "_gid", "_gat", "_utma", "_utmb", "_utmc"],
+  },
+  advertising: {
+    name: "Advertising",
+    description:
+      "Enables personalized ads through Google AdSense. Denying this keeps the site free of ad scripts and ad cookies.",
+    cookies: ["__gads", "__gpi", "IDE", "test_cookie"],
   },
 };

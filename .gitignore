@@ -43,7 +43,8 @@ next-env.d.ts
 # Custom ignores  
 .agent/  
 .agents/  
-.kilocode/  
+.kilocode/
+.zcode/  
 debug-*.js  
 tmp*  
 smogon_*.txt  

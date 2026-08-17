@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Script para eliminar el fondo de las imágenes de logo
  * Uso: node scripts/remove-background.js

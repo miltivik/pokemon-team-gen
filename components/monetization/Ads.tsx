@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { ADSENSE_PUBLISHER_ID, ADSENSE_SLOTS } from "@/lib/adsense";
+import { useCategoryConsent } from "@/components/ConsentAwareScripts";
 
 /**
  * Configuración de monetización
@@ -87,6 +88,7 @@ function AdSlot({
   fullWidthResponsive,
 }: AdSlotProps) {
   const mounted = useDeferredAdMount();
+  const hasAdvertising = useCategoryConsent("advertising");
   const hasConfiguredSlot = slot.trim().length > 0;
   const pushedRef = useRef(false);
   const adRef = useRef<HTMLModElement | null>(null);
@@ -129,7 +131,7 @@ function AdSlot({
     };
   }, [hasConfiguredSlot, mounted, placement, slot]);
 
-  if (!hasConfiguredSlot) return null;
+  if (!hasConfiguredSlot || !hasAdvertising) return null;
 
   return (
     <div

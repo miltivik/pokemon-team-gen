@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Script to generate a multi-size ICO favicon from a source image
  * 

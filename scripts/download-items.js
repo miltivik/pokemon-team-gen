@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Downloads item descriptions from Pokemon Showdown and saves as JSON.
  * Run with: node scripts/download-items.js

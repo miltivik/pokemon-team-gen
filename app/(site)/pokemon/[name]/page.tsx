@@ -207,11 +207,11 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
                 <TypeBadge key={type} type={type} />
               ))}
             </div>
-            <h1 className="text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">
-              {finalName}
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">
+              {finalName} — Stats, Movesets and Competitive Analysis
             </h1>
             <p className="text-zinc-600 dark:text-zinc-400 max-w-xl">
-              #{String(finalSummary.num).padStart(3, "0")} — Base stats, abilities and available competitive roles and movesets.
+              #{String(finalSummary.num).padStart(3, "0")} — Smogon-verified competitive data for Pokemon Showdown team building.
             </p>
             <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
               <Link href={`/configurar?fixedPokemon=${encodeURIComponent(finalName)}`}>

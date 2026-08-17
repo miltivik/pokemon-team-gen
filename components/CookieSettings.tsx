@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getGranularConsent, setGranularConsent, CONSENT_CATEGORY_INFO, type ConsentCategory } from "@/lib/consent";
+import { getGranularConsent, getConsentCategories, setGranularConsent, CONSENT_CATEGORY_INFO, type ConsentCategory } from "@/lib/consent";
 import type { GranularConsent } from "@/lib/consent";
 import { Switch } from "@/components/ui/switch";
 
@@ -12,6 +12,7 @@ interface CookieSettingsProps {
 export function CookieSettings({ onClose }: CookieSettingsProps) {
   const [consent, setConsentState] = useState<GranularConsent>({
     analytics: false,
+    advertising: false,
     timestamp: 0,
   });
   const [saved, setSaved] = useState(false);
@@ -38,14 +39,14 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
       <h2 className="mb-4 text-xl font-bold text-zinc-900 dark:text-zinc-50">
-        Analytics Settings
+        Cookie Settings
       </h2>
       <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-        Manage analytics consent. Language and theme storage are essential.
+        Manage your analytics and advertising consent. Language and theme storage are essential.
       </p>
 
       <div className="mb-6 space-y-4">
-        {(["analytics"] as ConsentCategory[]).map((category) => (
+        {getConsentCategories().map((category) => (
           <div key={category} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
             <div className="mb-2 flex items-center justify-between">
               <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
@@ -69,7 +70,7 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
 
       {saved && (
         <p className="mb-4 text-sm text-green-600 dark:text-green-400">
-          Analytics choice saved successfully!
+          Cookie choices saved successfully!
         </p>
       )}
 
@@ -86,7 +87,7 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
           onClick={handleSave}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
         >
-          Save Analytics Choice
+          Save Choices
         </button>
       </div>
     </div>

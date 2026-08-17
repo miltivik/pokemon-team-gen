@@ -5,7 +5,7 @@ import Script from "next/script";
 import { hasConsent, type ConsentCategory } from "@/lib/consent";
 import { ADSENSE_PUBLISHER_ID } from "@/lib/adsense";
 
-function useCategoryConsent(category: ConsentCategory) {
+export function useCategoryConsent(category: ConsentCategory) {
   const [hasCatConsent, setHasCatConsent] = useState(false);
 
   useEffect(() => {
@@ -20,13 +20,17 @@ function useCategoryConsent(category: ConsentCategory) {
 }
 
 function AdSenseLoader() {
+  const hasAdvertising = useCategoryConsent("advertising");
+
+  if (!hasAdvertising) return null;
+
   return (
     <Script
       id="adsense"
       async
       src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
       crossOrigin="anonymous"
-      strategy="afterInteractive"
+      strategy="lazyOnload"
     />
   );
 }
