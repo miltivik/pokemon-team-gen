@@ -41,6 +41,10 @@ function isValidTemplate(template: string): template is TemplateId {
     return VALID_TEMPLATES.includes(template as TemplateId);
 }
 
+interface ConfigurarPageClientProps {
+    initialLang?: "en" | "es";
+}
+
 interface TeamGenerationResult {
     team: GeneratedTeamMember[];
     gameplan?: GameplanData | null;
@@ -51,11 +55,20 @@ interface TeamGenerationResult {
     options?: TeamGenerationOptions | null;
 }
 
-export default function ConfigurarPageClient() {
+export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { format, setFormat, addTeam, team, isHydrated, generationOptions } = useTeam();
     const { t } = useTranslation();
+    const initialCopy = initialLang === "es"
+        ? {
+            title: "Configuración del Generador",
+            description: "Configura tus preferencias de equipo",
+        }
+        : {
+            title: t("form.title"),
+            description: t("form.description"),
+        };
     const storedGenerationOptions = useMemo(
         () => cloneGenerationOptions(generationOptions),
         [generationOptions]
@@ -165,8 +178,8 @@ export default function ConfigurarPageClient() {
     if (!isHydrated) {
         return (
             <ConfigurarPageSkeleton
-                title={t("form.title")}
-                description={t("form.description")}
+                title={initialCopy.title}
+                description={initialCopy.description}
             />
         );
     }

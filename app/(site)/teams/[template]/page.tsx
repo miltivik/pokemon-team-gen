@@ -14,6 +14,8 @@ interface TeamArchetypePageProps {
   params: Promise<{ template: string }>;
 }
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const allTemplates = Object.keys(TEMPLATES) as TemplateId[];
   return allTemplates.map((template) => ({ template }));
@@ -28,8 +30,8 @@ export async function generateMetadata({ params }: TeamArchetypePageProps): Prom
     };
   }
 
-  const title = `${templateData.label} Team Archetype Guide`;
-  const description = `Learn how to build a ${templateData.label} team in competitive Pokemon. Roles, core requirements, and strategy for Gen 9 OU, VGC and more.`;
+  const title = `${templateData.label} Pokemon Team Guide | Gen 9 OU`;
+  const description = `Learn how to build a ${templateData.label} Pokemon team for Gen 9 OU and VGC with core Pokemon, roles, required moves and a practical strategy guide.`;
 
   return {
     title,

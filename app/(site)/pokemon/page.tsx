@@ -7,9 +7,9 @@ import { hasCompetitiveData } from "@/lib/competitive-sets";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "Competitive Pokemon Profiles and Stats",
+  title: "Competitive Pokemon Profiles | Stats & Movesets",
   description:
-    "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets from Smogon set data.",
+    "Browse competitive Pokemon profiles with base stats, abilities, roles, movesets and teammates from current Smogon data for Pokemon Showdown team building.",
   keywords: [
     "pokemon stats",
     "competitive pokemon",
@@ -21,16 +21,16 @@ export const metadata: Metadata = {
     canonical: "/pokemon",
   },
   openGraph: {
-    title: "Competitive Pokemon Profiles and Stats",
-    description: "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets.",
+    title: "Competitive Pokemon Profiles | Stats & Movesets",
+    description: "Browse competitive Pokemon profiles with base stats, abilities, roles, movesets and teammates from current Smogon data.",
     url: "/pokemon",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Competitive Pokemon Profiles and Stats",
-    description: "Browse competitive Pokemon profiles with base stats, abilities, and available roles and movesets.",
+    title: "Competitive Pokemon Profiles | Stats & Movesets",
+    description: "Browse competitive Pokemon profiles with base stats, abilities, roles, movesets and teammates from current Smogon data.",
     images: ["/og-image.png"],
   },
 };

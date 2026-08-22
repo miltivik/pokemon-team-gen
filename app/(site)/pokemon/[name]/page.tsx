@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   getAllPokemonNames,
@@ -22,6 +22,8 @@ import { LinkedPokemonGrid } from "@/components/seo/LinkedPokemonGrid";
 interface PokemonPageProps {
   params: Promise<{ name: string }>;
 }
+
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const allNames = getAllPokemonNames();
@@ -127,9 +129,6 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   }
 
   const canonicalSlug = getPokemonSlug(finalName);
-  if (name !== canonicalSlug) {
-    permanentRedirect(`/pokemon/${canonicalSlug}`);
-  }
 
   const finalSummary = getPokemonSummary(finalName);
   if (!finalSummary) {

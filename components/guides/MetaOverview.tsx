@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n";
 import { formatPercentage } from "@/lib/format-percent";
 import type { MetaOverviewData, MetaOverviewPayload } from "@/lib/meta-analysis";
@@ -160,10 +160,10 @@ export function MetaOverview({ format, initialData }: MetaOverviewProps) {
         <div className="w-full space-y-6">
             <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <h3 className="flex items-center gap-2 leading-none font-semibold">
                         <BarChart3 className="h-5 w-5 text-blue-500" />
                         {t("guides.tierOverview")}
-                    </CardTitle>
+                    </h3>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -249,10 +249,10 @@ export function MetaOverview({ format, initialData }: MetaOverviewProps) {
 
             <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <h3 className="flex items-center gap-2 leading-none font-semibold">
                         <Shield className="h-5 w-5 text-violet-500" />
                         {t("guides.mostUsedItemsAbilities")}
-                    </CardTitle>
+                    </h3>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -299,10 +299,10 @@ export function MetaOverview({ format, initialData }: MetaOverviewProps) {
             {combinedThreats.length > 0 && (
                 <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
+                        <h3 className="flex items-center gap-2 leading-none font-semibold">
                             <Swords className="h-5 w-5 text-emerald-500" />
                             {lang === "es" ? "Foto rápida del meta" : "Meta Snapshot"}
-                        </CardTitle>
+                        </h3>
                     </CardHeader>
                     <CardContent className="grid gap-3 md:grid-cols-3">
                         {combinedThreats.slice(0, 3).map((entry) => (

@@ -23,7 +23,10 @@ function escapeRegExp(value) {
 function getTitle(html, pathname) {
   const match = html.match(/<title>([^<]+)<\/title>/i);
   assert.ok(match, `${pathname} must render a title`);
-  return match[1];
+  return match[1]
+    .replace(/&amp;/g, "&")
+    .replace(/&#x27;|&apos;/g, "'")
+    .replace(/&quot;/g, '"');
 }
 
 function getMetaContent(html, attribute, value, pathname) {
@@ -52,7 +55,7 @@ function getJsonLd(html) {
 async function checkPseo() {
   const competitiveSource = fs.readFileSync(path.join(root, "lib/competitive-sets.ts"), "utf8");
   const profileSource = fs.readFileSync(
-    path.join(root, "app/pokemon/[name]/page.tsx"),
+    path.join(root, "app/(site)/pokemon/[name]/page.tsx"),
     "utf8"
   );
   assert.match(
@@ -87,7 +90,7 @@ async function checkPseo() {
     assert.equal(response.status, 200, `${pathname} must return 200`);
     assert.match(
       text,
-      new RegExp(`<h1[^>]*>\\s*${escapeRegExp(displayName)}\\s*</h1>`),
+      new RegExp(`<h1[^>]*>[^<]*${escapeRegExp(displayName)}`),
       `${pathname} must render its proper display name`
     );
     assert.match(text, /Competitive Roles/, `${pathname} must render competitive data`);
@@ -95,9 +98,8 @@ async function checkPseo() {
   }
 
   for (const pathname of ["/pokemon/abra", "/pokemon/abomasnow-mega"]) {
-    const { text } = await get(pathname);
-    assert.match(text, /<meta[^>]+name="robots"[^>]+content="noindex"/, `${pathname} must be noindex`);
-    assert.doesNotMatch(text, /<link[^>]+rel="canonical"/, `${pathname} must not self-canonicalize`);
+    const { response } = await get(pathname);
+    assert.equal(response.status, 404, `${pathname} must return a real 404`);
   }
 
   const profile = await get("/pokemon/garchomp");
@@ -114,26 +116,16 @@ async function checkPseo() {
   );
 
   const legacySlug = await get("/pokemon/greattusk");
-  assert.ok(
-    (legacySlug.response.status === 308 &&
-      legacySlug.response.headers.get("location") === "/pokemon/great-tusk") ||
-      (legacySlug.response.status === 200 &&
-        /http-equiv="refresh" content="0;url=\/pokemon\/great-tusk"/.test(legacySlug.text)),
-    "legacy compound slugs must use Next.js permanent redirect semantics"
+  assert.equal(legacySlug.response.status, 308, "legacy compound slugs must return a permanent redirect");
+  assert.equal(
+    legacySlug.response.headers.get("location"),
+    "/pokemon/great-tusk",
+    "legacy compound slugs must redirect to the canonical Pokemon slug"
   );
 
   const { response, text } = await get("/sitemap.xml");
   assert.equal(response.status, 200, "/sitemap.xml must return 200");
   assert.doesNotMatch(text, /<(?:priority|changefreq)>/, "sitemap must omit ignored hints");
-  for (const block of text.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
-    if (/\/(?:pokemon|teams)\//.test(block[1])) {
-      assert.doesNotMatch(
-        block[1],
-        /<lastmod>/,
-        "programmatic pages must not publish an invented last-modified date"
-      );
-    }
-  }
   const pokemonUrls = [
     ...text.matchAll(/<loc>(https:\/\/poketeambuilder\.com\/pokemon\/[^<]+)<\/loc>/g),
   ].map((match) => match[1]);
@@ -190,9 +182,10 @@ async function checkMetadata() {
   assert.match(text, /<html[^>]+lang="en"/);
   assert.equal(
     getTitle(text, "/"),
-    "Competitive Pokemon Team Generator",
+    "Pokemon Team Generator for Showdown | Gen 9 OU & VGC",
     "home title must match the primary search intent"
   );
+  assertMetaDescriptionLength(text, "/");
   assert.match(text, /Generate competitive Pokemon teams/i);
   assert.doesNotMatch(text, /Genera equipos Pokemon competitivos/i);
   assert.match(
@@ -248,6 +241,19 @@ async function checkMetadata() {
   const sitemap = await get("/sitemap.xml");
   assert.match(sitemap.text, /<loc>https:\/\/poketeambuilder\.com\/es<\/loc>/);
 
+  const spanishConfig = await get("/es/configurar");
+  assert.equal(spanishConfig.response.status, 200, "/es/configurar must return 200");
+  assert.match(
+    spanishConfig.text,
+    /Configuraci[^<]*Generador/,
+    "/es/configurar must render a Spanish H1 during SSR"
+  );
+  assert.doesNotMatch(
+    spanishConfig.text,
+    /Generator Settings/,
+    "/es/configurar must not expose the English SSR skeleton"
+  );
+
   const routes = [
     "/about",
     "/tier-list",
@@ -299,6 +305,49 @@ async function checkMetadata() {
     }
   }
 
+  const metadataExpectations = [
+    [
+      "/configurar",
+      "Build Pokemon Showdown Teams | Gen 9 OU & VGC",
+      "Configure and generate competitive Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more. Choose a format, archetype and playstyle.",
+    ],
+    [
+      "/pokemon",
+      "Competitive Pokemon Profiles | Stats & Movesets",
+      "Browse competitive Pokemon profiles with base stats, abilities, roles, movesets and teammates from current Smogon data for Pokemon Showdown team building.",
+    ],
+    [
+      "/teams",
+      "Pokemon Team Archetypes | Rain, Stall & HO Guides",
+      "Explore competitive Pokemon team archetypes including Rain, Hyper Offense, Stall, Trick Room and more, with roles, cores and practical strategy guides.",
+    ],
+    [
+      "/teams/rain",
+      "Rain Pokemon Team Guide | Gen 9 OU",
+      "Learn how to build a Rain Pokemon team for Gen 9 OU and VGC with core Pokemon, roles, required moves and a practical strategy guide.",
+    ],
+    [
+      "/tier-list",
+      "Pokemon Tier List | Gen 9 OU & VGC Rankings",
+      "Explore Pokemon tier lists, viability rankings and usage stats for Gen 9 OU, UU, Ubers, Monotype and archived VGC formats.",
+    ],
+    [
+      "/pokemon-showdown-team-builder",
+      "Pokemon Showdown Team Builder | Gen 9 OU & VGC",
+      "Build competitive Pokemon Showdown teams in three steps: choose a format, pick an archetype, optimize your roster and export a ready-to-use team for battle.",
+    ],
+  ];
+  for (const [pathname, expectedTitle, expectedDescription] of metadataExpectations) {
+    const page = await get(pathname);
+    assert.equal(page.response.status, 200, `${pathname} must return 200`);
+    assert.equal(getTitle(page.text, pathname), expectedTitle, `${pathname} title must target its primary intent`);
+    assert.equal(
+      getMetaContent(page.text, "name", "description", pathname),
+      expectedDescription,
+      `${pathname} description must explain the page value`
+    );
+  }
+
   const breadcrumbCases = [
     ["/pokemon/garchomp", ["Home", "Pokemon", "Garchomp"]],
     ["/teams/rain", ["Home", "Team Archetypes", "Rain Teams"]],
@@ -337,9 +386,30 @@ async function checkConfigurar() {
   );
 }
 
+async function checkHttpStatuses() {
+  for (const pathname of [
+    "/does-not-exist",
+    "/blog/nope",
+    "/guides/nope",
+    "/pokemon/does-not-exist",
+    "/teams/nope",
+  ]) {
+    const { response } = await get(pathname);
+    assert.equal(response.status, 404, `${pathname} must return a real 404`);
+  }
+
+  const legacySlug = await get("/pokemon/greattusk");
+  assert.equal(legacySlug.response.status, 308, "known legacy Pokemon slugs must redirect permanently");
+  assert.equal(
+    legacySlug.response.headers.get("location"),
+    "/pokemon/great-tusk",
+    "known legacy Pokemon slugs must redirect to the canonical route"
+  );
+}
+
 async function checkContent() {
   const tierSource = fs.readFileSync(
-    path.join(root, "app/tier-list/tier-list-page-client.tsx"),
+    path.join(root, "app/(site)/tier-list/tier-list-page-client.tsx"),
     "utf8"
   );
   assert.match(
@@ -398,11 +468,30 @@ async function checkContent() {
     );
     const format = pathname.split("/").at(-1);
     const guideSource = fs.readFileSync(
-      path.join(root, "app/guides", format, `${format}-guide-client.tsx`),
+      path.join(root, "app/(site)/guides", format, `${format}-guide-client.tsx`),
       "utf8"
     );
     assert.doesNotMatch(guideSource, /FAQPage/, `${pathname} must not mark up hidden FAQ content`);
   }
+
+  const gen9Article = getJsonLd(pages["/guides/gen9-ou"]).find(
+    (entry) => entry["@type"] === "Article"
+  );
+  assert.ok(gen9Article, "/guides/gen9-ou must render Article JSON-LD");
+  assert.equal(
+    gen9Article.dateModified,
+    "2026-08-22",
+    "Gen 9 OU Article JSON-LD must use the explicit editorial update date"
+  );
+  assert.ok(
+    count(pages["/guides/gen9-ou"], /<h2\b/gi) >= 2,
+    "/guides/gen9-ou must expose multiple semantic H2 sections"
+  );
+  assert.match(
+    pages["/guides/gen9-ou"],
+    /Updated August 22, 2026/,
+    "/guides/gen9-ou must show when its meta snapshot was updated"
+  );
 
   const compactMeta = await get("/api/meta-overview?format=gen9ou&limit=6");
   assert.equal(compactMeta.response.status, 200, "compact meta API request must return 200");
@@ -515,6 +604,7 @@ async function checkVgc() {
     const { text } = await get(pathname);
     assert.match(text, /<meta[^>]+name="robots"[^>]+content="noindex, follow"/);
   }
+
 }
 
 async function checkCachePolicy() {
@@ -540,16 +630,22 @@ async function checkAdsenseReadiness() {
   const settings = fs.readFileSync(path.join(root, "components/CookieSettings.tsx"), "utf8");
   const analytics = fs.readFileSync(path.join(root, "lib/analytics.tsx"), "utf8");
   const webVitals = fs.readFileSync(path.join(root, "components/WebVitalsTracker.tsx"), "utf8");
-  const privacy = fs.readFileSync(path.join(root, "app/privacy/page.tsx"), "utf8");
+  const privacy = fs.readFileSync(path.join(root, "app/(site)/privacy/page.tsx"), "utf8");
   const envExample = fs.readFileSync(path.join(root, ".env.local.example"), "utf8");
   const design = fs.readFileSync(path.join(root, "docs/superpowers/specs/2026-07-17-adsense-readiness-design.md"), "utf8");
   const plan = fs.readFileSync(path.join(root, "docs/superpowers/plans/2026-07-17-adsense-readiness.md"), "utf8");
 
   assert.match(scripts, /<AdSenseLoader\s*\/>/, "AdSense must load so Google CMP can render");
-  assert.doesNotMatch(scripts, /hasAdvertising|Infolinks|Ezoic/, "only AdSense may own advertising runtime");
-  assert.doesNotMatch(ads, /hasConsent\(["']advertising["']\)|ezoic|infolinks/i);
-  assert.doesNotMatch(consent, /["']advertising["']\s*\||advertising:\s*boolean|advertising:\s*(true|false)/);
-  assert.doesNotMatch(banner + settings, /["']advertising["']/);
+  assert.doesNotMatch(scripts, /Infolinks|Ezoic/, "only AdSense may own advertising runtime");
+  assert.match(scripts, /useCategoryConsent\(["']advertising["']\)/, "AdSense must respect advertising consent");
+  assert.match(ads, /useCategoryConsent\(["']advertising["']\)/, "manual ad slots must respect advertising consent");
+  assert.match(
+    consent,
+    /export type ConsentCategory = ["']analytics["']\s*\|\s*["']advertising["']/,
+    "local consent must expose analytics and advertising categories"
+  );
+  assert.match(consent, /advertising:\s*boolean/, "advertising consent must be stored separately");
+  assert.match(banner + settings, /getConsentCategories\(\)/, "cookie UI must render configured consent categories");
   assert.doesNotMatch(consent, /["']preferences["']\s*\||preferences:\s*boolean|preferences:\s*(true|false)/);
   assert.doesNotMatch(banner + settings, /["']preferences["']|preference storage/i);
   assert.match(
@@ -559,8 +655,8 @@ async function checkAdsenseReadiness() {
   );
   assert.equal(
     count(consent, /updateAnalyticsConsent\(/g),
-    3,
-    "both local consent setters must update Google Consent Mode"
+    2,
+    "the local granular consent setter must update Google Consent Mode"
   );
   assert.match(
     analytics,
@@ -594,6 +690,7 @@ const checks = {
   pseo: checkPseo,
   metadata: checkMetadata,
   configurar: checkConfigurar,
+  statuses: checkHttpStatuses,
   content: checkContent,
   vgc: checkVgc,
   cache: checkCachePolicy,

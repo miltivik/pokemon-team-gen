@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "Pokemon Showdown Team Builder",
+  title: "Pokemon Showdown Team Builder | Gen 9 OU & VGC",
   description:
-    "Build competitive Pokemon teams for Pokemon Showdown in three steps: choose a format, pick an archetype and export. Supports Gen 9 OU, VGC 2026 Reg I and more.",
+    "Build competitive Pokemon Showdown teams in three steps: choose a format, pick an archetype, optimize your roster and export a ready-to-use team for battle.",
   keywords: [
     "pokemon showdown team builder",
     "pokemon showdown team generator",
@@ -20,18 +20,18 @@ export const metadata: Metadata = {
     canonical: "/pokemon-showdown-team-builder",
   },
   openGraph: {
-    title: "Pokemon Showdown Team Builder",
+    title: "Pokemon Showdown Team Builder | Gen 9 OU & VGC",
     description:
-      "Build competitive Pokemon teams for Pokemon Showdown in three steps: pick a format, choose an archetype, and export your team.",
+      "Build competitive Pokemon Showdown teams in three steps: choose a format, pick an archetype, optimize your roster and export a ready-to-use team for battle.",
     url: "/pokemon-showdown-team-builder",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pokemon Showdown Team Builder",
+    title: "Pokemon Showdown Team Builder | Gen 9 OU & VGC",
     description:
-      "Build competitive Pokemon teams for Pokemon Showdown in three steps: pick a format, choose an archetype, and export your team.",
+      "Build competitive Pokemon Showdown teams in three steps: choose a format, pick an archetype, optimize your roster and export a ready-to-use team for battle.",
     images: ["/og-image.png"],
   },
 };

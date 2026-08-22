@@ -53,8 +53,15 @@ export default function ConfigurarSpanishPage() {
           Aprende a usar el creador de equipos de Pokemon Showdown
         </Link>
       </p>
-      <Suspense fallback={<ConfigurarPageSkeleton />}>
-        <ConfigurarPageClient />
+      <Suspense
+        fallback={
+          <ConfigurarPageSkeleton
+            title="Configuración del Generador"
+            description="Configura tus preferencias de equipo"
+          />
+        }
+      >
+        <ConfigurarPageClient initialLang="es" />
       </Suspense>
     </>
   );

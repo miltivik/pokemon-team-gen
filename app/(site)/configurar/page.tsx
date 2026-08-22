@@ -5,9 +5,9 @@ import { ConfigurarPageSkeleton } from "@/components/page-skeletons";
 import ConfigurarPageClient from "./configurar-page-client";
 
 export const metadata: Metadata = {
-  title: "Team Generator Settings — Formats, Archetypes & Strategies | PokeTeamBuilder",
+  title: "Build Pokemon Showdown Teams | Gen 9 OU & VGC",
   description:
-    "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more. Choose formats, templates and strategies.",
+    "Configure and generate competitive Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more. Choose a format, archetype and playstyle.",
   keywords: [
     "pokemon team generator",
     "pokemon showdown team builder",
@@ -24,18 +24,18 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Team Generator Settings — Formats, Archetypes & Strategies",
+    title: "Build Pokemon Showdown Teams | Gen 9 OU & VGC",
     description:
-      "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more.",
+      "Configure and generate competitive Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more. Choose a format, archetype and playstyle.",
     url: "/configurar",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Team Generator Settings — Formats, Archetypes & Strategies",
+    title: "Build Pokemon Showdown Teams | Gen 9 OU & VGC",
     description:
-      "Configure and generate optimized Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more.",
+      "Configure and generate competitive Pokemon Showdown teams for Gen 9 OU, VGC, UU, RU, NU and more. Choose a format, archetype and playstyle.",
     images: ["/og-image.png"],
   },
 };

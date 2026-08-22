@@ -5,10 +5,11 @@ import "../globals.css";
 
 const ENGLISH_DESCRIPTION =
   "Generate competitive Pokemon teams for Pokemon Showdown across Gen 9 OU, UU, RU, NU, VGC 2026 Reg I and legacy formats, with optimized movesets and strategy.";
+const ENGLISH_TITLE = "Pokemon Team Generator for Showdown | Gen 9 OU & VGC";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://poketeambuilder.com'),
-  title: 'Pokemon Team Generator for Showdown — Gen 9 OU & VGC | PokeTeamBuilder',
+  title: ENGLISH_TITLE,
   description: ENGLISH_DESCRIPTION,
   keywords: [
     'pokemon team generator',
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
     alternateLocale: 'es_ES',
     url: 'https://poketeambuilder.com',
     siteName: 'Pokemon Team Generator',
-    title: 'Pokemon Team Generator for Showdown — Gen 9 OU & VGC | PokeTeamBuilder',
+    title: ENGLISH_TITLE,
     description: ENGLISH_DESCRIPTION,
     images: [
       {
@@ -55,7 +56,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pokemon Team Generator for Showdown — Gen 9 OU & VGC | PokeTeamBuilder',
+    title: ENGLISH_TITLE,
     description: ENGLISH_DESCRIPTION,
     images: ['/og-image.png'],
     creator: '@poketeamgen',

@@ -4,9 +4,9 @@ import { TEMPLATES, TemplateId } from "@/config/templates";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "Team Archetypes and Strategies",
+  title: "Pokemon Team Archetypes | Rain, Stall & HO Guides",
   description:
-    "Explore competitive Pokemon team archetypes including Rain, Hyper Offense, Stall, Trick Room and more. Learn roles, cores and strategies.",
+    "Explore competitive Pokemon team archetypes including Rain, Hyper Offense, Stall, Trick Room and more, with roles, cores and practical strategy guides.",
   keywords: [
     "pokemon team archetypes",
     "rain team pokemon",
@@ -18,16 +18,16 @@ export const metadata: Metadata = {
     canonical: "/teams",
   },
   openGraph: {
-    title: "Team Archetypes and Strategies",
-    description: "Explore competitive Pokemon team archetypes and strategies.",
+    title: "Pokemon Team Archetypes | Rain, Stall & HO Guides",
+    description: "Explore competitive Pokemon team archetypes including Rain, Hyper Offense, Stall, Trick Room and more.",
     url: "/teams",
     type: "website",
     images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Team Archetypes and Strategies",
-    description: "Explore competitive Pokemon team archetypes and strategies.",
+    title: "Pokemon Team Archetypes | Rain, Stall & HO Guides",
+    description: "Explore competitive Pokemon team archetypes including Rain, Hyper Offense, Stall, Trick Room and more.",
     images: ["/og-image.png"],
   },
 };
