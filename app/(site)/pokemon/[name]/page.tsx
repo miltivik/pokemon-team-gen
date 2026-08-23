@@ -24,6 +24,7 @@ interface PokemonPageProps {
 }
 
 export const dynamicParams = false;
+export const dynamic = "force-static";
 
 export async function generateStaticParams() {
   const allNames = getAllPokemonNames();
@@ -37,11 +38,7 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
   const finalName = getPokemonDisplayName(name);
 
   if (!finalName || !hasCompetitiveData(finalName)) {
-    return {
-      title: "Pokemon Profile Not Available",
-      robots: { index: false, follow: true },
-      alternates: { canonical: null },
-    };
+    notFound();
   }
 
   const canonicalSlug = getPokemonSlug(finalName);

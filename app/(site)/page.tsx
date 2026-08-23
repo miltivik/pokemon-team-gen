@@ -24,22 +24,38 @@ export default function Home() {
             <main id="main-content" className="container mx-auto flex flex-col items-center gap-12 px-4 py-12">
                 <HeroSection />
 
-                <SupportedFormatsSection />
-                <DemoShowcase />
-                <HowItWorksSection />
-                <FeaturesSection />
+                <div className="home-below-fold w-full">
+                    <SupportedFormatsSection />
+                </div>
+                <div className="home-below-fold w-full">
+                    <DemoShowcase />
+                </div>
+                <div className="home-below-fold w-full">
+                    <HowItWorksSection />
+                </div>
+                <div className="home-below-fold w-full">
+                    <FeaturesSection />
+                </div>
 
                 <section className="w-full flex justify-center">
                     <AdInline />
                 </section>
 
-                <TrendingTeamsSection />
+                <div className="home-below-fold w-full">
+                    <TrendingTeamsSection />
+                </div>
 
-                <PopularPokemonSection />
+                <div className="home-below-fold w-full">
+                    <PopularPokemonSection />
+                </div>
 
-                <ExploreSection />
+                <div className="home-below-fold w-full">
+                    <ExploreSection />
+                </div>
 
-                <BottomCtaSection />
+                <div className="home-below-fold w-full">
+                    <BottomCtaSection />
+                </div>
 
                 <section className="w-full flex justify-center py-4">
                     <AdBanner />

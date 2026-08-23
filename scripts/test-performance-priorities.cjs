@@ -8,6 +8,8 @@ const read = (relativePath) =>
   fs.readFileSync(path.join(root, relativePath), "utf8");
 
 const configurar = read("app/(site)/configurar/configurar-page-client.tsx");
+const home = read("app/(site)/page.tsx");
+const globalStyles = read("app/globals.css");
 const equipo = read("app/(site)/equipo/equipo-page-client.tsx");
 const teamForm = read("components/TeamForm.tsx");
 const webVitals = read("components/WebVitalsTracker.tsx");
@@ -25,6 +27,17 @@ assert.ok(
 assert.ok(
   bannerIndex < 0 || formIndex < bannerIndex,
   "TeamForm must render before the first banner ad"
+);
+
+assert.match(
+  home,
+  /home-below-fold/,
+  "home sections below the hero must opt into deferred rendering"
+);
+assert.match(
+  globalStyles,
+  /\.home-below-fold\s*\{[\s\S]*content-visibility:\s*auto[\s\S]*contain-intrinsic-size:/,
+  "deferred home sections must reserve intrinsic space while content-visibility skips offscreen work"
 );
 
 assert.match(
@@ -62,6 +75,21 @@ assert.doesNotMatch(
   webVitals,
   /import\s*\{[^}]*onLCP[^}]*\}\s*from\s*["']web-vitals["']/,
   "web-vitals must not be part of the static client import"
+);
+assert.match(
+  webVitals,
+  /delta[?:,\s]/,
+  "Web Vitals events must retain the metric delta for field diagnostics"
+);
+assert.match(
+  webVitals,
+  /navigation_type/,
+  "Web Vitals events must report navigation type for INP segmentation"
+);
+assert.match(
+  webVitals,
+  /onINP\(sendToAnalytics\)/,
+  "INP must remain registered after analytics consent"
 );
 
 console.log("Performance priority regressions passed.");

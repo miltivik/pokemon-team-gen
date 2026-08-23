@@ -279,8 +279,8 @@ function escapeRegExp(value: string) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export function getTranslatedCompetitiveSetLabel(setName: string, lang: "en" | "es") {
-    if (lang !== "es") return setName;
+export function translateCompetitiveText(text: string, lang: "en" | "es") {
+    if (lang !== "es") return text;
 
     return [...DATA_LABEL_REPLACEMENTS, ...SET_LABEL_REPLACEMENTS]
         .slice()
@@ -290,6 +290,10 @@ export function getTranslatedCompetitiveSetLabel(setName: string, lang: "en" | "
                 new RegExp(`\\b${escapeRegExp(source)}\\b`, "gi"),
                 translated
             ),
-            setName
+            text
         );
+}
+
+export function getTranslatedCompetitiveSetLabel(setName: string, lang: "en" | "es") {
+    return translateCompetitiveText(setName, lang);
 }

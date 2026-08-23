@@ -73,6 +73,11 @@ function main() {
   const generated = readJson("data/translations-es.json");
   const overrides = readJson("data/translations-es-overrides.json");
   const showdownSource = fs.readFileSync(path.join(root, "lib/showdown-data.ts"), "utf8");
+  const pokemonTranslationsSource = fs.readFileSync(
+    path.join(root, "lib/pokemon-translations.ts"),
+    "utf8"
+  );
+  const teamGuideSource = fs.readFileSync(path.join(root, "lib/team-guide.ts"), "utf8");
   const manual = {
     moves: parseManualMap(showdownSource, "MANUAL_MOVE_TRANSLATIONS"),
     abilities: parseManualMap(showdownSource, "MANUAL_ABILITY_TRANSLATIONS"),
@@ -105,6 +110,26 @@ function main() {
     overrides.items?.["Ability Shield"]?.name,
     "Escudo Habilidad",
     "new competitive item overrides must use the Spanish label"
+  );
+  assert.equal(
+    getTranslation("Stealth Rock", "moves", generated, overrides, manual.moves),
+    "Trampa Rocas",
+    "Stealth Rock must keep its official Spanish label"
+  );
+  assert.equal(
+    getTranslation("Rapid Spin", "moves", generated, overrides, manual.moves),
+    "Giro Rápido",
+    "Rapid Spin must keep its official Spanish label"
+  );
+  assert.match(
+    pokemonTranslationsSource,
+    /export function translateCompetitiveText\(/,
+    "Spanish guide text must have a shared competitive-label translation helper"
+  );
+  assert.match(
+    teamGuideSource,
+    /translateCompetitiveText\(/,
+    "generated Spanish guides must pass their text through the shared translation helper"
   );
 
   for (const relativePath of [

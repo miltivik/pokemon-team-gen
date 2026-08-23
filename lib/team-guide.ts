@@ -16,6 +16,7 @@ import {
 } from "@/lib/competitive-format-profile";
 import { getTournamentPriorSet } from "@/lib/tournament-priors";
 import { inferPrimaryStrategicRole } from "@/lib/strategic-role";
+import { translateCompetitiveText } from "@/lib/pokemon-translations";
 import { getMoveData, type MoveData, type PokedexEntry, type Role } from "@/lib/showdown-data";
 import { getEffectiveness } from "@/lib/type-chart";
 import { toID } from "@/lib/utils";
@@ -315,6 +316,24 @@ interface TeamProfile {
 
 function text(lang: GuideLang, en: string, es: string) {
   return lang === "es" ? es : en;
+}
+
+function translateGuideValue<T>(value: T, lang: GuideLang): T {
+  if (typeof value === "string") {
+    return translateCompetitiveText(value, lang) as T;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => translateGuideValue(item, lang)) as T;
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, translateGuideValue(entry, lang)])
+    ) as T;
+  }
+
+  return value;
 }
 
 function translateType(type: string, lang: GuideLang) {
@@ -2039,7 +2058,7 @@ export function generateTeamGuide(
   const templateId = options.templateId ?? "balanced";
   const teamProfile = buildTeamProfile(team, options.format, templateId, options.lang);
 
-  return {
+  const guide: TeamGuideData = {
     archetype: teamProfile.archetype,
     subarchetype: teamProfile.subarchetype,
     overview: buildOverview(teamProfile),
@@ -2049,6 +2068,8 @@ export function generateTeamGuide(
     generalTips: buildGeneralTips(teamProfile),
     recommendedModes: teamProfile.recommendedModes,
   };
+
+  return options.lang === "es" ? translateGuideValue(guide, options.lang) : guide;
 }
 
 export function attachMemberAnalyses(team: GeneratedTeamMember[], teamGuide: TeamGuideData) {

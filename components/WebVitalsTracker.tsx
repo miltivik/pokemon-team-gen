@@ -5,26 +5,54 @@ import { hasConsent } from "@/lib/consent";
 
 let trackingStarted = false;
 
-function sendToAnalytics({ name, value, rating }: { name: string; value: number; rating: string }) {
+function sendToAnalytics({
+  name,
+  value,
+  rating,
+  delta,
+  id,
+  navigationType,
+}: {
+  name: string;
+  value: number;
+  rating: string;
+  delta: number;
+  id: string;
+  navigationType: string;
+}) {
   if (!hasConsent("analytics")) return;
+
+  const metricValue = Math.round(name === "CLS" ? value * 1000 : value);
+  const metricDelta = Math.round(name === "CLS" ? delta * 1000 : delta);
 
   // Send to Google Analytics 4 if available
   if (typeof window !== "undefined" && "gtag" in window) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const gtag = (window as any).gtag;
     if (gtag) {
-      gtag("event", name, {
+      const eventParams: Record<string, string | number | boolean> = {
         event_category: "Web Vitals",
-        value: Math.round(name === "CLS" ? value * 1000 : value),
+        value: metricDelta,
+        metric_value: metricValue,
+        metric_delta: metricDelta,
         event_label: rating,
+        metric_id: id,
+        navigation_type: navigationType,
         non_interaction: true,
-      });
+      };
+      gtag("event", name, eventParams);
     }
   }
 
   // Also log to console in development
   if (process.env.NODE_ENV === "development") {
-    console.log(`[Web Vitals] ${name}:`, { value, rating });
+    console.log(`[Web Vitals] ${name}:`, {
+      value,
+      rating,
+      delta,
+      id,
+      navigationType,
+    });
   }
 }
 

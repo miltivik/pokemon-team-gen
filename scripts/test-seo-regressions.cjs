@@ -73,6 +73,16 @@ async function checkPseo() {
     /competitiveNames\.slice\(/,
     "static generation must not cap competitive Pokemon"
   );
+  assert.match(
+    profileSource,
+    /export const dynamic = [\"']force-static[\"'];/,
+    "Pokemon profile routes must be statically bounded so unknown slugs cannot fall through to a 200"
+  );
+  assert.match(
+    profileSource,
+    /export async function generateMetadata[\s\S]*?if \(!finalName \|\| !hasCompetitiveData\(finalName\)\) \{\s*notFound\(\);/,
+    "Pokemon metadata generation must reject unknown slugs before rendering a document"
+  );
 
   const expectedProfiles = new Map([
     ["/pokemon/garchomp", "Garchomp"],

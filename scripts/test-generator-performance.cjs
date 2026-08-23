@@ -57,6 +57,12 @@ async function main() {
   assert.ok(result.teamGuide, "internal generator consumers keep the active guide");
   assert.deepEqual(Object.keys(result.gameplanI18n).sort(), ["en", "es"]);
   assert.deepEqual(Object.keys(result.teamGuideI18n).sort(), ["en", "es"]);
+  const spanishGuideText = JSON.stringify(result.teamGuideI18n.es);
+  assert.doesNotMatch(
+    spanishGuideText,
+    /\b(?:Stealth Rock|Rapid Spin)\b/,
+    "Spanish guide narratives must not leak canonical English hazard or removal move labels"
+  );
 
   console.log("Generator performance contract checks passed.");
 }
