@@ -27,15 +27,13 @@ interface SiteShellProps {
 export function SiteShell({ lang, jsonLd, children }: SiteShellProps) {
   return (
     <html lang={lang} suppressHydrationWarning>
-      <head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50 dark:bg-black`}
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50 dark:bg-black`}
-      >
         <ConsentAwareScripts />
         <AnalyticsTracker />
         <WebVitalsTracker />
