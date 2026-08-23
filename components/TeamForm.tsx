@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { FORMATS, FormatId, getGenFromFormat } from "../config/formats";
@@ -20,7 +21,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { PokemonCombobox } from "./PokemonCombobox";
 import { useTranslation } from "@/lib/i18n";
 import { getCanonicalSpeciesId, getCanonicalSpeciesName } from "@/lib/pokemon-forms";
 import type { GameplanData } from "@/lib/team-storage";
@@ -53,6 +53,19 @@ const TYPE_KEYS = [
     "ghost", "dark", "fairy", "normal", "fighting", "flying",
     "poison", "ground", "rock", "bug", "steel", "ice"
 ] as const;
+
+const PokemonCombobox = dynamic(
+    () => import("./PokemonCombobox").then((module) => module.PokemonCombobox),
+    {
+        ssr: false,
+        loading: () => (
+            <div
+                aria-hidden="true"
+                className="h-10 w-full rounded-md border border-input bg-background"
+            />
+        ),
+    }
+);
 
 export function TeamForm({
     onGenerate,

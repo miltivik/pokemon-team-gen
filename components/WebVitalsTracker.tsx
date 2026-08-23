@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { onLCP, onINP, onCLS, onTTFB, onFCP } from "web-vitals";
 import { hasConsent } from "@/lib/consent";
 
 let trackingStarted = false;
@@ -35,11 +34,17 @@ export function WebVitalsTracker() {
       if (trackingStarted || !hasConsent("analytics")) return;
       trackingStarted = true;
 
-      onLCP(sendToAnalytics);
-      onINP(sendToAnalytics);
-      onCLS(sendToAnalytics);
-      onTTFB(sendToAnalytics);
-      onFCP(sendToAnalytics);
+      void import("web-vitals")
+        .then(({ onLCP, onINP, onCLS, onTTFB, onFCP }) => {
+          onLCP(sendToAnalytics);
+          onINP(sendToAnalytics);
+          onCLS(sendToAnalytics);
+          onTTFB(sendToAnalytics);
+          onFCP(sendToAnalytics);
+        })
+        .catch(() => {
+          trackingStarted = false;
+        });
     };
 
     startTracking();

@@ -11,6 +11,8 @@
     "test:generations": "node scripts/test-generation-matrix.cjs",
     "test:format-sources": "node scripts/test-format-source-resolver.cjs",
     "test:mobile": "node scripts/test-mobile-regressions.cjs",
+    "test:performance-priorities": "node scripts/test-performance-priorities.cjs",
+    "test:generator-cpu": "node scripts/test-generator-cpu.cjs",
     "test:seo": "node scripts/test-seo-regressions.cjs",
     "test:translations": "node scripts/test-spanish-translations.cjs",
     "test:standalone": "node scripts/test-standalone-build.cjs",

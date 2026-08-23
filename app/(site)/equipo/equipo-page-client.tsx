@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
 import {
     BookOpen,
@@ -14,8 +15,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { PokemonCard } from "@/components/PokemonCard";
-import { TeamExplanation } from "@/components/TeamExplanation";
-import { SimilarTeams } from "@/components/SimilarTeams";
 import { BugReportDialog } from "@/components/BugReportDialog";
 import { AdHero, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { Button } from "@/components/ui/button";
@@ -34,6 +33,31 @@ interface EquipoPageClientProps {
 }
 
 type PokemonDetailsDialogComponent = ComponentType<PokemonDetailsDialogProps>;
+
+function BelowFoldSectionSkeleton({ className }: { className: string }) {
+    return (
+        <div
+            aria-hidden="true"
+            className={`animate-pulse rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 ${className}`}
+        />
+    );
+}
+
+const TeamExplanation = dynamic(
+    () => import("@/components/TeamExplanation").then((module) => module.TeamExplanation),
+    {
+        ssr: false,
+        loading: () => <BelowFoldSectionSkeleton className="min-h-[32rem]" />,
+    }
+);
+
+const SimilarTeams = dynamic(
+    () => import("@/components/SimilarTeams").then((module) => module.SimilarTeams),
+    {
+        ssr: false,
+        loading: () => <BelowFoldSectionSkeleton className="min-h-[24rem]" />,
+    }
+);
 
 function loadPokemonDetailsDialog(): Promise<PokemonDetailsDialogComponent> {
     return import("@/components/PokemonDetailsPanel").then((module) => module.PokemonDetailsDialog);

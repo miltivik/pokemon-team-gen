@@ -151,16 +151,28 @@ export const WEATHER_SETTER_ABILITY_IDS = [
   "orichalcumpulse",
 ];
 
+interface CandidateStatProfile {
+  bulk: number;
+  offense: number;
+  maxOffense: number;
+  speed: number;
+}
+
+const TEMPLATE_ID_BY_LABEL = new Map<string, TemplateId>();
+for (const [templateId, candidate] of Object.entries(TEMPLATES)) {
+  if (!TEMPLATE_ID_BY_LABEL.has(candidate.label)) {
+    TEMPLATE_ID_BY_LABEL.set(candidate.label, templateId as TemplateId);
+  }
+}
+
+const CANDIDATE_STAT_PROFILE_CACHE = new WeakMap<
+  PokemonSpecies,
+  CandidateStatProfile
+>();
+
 export function getTemplateId(template?: Template): TemplateId | null {
   if (!template) return null;
-
-  for (const [templateId, candidate] of Object.entries(TEMPLATES)) {
-    if (candidate.label === template.label) {
-      return templateId as TemplateId;
-    }
-  }
-
-  return null;
+  return TEMPLATE_ID_BY_LABEL.get(template.label) ?? null;
 }
 
 export function hasAvailableMove(
@@ -201,18 +213,23 @@ export function teamHasAnyAbility(teamAbilities: Set<string>, abilityIds: string
 }
 
 export function getCandidateStatProfile(candidate: PokemonSpecies) {
+  const cached = CANDIDATE_STAT_PROFILE_CACHE.get(candidate);
+  if (cached) return cached;
+
   const bulk =
     candidate.baseStats.hp + candidate.baseStats.def + candidate.baseStats.spd;
   const offense =
     candidate.baseStats.atk + candidate.baseStats.spa + candidate.baseStats.spe;
   const maxOffense = Math.max(candidate.baseStats.atk, candidate.baseStats.spa);
 
-  return {
+  const profile = {
     bulk,
     offense,
     maxOffense,
     speed: candidate.baseStats.spe,
   };
+  CANDIDATE_STAT_PROFILE_CACHE.set(candidate, profile);
+  return profile;
 }
 
 export function hasAnyType(candidate: PokemonSpecies, types: string[]) {

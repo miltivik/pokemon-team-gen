@@ -262,6 +262,56 @@ const SHARPNESS_MOVE_IDS = new Set(
   ].map(toID)
 );
 
+function toMoveIdSet(moveNames: readonly string[]) {
+  return new Set(moveNames.map(toID));
+}
+
+const TEMPLATE_MOVE_ID_SETS = {
+  hazards: toMoveIdSet(HAZARD_MOVES),
+  removal: toMoveIdSet(REMOVAL_MOVES),
+  pivot: toMoveIdSet(PIVOT_MOVES),
+  recovery: toMoveIdSet(RECOVERY_MOVES),
+  setup: toMoveIdSet(SETUP_MOVES),
+  leadPressure: toMoveIdSet(LEAD_PRESSURE_MOVES),
+  knockOffAndStealthRock: toMoveIdSet(["Knock Off", "Stealth Rock"]),
+  knockOffTauntAndStealthRock: toMoveIdSet(["Knock Off", "Taunt", "Stealth Rock"]),
+  knockOffAndTaunt: toMoveIdSet(["Knock Off", "Taunt"]),
+  stackingHazards: toMoveIdSet(STACKING_HAZARD_MOVES),
+  tailwindSupport: toMoveIdSet([
+    "Protect",
+    "Detect",
+    "Spiky Shield",
+    "Helping Hand",
+    "Icy Wind",
+    "Wide Guard",
+    "Follow Me",
+    "Rage Powder",
+    "Taunt",
+  ]),
+  rainPayoff: toMoveIdSet(RAIN_PAYOFF_MOVES),
+  sunPayoff: toMoveIdSet(SUN_PAYOFF_MOVES),
+  sandPayoff: toMoveIdSet(SAND_PAYOFF_MOVES),
+  weatherFlex: toMoveIdSet(WEATHER_FLEX_MOVES),
+  weatherSetters: toMoveIdSet(["Rain Dance", "Sunny Day", "Sandstorm", "Snowscape"]),
+  recoveryAndStall: toMoveIdSet([...RECOVERY_MOVES, ...STALL_PAYOFF_MOVES]),
+};
+
+const TEMPLATE_MOVE_IDS = {
+  stealthRock: toID("Stealth Rock"),
+  trickRoom: toID("Trick Room"),
+  tailwind: toID("Tailwind"),
+  rainDance: toID("Rain Dance"),
+  sunnyDay: toID("Sunny Day"),
+  sandstorm: toID("Sandstorm"),
+};
+
+function hasTeamMoveInSet(teamMoves: Set<string>, moveIds: ReadonlySet<string>) {
+  for (const moveId of moveIds) {
+    if (teamMoves.has(moveId)) return true;
+  }
+  return false;
+}
+
 export interface OptimizedSet {
   species: string;
   ability: string;
@@ -2132,8 +2182,9 @@ export class SetOptimizer {
     const isDoubles = FORMATS[options.format as FormatId]?.gameType === "doubles";
     const protectUsers = this.getCurrentProtectLikeMoveCount(options);
     const protectSoftCap = this.getDoublesProtectSoftCap(options);
-    const matchesMove = (moveNames: string[]) =>
-      moveNames.some((moveName) => toID(moveName) === moveId);
+    const matchesMove = (moveIds: ReadonlySet<string>) => moveIds.has(moveId);
+    const teamHasMove = (moveIds: ReadonlySet<string>) =>
+      hasTeamMoveInSet(teamMoves, moveIds);
 
     if (isDoubles && PROTECT_LIKE_MOVE_IDS.has(moveId)) {
       if (protectUsers >= protectSoftCap) {
@@ -2142,9 +2193,9 @@ export class SetOptimizer {
 
       switch (templateId) {
         case "tailwind":
-          return teamMoves.has(toID("Tailwind")) ? 0.18 : 0.08;
+          return teamMoves.has(TEMPLATE_MOVE_IDS.tailwind) ? 0.18 : 0.08;
         case "trickroom":
-          return teamMoves.has(toID("Trick Room")) ? 0.16 : 0.06;
+          return teamMoves.has(TEMPLATE_MOVE_IDS.trickRoom) ? 0.16 : 0.06;
         case "rain":
         case "sun":
         case "sand":
@@ -2164,109 +2215,130 @@ export class SetOptimizer {
       case "balanced":
         if (
           !isDoubles &&
-          !HAZARD_MOVES.some((moveName) => teamMoves.has(toID(moveName))) &&
-          matchesMove(HAZARD_MOVES)
+          !teamHasMove(TEMPLATE_MOVE_ID_SETS.hazards) &&
+          matchesMove(TEMPLATE_MOVE_ID_SETS.hazards)
         ) {
           return 0.8;
         }
         if (
           !isDoubles &&
-          !REMOVAL_MOVES.some((moveName) => teamMoves.has(toID(moveName))) &&
-          matchesMove(REMOVAL_MOVES)
+          !teamHasMove(TEMPLATE_MOVE_ID_SETS.removal) &&
+          matchesMove(TEMPLATE_MOVE_ID_SETS.removal)
         ) {
           return 0.8;
         }
-        if (matchesMove(PIVOT_MOVES) || matchesMove(RECOVERY_MOVES)) return 0.25;
+        if (
+          matchesMove(TEMPLATE_MOVE_ID_SETS.pivot) ||
+          matchesMove(TEMPLATE_MOVE_ID_SETS.recovery)
+        ) return 0.25;
         return 0;
       case "offense":
-        if (matchesMove(SETUP_MOVES)) return 0.85;
-        if (!isDoubles && teamMoves.size === 0 && matchesMove(LEAD_PRESSURE_MOVES)) return 0.7;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.setup)) return 0.85;
+        if (
+          !isDoubles &&
+          teamMoves.size === 0 &&
+          matchesMove(TEMPLATE_MOVE_ID_SETS.leadPressure)
+        ) return 0.7;
         return 0;
       case "bulkyoffense":
-        if (matchesMove(PIVOT_MOVES)) return 0.55;
-        if (matchesMove(SETUP_MOVES)) return 0.45;
-        if (matchesMove(RECOVERY_MOVES)) return 0.35;
-        if (matchesMove(["Knock Off", "Stealth Rock"])) return 0.4;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.pivot)) return 0.55;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.setup)) return 0.45;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.recovery)) return 0.35;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.knockOffAndStealthRock)) return 0.4;
         return 0;
       case "voltturn":
-        if (matchesMove(PIVOT_MOVES)) return 1.1;
-        if (matchesMove(["Knock Off", "Taunt", "Stealth Rock"])) return 0.35;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.pivot)) return 1.1;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.knockOffTauntAndStealthRock)) return 0.35;
         return 0;
       case "hazardstack":
-        if (!teamMoves.has(toID("Stealth Rock")) && moveId === toID("Stealth Rock")) return 2.2;
         if (
-          teamMoves.has(toID("Stealth Rock")) &&
-          matchesMove(STACKING_HAZARD_MOVES) &&
+          !teamMoves.has(TEMPLATE_MOVE_IDS.stealthRock) &&
+          moveId === TEMPLATE_MOVE_IDS.stealthRock
+        ) return 2.2;
+        if (
+          teamMoves.has(TEMPLATE_MOVE_IDS.stealthRock) &&
+          matchesMove(TEMPLATE_MOVE_ID_SETS.stackingHazards) &&
           !teamMoves.has(moveId)
         ) {
           return 1.4;
         }
-        if (matchesMove(["Knock Off", "Taunt"])) return 0.35;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.knockOffAndTaunt)) return 0.35;
         return 0;
       case "trickroom":
-        if (!teamMoves.has(toID("Trick Room")) && moveId === toID("Trick Room")) return 2.4;
+        if (
+          !teamMoves.has(TEMPLATE_MOVE_IDS.trickRoom) &&
+          moveId === TEMPLATE_MOVE_IDS.trickRoom
+        ) return 2.4;
         return 0;
       case "tailwind":
-        if (!teamMoves.has(toID("Tailwind")) && moveId === toID("Tailwind")) return 2.4;
         if (
-          matchesMove([
-            "Protect",
-            "Detect",
-            "Spiky Shield",
-            "Helping Hand",
-            "Icy Wind",
-            "Wide Guard",
-            "Follow Me",
-            "Rage Powder",
-            "Taunt",
-          ])
-        ) {
-          return teamMoves.has(toID("Tailwind")) ? 0.45 : 0.3;
+          !teamMoves.has(TEMPLATE_MOVE_IDS.tailwind) &&
+          moveId === TEMPLATE_MOVE_IDS.tailwind
+        ) return 2.4;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.tailwindSupport)) {
+          return teamMoves.has(TEMPLATE_MOVE_IDS.tailwind) ? 0.45 : 0.3;
         }
         return 0;
       case "rain":
-        if (!teamMoves.has(toID("Rain Dance")) && moveId === toID("Rain Dance")) return 0.5;
-        if (matchesMove(RAIN_PAYOFF_MOVES)) return 0.4;
+        if (
+          !teamMoves.has(TEMPLATE_MOVE_IDS.rainDance) &&
+          moveId === TEMPLATE_MOVE_IDS.rainDance
+        ) return 0.5;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.rainPayoff)) return 0.4;
         return 0;
       case "sun":
-        if (!teamMoves.has(toID("Sunny Day")) && moveId === toID("Sunny Day")) return 0.5;
-        if (matchesMove(SUN_PAYOFF_MOVES)) return 0.4;
+        if (
+          !teamMoves.has(TEMPLATE_MOVE_IDS.sunnyDay) &&
+          moveId === TEMPLATE_MOVE_IDS.sunnyDay
+        ) return 0.5;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.sunPayoff)) return 0.4;
         return 0;
       case "sand":
-        if (!teamMoves.has(toID("Sandstorm")) && moveId === toID("Sandstorm")) return 0.35;
-        if (matchesMove(SAND_PAYOFF_MOVES)) return 0.35;
+        if (
+          !teamMoves.has(TEMPLATE_MOVE_IDS.sandstorm) &&
+          moveId === TEMPLATE_MOVE_IDS.sandstorm
+        ) return 0.35;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.sandPayoff)) return 0.35;
         return 0;
       case "weatheroffense":
-        if (matchesMove(WEATHER_FLEX_MOVES)) return 0.45;
-        if (matchesMove(["Rain Dance", "Sunny Day", "Sandstorm", "Snowscape"])) return 0.35;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.weatherFlex)) return 0.45;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.weatherSetters)) return 0.35;
         return 0;
       case "semistall":
-        if (!isDoubles && !teamMoves.has(toID("Stealth Rock")) && moveId === toID("Stealth Rock")) return 0.9;
         if (
           !isDoubles &&
-          !REMOVAL_MOVES.some((moveName) => teamMoves.has(toID(moveName))) &&
-          matchesMove(REMOVAL_MOVES)
+          !teamMoves.has(TEMPLATE_MOVE_IDS.stealthRock) &&
+          moveId === TEMPLATE_MOVE_IDS.stealthRock
+        ) return 0.9;
+        if (
+          !isDoubles &&
+          !teamHasMove(TEMPLATE_MOVE_ID_SETS.removal) &&
+          matchesMove(TEMPLATE_MOVE_ID_SETS.removal)
         ) {
           return 0.9;
         }
-        if (matchesMove([...RECOVERY_MOVES, ...STALL_PAYOFF_MOVES])) {
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.recoveryAndStall)) {
           return maxOffense >= 95 ? 0.8 : 0.7;
         }
-        if (matchesMove(SETUP_MOVES) && maxOffense >= 95) return 0.25;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.setup) && maxOffense >= 95) return 0.25;
         return 0;
       case "stall":
-        if (!isDoubles && !teamMoves.has(toID("Stealth Rock")) && moveId === toID("Stealth Rock")) return 1;
         if (
           !isDoubles &&
-          !REMOVAL_MOVES.some((moveName) => teamMoves.has(toID(moveName))) &&
-          matchesMove(REMOVAL_MOVES)
+          !teamMoves.has(TEMPLATE_MOVE_IDS.stealthRock) &&
+          moveId === TEMPLATE_MOVE_IDS.stealthRock
+        ) return 1;
+        if (
+          !isDoubles &&
+          !teamHasMove(TEMPLATE_MOVE_ID_SETS.removal) &&
+          matchesMove(TEMPLATE_MOVE_ID_SETS.removal)
         ) {
           return 1;
         }
-        if (matchesMove([...RECOVERY_MOVES, ...STALL_PAYOFF_MOVES])) {
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.recoveryAndStall)) {
           return bulk >= 280 ? 0.95 : 0.75;
         }
-        if (matchesMove(HAZARD_MOVES)) return 0.45;
+        if (matchesMove(TEMPLATE_MOVE_ID_SETS.hazards)) return 0.45;
         return 0;
       default:
         return 0;

@@ -213,14 +213,6 @@ export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClie
                 </header>
 
                 <section className="w-full flex justify-center">
-                    <AdHero />
-                </section>
-
-                <section className="w-full flex justify-center py-4">
-                    <AdBanner />
-                </section>
-
-                <section className="w-full flex justify-center">
                     <TeamForm
                         key={formSeedKey}
                         onGenerate={handleGenerate}
@@ -231,6 +223,14 @@ export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClie
                         initialExcludeLegendaries={initialExcludeLegendaries}
                         initialFixedPokemon={initialFixedPokemon}
                     />
+                </section>
+
+                <section className="w-full flex justify-center">
+                    <AdHero />
+                </section>
+
+                <section className="w-full flex justify-center py-4">
+                    <AdBanner />
                 </section>
 
                 <AdInline />
