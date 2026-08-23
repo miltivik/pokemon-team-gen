@@ -212,6 +212,7 @@ export function TeamForm({
                         <div className="space-y-2">
                             <Label htmlFor="pokemon">{t("form.fixedMember")}</Label>
                             <PokemonCombobox
+                                id="pokemon"
                                 value={pokemonName}
                                 onChange={(name) => {
                                     if (!name) {
@@ -275,11 +276,12 @@ export function TeamForm({
                             id="legendary"
                             checked={excludeLegendaries}
                             onCheckedChange={setExcludeLegendaries}
+                            className="!h-6 !w-11"
                         />
                         <Label htmlFor="legendary">{t("form.excludeLegendaries")}</Label>
                     </div>
 
-                    <Button type="submit" disabled={isLoading} className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold">
+                    <Button type="submit" disabled={isLoading} className="min-h-11 w-full bg-rose-600 font-bold text-white hover:bg-rose-700">
                         {isLoading && (
                             <Loader2 className="mr-2 inline-block h-4 w-4 animate-spin" aria-hidden="true" />
                         )}

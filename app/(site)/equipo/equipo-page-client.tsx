@@ -80,7 +80,7 @@ function PokemonCardSkeleton({ index }: { index: number }) {
 }
 
 function EquipoEmptyState() {
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-50 px-4 font-sans dark:bg-black">
@@ -88,7 +88,7 @@ function EquipoEmptyState() {
                 <h1 className="text-2xl font-bold dark:text-white">{t("app.noTeam")}</h1>
                 <p className="text-zinc-500 dark:text-zinc-400">{t("app.generateFirst")}</p>
             </div>
-            <Link href="/configurar">
+            <Link href={lang === "es" ? "/es/configurar" : "/configurar"}>
                 <Button className="bg-blue-600 text-white hover:bg-blue-700">
                     {t("nav.configurar")}
                 </Button>
@@ -168,6 +168,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
         team,
         setTeam,
         gameplan,
+        gameplanI18n,
         teamGuide,
         teamGuideI18n,
         format,
@@ -187,6 +188,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
         [generationOptions]
     );
     const bugReportContext = buildBugReportGenerationContext(team, generationOptions);
+    const resolvedGameplan = gameplanI18n?.[lang] || gameplan;
     const resolvedTeamGuide = teamGuideI18n?.[lang] || teamGuide;
     const selectedPokemon =
         selectedPokemonIndex === null ? null : (team[selectedPokemonIndex] ?? null);
@@ -265,6 +267,10 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
             if (!response.ok) throw new Error("Generation failed");
 
             const data = await response.json();
+            const activeGameplan =
+                data.gameplan ?? data.gameplanI18n?.[lang] ?? data.gameplanI18n?.en ?? null;
+            const activeTeamGuide =
+                data.teamGuide ?? data.teamGuideI18n?.[lang] ?? data.teamGuideI18n?.en ?? null;
 
             analytics.generateTeam(
                 regenerationOptions.format ?? format,
@@ -272,9 +278,9 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
             );
             addTeam(
                 data.team,
-                data.gameplan,
+                activeGameplan,
                 data.gameplanI18n,
-                data.teamGuide,
+                activeTeamGuide,
                 data.teamGuideI18n,
                 regenerationOptions
             );
@@ -379,7 +385,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                         <Save className="h-4 w-4" />
                         {t("app.saveTeam")}
                     </Button>
-                    <Link href="/configurar">
+                    <Link href={lang === "es" ? "/es/configurar" : "/configurar"}>
                         <Button
                             variant="ghost"
                             className="gap-2 font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
@@ -419,7 +425,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
 
                 <AdInline />
 
-                {gameplan && (
+                {resolvedGameplan && (
                     <div className="mt-8 w-full max-w-4xl space-y-4 py-8">
                         <h3 className="text-center text-xl font-bold dark:text-white">
                             {t("gameplan.title")}
@@ -455,7 +461,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                                     </h4>
                                 </div>
                                 <p className="text-sm font-semibold leading-relaxed text-zinc-800 dark:text-zinc-200">
-                                    {gameplan.early.summary}
+                                    {resolvedGameplan.early.summary}
                                 </p>
                             </div>
 
@@ -467,7 +473,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                                     </h4>
                                 </div>
                                 <p className="text-sm font-semibold leading-relaxed text-zinc-800 dark:text-zinc-200">
-                                    {gameplan.mid.summary}
+                                    {resolvedGameplan.mid.summary}
                                 </p>
                             </div>
 
@@ -479,7 +485,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
                                     </h4>
                                 </div>
                                 <p className="text-sm font-semibold leading-relaxed text-zinc-800 dark:text-zinc-200">
-                                    {gameplan.late.summary}
+                                    {resolvedGameplan.late.summary}
                                 </p>
                             </div>
                         </div>

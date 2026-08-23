@@ -49,6 +49,15 @@ const EMPTY_FEASIBILITY: TeamGenerationFeasibility = {
   infeasibleCore: [],
 };
 
+const FEASIBILITY_CACHE_TTL_MS = 1000 * 60 * 60;
+const FEASIBILITY_CACHE_MAX_ENTRIES = 64;
+interface FeasibilityCacheEntry {
+  value: TeamGenerationFeasibility;
+  expiresAt: number;
+}
+
+const feasibilityCache = new Map<string, FeasibilityCacheEntry>();
+
 const SPEED_CONTROL_MOVES = [
   "Tailwind",
   "Trick Room",
@@ -91,6 +100,53 @@ function cloneFeasibility(feasibility: TeamGenerationFeasibility = EMPTY_FEASIBI
     infeasibleSupportPackages: [...feasibility.infeasibleSupportPackages],
     infeasibleCore: [...feasibility.infeasibleCore],
   };
+}
+
+function getFeasibilityCacheKey(options: FeasibilityOptions) {
+  const source = options.data.meta.sourceInfo;
+  return [
+    options.format,
+    options.gen,
+    options.type ?? "",
+    options.excludeLegendaries ? "1" : "0",
+    options.templateId,
+    source.provider,
+    source.requestedFormat,
+    source.resolvedFormat,
+    source.month,
+    source.rating,
+    source.fallbackType,
+    Object.keys(options.data.pokemon).length,
+  ].join("|");
+}
+
+function readCachedFeasibility(key: string) {
+  const entry = feasibilityCache.get(key);
+  if (!entry) return null;
+
+  if (entry.expiresAt <= Date.now()) {
+    feasibilityCache.delete(key);
+    return null;
+  }
+
+  // Promote the entry so the Map also acts as a small LRU cache.
+  feasibilityCache.delete(key);
+  feasibilityCache.set(key, entry);
+  return cloneFeasibility(entry.value);
+}
+
+function writeCachedFeasibility(key: string, value: TeamGenerationFeasibility) {
+  feasibilityCache.delete(key);
+  feasibilityCache.set(key, {
+    value: cloneFeasibility(value),
+    expiresAt: Date.now() + FEASIBILITY_CACHE_TTL_MS,
+  });
+
+  while (feasibilityCache.size > FEASIBILITY_CACHE_MAX_ENTRIES) {
+    const oldestKey = feasibilityCache.keys().next().value;
+    if (!oldestKey) break;
+    feasibilityCache.delete(oldestKey);
+  }
 }
 
 function hasMove(entry: CandidateFeasibilityEntry, moveName: string) {
@@ -316,6 +372,12 @@ export function getTeamGenerationFeasibility(
     return cloneFeasibility();
   }
 
+  const cacheKey = getFeasibilityCacheKey(options);
+  const cached = readCachedFeasibility(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const pool = buildFullFormatCandidatePool({
     data: options.data,
     format: options.format,
@@ -346,8 +408,10 @@ export function getTeamGenerationFeasibility(
     ) < needed;
   });
 
-  return {
+  const result = {
     infeasibleSupportPackages,
     infeasibleCore,
   };
+  writeCachedFeasibility(cacheKey, result);
+  return result;
 }

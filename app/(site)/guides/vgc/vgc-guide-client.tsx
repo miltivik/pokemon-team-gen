@@ -96,6 +96,16 @@ export default function VGCGuideClient({
                 </section>
 
                 <div className="w-full max-w-4xl space-y-6">
+                    <section className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                        <h2 className="mb-2 text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                            {lang === "es" ? "Cómo construir un equipo VGC" : "How to build a VGC team"}
+                        </h2>
+                        <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                            {lang === "es"
+                                ? "Usa el resumen del metajuego, elige un estilo de juego y combina roles que cubran las amenazas actuales de Regulation I."
+                                : "Use the metagame snapshot, choose a playstyle and combine roles that cover the current Regulation I threats."}
+                        </p>
+                    </section>
                     <MetaOverview format={CURRENT_VGC_FORMAT} initialData={initialData} />
 
                     <Card className="border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
@@ -178,12 +188,16 @@ export default function VGCGuideClient({
                             {t("guides.fullTierList")}
                         </Button>
                     </Link>
-                    <Link href="/pokemon-showdown-team-builder">
-                        <Button variant="outline" className="gap-2">
+                    <Button
+                        asChild
+                        variant="outline"
+                        className="h-auto min-h-11 w-full min-w-0 whitespace-normal break-words text-center leading-snug sm:w-auto"
+                    >
+                        <Link href="/pokemon-showdown-team-builder">
                             <Rocket className="h-4 w-4" />
                             {t("seo.vgcShowdownBuilderLink")}
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
 
                 <section className="flex w-full justify-center py-4">

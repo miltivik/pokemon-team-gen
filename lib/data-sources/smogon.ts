@@ -191,7 +191,11 @@ export class SmogonDataSource {
         try {
           const headRes = await fetch(baselineUrl, {
             method: "HEAD",
-            next: { revalidate: 3600 },
+            // The raw chaos payloads are frequently larger than Next's 2 MB
+            // Data Cache item limit. SmogonDataSource owns the normalized
+            // memory/disk/in-flight cache below, so do not duplicate this
+            // multi-megabyte response in the framework cache.
+            cache: "no-store",
           });
           if (!headRes.ok) continue;
         } catch {
@@ -201,7 +205,7 @@ export class SmogonDataSource {
         for (const rating of RATINGS) {
           const url = `${BASE_URL}/${month}/chaos/${candidate.slug}-${rating}.json`;
           try {
-            const res = await fetch(url, { next: { revalidate: 3600 } });
+            const res = await fetch(url, { cache: "no-store" });
             if (!res.ok) continue;
 
             const data = JSON.parse(await res.text()) as ChaosData;
@@ -246,7 +250,7 @@ export class SmogonDataSource {
     for (const rating of RATINGS) {
       const url = `${BASE_URL}/${month}/leads/${formatSlug}-${rating}.txt`;
       try {
-        const res = await fetch(url, { next: { revalidate: 3600 } });
+        const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) continue;
 
         const text = await res.text();

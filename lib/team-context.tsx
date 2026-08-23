@@ -138,9 +138,9 @@ export function TeamProvider({ children }: { children: ReactNode }) {
             updateState((current) => ({
                 ...current,
                 team: rawTeam,
-                gameplan: rawGameplan ?? current.gameplan,
+                gameplan: rawGameplanI18n ? null : rawGameplan ?? current.gameplan,
                 gameplanI18n: rawGameplanI18n ?? current.gameplanI18n,
-                teamGuide: rawTeamGuide ?? current.teamGuide,
+                teamGuide: rawTeamGuideI18n ? null : rawTeamGuide ?? current.teamGuide,
                 teamGuideI18n: rawTeamGuideI18n ?? current.teamGuideI18n,
                 format:
                     getGenerationOptionsFormat(

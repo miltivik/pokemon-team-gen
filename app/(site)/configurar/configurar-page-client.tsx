@@ -59,7 +59,7 @@ export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClie
     const router = useRouter();
     const searchParams = useSearchParams();
     const { format, setFormat, addTeam, team, isHydrated, generationOptions } = useTeam();
-    const { t } = useTranslation();
+    const { t, lang } = useTranslation();
     const initialCopy = initialLang === "es"
         ? {
             title: "Configuración del Generador",
@@ -164,15 +164,19 @@ export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClie
 
     const handleGenerate = (data: TeamGenerationResult) => {
         analytics.generateTeam(data.options?.format || format, data.templateId || "balanced");
+        const activeGameplan =
+            data.gameplan ?? data.gameplanI18n?.[lang] ?? data.gameplanI18n?.en ?? null;
+        const activeTeamGuide =
+            data.teamGuide ?? data.teamGuideI18n?.[lang] ?? data.teamGuideI18n?.en ?? null;
         addTeam(
             data.team,
-            data.gameplan,
+            activeGameplan,
             data.gameplanI18n,
-            data.teamGuide,
+            activeTeamGuide,
             data.teamGuideI18n,
             data.options
         );
-        router.push("/equipo");
+        router.push(initialLang === "es" ? "/es/equipo" : "/equipo");
     };
 
     if (!isHydrated) {

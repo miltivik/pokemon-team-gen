@@ -135,6 +135,12 @@ async function checkPseo() {
     pokemonUrls.length,
     "Pokemon sitemap URLs must be unique"
   );
+  const pseoBlocks = [...text.matchAll(/<url>\s*<loc>https:\/\/poketeambuilder\.com\/(?:pokemon|teams)\/[^<]+<\/loc>[\s\S]*?<\/url>/g)];
+  assert.ok(pseoBlocks.length > 300, "sitemap must include generated pSEO URL blocks");
+  assert.ok(
+    pseoBlocks.every((match) => !/<lastmod>/i.test(match[0])),
+    "generated pSEO URLs must not share an artificial lastmod"
+  );
   assert.ok(
     pokemonUrls.includes("https://poketeambuilder.com/pokemon/flutter-mane"),
     "sitemap must use the canonical Flutter Mane slug"
@@ -255,6 +261,7 @@ async function checkMetadata() {
   );
 
   const routes = [
+    "/es/equipo",
     "/about",
     "/tier-list",
     "/guides/gen9-ou",
@@ -539,6 +546,10 @@ async function checkVgc() {
     count(guide, /href="\/pokemon-showdown-team-builder"/g) >= 2,
     "/guides/vgc must link to the Showdown builder contextually and from the footer"
   );
+  assert.ok(
+    count(guide, /<h2\b/gi) >= 1,
+    "/guides/vgc must expose at least one semantic H2 section"
+  );
 
   const { response: landingResponse, text: landing } = await get(
     "/pokemon-showdown-team-builder"
@@ -609,16 +620,20 @@ async function checkVgc() {
 
 async function checkCachePolicy() {
   const source = fs.readFileSync(path.join(root, "lib/data-sources/smogon.ts"), "utf8");
-  assert.doesNotMatch(source, /cache:\s*["']no-store["']/, "Smogon fetches must not force ISR pages dynamic");
+  assert.equal(
+    count(source, /cache:\s*["']no-store["']/g),
+    3,
+    "all three raw Smogon fetches must bypass the Next Data Cache size limit"
+  );
   assert.match(
     source,
     /const CACHE_TTL = 1000 \* 60 \* 60;/,
     "the application cache must honor the one-hour freshness contract"
   );
-  assert.equal(
-    count(source, /next:\s*{\s*revalidate:\s*3600\s*}/g),
-    3,
-    "all three Smogon upstream fetches must use one-hour revalidation"
+  assert.doesNotMatch(
+    source,
+    /next:\s*{\s*revalidate:\s*3600\s*}/,
+    "raw Smogon payloads must not enter the Next Data Cache"
   );
 }
 

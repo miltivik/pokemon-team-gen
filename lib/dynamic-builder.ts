@@ -55,7 +55,7 @@ export interface DynamicTeamResponse {
   subarchetype?: string;
   dataProvenance?: NormalizedSmogonData["meta"]["sourceInfo"] | { provider: "local"; requestedFormat: string };
   recommendedModes?: TeamGuideData["recommendedModes"];
-  gameplan: {
+  gameplan?: {
     early: GamePhase;
     mid: GamePhase;
     late: GamePhase;
@@ -64,7 +64,7 @@ export interface DynamicTeamResponse {
     en: { early: GamePhase; mid: GamePhase; late: GamePhase };
     es: { early: GamePhase; mid: GamePhase; late: GamePhase };
   };
-  teamGuide: TeamGuideData;
+  teamGuide?: TeamGuideData;
   teamGuideI18n: {
     en: TeamGuideData;
     es: TeamGuideData;
@@ -154,7 +154,14 @@ export async function generateDynamicTeam(
   const rng = createSeededRandom(rngSeed);
   const gen = getGenFromFormat(format as FormatId) || 9;
   const formatProfile = getCompetitiveFormatProfile(format);
-  const data = dataOverride ?? (await SmogonDataSource.getStats(format));
+  const dataPromise = dataOverride ?? SmogonDataSource.getStats(format);
+  const archetypeHintsPromise = formatProfile.isVgc
+    ? getVGCArchetypes(format).catch(() => [])
+    : Promise.resolve<string[]>([]);
+  const [data, archetypeHints] = await Promise.all([
+    dataPromise,
+    archetypeHintsPromise,
+  ]);
   const usedFallbackData = !data;
   const finalData: NormalizedSmogonData = data
     ? { ...data, meta: { ...data.meta } }
@@ -169,15 +176,8 @@ export async function generateDynamicTeam(
     });
   }
 
-  if (formatProfile.isVgc) {
-    try {
-      const archetypeHints = await getVGCArchetypes(format);
-      if (archetypeHints.length > 0) {
-        finalData.meta.optionalArchetypeHints = archetypeHints;
-      }
-    } catch {
-      // Ignore secondary-source failures and keep Smogon as primary truth.
-    }
+  if (archetypeHints.length > 0) {
+    finalData.meta.optionalArchetypeHints = archetypeHints;
   }
   const safeTemplateId = sanitizeTemplateForFormat(
     templateId as TemplateId | undefined,
@@ -292,7 +292,7 @@ export async function generateDynamicTeam(
       data?.meta.sourceInfo ?? {
         provider: "local",
         requestedFormat: format,
-      },
+    },
     recommendedModes: finalizedCandidate.guide.recommendedModes,
     gameplan: finalizedCandidate.guide.phases,
     gameplanI18n: {

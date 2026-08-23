@@ -13,20 +13,20 @@ export function Footer() {
         brandName: "PokeTeamBuilder",
         brandDescription:
             lang === "es"
-                ? "Genera equipos competitivos de Pokemon basados en datos reales del meta. Hecho para la comunidad competitiva de Pokemon."
+                ? "Genera equipos competitivos de Pokémon basados en datos reales del meta. Hecho para la comunidad competitiva de Pokémon."
                 : "Generate competitive Pokemon teams based on real meta data. Built for the competitive Pokemon community.",
         tool: lang === "es" ? "Herramienta" : "Tool",
         generator: lang === "es" ? "Generador de equipos" : "Team Generator",
-        guides: lang === "es" ? "Guias" : "Guides",
+        guides: lang === "es" ? "Guías" : "Guides",
         blog: "Blog",
         legal: lang === "es" ? "Legal" : "Legal",
-        privacy: lang === "es" ? "Politica de privacidad" : "Privacy Policy",
-        terms: lang === "es" ? "Terminos del servicio" : "Terms of Service",
-        cookies: lang === "es" ? "Configuracion de cookies" : "Cookie Settings",
+        privacy: lang === "es" ? "Política de privacidad" : "Privacy Policy",
+        terms: lang === "es" ? "Términos del servicio" : "Terms of Service",
+        cookies: lang === "es" ? "Configuración de cookies" : "Cookie Settings",
         contact: lang === "es" ? "Contacto" : "Contact",
         disclaimer:
             lang === "es"
-                ? "Pokemon y todos los nombres relacionados son marcas de Nintendo, The Pokemon Company y Game Freak. Esta es una herramienta hecha por fans, sin afiliacion ni respaldo oficial de esas companias."
+                ? "Pokémon y todos los nombres relacionados son marcas de Nintendo, The Pokémon Company y Game Freak. Esta es una herramienta hecha por fans, sin afiliación ni respaldo oficial de esas compañías."
                 : "Pokemon and all related names are trademarks of Nintendo, The Pokemon Company, and Game Freak. This is a fan-made tool, not affiliated with or endorsed by any of these companies.",
         copyright:
             lang === "es"
@@ -97,7 +97,7 @@ export function Footer() {
                                     href="/guides/gen9-ou"
                                     className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
                                 >
-                                    {lang === "es" ? "Guia Gen 9 OU" : "Gen 9 OU Guide"}
+                                    {lang === "es" ? "Guía Gen 9 OU" : "Gen 9 OU Guide"}
                                 </Link>
                             </li>
                             <li>
@@ -105,7 +105,7 @@ export function Footer() {
                                     href="/guides/vgc"
                                     className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
                                 >
-                                    {lang === "es" ? "Guia VGC" : "VGC Guide"}
+                                    {lang === "es" ? "Guía VGC" : "VGC Guide"}
                                 </Link>
                             </li>
                             <li>

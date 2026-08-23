@@ -41,11 +41,13 @@ export function SiteShell({ lang, jsonLd, children }: SiteShellProps) {
         <WebVitalsTracker />
         <KoFiButton />
         <Providers initialLang={lang}>
-           <Navbar />
-           {children}
-           <Footer />
+          <Navbar />
+          <div className="pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
+            {children}
+            <Footer />
+          </div>
+          <CookieConsent />
         </Providers>
-        <CookieConsent />
       </body>
     </html>
   );

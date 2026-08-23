@@ -70,7 +70,9 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
     }, []);
 
     const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
-    const languageToggleLabel = lang === "en" ? "Switch to Spanish" : "Cambiar a ingles";
+    const languageToggleLabel = lang === "en" ? "Switch to Spanish" : "Cambiar a inglés";
+    const homePath = lang === "es" ? "/es" : "/";
+    const configurarPath = lang === "es" ? "/es/configurar" : "/configurar";
 
     return (
         <>
@@ -84,7 +86,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
             >
                 <div className="container mx-auto px-4">
                     <div className="flex h-14 items-center gap-1">
-                        <Link href="/" className="mr-1 flex items-center gap-2 px-2">
+                        <Link href={homePath} className="mr-1 flex items-center gap-2 px-2">
                             <Image
                                 src="/icons/logo-dark-nobg.png"
                                 alt="Logo"
@@ -108,7 +110,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
 
                         <div className="hidden items-center gap-1 md:flex">
                             <Link
-                                href="/"
+                                href={homePath}
                                 className={`relative rounded-lg px-4 py-2 text-sm font-semibold transition-colors transition-shadow duration-200 ${
                                     activeTab === "home" || pathname === "/"
                                         ? "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"
@@ -148,7 +150,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                                     onClick={() => setGuidesOpen((open) => !open)}
                                     aria-expanded={guidesOpen}
                                     aria-haspopup="true"
-                                    aria-label={lang === "es" ? "Menu de guias" : "Guides menu"}
+                                    aria-label={lang === "es" ? "Menú de guías" : "Guides menu"}
                                     className={`relative flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                                         isActive("/guides") || isActive("/tier-list")
                                             ? "bg-orange-50 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400"
@@ -182,7 +184,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                                     <div
                                         className="absolute left-0 top-full z-50 mt-1 w-52 rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
                                         role="menu"
-                                        aria-label={lang === "es" ? "Submenu de guias" : "Guides submenu"}
+                                        aria-label={lang === "es" ? "Submenú de guías" : "Guides submenu"}
                                     >
                                         <Link
                                             href="/guides/gen9-ou"
@@ -254,7 +256,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                         <div className="flex-1" />
 
                         <Link
-                            href="/configurar"
+                            href={configurarPath}
                             className="hidden items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-blue-700 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 sm:flex"
                         >
                             <Sparkles className="h-4 w-4" />
@@ -272,9 +274,11 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                                 if (nextLang === "es") {
                                     if (pathname === "/") router.push(`/es${search}`);
                                     else if (pathname === "/configurar") router.push(`/es/configurar${search}`);
+                                    else if (pathname === "/equipo") router.push(`/es/equipo${search}`);
                                 } else {
                                     if (pathname === "/es") router.push(`/${search}`);
                                     else if (pathname === "/es/configurar") router.push(`/configurar${search}`);
+                                    else if (pathname === "/es/equipo") router.push(`/equipo${search}`);
                                 }
                             }}
                             className="flex items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
@@ -287,14 +291,23 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                 </div>
             </nav>
 
-            <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 md:hidden" aria-label="Mobile navigation">
+            <div
+                className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 md:hidden"
+                aria-label={lang === "es" ? "Navegación móvil" : "Mobile navigation"}
+            >
                 {mobileMenuOpen && (
-                    <div className="absolute bottom-full left-1/2 mb-4 flex w-56 -translate-x-1/2 flex-col rounded-2xl border border-zinc-200 bg-white py-2 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900">
+                    <div
+                        id="mobile-guides-menu"
+                        role="menu"
+                        aria-label={lang === "es" ? "Menú de guías" : "Guides menu"}
+                        className="absolute bottom-full left-1/2 mb-4 flex w-56 -translate-x-1/2 flex-col rounded-2xl border border-zinc-200 bg-white py-2 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900"
+                    >
                         <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
                             {t("nav.guides")}
                         </div>
                         <Link
                             href="/guides/gen9-ou"
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -303,6 +316,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                         </Link>
                         <Link
                             href="/guides/vgc"
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -311,6 +325,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                         </Link>
                         <Link
                             href="/tier-list"
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -320,6 +335,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                         <hr className="my-2 border-zinc-200 dark:border-zinc-700" />
                         <Link
                             href="/changelog"
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -328,6 +344,7 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                         </Link>
                         <Link
                             href="/about"
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -339,18 +356,18 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
 
                 <div className="flex items-center gap-1 rounded-full border border-zinc-700 bg-zinc-900/95 px-2 py-2 shadow-2xl backdrop-blur-lg dark:bg-zinc-900/95">
                     <Link
-                        href="/"
+                        href={homePath}
                         aria-label={lang === "es" ? "Inicio" : "Home"}
-                        className={`rounded-full p-2 focus-visible:ring-2 focus-visible:ring-white ${
+                        className={`rounded-full p-3 focus-visible:ring-2 focus-visible:ring-white ${
                             pathname === "/" ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-white"
                         }`}
                     >
                         <Home className="h-5 w-5" />
                     </Link>
                     <Link
-                        href="/configurar"
+                        href={configurarPath}
                         aria-label={lang === "es" ? "Crear equipo" : "Create team"}
-                        className={`rounded-full p-2 focus-visible:ring-2 focus-visible:ring-white ${
+                        className={`rounded-full p-3 focus-visible:ring-2 focus-visible:ring-white ${
                             pathname === "/configurar" ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-white"
                         }`}
                     >
@@ -359,16 +376,19 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
                     <Link
                         href="/saved-teams"
                         aria-label={lang === "es" ? "Equipos guardados" : "Saved teams"}
-                        className={`rounded-full p-2 focus-visible:ring-2 focus-visible:ring-white ${
+                        className={`rounded-full p-3 focus-visible:ring-2 focus-visible:ring-white ${
                             pathname === "/saved-teams" ? "bg-cyan-600 text-white" : "text-zinc-400 hover:text-white"
                         }`}
                     >
                         <Save className="h-5 w-5" />
                     </Link>
                     <button
-                        aria-label={lang === "es" ? "Menu" : "Menu"}
+                        aria-label={lang === "es" ? "Menú" : "Menu"}
+                        aria-expanded={mobileMenuOpen}
+                        aria-controls="mobile-guides-menu"
+                        aria-haspopup="menu"
                         onClick={() => setMobileMenuOpen((open) => !open)}
-                        className={`rounded-full p-2 focus-visible:ring-2 focus-visible:ring-white ${
+                        className={`rounded-full p-3 focus-visible:ring-2 focus-visible:ring-white ${
                             mobileMenuOpen ? "bg-orange-600 text-white" : "text-zinc-400 hover:text-white"
                         }`}
                     >

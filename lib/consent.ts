@@ -3,6 +3,26 @@ const REGION_COOKIE = "ptb_region";
 
 export type ConsentCategory = "analytics" | "advertising";
 
+export interface ConsentCategoryCopy {
+  name: string;
+  description: string;
+}
+
+export interface ConsentUiCopy {
+  title: string;
+  description: string;
+  settingsDescription: string;
+  learnMore: string;
+  customize: string;
+  reject: string;
+  accept: string;
+  settings: string;
+  back: string;
+  save: string;
+  cookies: string;
+  enableCategory: (name: string) => string;
+}
+
 export type ConsentState = "granted" | "denied" | "pending";
 
 export interface GranularConsent {
@@ -126,3 +146,64 @@ export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; desc
     cookies: ["__gads", "__gpi", "IDE", "test_cookie"],
   },
 };
+
+export function getConsentCategoryCopy(
+  category: ConsentCategory,
+  lang: "en" | "es"
+): ConsentCategoryCopy {
+  if (lang === "es") {
+    return category === "analytics"
+      ? {
+          name: "Analítica",
+          description: "Ayúdanos a entender cómo interactúan los visitantes con el sitio web.",
+        }
+      : {
+          name: "Publicidad",
+          description:
+            "Activa anuncios personalizados mediante Google AdSense. Si la rechazas, no se cargarán scripts ni cookies publicitarias.",
+        };
+  }
+
+  return {
+    name: CONSENT_CATEGORY_INFO[category].name,
+    description: CONSENT_CATEGORY_INFO[category].description,
+  };
+}
+
+export function getConsentUiCopy(lang: "en" | "es"): ConsentUiCopy {
+  if (lang === "es") {
+    return {
+      title: "Valoramos tu privacidad",
+      description:
+        "Elige si permites analítica y anuncios personalizados. El almacenamiento del idioma y del tema es esencial y siempre está activo.",
+      settingsDescription:
+        "Administra tus preferencias de analítica y publicidad. El almacenamiento del idioma y del tema es esencial.",
+      learnMore: "Más información en nuestra Política de privacidad",
+      customize: "Personalizar ajustes",
+      reject: "Rechazar opcionales",
+      accept: "Aceptar opcionales",
+      settings: "Configuración de cookies",
+      back: "Volver",
+      save: "Guardar preferencias",
+      cookies: "Cookies",
+      enableCategory: (name) => `Activar ${name}`,
+    };
+  }
+
+  return {
+    title: "We value your privacy",
+    description:
+      "Choose whether to allow analytics and personalized ads. Language and theme storage are essential and always on.",
+    settingsDescription:
+      "Manage your analytics and advertising consent. Language and theme storage are essential.",
+    learnMore: "Learn more in our Privacy Policy",
+    customize: "Customize Settings",
+    reject: "Reject Optional",
+    accept: "Accept Optional",
+    settings: "Cookie Settings",
+    back: "Back",
+    save: "Save Choices",
+    cookies: "Cookies",
+    enableCategory: (name) => `Enable ${name}`,
+  };
+}

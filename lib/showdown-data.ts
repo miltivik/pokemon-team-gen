@@ -5,6 +5,7 @@ import movesRaw from '../data/moves.json';
 import abilitiesRaw from '../data/abilities.json';
 import itemsRaw from '../data/items.json';
 import translationsEsRaw from '../data/translations-es.json';
+import translationsEsOverridesRaw from '../data/translations-es-overrides.json';
 export { getPokemonSpriteUrl } from './pokemon-sprites';
 
 export interface PokedexEntry {
@@ -61,6 +62,11 @@ const translationsEs: {
     abilities: Record<string, { name: string; desc?: string }>;
     items: Record<string, { name: string; desc?: string }>;
 };
+const translationsEsOverrides = translationsEsOverridesRaw as {
+    moves?: Record<string, { name?: string; desc?: string }>;
+    abilities?: Record<string, { name?: string; desc?: string }>;
+    items?: Record<string, { name?: string; desc?: string }>;
+};
 const learnsetMoveIdsCache = new Map<string, string[]>();
 const learnableMovesCache = new Map<string, MoveData[]>();
 const UNSUPPORTED_NONSTANDARD_FOR_TEAM_BUILDER = new Set([
@@ -79,6 +85,14 @@ const MANUAL_ITEM_TRANSLATIONS: Record<string, string> = {
     "Punching Glove": "Guante de Boxeo",
     "Reaper Cloth": "Tela Terrible",
     "Utility Umbrella": "Paraguas Multiuso"
+};
+
+const MANUAL_ABILITY_TRANSLATIONS: Record<string, string> = {
+    "Mountaineer": "Montañista",
+};
+
+const MANUAL_ABILITY_DESC_ES: Record<string, string> = {
+    "Mountaineer": "Este Pokémon no recibe daño de movimientos de tipo Roca ni de Trampa Rocas.",
 };
 
 const MANUAL_ITEM_DESC_ES: Record<string, string> = {
@@ -321,19 +335,61 @@ export function getPokemonGeneration(name: string): number {
     return 9;
 }
 
+type TranslationCategory = "moves" | "abilities" | "items";
+
+function normalizeTranslationKey(value: string): string {
+    return value
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+}
+
+function getTranslatedEntry(
+    category: TranslationCategory,
+    name: string
+): { name?: string; desc?: string } | undefined {
+    const normalizedName = normalizeTranslationKey(name);
+    const sources = [
+        translationsEsOverrides[category] ?? {},
+        translationsEs[category],
+    ];
+
+    for (const source of sources) {
+        if (source[name]) return source[name];
+        const match = Object.entries(source).find(
+            ([key]) => normalizeTranslationKey(key) === normalizedName
+        );
+        if (match) return match[1];
+    }
+
+    return undefined;
+}
+
+function getManualTranslation(
+    map: Record<string, string>,
+    name: string
+): string | undefined {
+    if (map[name]) return map[name];
+    const normalizedName = normalizeTranslationKey(name);
+    return Object.entries(map).find(
+        ([key]) => normalizeTranslationKey(key) === normalizedName
+    )?.[1];
+}
+
 export function getTranslatedMoveName(moveName: string, lang: 'en' | 'es'): string {
     const properName = getProperMoveName(moveName);
     if (lang === 'es') {
-        if (MANUAL_MOVE_TRANSLATIONS[properName]) return MANUAL_MOVE_TRANSLATIONS[properName];
-        const translated = translationsEs.moves[properName];
-        if (translated?.name) return translated.name;
+        return getManualTranslation(MANUAL_MOVE_TRANSLATIONS, properName)
+            || getTranslatedEntry("moves", properName)?.name
+            || properName;
     }
     return properName;
 }
 
 export function getTranslatedMoveDesc(moveName: string, lang: 'en' | 'es'): string | undefined {
     if (lang === 'es') {
-        const translated = translationsEs.moves[moveName];
+        const translated = getTranslatedEntry("moves", getProperMoveName(moveName));
         if (translated?.desc) return translated.desc;
     }
     const id = moveName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -343,15 +399,19 @@ export function getTranslatedMoveDesc(moveName: string, lang: 'en' | 'es'): stri
 export function getTranslatedAbilityName(abilityName: string, lang: 'en' | 'es'): string {
     const properName = getProperAbilityName(abilityName);
     if (lang === 'es') {
-        const translated = translationsEs.abilities[properName];
-        if (translated?.name) return translated.name;
+        return getManualTranslation(MANUAL_ABILITY_TRANSLATIONS, properName)
+            || getTranslatedEntry("abilities", properName)?.name
+            || properName;
     }
     return properName;
 }
 
 export function getTranslatedAbilityDesc(abilityName: string, lang: 'en' | 'es'): string {
     if (lang === 'es') {
-        const translated = translationsEs.abilities[abilityName];
+        const properName = getProperAbilityName(abilityName);
+        const manualDescription = getManualTranslation(MANUAL_ABILITY_DESC_ES, properName);
+        if (manualDescription) return manualDescription;
+        const translated = getTranslatedEntry("abilities", properName);
         if (translated?.desc) return translated.desc;
     }
     const id = abilityName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -361,9 +421,9 @@ export function getTranslatedAbilityDesc(abilityName: string, lang: 'en' | 'es')
 export function getTranslatedItemName(itemName: string, lang: 'en' | 'es'): string {
     const properName = getProperItemName(itemName);
     if (lang === 'es') {
-        if (MANUAL_ITEM_TRANSLATIONS[properName]) return MANUAL_ITEM_TRANSLATIONS[properName];
-        const translated = translationsEs.items[properName];
-        if (translated?.name) return translated.name;
+        return getManualTranslation(MANUAL_ITEM_TRANSLATIONS, properName)
+            || getTranslatedEntry("items", properName)?.name
+            || properName;
     }
     return properName;
 }
@@ -380,8 +440,10 @@ export function getItemDescription(itemName: string): { desc: string; shortDesc:
 
 export function getTranslatedItemDesc(itemName: string, lang: 'en' | 'es'): string {
     if (lang === 'es') {
-        if (MANUAL_ITEM_DESC_ES[itemName]) return MANUAL_ITEM_DESC_ES[itemName];
-        const translated = translationsEs.items[itemName];
+        const properName = getProperItemName(itemName);
+        const manualDescription = getManualTranslation(MANUAL_ITEM_DESC_ES, properName);
+        if (manualDescription) return manualDescription;
+        const translated = getTranslatedEntry("items", properName);
         if (translated?.desc) return translated.desc;
     }
     const id = itemName.toLowerCase().replace(/[^a-z0-9]/g, '');

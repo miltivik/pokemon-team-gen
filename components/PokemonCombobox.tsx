@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 
 interface PokemonComboboxProps {
+    id?: string;
     value?: string;
     onChange: (value: string) => void;
     placeholder?: string;
@@ -57,7 +58,7 @@ function getPokemonSearchResults(query: string, limit = 50) {
     ].slice(0, limit);
 }
 
-export function PokemonCombobox({ value, onChange, placeholder, className }: PokemonComboboxProps) {
+export function PokemonCombobox({ id, value, onChange, placeholder, className }: PokemonComboboxProps) {
     const { t } = useTranslation();
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState(value || "");
@@ -107,6 +108,7 @@ export function PokemonCombobox({ value, onChange, placeholder, className }: Pok
                 </div>
                 <Input
                     ref={inputRef}
+                    id={id}
                     placeholder={placeholder}
                     value={query}
                     onChange={(e) => {

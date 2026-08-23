@@ -43,6 +43,7 @@ export function ThemeSwitcher() {
                 checked={isDark}
                 onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
                 aria-label="Toggle dark mode"
+                className="!h-6 !w-11"
             />
 
             {/* Moon icon for dark mode */}

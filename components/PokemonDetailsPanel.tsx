@@ -25,6 +25,13 @@ import type {
 } from "@/lib/team-guide";
 import { ItemIcon } from "@/components/ItemIcon";
 import { STRATEGIC_ROLE_DESCRIPTION_KEYS, getStrategicRoleLabel } from "@/lib/strategic-role-label";
+import {
+    getTranslatedAbilityDescription,
+    getTranslatedAbilityLabel,
+    getTranslatedCompetitiveSetLabel,
+    getTranslatedItemLabel,
+    getTranslatedMoveLabel,
+} from "@/lib/pokemon-translations";
 
 const ALGORITHM_PRESET_ID = "__algorithm__";
 
@@ -219,10 +226,6 @@ function getMoveNames(moves?: Array<{ name: string } | string>) {
     return (moves ?? []).map((move) => (typeof move === "string" ? move : move.name));
 }
 
-function formatMoveName(move: string) {
-    return move.replace(/[-_]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
 function getStrategicRoleHowToPlay(
     role: string | undefined,
     t: (key: string) => string
@@ -260,6 +263,7 @@ function buildFallbackDetails(
     pokemon: DetailedPokemon,
     requestedRole: Role,
     t: (key: string) => string,
+    lang: "en" | "es",
     displayItem?: string
 ): PokemonDetailsResponse {
     const moveNames = getMoveNames(pokemon.moves);
@@ -271,21 +275,21 @@ function buildFallbackDetails(
         item: displayItem
             ? {
                 name: displayItem,
-                label: displayItem,
+                label: getTranslatedItemLabel(displayItem, lang),
                 desc: "",
             }
             : null,
         abilities: Object.entries(pokemon.abilities ?? {}).map(([slot, ability]) => ({
             slot,
             name: ability,
-            label: ability,
-            desc: "",
+            label: getTranslatedAbilityLabel(ability, lang),
+            desc: getTranslatedAbilityDescription(ability, lang),
             selected: ability === pokemon.ability,
         })),
         moves: moveNames.map((moveName) => {
             return {
                 name: moveName,
-                label: formatMoveName(moveName),
+                label: getTranslatedMoveLabel(moveName, lang),
                 type: "Normal",
                 category: "Status",
                 basePower: null,
@@ -453,8 +457,8 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
 
 
     const fallbackDetails = useMemo(
-        () => buildFallbackDetails(pokemon, requestedRole, t, displayItem),
-        [pokemon, requestedRole, t, displayItem]
+        () => buildFallbackDetails(pokemon, requestedRole, t, lang, displayItem),
+        [pokemon, requestedRole, t, lang, displayItem]
     );
     const currentDetails = detailsState.requestKey === requestKey ? detailsState.data : null;
     const currentError = detailsState.requestKey === requestKey ? detailsState.error : null;
@@ -468,7 +472,9 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
 
     const algorithmPreset = useMemo<TeamBuildPreset>(() => {
         const rawLabel = activeDetails.algorithmLabel || t("details.algorithmRecommendation");
-        const strategicRoleLabel = rawLabel.startsWith("role.") ? t(rawLabel) : rawLabel;
+        const strategicRoleLabel = rawLabel.startsWith("role.")
+            ? t(rawLabel)
+            : getTranslatedCompetitiveSetLabel(rawLabel, lang);
         return pokemon.buildPresets?.[ALGORITHM_PRESET_ID] ?? {
             id: ALGORITHM_PRESET_ID,
             label: strategicRoleLabel,
@@ -483,7 +489,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
             analysisRole: pokemon.analysis?.role,
             analysisHowToPlay: pokemon.analysis?.howToPlay,
         };
-    }, [activeDetails.algorithmLabel, currentRole, displayEvs, displayItem, displayNature, moveNames, pokemon.ability, pokemon.analysis?.howToPlay, pokemon.analysis?.role, pokemon.buildPresets, pokemon.teraType, t]);
+    }, [activeDetails.algorithmLabel, currentRole, displayEvs, displayItem, displayNature, lang, moveNames, pokemon.ability, pokemon.analysis?.howToPlay, pokemon.analysis?.role, pokemon.buildPresets, pokemon.teraType, t]);
 
     const inferredStrategicRole = pokemon.analysis?.primaryFunction || pokemon.analysis?.role || currentRole;
     const inferredStrategicRoleLabel = getStrategicRoleLabel(inferredStrategicRole, t);
@@ -516,13 +522,15 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
             if (!preset?.id || preset.id === ALGORITHM_PRESET_ID) return;
             options.set(preset.id, {
                 id: preset.id,
-                label: preset.label || preset.id,
+                label: getTranslatedCompetitiveSetLabel(preset.label || preset.id, lang),
             });
         });
 
         availableRolePresets.forEach((rolePreset) => {
             if (!options.has(rolePreset)) {
-                const label = rolePreset.startsWith("role.") ? t(rolePreset) : rolePreset;
+                const label = rolePreset.startsWith("role.")
+                    ? t(rolePreset)
+                    : getTranslatedCompetitiveSetLabel(rolePreset, lang);
                 options.set(rolePreset, {
                     id: rolePreset,
                     label,
@@ -531,7 +539,7 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
         });
 
         return Array.from(options.values());
-    }, [algorithmPreset.label, availableRolePresets, pokemon.buildPresets, t]);
+    }, [algorithmPreset.label, availableRolePresets, lang, pokemon.buildPresets, t]);
 
     const presetOptionIds = useMemo(
         () => new Set(presetOptions.map((preset) => preset.id)),
@@ -797,7 +805,13 @@ export function PokemonDetailsDialog({ pokemon, item, format, onUpdate, open, on
                                             </SelectContent>
                                         </Select>
                                     ) : (
-                                        <Badge variant="outline">{selectedPresetId === ALGORITHM_PRESET_ID ? algorithmPreset.label : selectedPresetId.startsWith("role.") ? t(selectedPresetId) : selectedPresetId}</Badge>
+                                        <Badge variant="outline">
+                                            {selectedPresetId === ALGORITHM_PRESET_ID
+                                                ? algorithmPreset.label
+                                                : selectedPresetId.startsWith("role.")
+                                                    ? t(selectedPresetId)
+                                                    : getTranslatedCompetitiveSetLabel(selectedPresetId, lang)}
+                                        </Badge>
                                     )}
                                 </div>
                                 <p className="text-sm font-medium leading-relaxed text-zinc-700 dark:text-zinc-300">{strategicDescription}</p>

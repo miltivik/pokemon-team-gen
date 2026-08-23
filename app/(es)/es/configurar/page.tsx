@@ -6,9 +6,10 @@ import ConfigurarPageClient from "@/app/(site)/configurar/configurar-page-client
 
 const SPANISH_DESCRIPTION =
   "Configura y genera equipos Pokémon competitivos para Pokémon Showdown: Gen 9 OU, VGC, UU, RU, NU y más formatos. Elige formato, plantilla y estilo de juego.";
+const SPANISH_TITLE = "Configurar Equipos Pokémon para Showdown | PokeTeamBuilder";
 
 export const metadata: Metadata = {
-  title: "Configurar y Generar Equipos Pokémon para Showdown | PokeTeamBuilder",
+  title: SPANISH_TITLE,
   description: SPANISH_DESCRIPTION,
   keywords: [
     "configurar equipo pokemon",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Configurar y Generar Equipos Pokémon para Showdown",
+    title: SPANISH_TITLE,
     description: SPANISH_DESCRIPTION,
     url: "/es/configurar",
     type: "website",
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Configurar y Generar Equipos Pokémon para Showdown",
+    title: SPANISH_TITLE,
     description: SPANISH_DESCRIPTION,
     images: ["/og-image.png"],
   },

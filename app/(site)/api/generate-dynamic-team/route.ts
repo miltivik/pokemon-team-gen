@@ -94,8 +94,12 @@ export async function POST(req: NextRequest) {
             lang
         });
 
+        const compactResult = { ...result };
+        delete compactResult.gameplan;
+        delete compactResult.teamGuide;
+
         return NextResponse.json({
-            ...result,
+            ...compactResult,
             team: hydrateTeamForClient(result.team),
         });
     } catch (error) {

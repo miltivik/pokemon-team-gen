@@ -43,22 +43,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/contact` },
   ];
 
-  // Date of the last content-wide change to pSEO pages (teammates/checks
-  // sections, team cores). Bumping this accelerates Google's re-crawl of the
-  // new internal link graph. Update ONLY on real content changes, not on
-  // every deploy, or lastmod loses credibility.
-  const PSEO_CONTENT_UPDATED = new Date("2026-08-16");
-
   const allNames = getAllPokemonNames();
   const competitiveNames = allNames.filter((name) => hasCompetitiveData(name));
   const pokemonRoutes: MetadataRoute.Sitemap = competitiveNames.map((name) => ({
     url: `${baseUrl}/pokemon/${getPokemonSlug(name)}`,
-    lastModified: PSEO_CONTENT_UPDATED,
   }));
 
   const templateRoutes: MetadataRoute.Sitemap = Object.keys(TEMPLATES).map((id) => ({
     url: `${baseUrl}/teams/${id}`,
-    lastModified: PSEO_CONTENT_UPDATED,
   }));
 
   return [...staticRoutes, ...pokemonRoutes, ...templateRoutes];
