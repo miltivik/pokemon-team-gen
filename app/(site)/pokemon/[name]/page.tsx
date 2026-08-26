@@ -18,6 +18,7 @@ import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole, ge
 import { getChecksFor, getTeammatesFor } from "@/lib/related-pokemon";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { LinkedPokemonGrid } from "@/components/seo/LinkedPokemonGrid";
+import { getFeaturedPokemonBuilderHref, getFeaturedPokemonSeo } from "@/config/featured-pokemon";
 
 interface PokemonPageProps {
   params: Promise<{ name: string }>;
@@ -33,6 +34,10 @@ export async function generateStaticParams() {
   return competitiveNames.map((name) => ({ name: getPokemonSlug(name) }));
 }
 
+function getPokemonProfileDescription(name: string): string {
+  return `Explore ${name}'s base stats, abilities, roles, movesets, teammates and format data for Pokemon Showdown team building, plus practical usage notes.`;
+}
+
 export async function generateMetadata({ params }: PokemonPageProps): Promise<Metadata> {
   const { name } = await params;
   const finalName = getPokemonDisplayName(name);
@@ -42,14 +47,17 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
   }
 
   const canonicalSlug = getPokemonSlug(finalName);
+  const featuredProfile = getFeaturedPokemonSeo(finalName);
+  const description = featuredProfile?.metaDescription ?? getPokemonProfileDescription(finalName);
 
   return {
     title: `${finalName} - Stats, Movesets and Competitive Analysis`,
-    description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets for Pokemon Showdown team building.`,
+    description,
     keywords: [
       `${finalName.toLowerCase()} pokemon`,
       `${finalName.toLowerCase()} moveset`,
       `${finalName.toLowerCase()} competitive`,
+      ...(featuredProfile ? [featuredProfile.searchIntent, `${finalName.toLowerCase()} team`] : []),
       "pokemon showdown",
       "pokemon showdown movesets",
     ],
@@ -58,7 +66,7 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
     },
     openGraph: {
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
-      description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
+      description,
       url: `/pokemon/${canonicalSlug}`,
       type: "website",
       images: ["/og-image.png"],
@@ -66,7 +74,7 @@ export async function generateMetadata({ params }: PokemonPageProps): Promise<Me
     twitter: {
       card: "summary_large_image",
       title: `${finalName} - Stats, Movesets and Competitive Analysis`,
-      description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
+      description,
       images: ["/og-image.png"],
     },
   };
@@ -126,6 +134,8 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   }
 
   const canonicalSlug = getPokemonSlug(finalName);
+  const featuredProfile = getFeaturedPokemonSeo(finalName);
+  const description = featuredProfile?.metaDescription ?? getPokemonProfileDescription(finalName);
 
   const finalSummary = getPokemonSummary(finalName);
   if (!finalSummary) {
@@ -133,8 +143,9 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   }
 
   const spriteUrl = getPokemonSpriteUrl(finalName, "artwork");
-  const roles = getAvailableRoles(finalName, "ou");
-  const smogonUrl = getSmogonUrl(finalName, "gen9ou");
+  const profileFormat = featuredProfile?.formatId ?? "gen9ou";
+  const roles = getAvailableRoles(finalName, profileFormat);
+  const smogonUrl = getSmogonUrl(finalName, profileFormat);
   const teammates = await getTeammatesFor(finalName);
   const checks = getChecksFor(finalName);
   const coreFormats = getAvailableFormats(finalName)
@@ -146,7 +157,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: `${finalName} - Stats, Movesets and Competitive Analysis`,
-    description: `Explore ${finalName}'s base stats, abilities, and available competitive roles and movesets.`,
+    description,
     url: `https://poketeambuilder.com/pokemon/${canonicalSlug}`,
     inLanguage: "en",
     about: {
@@ -224,7 +235,18 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
 
         <PokemonCompetitiveDescription name={finalName} summary={finalSummary} />
 
-        <HowToUseSection name={finalName} />
+        {featuredProfile && (
+          <FeaturedPokemonSeoSection name={finalName} profile={featuredProfile} />
+        )}
+
+        <HowToUseSection
+          name={finalName}
+          types={finalSummary.types}
+          roles={roles}
+          teammates={teammates}
+          checks={checks}
+          formatLabels={coreFormats.map(({ info }) => info.label)}
+        />
 
         <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
           <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Base Stats</h2>
@@ -311,7 +333,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           </section>
         )}
 
-        <PokemonMovesetsSection name={finalName} roles={roles} />
+        <PokemonMovesetsSection name={finalName} roles={roles} formatTier={profileFormat} />
 
         <PokemonNotableMovesSection name={finalName} />
 
@@ -409,15 +431,44 @@ function PokemonCompetitiveDescription({ name, summary }: { name: string; summar
   );
 }
 
-function HowToUseSection({ name }: { name: string }) {
+function HowToUseSection({
+  name,
+  types,
+  roles,
+  teammates,
+  checks,
+  formatLabels,
+}: {
+  name: string;
+  types: string[];
+  roles: string[];
+  teammates: string[];
+  checks: string[];
+  formatLabels: string[];
+}) {
   const curated = CURATED_POKEMON[name];
-  if (!curated) return null;
+  const guidanceTips = curated?.whenToUse ?? [
+    `${name} gives your team a ${types.join(" / ")} option that fits ${roles[0]?.toLowerCase() || "flexible"} structures.`,
+    formatLabels.length > 0
+      ? `Its available sets cover ${formatLabels.slice(0, 3).join(", ")}. Check the target format before choosing a moveset or exporting.`
+      : `Check the target format before choosing a moveset, item and role for ${name}.`,
+    teammates.length > 0
+      ? `Test it beside ${teammates.slice(0, 3).join(", ")} and verify that the six Pokemon share a clear game plan.`
+      : `Pair it with teammates that cover its weaknesses and give it room to perform its primary role.`,
+  ];
+  const watchOut = curated?.watchOut ?? (
+    checks.length > 0
+      ? `Plan for ${checks.slice(0, 3).join(", ")} in the matchup and keep a safe answer available before committing to ${name}.`
+      : `Review type coverage and speed control before committing to ${name} as a team centerpiece.`
+  );
 
   return (
     <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
-      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">How to Use {name}</h2>
+      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+        {curated ? `How to Use ${name}` : `Team-Building Notes for ${name}`}
+      </h2>
       <ul className="space-y-2 mb-5">
-        {curated.whenToUse.map((tip) => (
+        {guidanceTips.map((tip) => (
           <li key={tip} className="flex gap-2.5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
             <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 shrink-0" aria-hidden="true" />
             <span>{tip}</span>
@@ -426,17 +477,56 @@ function HowToUseSection({ name }: { name: string }) {
       </ul>
       <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-900">
         <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300 mb-1">Watch out for</h3>
-        <p className="text-sm text-amber-900/80 dark:text-amber-200/80 leading-relaxed">{curated.watchOut}</p>
+        <p className="text-sm text-amber-900/80 dark:text-amber-200/80 leading-relaxed">{watchOut}</p>
       </div>
     </section>
   );
 }
 
-function PokemonMovesetsSection({ name, roles }: { name: string; roles: string[] }) {
+function FeaturedPokemonSeoSection({
+  name,
+  profile,
+}: {
+  name: string;
+  profile: NonNullable<ReturnType<typeof getFeaturedPokemonSeo>>;
+}) {
+  return (
+    <section className="mb-8 rounded-2xl border border-blue-200 bg-blue-50/70 p-6 dark:border-blue-900 dark:bg-blue-950/20">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700 dark:text-blue-300">Featured team-building profile</p>
+          <h2 className="mt-2 text-xl font-bold text-zinc-900 dark:text-zinc-100">
+            Build a {profile.formatLabel} team with {name}
+          </h2>
+        </div>
+        <span className="shrink-0 rounded-full border border-blue-200 bg-white px-3 py-1 text-xs font-semibold text-blue-700 dark:border-blue-800 dark:bg-zinc-900 dark:text-blue-300">
+          {profile.formatLabel}
+        </span>
+      </div>
+      <p className="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{profile.profileDescription}</p>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <Link
+          href={getFeaturedPokemonBuilderHref(profile)}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+        >
+          Build a team with {name}
+        </Link>
+        <Link
+          href={profile.guideHref}
+          className="rounded-lg border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:border-blue-500 dark:border-blue-800 dark:bg-zinc-900 dark:text-blue-300"
+        >
+          Read the {profile.formatLabel} guide
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function PokemonMovesetsSection({ name, roles, formatTier }: { name: string; roles: string[]; formatTier: string }) {
   if (roles.length === 0) return null;
 
   const sets = roles
-    .map((role) => getCompetitiveSetByRole(name, role, "ou"))
+    .map((role) => getCompetitiveSetByRole(name, role, formatTier))
     .filter((s) => s !== null);
 
   if (sets.length === 0) return null;

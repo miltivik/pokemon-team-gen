@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
+import { TeamBuilderLinkCluster } from "@/components/seo/TeamBuilderLinkCluster";
 
 export const metadata: Metadata = {
   title: "Pokemon Showdown Team Builder | Gen 9 OU & VGC",
@@ -236,6 +237,8 @@ export default function PokemonShowdownTeamBuilderPage() {
             ))}
           </div>
         </section>
+
+        <TeamBuilderLinkCluster excludePathname="/pokemon-showdown-team-builder" />
 
         <section className="w-full max-w-4xl">
           <h2 className="mb-6 text-center text-2xl font-bold text-zinc-900 dark:text-zinc-50">

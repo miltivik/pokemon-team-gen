@@ -17,6 +17,7 @@ import {
 const cachedDataV2: Map<string, PikalyticsData> = new Map();
 const lastFetchTime: Map<string, number> = new Map();
 const CACHE_TTL = 1000 * 60 * 60;
+const PIKALYTICS_TIMEOUT_MS = 1500;
 
 export interface PikalyticsPokemonData {
   name: string;
@@ -32,6 +33,28 @@ export interface PikalyticsData {
   format: string;
   pokemon: Record<string, PikalyticsPokemonData>;
   lastUpdated: string;
+}
+
+function emptyPikalyticsData(format: string): PikalyticsData {
+  return {
+    format,
+    pokemon: {},
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
+async function fetchPikalyticsWithTimeout(
+  input: string,
+  init?: RequestInit
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PIKALYTICS_TIMEOUT_MS);
+
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 function normalizePokemonEntryName(name: string | null | undefined) {
@@ -59,13 +82,20 @@ export async function getPikalyticsData(format: string): Promise<PikalyticsData>
 
   const pikalyticsFormat = getPrimaryProviderSlug(format, "pikalytics") || format;
 
+  // Server rendering should never depend on the public proxy. The page has
+  // complete Smogon data as its primary source and can enrich in the browser
+  // or through the internal API when a base URL is explicitly configured.
+  if (typeof window === "undefined" && !process.env.NEXT_PUBLIC_BASE_URL) {
+    return cached ?? emptyPikalyticsData(format);
+  }
+
   if (typeof window !== "undefined" || process.env.NEXT_PUBLIC_BASE_URL) {
     try {
       const baseUrl =
         typeof window !== "undefined"
           ? ""
           : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const response = await fetch(
+      const response = await fetchPikalyticsWithTimeout(
         `${baseUrl}/api/pikalytics?format=${pikalyticsFormat}`,
         { cache: "no-store" }
       );
@@ -85,10 +115,7 @@ export async function getPikalyticsData(format: string): Promise<PikalyticsData>
       `https://pikalytics.com/pokedex/${pikalyticsFormat}`
     )}`;
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    const response = await fetch(proxyUrl, { signal: controller.signal });
-    clearTimeout(timeoutId);
+    const response = await fetchPikalyticsWithTimeout(proxyUrl);
 
     if (response.ok) {
       const json = await response.json();
@@ -105,11 +132,7 @@ export async function getPikalyticsData(format: string): Promise<PikalyticsData>
     console.error("Pikalytics proxy fetch failed:", error);
   }
 
-  return {
-    format,
-    pokemon: {},
-    lastUpdated: new Date().toISOString(),
-  };
+  return cached ?? emptyPikalyticsData(format);
 }
 
 function parsePikalyticsHTML(html: string, format: string): PikalyticsData | null {

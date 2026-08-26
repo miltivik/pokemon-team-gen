@@ -5,6 +5,7 @@ import { getAllPokemonNames, getPokemonSlug } from "@/lib/pokemon-summary";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData } from "@/lib/competitive-sets";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
+import { FEATURED_POKEMON_SEO } from "@/config/featured-pokemon";
 
 export const metadata: Metadata = {
   title: "Competitive Pokemon Profiles | Stats & Movesets",
@@ -58,6 +59,28 @@ export default function PokemonIndexPage() {
             Browse base stats, abilities and available competitive roles and movesets for Pokemon with Smogon set data.
           </p>
         </header>
+
+        <section aria-labelledby="featured-profiles-heading" className="mb-10">
+          <h2 id="featured-profiles-heading" className="mb-3 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+            Featured Competitive Profiles
+          </h2>
+          <p className="mb-5 max-w-3xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            Start with format-aware profiles for common Gen 9 OU and VGC team-building questions, then open the builder with that Pokemon fixed in the roster.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURED_POKEMON_SEO.map((profile) => (
+              <Link
+                key={profile.name}
+                href={`/pokemon/${getPokemonSlug(profile.name)}`}
+                className="rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-blue-300 hover:bg-blue-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-blue-800 dark:hover:bg-blue-950/20"
+              >
+                <span className="block text-sm font-bold text-zinc-900 dark:text-zinc-100">{profile.name}</span>
+                <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">{profile.formatLabel}</span>
+                <span className="mt-2 block text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">{profile.searchIntent}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {featured.map((name) => {

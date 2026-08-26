@@ -36,7 +36,10 @@ export default function Gen9OUGuideClient({
                         {t("guides.gen9ouDesc")}
                     </p>
                     <p className="text-sm text-zinc-500 dark:text-zinc-500">
-                        Updated August 22, 2026 · Meta snapshot sourced from Smogon usage data and Pikalytics team data.
+                        Updated August 22, 2026 · Meta snapshot sourced from Smogon usage data; Pikalytics team data enriches the view when available.
+                    </p>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        Sources: <a href="https://www.smogon.com/stats/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">Smogon usage data</a> and <a href="https://pikalytics.com/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">Pikalytics team data</a>.
                     </p>
                 </header>
 

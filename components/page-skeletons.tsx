@@ -116,22 +116,28 @@ export function ExportPageSkeleton() {
 export function ConfigurarPageSkeleton({
   title = "Generator Settings",
   description = "Configure your team preferences",
+  showHeading = true,
 }: {
   title?: string;
   description?: string;
+  showHeading?: boolean;
 } = {}) {
   return (
     <ShellFrame>
-      <header className="flex min-h-28 w-full flex-col items-center justify-center space-y-4 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {title}
-        </h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">{description}</p>
-        <div className="flex min-h-8 items-center justify-center gap-2">
-          <SkeletonPill className="h-8 w-20" />
-          <SkeletonPill className="h-8 w-28" />
-        </div>
-      </header>
+      {showHeading ? (
+        <header className="flex min-h-28 w-full flex-col items-center justify-center space-y-4 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            {title}
+          </h1>
+          <p className="text-lg text-zinc-600 dark:text-zinc-400">{description}</p>
+          <div className="flex min-h-8 items-center justify-center gap-2">
+            <SkeletonPill className="h-8 w-20" />
+            <SkeletonPill className="h-8 w-28" />
+          </div>
+        </header>
+      ) : (
+        <div className="min-h-28 w-full" aria-hidden="true" />
+      )}
 
       <section className="w-full flex justify-center">
         <AdHero />

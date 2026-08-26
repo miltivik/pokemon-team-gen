@@ -43,6 +43,7 @@ function isValidTemplate(template: string): template is TemplateId {
 
 interface ConfigurarPageClientProps {
     initialLang?: "en" | "es";
+    hideHeader?: boolean;
 }
 
 interface TeamGenerationResult {
@@ -55,7 +56,10 @@ interface TeamGenerationResult {
     options?: TeamGenerationOptions | null;
 }
 
-export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClientProps) {
+export default function ConfigurarPageClient({
+    initialLang,
+    hideHeader = false,
+}: ConfigurarPageClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { format, setFormat, addTeam, team, isHydrated, generationOptions } = useTeam();
@@ -184,6 +188,7 @@ export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClie
             <ConfigurarPageSkeleton
                 title={initialCopy.title}
                 description={initialCopy.description}
+                showHeading={!hideHeader}
             />
         );
     }
@@ -191,26 +196,28 @@ export default function ConfigurarPageClient({ initialLang }: ConfigurarPageClie
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">
             <main className="container mx-auto flex flex-col items-center gap-8 px-4 py-8">
-                <header className="flex min-h-28 flex-col items-center justify-center space-y-4 text-center">
-                    <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                        {t("form.title")}
-                    </h1>
-                    <p className="text-lg text-zinc-600 dark:text-zinc-400">
-                        {t("form.description")}
-                    </p>
-                    <div className="flex min-h-8 items-center justify-center gap-2">
-                        {initialFormat && (
-                            <span className="rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white">
-                                {initialFormat.toUpperCase()}
-                            </span>
-                        )}
-                        {initialTemplate && (
-                            <span className="rounded-full bg-purple-600 px-3 py-1 text-sm font-medium text-white">
-                                {initialTemplate}
-                            </span>
-                        )}
-                    </div>
-                </header>
+                {!hideHeader && (
+                    <header className="flex min-h-28 flex-col items-center justify-center space-y-4 text-center">
+                        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                            {t("form.title")}
+                        </h1>
+                        <p className="text-lg text-zinc-600 dark:text-zinc-400">
+                            {t("form.description")}
+                        </p>
+                        <div className="flex min-h-8 items-center justify-center gap-2">
+                            {initialFormat && (
+                                <span className="rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white">
+                                    {initialFormat.toUpperCase()}
+                                </span>
+                            )}
+                            {initialTemplate && (
+                                <span className="rounded-full bg-purple-600 px-3 py-1 text-sm font-medium text-white">
+                                    {initialTemplate}
+                                </span>
+                            )}
+                        </div>
+                    </header>
+                )}
 
                 <section className="w-full flex justify-center">
                     <TeamForm

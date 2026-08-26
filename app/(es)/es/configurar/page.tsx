@@ -54,16 +54,68 @@ export default function ConfigurarSpanishPage() {
           Aprende a usar el creador de equipos de Pokemon Showdown
         </Link>
       </p>
+      <header
+        lang="es"
+        className="container mx-auto flex min-h-28 flex-col items-center justify-center space-y-4 px-4 pt-8 text-center"
+      >
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          Configuración del Generador
+        </h1>
+        <p className="text-lg text-zinc-600 dark:text-zinc-400">
+          Configura tus preferencias de equipo
+        </p>
+      </header>
       <Suspense
         fallback={
           <ConfigurarPageSkeleton
             title="Configuración del Generador"
             description="Configura tus preferencias de equipo"
+            showHeading={false}
           />
         }
       >
-        <ConfigurarPageClient initialLang="es" />
+        <ConfigurarPageClient initialLang="es" hideHeader />
       </Suspense>
+      <section
+        lang="es"
+        aria-labelledby="configurar-seo-heading-es"
+        className="container mx-auto max-w-4xl px-4 pb-12 pt-4"
+      >
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <h2
+            id="configurar-seo-heading-es"
+            className="text-2xl font-bold text-zinc-900 dark:text-zinc-50"
+          >
+            Configura tu equipo de Pokemon Showdown
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl leading-relaxed text-zinc-600 dark:text-zinc-400">
+            Elige un formato como Gen 9 OU o VGC, selecciona un arquetipo y
+            ajusta el estilo de juego antes de generar un equipo legal de seis
+            Pokemon. El creador aplica las reglas del formato y los datos de
+            sets competitivos de las páginas de análisis.
+          </p>
+          <div className="mt-6 grid gap-4 text-left sm:grid-cols-3">
+            <div>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Elige un formato</h3>
+              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                Empieza con las reglas que coinciden con tus combates.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Selecciona un estilo</h3>
+              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                Prueba Lluvia, Hiper Ofensiva, Stall, Equilibrado y otros núcleos.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Exporta y prueba</h3>
+              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                Exporta tu equipo a Pokemon Showdown y ajústalo después de probarlo.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

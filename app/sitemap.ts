@@ -12,9 +12,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/es/configurar` },
     { url: `${baseUrl}/tier-list` },
     { url: `${baseUrl}/about` },
-    { url: `${baseUrl}/guides/gen9-ou` },
-    { url: `${baseUrl}/guides/vgc` },
+    {
+      url: `${baseUrl}/guides/gen9-ou`,
+      lastModified: new Date("2026-08-22T00:00:00.000Z"),
+    },
+    {
+      url: `${baseUrl}/guides/vgc`,
+      lastModified: new Date("2026-08-13T00:00:00.000Z"),
+    },
     { url: `${baseUrl}/pokemon-showdown-team-builder` },
+    {
+      url: `${baseUrl}/gen-9-ou-team-builder`,
+      lastModified: new Date("2026-08-26T00:00:00.000Z"),
+    },
+    {
+      url: `${baseUrl}/vgc-team-builder`,
+      lastModified: new Date("2026-08-26T00:00:00.000Z"),
+    },
+    {
+      url: `${baseUrl}/rain-team-builder`,
+      lastModified: new Date("2026-08-26T00:00:00.000Z"),
+    },
+    {
+      url: `${baseUrl}/hyper-offense-team-builder`,
+      lastModified: new Date("2026-08-26T00:00:00.000Z"),
+    },
     { url: `${baseUrl}/blog` },
     {
       url: `${baseUrl}/blog/best-rain-team-gen9-ou`,

@@ -73,6 +73,9 @@ export default function VGCGuideClient({
                             ? "Regulation F sigue disponible como formato historico."
                             : "Regulation F remains available as a legacy format."}
                     </p>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        Updated August 13, 2026 · Sources: <a href="https://www.smogon.com/stats/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">Smogon usage data</a> and <a href="https://pikalytics.com/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">Pikalytics team data</a> when available.
+                    </p>
                 </header>
 
                 <section className="flex w-full justify-center">

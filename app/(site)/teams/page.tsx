@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { TEMPLATES, TemplateId } from "@/config/templates";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
+import { TeamBuilderLinkCluster } from "@/components/seo/TeamBuilderLinkCluster";
 
 export const metadata: Metadata = {
   title: "Pokemon Team Archetypes | Rain, Stall & HO Guides",
@@ -69,6 +70,8 @@ export default function TeamsIndexPage() {
             Explore competitive Pokemon team archetypes. Understand the roles, required Pokemon and strategies behind each playstyle.
           </p>
         </header>
+
+        <TeamBuilderLinkCluster />
 
         <div className="grid gap-4 sm:grid-cols-2">
           {templates.map(([id, template]) => (

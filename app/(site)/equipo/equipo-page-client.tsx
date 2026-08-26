@@ -338,6 +338,7 @@ export function EquipoPageClient({ expectsTeam }: EquipoPageClientProps) {
             format,
             generationOptions,
         });
+        analytics.saveTeam(format);
         toast.success(t("app.teamSaved"));
     };
 

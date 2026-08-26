@@ -52,6 +52,56 @@ function getJsonLd(html) {
     .map((match) => JSON.parse(match[1]));
 }
 
+const growthLandingPages = [
+  {
+    pathname: "/gen-9-ou-team-builder",
+    title: "Gen 9 OU Team Builder | Pokemon Showdown",
+    heading: "Gen 9 OU Team Builder",
+    marker: /Gen 9 OU team for Pokemon Showdown/i,
+  },
+  {
+    pathname: "/vgc-team-builder",
+    title: "VGC Team Builder | Pokemon Showdown",
+    heading: "VGC Team Builder",
+    marker: /VGC 2026 Reg I team for Pokemon Showdown/i,
+  },
+  {
+    pathname: "/rain-team-builder",
+    title: "Rain Team Builder | Gen 9 OU Pokemon",
+    heading: "Rain Team Builder",
+    marker: /Rain team for Gen 9 OU Pokemon Showdown/i,
+  },
+  {
+    pathname: "/hyper-offense-team-builder",
+    title: "Hyper Offense Team Builder | Gen 9 OU",
+    heading: "Hyper Offense Team Builder",
+    marker: /Hyper Offense team for Gen 9 OU Pokemon Showdown/i,
+  },
+];
+
+const growthFeaturedProfiles = [
+  ["great-tusk", "Great Tusk"],
+  ["kingambit", "Kingambit"],
+  ["gholdengo", "Gholdengo"],
+  ["dragapult", "Dragapult"],
+  ["zamazenta", "Zamazenta"],
+  ["gliscor", "Gliscor"],
+  ["ogerpon-wellspring", "Ogerpon-Wellspring"],
+  ["rillaboom", "Rillaboom"],
+  ["iron-valiant", "Iron Valiant"],
+  ["roaring-moon", "Roaring Moon"],
+  ["kyurem", "Kyurem"],
+  ["toxapex", "Toxapex"],
+  ["flutter-mane", "Flutter Mane"],
+  ["miraidon", "Miraidon"],
+  ["koraidon", "Koraidon"],
+  ["incineroar", "Incineroar"],
+  ["amoonguss", "Amoonguss"],
+  ["tornadus", "Tornadus"],
+  ["groudon", "Groudon"],
+  ["kyogre", "Kyogre"],
+];
+
 async function checkPseo() {
   const competitiveSource = fs.readFileSync(path.join(root, "lib/competitive-sets.ts"), "utf8");
   const profileSource = fs.readFileSync(
@@ -82,6 +132,21 @@ async function checkPseo() {
     profileSource,
     /export async function generateMetadata[\s\S]*?if \(!finalName \|\| !hasCompetitiveData\(finalName\)\) \{\s*notFound\(\);/,
     "Pokemon metadata generation must reject unknown slugs before rendering a document"
+  );
+  assert.match(
+    profileSource,
+    /function getPokemonProfileDescription[\s\S]*?teammates and format data[\s\S]*?practical usage notes/i,
+    "Pokemon metadata must expose more than generic stats and moveset language"
+  );
+  assert.match(
+    profileSource,
+    /const guidanceTips = curated\?\.whenToUse \?\? \[/,
+    "non-curated Pokemon profiles must receive data-backed guidance"
+  );
+  assert.doesNotMatch(
+    profileSource,
+    /if \(!curated\) return null/,
+    "Pokemon guidance must not disappear for the majority of non-curated profiles"
   );
 
   const expectedProfiles = new Map([
@@ -389,6 +454,91 @@ async function checkMetadata() {
     "2026-08-13",
     "archetype Articles must carry an explicit, static update date"
   );
+  assert.match(
+    rainPage.text,
+    /href="https:\/\/www\.smogon\.com\/stats\//,
+    "team archetype pages must expose their Smogon data source"
+  );
+  assert.match(
+    rainPage.text,
+    /href="https:\/\/pikalytics\.com\//,
+    "team archetype pages must expose their Pikalytics enrichment source"
+  );
+  for (const [pathname, date] of [
+    ["/guides/gen9-ou", "2026-08-22"],
+    ["/guides/vgc", "2026-08-13"],
+  ]) {
+    const block = sitemap.text.match(
+      new RegExp(`<url>\\s*<loc>https://poketeambuilder\\.com${pathname}</loc>[\\s\\S]*?</url>`)
+    )?.[0];
+    assert.ok(block, `${pathname} must appear in the sitemap`);
+    assert.match(block, new RegExp(`<lastmod>${date}`), `${pathname} must publish its editorial update date`);
+  }
+}
+
+async function checkGrowth() {
+  const { text: sitemap } = await get("/sitemap.xml");
+
+  for (const landing of growthLandingPages) {
+    const page = await get(landing.pathname);
+    assert.equal(page.response.status, 200, `${landing.pathname} must return 200`);
+    assert.equal(count(page.text, /<h1\b/gi), 1, `${landing.pathname} must render one H1`);
+    assert.equal(getTitle(page.text, landing.pathname), landing.title);
+    assertMetaDescriptionLength(page.text, landing.pathname);
+    assert.match(
+      page.text,
+      new RegExp(`<h1[^>]*>\\s*${escapeRegExp(landing.heading)}\\s*<\\/h1>`, "i"),
+      `${landing.pathname} H1 must match the search intent`
+    );
+    assert.match(page.text, landing.marker, `${landing.pathname} must explain its distinct use case`);
+    assert.match(
+      page.text,
+      new RegExp(`<link[^>]+rel="canonical"[^>]+href="https://poketeambuilder\\.com${landing.pathname}"`, "i"),
+      `${landing.pathname} must self-canonicalize`
+    );
+    assert.match(page.text, /href="\/configurar(?:\?|"|)/, `${landing.pathname} must link to the builder`);
+    const jsonLd = getJsonLd(page.text);
+    assert.ok(jsonLd.some((entry) => entry["@type"] === "WebPage"), `${landing.pathname} must render WebPage JSON-LD`);
+    assert.ok(jsonLd.some((entry) => entry["@type"] === "FAQPage"), `${landing.pathname} must render FAQPage JSON-LD`);
+    assert.ok(jsonLd.some((entry) => entry["@type"] === "BreadcrumbList"), `${landing.pathname} must render breadcrumbs`);
+    assert.match(
+      sitemap,
+      new RegExp(`<loc>https://poketeambuilder\\.com${landing.pathname}<\\/loc>`),
+      `${landing.pathname} must appear in the sitemap`
+    );
+  }
+
+  const primaryLanding = await get("/pokemon-showdown-team-builder");
+  for (const landing of growthLandingPages) {
+    assert.match(
+      primaryLanding.text,
+      new RegExp(`href="${landing.pathname}"`),
+      `primary landing must link to ${landing.pathname}`
+    );
+  }
+
+  const pokemonHub = await get("/pokemon");
+  assert.match(pokemonHub.text, /Featured Competitive Profiles/);
+  for (const [slug, displayName] of growthFeaturedProfiles) {
+    assert.match(
+      pokemonHub.text,
+      new RegExp(`href="/pokemon/${slug}"[^>]*>[\\s\\S]*?${escapeRegExp(displayName)}`),
+      `/pokemon must feature ${displayName}`
+    );
+
+    const profile = await get(`/pokemon/${slug}`);
+    assert.equal(profile.response.status, 200, `/pokemon/${slug} must return 200`);
+    assert.match(
+      profile.text.replace(/<!-- -->/g, ""),
+      new RegExp(`Build a [^<]+ team with ${escapeRegExp(displayName)}`, "i"),
+      `/pokemon/${slug} must render its format-aware builder section`
+    );
+  }
+
+  const analyticsSource = fs.readFileSync(path.join(root, "lib/analytics.tsx"), "utf8");
+  for (const eventName of ["view_seo_landing", "click_seo_landing", "save_team"]) {
+    assert.match(analyticsSource, new RegExp(eventName), `analytics must define ${eventName}`);
+  }
 }
 
 async function checkConfigurar() {
@@ -397,9 +547,33 @@ async function checkConfigurar() {
   assert.equal(count(text, /<h1\b/gi), 1, "/configurar must render one H1");
   assert.match(text, /Generator Settings/);
   assert.match(text, /Configure your team preferences/);
+  assert.match(
+    text,
+    /Build a competitive Pokemon Showdown team/i,
+    "/configurar must explain its team-building intent before hydration"
+  );
+  assert.match(
+    text,
+    /Export.*Pokemon Showdown/i,
+    "/configurar must explain the output users can generate"
+  );
   assert.ok(
     count(text, /href="\/pokemon-showdown-team-builder"/g) >= 2,
     "/configurar must link to the Showdown builder contextually and from the footer"
+  );
+
+  const spanishConfig = await get("/es/configurar");
+  assert.equal(spanishConfig.response.status, 200, "/es/configurar must return 200");
+  assert.equal(count(spanishConfig.text, /<h1\b/gi), 1, "/es/configurar must render one H1");
+  assert.match(
+    spanishConfig.text,
+    /Configura tu equipo de Pokemon Showdown/i,
+    "/es/configurar must explain its team-building intent in Spanish before hydration"
+  );
+  assert.match(
+    spanishConfig.text,
+    /Exporta.*Pokemon Showdown/i,
+    "/es/configurar must explain the generated output in Spanish"
   );
 }
 
@@ -489,6 +663,16 @@ async function checkContent() {
       "utf8"
     );
     assert.doesNotMatch(guideSource, /FAQPage/, `${pathname} must not mark up hidden FAQ content`);
+    assert.match(
+      pages[pathname],
+      /href="https:\/\/www\.smogon\.com\/stats\//,
+      `${pathname} must expose its Smogon data source`
+    );
+    assert.match(
+      pages[pathname],
+      /href="https:\/\/pikalytics\.com\//,
+      `${pathname} must expose its Pikalytics enrichment source`
+    );
   }
 
   const gen9Article = getJsonLd(pages["/guides/gen9-ou"]).find(
@@ -630,6 +814,7 @@ async function checkVgc() {
 
 async function checkCachePolicy() {
   const source = fs.readFileSync(path.join(root, "lib/data-sources/smogon.ts"), "utf8");
+  const pikalyticsSource = fs.readFileSync(path.join(root, "lib/pikalytics.ts"), "utf8");
   assert.equal(
     count(source, /cache:\s*["']no-store["']/g),
     3,
@@ -644,6 +829,21 @@ async function checkCachePolicy() {
     source,
     /next:\s*{\s*revalidate:\s*3600\s*}/,
     "raw Smogon payloads must not enter the Next Data Cache"
+  );
+  assert.match(
+    pikalyticsSource,
+    /const PIKALYTICS_TIMEOUT_MS = 1500;/,
+    "Pikalytics enrichment must have an explicit bounded timeout"
+  );
+  assert.match(
+    pikalyticsSource,
+    /typeof window === [\"']undefined[\"'] && !process\.env\.NEXT_PUBLIC_BASE_URL/,
+    "server rendering must skip external Pikalytics fetches when no internal base URL exists"
+  );
+  assert.match(
+    pikalyticsSource,
+    /return cached \?\? emptyPikalyticsData\(format\);/,
+    "Pikalytics failures must preserve stale data when it is available"
   );
 }
 
@@ -714,6 +914,7 @@ async function checkAdsenseReadiness() {
 const checks = {
   pseo: checkPseo,
   metadata: checkMetadata,
+  growth: checkGrowth,
   configurar: checkConfigurar,
   statuses: checkHttpStatuses,
   content: checkContent,

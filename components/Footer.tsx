@@ -70,6 +70,22 @@ export function Footer() {
                             </li>
                             <li>
                                 <Link
+                                    href="/gen-9-ou-team-builder"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {lang === "es" ? "Constructor de equipos Gen 9 OU" : "Gen 9 OU Team Builder"}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/vgc-team-builder"
+                                    className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+                                >
+                                    {lang === "es" ? "Constructor de equipos VGC" : "VGC Team Builder"}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     href="/saved-teams"
                                     className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
                                 >

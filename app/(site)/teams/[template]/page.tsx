@@ -267,6 +267,10 @@ export default async function TeamArchetypePage({ params }: TeamArchetypePagePro
           </div>
         </section>
 
+        <p className="mb-8 text-center text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+          Strategy and meta references use <a href="https://www.smogon.com/stats/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">Smogon usage data</a>; <a href="https://pikalytics.com/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">Pikalytics team data</a> may enrich the recommendations when available.
+        </p>
+
         <section className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-2xl border border-blue-200 dark:border-blue-800 p-6 text-center">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
             Generate a {templateData.label} Team

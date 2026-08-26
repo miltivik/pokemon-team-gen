@@ -63,6 +63,13 @@ export const analytics = {
     // Page views
     viewLanding: () => trackPageView("/", "Landing"),
     viewConfigurar: () => trackPageView("/configurar", "Configurar"),
+    viewSeoLanding: (landingPath: string) => trackEvent("view_seo_landing", {
+        landing_path: landingPath,
+    }),
+    clickSeoLanding: (landingPath: string, destination: string) => trackEvent("click_seo_landing", {
+        landing_path: landingPath,
+        destination,
+    }),
     viewEquipo: () => trackPageView("/equipo", "Equipo"),
     viewAnalisis: () => trackPageView("/analisis", "Analisis"),
     viewExportar: () => trackPageView("/exportar", "Exportar"),
@@ -90,6 +97,10 @@ export const analytics = {
 
     exportTeam: (format: string) => trackEvent("export_team", {
         export_format: format,
+    }),
+
+    saveTeam: (format: string) => trackEvent("save_team", {
+        format,
     }),
 
     clickSimilarTeams: (template: string) => trackEvent("click_similar_teams", {
@@ -136,6 +147,10 @@ function getPageTitle(pathname: string): string {
     const titles: Record<string, string> = {
         "/": "Landing",
         "/configurar": "Configurar",
+        "/gen-9-ou-team-builder": "Gen 9 OU Team Builder",
+        "/vgc-team-builder": "VGC Team Builder",
+        "/rain-team-builder": "Rain Team Builder",
+        "/hyper-offense-team-builder": "Hyper Offense Team Builder",
         "/equipo": "Equipo",
         "/analisis": "Análisis",
         "/exportar": "Exportar",
