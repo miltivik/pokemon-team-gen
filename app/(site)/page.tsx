@@ -24,16 +24,16 @@ export default function Home() {
             <main id="main-content" className="container mx-auto flex flex-col items-center gap-12 px-4 py-12">
                 <HeroSection />
 
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <SupportedFormatsSection />
                 </div>
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <DemoShowcase />
                 </div>
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <HowItWorksSection />
                 </div>
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <FeaturesSection />
                 </div>
 
@@ -41,19 +41,19 @@ export default function Home() {
                     <AdInline />
                 </section>
 
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <TrendingTeamsSection />
                 </div>
 
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <PopularPokemonSection />
                 </div>
 
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <ExploreSection />
                 </div>
 
-                <div className="home-below-fold w-full">
+                <div className="home-below-fold flex w-full justify-center">
                     <BottomCtaSection />
                 </div>
 
