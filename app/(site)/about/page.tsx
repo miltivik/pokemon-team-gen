@@ -1,19 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AdHero, AdBanner, AdInline, KoFiWidget } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
-import { analytics } from "@/lib/analytics";
 
 export default function AboutPage() {
     const { t } = useTranslation();
-
-    useEffect(() => {
-        analytics.viewAbout();
-    }, []);
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">

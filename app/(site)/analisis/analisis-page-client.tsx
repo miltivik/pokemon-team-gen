@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
 import { ArrowLeft, FileOutput, RefreshCw } from "lucide-react";
 import { TeamAnalysis } from "@/components/TeamAnalysis";
 import { AdBanner, AdHero } from "@/components/monetization/Ads";
 import { AnalysisPageSkeleton } from "@/components/page-skeletons";
 import { Button } from "@/components/ui/button";
-import { analytics } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
 import { useTeam } from "@/lib/team-context";
 
@@ -34,10 +32,6 @@ function AnalisisEmptyState() {
 export function AnalisisPageClient({ expectsTeam }: AnalisisPageClientProps) {
     const { team, teamGuide, teamGuideI18n, format, isHydrated } = useTeam();
     const { t, lang } = useTranslation();
-
-    useEffect(() => {
-        analytics.viewAnalisis();
-    }, []);
 
     const resolvedTeamGuide = teamGuideI18n?.[lang] || teamGuide;
 

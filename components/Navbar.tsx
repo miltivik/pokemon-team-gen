@@ -17,6 +17,7 @@ import {
     Sparkles,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { getLocalizedPath } from "@/lib/i18n-shared";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 export type NavTab = "home" | "analysis";
@@ -27,7 +28,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
-    const { t, lang, setLang } = useTranslation();
+    const { t, lang } = useTranslation();
     const pathname = usePathname();
     const router = useRouter();
     const [guidesOpen, setGuidesOpen] = useState(false);
@@ -73,6 +74,15 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
     const languageToggleLabel = lang === "en" ? "Switch to Spanish" : "Cambiar a inglés";
     const homePath = lang === "es" ? "/es" : "/";
     const configurarPath = lang === "es" ? "/es/configurar" : "/configurar";
+    const languageTarget = getLocalizedPath(pathname, lang === "en" ? "es" : "en");
+
+    function navigateToLanguage() {
+        if (!languageTarget) return;
+
+        const search = typeof window !== "undefined" ? window.location.search : "";
+        const hash = typeof window !== "undefined" ? window.location.hash : "";
+        router.push(`${languageTarget}${search}${hash}`);
+    }
 
     return (
         <>
@@ -265,28 +275,16 @@ export function Navbar({ activeTab = "home", hasTeam = false }: NavbarProps) {
 
                         <ThemeSwitcher />
 
-                        <button
-                            onClick={() => {
-                                const nextLang = lang === "en" ? "es" : "en";
-                                setLang(nextLang);
-
-                                const search = typeof window !== "undefined" ? window.location.search : "";
-                                if (nextLang === "es") {
-                                    if (pathname === "/") router.push(`/es${search}`);
-                                    else if (pathname === "/configurar") router.push(`/es/configurar${search}`);
-                                    else if (pathname === "/equipo") router.push(`/es/equipo${search}`);
-                                } else {
-                                    if (pathname === "/es") router.push(`/${search}`);
-                                    else if (pathname === "/es/configurar") router.push(`/configurar${search}`);
-                                    else if (pathname === "/es/equipo") router.push(`/equipo${search}`);
-                                }
-                            }}
-                            className="flex items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                            aria-label={languageToggleLabel}
-                        >
-                            <Languages className="h-4 w-4" aria-hidden="true" />
-                            <span className="text-xs uppercase tracking-wider">{lang === "en" ? "EN" : "ES"}</span>
-                        </button>
+                        {languageTarget && (
+                            <button
+                                onClick={navigateToLanguage}
+                                className="flex items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-sm font-semibold text-zinc-700 shadow-sm transition-colors hover:bg-zinc-100 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                                aria-label={languageToggleLabel}
+                            >
+                                <Languages className="h-4 w-4" aria-hidden="true" />
+                                <span className="text-xs uppercase tracking-wider">{lang === "en" ? "EN" : "ES"}</span>
+                            </button>
+                        )}
                     </div>
                 </div>
             </nav>

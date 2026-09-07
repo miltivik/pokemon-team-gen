@@ -34,17 +34,19 @@ function getGtag() {
 }
 
 // Track page views
-export function trackPageView(pagePath: string, pageTitle: string) {
-    if (!hasConsent("analytics")) return;
+export function trackPageView(pagePath: string, pageTitle: string): boolean {
+    if (!hasConsent("analytics")) return false;
     const gtag = getGtag();
     if (!GA_ID || !gtag) {
-        return;
+        return false;
     }
 
-    gtag("config", GA_ID, {
+    gtag("event", "page_view", {
         page_path: pagePath,
         page_title: pageTitle,
+        page_location: `${window.location.origin}${pagePath}`,
     });
+    return true;
 }
 
 // Track custom events
@@ -159,17 +161,37 @@ function getPageTitle(pathname: string): string {
     return titles[pathname] || "Unknown";
 }
 
+let lastTrackedPage = "";
+
 // Hook for React components
 export function useAnalytics() {
     const pathname = usePathname();
+    const pagePath = pathname;
 
     // Track page views on route change
     useEffect(() => {
-        if (pathname) {
-            const pageTitle = getPageTitle(pathname);
-            trackPageView(pathname, pageTitle);
-        }
-    }, [pathname]);
+        if (!pathname) return;
+
+        const sendPageView = () => {
+            const query = window.location.search;
+            const currentPagePath = `${pagePath}${query}`;
+            if (lastTrackedPage === currentPagePath) return;
+
+            const pageTitle = document.title || getPageTitle(pathname);
+            if (trackPageView(currentPagePath, pageTitle)) {
+                lastTrackedPage = currentPagePath;
+            }
+        };
+
+        sendPageView();
+        window.addEventListener("gtagReady", sendPageView);
+        window.addEventListener("consentChanged", sendPageView);
+
+        return () => {
+            window.removeEventListener("gtagReady", sendPageView);
+            window.removeEventListener("consentChanged", sendPageView);
+        };
+    }, [pagePath, pathname]);
 
     return analytics;
 }

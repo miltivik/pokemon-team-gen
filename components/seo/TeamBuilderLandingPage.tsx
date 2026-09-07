@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TeamBuilderLinkCluster } from "@/components/seo/TeamBuilderLinkCluster";
 import { SeoLandingAnalytics, TrackedSeoLink } from "@/components/seo/SeoLandingAnalytics";
-import { getPokemonSlug } from "@/lib/pokemon-summary";
+import { getPokemonSlug } from "@/lib/pokemon-slug";
 import type { TeamBuilderLanding } from "@/config/team-builder-landings";
 
 function JsonLd({ landing }: { landing: TeamBuilderLanding }) {

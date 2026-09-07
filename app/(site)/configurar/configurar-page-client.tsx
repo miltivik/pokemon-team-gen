@@ -161,11 +161,6 @@ export default function ConfigurarPageClient({
         }
     }, [initialFormat, isHydrated, setFormat]);
 
-    // Track page view
-    useEffect(() => {
-        analytics.viewConfigurar();
-    }, []);
-
     const handleGenerate = (data: TeamGenerationResult) => {
         analytics.generateTeam(data.options?.format || format, data.templateId || "balanced");
         const activeGameplan =

@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { Rocket, Trophy } from "lucide-react";
 import { AdBanner, AdHero, AdInline } from "@/components/monetization/Ads";
 import { MetaOverview } from "@/components/guides/MetaOverview";
 import { Button } from "@/components/ui/button";
-import { analytics } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { MetaOverviewPayload } from "@/lib/meta-analysis";
 
@@ -16,10 +14,6 @@ export default function Gen9OUGuideClient({
     initialData: MetaOverviewPayload | null;
 }) {
     const { t } = useTranslation();
-
-    useEffect(() => {
-        analytics.viewGuides("gen9-ou");
-    }, []);
 
     return (
         <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">

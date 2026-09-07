@@ -1,5 +1,6 @@
 import pokemonSummariesRaw from "../data/pokemon-summaries.json";
 import pokedexRaw from "../data/pokedex.json";
+export { getPokemonSlug } from "./pokemon-slug";
 
 type BaseStats = {
     hp: number;
@@ -53,16 +54,6 @@ export function getPokemonSummary(name: string): PokemonSummary | undefined {
 
 export function getPokemonDisplayName(name: string): string | undefined {
     return displayNameMap[normalizePokemonName(name)];
-}
-
-export function getPokemonSlug(name: string): string {
-    return name
-        .normalize("NFKD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .replace(/[’']/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
 }
 
 export function getAllPokemonNames() {

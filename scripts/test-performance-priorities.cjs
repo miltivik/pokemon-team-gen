@@ -13,6 +13,10 @@ const globalStyles = read("app/globals.css");
 const equipo = read("app/(site)/equipo/equipo-page-client.tsx");
 const teamForm = read("components/TeamForm.tsx");
 const webVitals = read("components/WebVitalsTracker.tsx");
+const hero = read("components/home/HeroSection.tsx");
+const landing = read("components/seo/TeamBuilderLandingPage.tsx");
+const pokemonSummary = read("lib/pokemon-summary.ts");
+const pokemonSlug = read("lib/pokemon-slug.ts");
 const renderStart = configurar.indexOf("return (");
 const formIndex = configurar.indexOf("<TeamForm", renderStart);
 const heroIndex = configurar.indexOf("<AdHero", renderStart);
@@ -91,5 +95,11 @@ assert.match(
   /onINP\(sendToAnalytics\)/,
   "INP must remain registered after analytics consent"
 );
+assert.match(hero, /@\/lib\/pokemon-slug/);
+assert.doesNotMatch(hero, /@\/lib\/pokemon-summary/);
+assert.match(landing, /@\/lib\/pokemon-slug/);
+assert.match(pokemonSummary, /export \{ getPokemonSlug \} from ["']\.\/pokemon-slug["']\;/);
+assert.match(pokemonSlug, /export function getPokemonSlug/);
+assert.doesNotMatch(pokemonSlug, /pokemon-summaries|pokedex\.json/);
 
 console.log("Performance priority regressions passed.");

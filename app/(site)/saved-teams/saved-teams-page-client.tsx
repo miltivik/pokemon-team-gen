@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { AdResponsive, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { SavedTeamsPageSkeleton } from "@/components/page-skeletons";
 import { useTranslation } from "@/lib/i18n";
-import { analytics } from "@/lib/analytics";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { getPokemonSummary } from "@/lib/pokemon-summary";
 import {
@@ -93,8 +92,6 @@ export default function SavedTeamsPageClient() {
             setSavedTeams(readSavedTeamsFromStorage());
             setLoading(false);
         });
-
-        analytics.viewSavedTeams();
 
         return () => {
             window.cancelAnimationFrame(frameId);

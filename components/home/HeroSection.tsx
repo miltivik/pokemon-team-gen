@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
-import { getPokemonSlug } from "@/lib/pokemon-summary";
+import { getPokemonSlug } from "@/lib/pokemon-slug";
 
 const HERO_PREVIEW_POKEMON = [
     "Great Tusk",

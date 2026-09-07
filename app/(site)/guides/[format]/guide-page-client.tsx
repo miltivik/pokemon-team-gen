@@ -20,7 +20,6 @@ import { AdBanner, AdHero, AdInline } from "@/components/monetization/Ads";
 import { PokemonStatCard } from "@/components/guides/PokemonStatCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { analytics } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { CombinedPokemonData } from "@/lib/pikalytics";
 import { FORMATS, type FormatId } from "@/config/formats";
@@ -68,8 +67,6 @@ export default function DynamicGuidePageClient({
         translatedDescription === descriptionKey ? t("guides.genericDesc") : translatedDescription;
 
     useEffect(() => {
-        analytics.viewGuides(format);
-
         const controller = new AbortController();
 
         async function fetchData() {

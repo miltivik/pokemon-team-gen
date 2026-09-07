@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AdHero, AdBanner, AdInline } from "@/components/monetization/Ads";
 import { useTranslation } from "@/lib/i18n";
-import { analytics } from "@/lib/analytics";
 
 type ChangeType = "new" | "improved" | "fixed";
 
@@ -87,10 +85,6 @@ export default function ChangelogPage() {
             ] as const,
         },
     ] as const;
-
-    useEffect(() => {
-        analytics.viewChangelog();
-    }, []);
 
     return (
         <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans">

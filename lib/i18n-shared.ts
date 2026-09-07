@@ -11,6 +11,23 @@ export function resolveLang(value: string | null | undefined): Lang {
     return isLang(value) ? value : DEFAULT_LANG;
 }
 
+const LOCALIZED_PATHS: Record<string, Record<Lang, string>> = {
+    "/": { en: "/", es: "/es" },
+    "/configurar": { en: "/configurar", es: "/es/configurar" },
+    "/equipo": { en: "/equipo", es: "/es/equipo" },
+};
+
+export function getPathLanguage(pathname: string): Lang {
+    return pathname === "/es" || pathname.startsWith("/es/") ? "es" : "en";
+}
+
+export function getLocalizedPath(pathname: string, lang: Lang): string | null {
+    const pathEntry = Object.values(LOCALIZED_PATHS).find(
+        (paths) => Object.values(paths).includes(pathname)
+    );
+    return pathEntry?.[lang] ?? null;
+}
+
 export function translateFromMap<Key extends string>(
     dictionary: Record<Lang, Record<Key, string>>,
     lang: Lang,

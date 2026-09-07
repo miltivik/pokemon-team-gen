@@ -54,7 +54,7 @@ export function Footer() {
                         <ul className="space-y-2 text-sm">
                             <li>
                                 <Link
-                                    href="/configurar"
+                                    href={lang === "es" ? "/es/configurar" : "/configurar"}
                                     className="text-zinc-600 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
                                 >
                                     {copy.generator}

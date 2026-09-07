@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import {
     BookOpen,
@@ -17,7 +16,6 @@ import { AdBanner, AdHero, AdInline } from "@/components/monetization/Ads";
 import { MetaOverview } from "@/components/guides/MetaOverview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { analytics } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
 import { COLOR_THEMES, FORMAT_GUIDES } from "@/config/format-guides";
 import { CURRENT_VGC_FORMAT } from "@/config/formats";
@@ -35,10 +33,6 @@ export default function VGCGuideClient({
     initialData: MetaOverviewPayload | null;
 }) {
     const { t, lang } = useTranslation();
-
-    useEffect(() => {
-        analytics.viewGuides("vgc");
-    }, []);
 
     const guideData = FORMAT_GUIDES.vgc;
 

@@ -104,6 +104,7 @@ const growthFeaturedProfiles = [
 
 async function checkPseo() {
   const competitiveSource = fs.readFileSync(path.join(root, "lib/competitive-sets.ts"), "utf8");
+  const relatedSource = fs.readFileSync(path.join(root, "lib/related-pokemon.ts"), "utf8");
   const profileSource = fs.readFileSync(
     path.join(root, "app/(site)/pokemon/[name]/page.tsx"),
     "utf8"
@@ -148,6 +149,26 @@ async function checkPseo() {
     /if \(!curated\) return null/,
     "Pokemon guidance must not disappear for the majority of non-curated profiles"
   );
+  assert.match(
+    relatedSource,
+    /isAllowedInFormat/,
+    "related Pokemon candidates must use the selected format legality rules"
+  );
+  assert.match(
+    relatedSource,
+    /source: "smogon"[\s\S]*?sourceInfo/,
+    "related Pokemon results must expose their data provenance"
+  );
+  assert.match(
+    profileSource,
+    /getTeammatesFor\(finalName, profileFormat\)/,
+    "Pokemon profiles must request teammates in their resolved format"
+  );
+  assert.match(
+    profileSource,
+    /getChecksFor\(finalName, profileFormat\)/,
+    "Pokemon profiles must request type threats in their resolved format"
+  );
 
   const expectedProfiles = new Map([
     ["/pokemon/garchomp", "Garchomp"],
@@ -178,6 +199,21 @@ async function checkPseo() {
   }
 
   const profile = await get("/pokemon/garchomp");
+  assert.match(
+    profile.text,
+    /Threats by Type Advantage for[\s\S]*?Garchomp/,
+    "Pokemon profiles must label type heuristics as type-advantage threats"
+  );
+  assert.doesNotMatch(
+    profile.text,
+    /current Gen 9 OU usage data/,
+    "Pokemon profiles must not claim every recommendation is current Gen 9 OU data"
+  );
+  assert.match(
+    profile.text,
+    /href="\/configurar\?format=gen9ou(?:&|&amp;)fixedPokemon=Garchomp/,
+    "Pokemon profile team CTAs must preserve the resolved format"
+  );
   const profileLd = getJsonLd(profile.text).find((entry) => entry["@type"] === "WebPage");
   assert.ok(profileLd, "Pokemon profiles must render WebPage JSON-LD");
   assert.ok(
@@ -885,8 +921,23 @@ async function checkAdsenseReadiness() {
   );
   assert.match(
     analytics,
-    /function trackPageView\([^)]*\)\s*{\s*if \(!hasConsent\("analytics"\)\) return;/,
+    /function trackPageView\([^)]*\)[^{]*{[\s\S]*?if \(!hasConsent\("analytics"\)\) return false;/,
     "pageviews must check current analytics consent"
+  );
+  assert.match(
+    scripts,
+    /send_page_view:\s*false/,
+    "GA must leave pageview emission to the global tracker"
+  );
+  assert.match(
+    analytics,
+    /lastTrackedPage/,
+    "global pageview tracking must deduplicate remounts"
+  );
+  assert.match(
+    analytics,
+    /page_location/,
+    "global pageview tracking must send the real location"
   );
   assert.match(
     analytics,

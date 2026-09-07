@@ -1,4 +1,3 @@
-import { getSmogonStats } from "./smogon-stats";
 import {
   getAllPokemonNames,
   getPokemonDisplayName,
@@ -7,6 +6,10 @@ import {
 import { hasCompetitiveData } from "./competitive-sets";
 import { getPokemonRole } from "./showdown-data";
 import { getWeaknesses } from "./type-chart";
+import { isAllowedInFormat } from "./format-rules";
+import type { FormatId } from "@/config/formats";
+import { getSmogonSourceInfo, getSmogonStats } from "./smogon-stats";
+import type { SmogonSourceInfo } from "./data-sources/smogon-types";
 
 /**
  * Build-time helpers for internal linking between Pokemon profile pages.
@@ -17,27 +20,35 @@ import { getWeaknesses } from "./type-chart";
  * sections populated and the build green.
  */
 
-const TEAMMATES_FORMAT = "gen9ou";
+const TEAMMATES_FORMAT: FormatId = "gen9ou";
 
-let teammatesIndex: Record<string, string[]> | null = null;
+export interface RelatedPokemonResult {
+  pokemon: string[];
+  source: "smogon" | "heuristic";
+  format: FormatId;
+  sourceInfo: SmogonSourceInfo | null;
+}
+
+const teammatesIndexes = new Map<string, Record<string, string[]>>();
 
 function baseStatTotal(summary: { baseStats: Record<string, number> }): number {
   return Object.values(summary.baseStats).reduce((a, b) => a + b, 0);
 }
 
-async function loadTeammatesIndex(): Promise<Record<string, string[]>> {
-  if (teammatesIndex) return teammatesIndex;
+async function loadTeammatesIndex(format: FormatId): Promise<Record<string, string[]>> {
+  const cached = teammatesIndexes.get(format);
+  if (cached) return cached;
 
   const index: Record<string, string[]> = {};
   try {
-    const stats = await getSmogonStats(TEAMMATES_FORMAT);
+    const stats = await getSmogonStats(format);
     for (const mon of Object.values(stats)) {
       const ranked = Object.entries(mon.teammates)
         .sort((a, b) => b[1] - a[1])
         .map(([teammateId]) => getPokemonDisplayName(teammateId))
         .filter((displayName): displayName is string => {
           if (!displayName) return false;
-          return hasCompetitiveData(displayName);
+          return hasCompetitiveData(displayName) && isAllowedInFormat(displayName, format);
         })
         .slice(0, 8);
 
@@ -48,18 +59,23 @@ async function loadTeammatesIndex(): Promise<Record<string, string[]>> {
     // Stats unavailable: callers fall back to static heuristics.
   }
 
-  teammatesIndex = index;
+  teammatesIndexes.set(format, index);
   return index;
 }
 
-function getStaticTeammates(name: string, limit: number): string[] {
+function getStaticTeammates(name: string, format: FormatId, limit: number): string[] {
   const summary = getPokemonSummary(name);
   if (!summary) return [];
 
   const role = getPokemonRole(name);
 
   return getAllPokemonNames()
-    .filter((candidate) => candidate !== name && hasCompetitiveData(candidate))
+    .filter(
+      (candidate) =>
+        candidate !== name &&
+        hasCompetitiveData(candidate) &&
+        isAllowedInFormat(candidate, format)
+    )
     .map((candidate) => {
       const candidateSummary = getPokemonSummary(candidate);
       if (!candidateSummary) return null;
@@ -90,30 +106,57 @@ function getStaticTeammates(name: string, limit: number): string[] {
  * Pokemon that frequently appear on the same teams as `name` in real usage
  * data, falling back to a static role/type heuristic.
  */
-export async function getTeammatesFor(name: string, limit = 8): Promise<string[]> {
-  const index = await loadTeammatesIndex();
+export async function getTeammatesFor(
+  name: string,
+  format: FormatId,
+  limit = 8
+): Promise<RelatedPokemonResult> {
+  const emptyResult: RelatedPokemonResult = {
+    pokemon: [],
+    source: "heuristic",
+    format,
+    sourceInfo: null,
+  };
+  if (!isAllowedInFormat(name, format)) return emptyResult;
+
+  const index = await loadTeammatesIndex(format);
   const fromStats = index[name];
 
-  if (fromStats && fromStats.length >= 4) {
-    return fromStats.slice(0, limit);
+  if (fromStats && fromStats.length > 0) {
+    return {
+      pokemon: fromStats.slice(0, limit),
+      source: "smogon",
+      format,
+      sourceInfo: getSmogonSourceInfo(format),
+    };
   }
 
-  return getStaticTeammates(name, limit);
+  return {
+    pokemon: getStaticTeammates(name, format, limit),
+    source: "heuristic",
+    format,
+    sourceInfo: getSmogonSourceInfo(format),
+  };
 }
 
 /**
  * Pokemon whose STAB hits one of `name`'s weaknesses super effectively —
  * a deterministic, data-free approximation of "checks".
  */
-export function getChecksFor(name: string, limit = 6): string[] {
+export function getChecksFor(name: string, format: FormatId, limit = 6): string[] {
   const summary = getPokemonSummary(name);
-  if (!summary) return [];
+  if (!summary || !isAllowedInFormat(name, format)) return [];
 
   const weaknesses = getWeaknesses(summary.types);
   if (weaknesses.length === 0) return [];
 
   return getAllPokemonNames()
-    .filter((candidate) => candidate !== name && hasCompetitiveData(candidate))
+    .filter(
+      (candidate) =>
+        candidate !== name &&
+        hasCompetitiveData(candidate) &&
+        isAllowedInFormat(candidate, format)
+    )
     .map((candidate) => {
       const candidateSummary = getPokemonSummary(candidate);
       if (!candidateSummary) return null;
@@ -161,7 +204,7 @@ export async function getPopularPokemon(limit = 12): Promise<string[]> {
       .map((monName) => getPokemonDisplayName(monName))
       .filter((displayName): displayName is string => {
         if (!displayName) return false;
-        return hasCompetitiveData(displayName);
+        return hasCompetitiveData(displayName) && isAllowedInFormat(displayName, TEAMMATES_FORMAT);
       })
       .slice(0, limit);
 
@@ -170,5 +213,7 @@ export async function getPopularPokemon(limit = 12): Promise<string[]> {
     // Stats unavailable: fall through to the curated list.
   }
 
-  return POPULAR_FALLBACK.filter((name) => hasCompetitiveData(name)).slice(0, limit);
+  return POPULAR_FALLBACK
+    .filter((name) => hasCompetitiveData(name) && isAllowedInFormat(name, TEAMMATES_FORMAT))
+    .slice(0, limit);
 }

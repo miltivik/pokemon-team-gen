@@ -1,8 +1,9 @@
 import { SmogonDataSource } from "./data-sources/smogon";
-import type { NormalizedSmogonData } from "./data-sources/smogon-types";
+import type { NormalizedSmogonData, SmogonSourceInfo } from "./data-sources/smogon-types";
 
 const cachedDataV2: Map<string, Record<string, SmogonMonData>> = new Map();
 const lastFetchTime: Map<string, number> = new Map();
+const sourceInfoByFormat: Map<string, SmogonSourceInfo | null> = new Map();
 const CACHE_TTL = 1000 * 60 * 60;
 
 export interface SmogonMonData {
@@ -89,17 +90,26 @@ export async function getSmogonStats(
   }
 
   try {
+    const sourceData = typeof window === "undefined"
+      ? await SmogonDataSource.getStats(format)
+      : null;
     const data = typeof window === "undefined"
-      ? normalizeData(await SmogonDataSource.getStats(format))
+      ? normalizeData(sourceData)
       : await fetchSmogonStatsFromApi(format);
+    sourceInfoByFormat.set(format, sourceData?.meta.sourceInfo ?? null);
     cachedDataV2.set(format, data);
     lastFetchTime.set(format, Date.now());
     return data;
   } catch {
+    sourceInfoByFormat.set(format, null);
     cachedDataV2.set(format, {});
     lastFetchTime.set(format, Date.now());
     return {};
   }
+}
+
+export function getSmogonSourceInfo(format: string): SmogonSourceInfo | null {
+  return sourceInfoByFormat.get(format) ?? null;
 }
 
 export async function getTopPokemonForMeta(

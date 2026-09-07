@@ -5,8 +5,7 @@ import { createContext, useContext, useState, ReactNode, useCallback, useEffect 
 import {
     createLangCookie,
     DEFAULT_LANG,
-    LANGUAGE_COOKIE_KEY,
-    resolveLang,
+    getPathLanguage,
     type Lang,
     translateFromMap,
 } from "@/lib/i18n-shared";
@@ -1227,7 +1226,8 @@ interface LanguageProviderProps {
 
 export function LanguageProvider({ children, initialLang }: LanguageProviderProps) {
     const pathname = usePathname();
-    const [lang, setLang] = useState<Lang>(initialLang ?? DEFAULT_LANG);
+    const routeLang = getPathLanguage(pathname);
+    const [lang, setLang] = useState<Lang>(initialLang ?? routeLang ?? DEFAULT_LANG);
     const [restored, setRestored] = useState(false);
 
     const t = useCallback(
@@ -1238,17 +1238,8 @@ export function LanguageProvider({ children, initialLang }: LanguageProviderProp
     );
 
     useEffect(() => {
-        const cookieLang = pathname === "/es" || pathname.startsWith("/es/")
-            ? "es"
-            : resolveLang(
-                document.cookie
-                    .split("; ")
-                    .find((entry) => entry.startsWith(`${LANGUAGE_COOKIE_KEY}=`))
-                    ?.split("=")[1]
-            );
-
         const frame = window.requestAnimationFrame(() => {
-            setLang(cookieLang);
+            setLang(getPathLanguage(pathname));
             setRestored(true);
         });
 

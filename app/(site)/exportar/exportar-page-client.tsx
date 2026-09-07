@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Copy, FileText, Link2, ListOrdered, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -36,10 +36,6 @@ export function ExportarPageClient({ expectsTeam }: ExportarPageClientProps) {
     const { team, format, isHydrated } = useTeam();
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
-
-    useEffect(() => {
-        analytics.viewExportar();
-    }, []);
 
     if (!isHydrated) {
         return expectsTeam ? <ExportPageSkeleton /> : <ExportarEmptyState />;

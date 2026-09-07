@@ -16,7 +16,6 @@ import { formatPercentage } from "@/lib/format-percent";
 import { useTranslation } from "@/lib/i18n";
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { getPokemonSlug, getPokemonSummary } from "@/lib/pokemon-summary";
-import { analytics } from "@/lib/analytics";
 
 const FORMAT_OPTIONS = [
   { id: "gen9ou", name: "Gen 9 OU", nameEs: "Gen 9 OU" },
@@ -71,10 +70,6 @@ export default function TierListPageClient({ initialTierData }: TierListPageClie
   const [format, setFormat] = useState("gen9ou");
   const [tierData, setTierData] = useState(initialTierData);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    analytics.viewTierList();
-  }, []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);

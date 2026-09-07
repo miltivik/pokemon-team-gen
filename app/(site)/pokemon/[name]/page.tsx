@@ -12,6 +12,7 @@ import {
 import { getPokemonSpriteUrl } from "@/lib/pokemon-sprites";
 import { hasCompetitiveData, getAvailableRoles, getCompetitiveSetByRole, getAvailableFormats, getCompetitiveMoveNames } from "@/lib/competitive-sets";
 import { CORE_FORMATS } from "@/config/format-labels";
+import { FORMATS, type FormatId } from "@/config/formats";
 import { CURATED_POKEMON } from "@/config/curated-pokemon";
 import { getSmogonUrl } from "@/lib/pokemon-tier";
 import { getAbilityDescription, getLearnableMovesWithDetails, getPokemonRole, getMoveData } from "@/lib/showdown-data";
@@ -143,11 +144,16 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
   }
 
   const spriteUrl = getPokemonSpriteUrl(finalName, "artwork");
-  const profileFormat = featuredProfile?.formatId ?? "gen9ou";
+  const profileFormat = (featuredProfile?.formatId ?? "gen9ou") as FormatId;
+  const formatLabel = FORMATS[profileFormat]?.label ?? profileFormat;
   const roles = getAvailableRoles(finalName, profileFormat);
   const smogonUrl = getSmogonUrl(finalName, profileFormat);
-  const teammates = await getTeammatesFor(finalName);
-  const checks = getChecksFor(finalName);
+  const teammateResult = await getTeammatesFor(finalName, profileFormat);
+  const teammates = teammateResult.pokemon;
+  const checks = getChecksFor(finalName, profileFormat);
+  const teammateSourceLabel = teammateResult.sourceInfo
+    ? `${teammateResult.sourceInfo.resolvedFormat}, ${teammateResult.sourceInfo.month}${teammateResult.sourceInfo.fallbackType === "exact" ? "" : `; ${teammateResult.sourceInfo.fallbackType} fallback`}`
+    : null;
   const coreFormats = getAvailableFormats(finalName)
     .map((key) => ({ key, info: CORE_FORMATS[key] }))
     .filter((entry): entry is { key: string; info: NonNullable<typeof entry.info> } => Boolean(entry.info))
@@ -221,7 +227,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
               #{String(finalSummary.num).padStart(3, "0")} — Smogon-verified competitive data for Pokemon Showdown team building.
             </p>
             <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
-              <Link href={`/configurar?fixedPokemon=${encodeURIComponent(finalName)}`}>
+              <Link href={`/configurar?format=${profileFormat}&fixedPokemon=${encodeURIComponent(finalName)}`}>
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                   Build Team with {finalName}
                 </Button>
@@ -343,7 +349,9 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
               Best Teammates for {finalName}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-              Pokemon that most frequently share teams with {finalName} in current Gen 9 OU usage data.
+              {teammateResult.source === "smogon"
+                ? `Frequently shared teammates in ${formatLabel} data from Smogon${teammateSourceLabel ? ` (${teammateSourceLabel})` : ""}.`
+                : `Suggested ${formatLabel} teammates based on shared roles and types${teammateSourceLabel ? ` after checking Smogon data (${teammateSourceLabel})` : " while format data is unavailable"}.`}
             </p>
             <LinkedPokemonGrid pokemon={teammates} />
           </section>
@@ -352,10 +360,10 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
         {checks.length > 0 && (
           <section className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 mb-8">
             <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-              Pokemon that Check {finalName}
+              Threats by Type Advantage for {finalName}
             </h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-              Strong Pokemon whose STAB attacks exploit the type weaknesses of {finalName}.
+              Pokemon whose STAB types exploit {finalName}&apos;s weaknesses. This is a type matchup heuristic, not a complete battle simulation.
             </p>
             <LinkedPokemonGrid pokemon={checks} />
           </section>
@@ -368,7 +376,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 max-w-lg mx-auto">
             Use our team generator to create a competitive team featuring {finalName} with available moveset, item and EV spread data.
           </p>
-          <Link href={`/configurar?fixedPokemon=${encodeURIComponent(finalName)}`}>
+          <Link href={`/configurar?format=${profileFormat}&fixedPokemon=${encodeURIComponent(finalName)}`}>
             <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6">
               Generate Team &rarr;
             </Button>

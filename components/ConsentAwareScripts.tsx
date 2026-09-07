@@ -56,7 +56,8 @@ export function GA4Loader() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${gaId}', { page_path: window.location.pathname });
+            gtag('config', '${gaId}', { page_path: window.location.pathname, send_page_view: false });
+            window.dispatchEvent(new Event('gtagReady'));
           `,
         }}
       />

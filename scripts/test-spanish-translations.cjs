@@ -148,11 +148,14 @@ function main() {
     "utf8"
   );
   const navbarSource = fs.readFileSync(path.join(root, "components/Navbar.tsx"), "utf8");
+  const footerSource = fs.readFileSync(path.join(root, "components/Footer.tsx"), "utf8");
   const spanishTeamPage = path.join(root, "app/(es)/es/equipo/page.tsx");
   assert.ok(fs.existsSync(spanishTeamPage), "the Spanish generated-team route must exist");
   assert.match(configurarSource, /initialLang === "es" \? "\/es\/equipo"/);
   assert.match(navbarSource, /configurarPath = lang === "es" \? "\/es\/configurar"/);
-  assert.match(navbarSource, /pathname === "\/es\/equipo"/);
+  assert.match(navbarSource, /getLocalizedPath\(pathname/);
+  assert.doesNotMatch(navbarSource, /setLang\(nextLang\)/);
+  assert.match(footerSource, /href=\{lang === "es" \? "\/es\/configurar" : "\/configurar"\}/);
   assert.match(cardSource, /getTranslatedMoveLabel/);
   assert.match(cardSource, /getTranslatedItemLabel/);
   assert.match(detailsSource, /getTranslatedAbilityLabel/);
