@@ -130,27 +130,17 @@ function EquipoPageSkeleton() {
                     <SkeletonPill className="h-6 w-64" />
                 </header>
 
-                <section className="w-full flex justify-center">
-                    <AdHero />
-                </section>
-
                 <div className="flex w-full max-w-4xl flex-wrap items-center justify-center gap-3">
                     {Array.from({ length: 6 }, (_, index) => (
                         <SkeletonPill key={index} className="h-10 w-32 rounded-xl" />
                     ))}
                 </div>
 
-                <section className="w-full flex justify-center py-4">
-                    <AdBanner />
-                </section>
-
                 <div className="mb-8 grid w-full max-w-5xl grid-cols-1 gap-10 pt-8 pb-32 sm:grid-cols-2 md:grid-cols-3">
                     {Array.from({ length: 6 }, (_, index) => (
                         <PokemonCardSkeleton key={index} index={index} />
                     ))}
                 </div>
-
-                <AdInline />
 
                 <section className="w-full max-w-4xl space-y-4 py-8">
                     <SkeletonPill className="mx-auto h-6 w-40" />
@@ -177,10 +167,6 @@ function EquipoPageSkeleton() {
                         aria-hidden="true"
                         className="h-48 animate-pulse rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
                     />
-                </section>
-
-                <section className="w-full flex justify-center py-4">
-                    <AdBanner />
                 </section>
             </main>
         </div>

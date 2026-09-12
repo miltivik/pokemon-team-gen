@@ -95,7 +95,7 @@ function AdSlot({
   const [isUnfilled, setIsUnfilled] = useState(false);
 
   useEffect(() => {
-    if (!hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
+    if (!hasAdvertising || !hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
       return;
     }
 
@@ -105,11 +105,11 @@ function AdSlot({
     } catch (error) {
       console.error("AdSense error:", error);
     }
-  }, [hasConfiguredSlot, mounted]);
+  }, [hasAdvertising, hasConfiguredSlot, mounted]);
 
   useEffect(() => {
     const adElement = adRef.current;
-    if (!hasConfiguredSlot || !mounted || !adElement || !CONFIG.adsense.publisherId) {
+    if (!hasAdvertising || !hasConfiguredSlot || !mounted || !adElement || !CONFIG.adsense.publisherId) {
       return;
     }
 
@@ -129,7 +129,7 @@ function AdSlot({
     return () => {
       observer.disconnect();
     };
-  }, [hasConfiguredSlot, mounted, placement, slot]);
+  }, [hasAdvertising, hasConfiguredSlot, mounted, placement, slot]);
 
   if (!hasConfiguredSlot || !hasAdvertising) return null;
 

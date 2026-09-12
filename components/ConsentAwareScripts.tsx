@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
-import { hasConsent, type ConsentCategory } from "@/lib/consent";
+import { hasConsent, syncConsentFromStorage, type ConsentCategory } from "@/lib/consent";
 import { ADSENSE_PUBLISHER_ID } from "@/lib/adsense";
 
 export function useCategoryConsent(category: ConsentCategory) {
@@ -30,7 +30,7 @@ function AdSenseLoader() {
       async
       src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
       crossOrigin="anonymous"
-      strategy="lazyOnload"
+      strategy="afterInteractive"
     />
   );
 }
@@ -66,6 +66,11 @@ export function GA4Loader() {
 }
 
 export function ConsentAwareScripts() {
+  useEffect(() => {
+    window.addEventListener("storage", syncConsentFromStorage);
+    return () => window.removeEventListener("storage", syncConsentFromStorage);
+  }, []);
+
   return (
     <>
       <AdSenseLoader />

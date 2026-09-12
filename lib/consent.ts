@@ -1,5 +1,4 @@
-const CONSENT_KEY = "ptb_cookie_consent";
-const REGION_COOKIE = "ptb_region";
+export const CONSENT_KEY = "ptb_cookie_consent";
 
 export type ConsentCategory = "analytics" | "advertising";
 
@@ -37,6 +36,8 @@ const DEFAULT_CONSENT: GranularConsent = {
   timestamp: 0,
 };
 
+let sessionConsent: GranularConsent | undefined;
+
 function updateAnalyticsConsent(granted: boolean): void {
   const gtag = window.gtag;
   if (typeof gtag === "function") {
@@ -46,23 +47,8 @@ function updateAnalyticsConsent(granted: boolean): void {
   }
 }
 
-/**
- * Whether the visitor is in a region where cookie consent is legally
- * required (EEA, UK, Switzerland). Resolved from the geo cookie set by
- * middleware from Cloudflare/Vercel request headers. Unknown regions
- * default to consent-required (privacy-conservative).
- */
-export function isConsentRequiredRegion(): boolean {
-  if (typeof window === "undefined") return true;
-  const match = document.cookie
-    .split("; ")
-    .find((entry) => entry.startsWith(`${REGION_COOKIE}=`));
-  return match ? decodeURIComponent(match.split("=")[1]) === "eu" : true;
-}
-
 export function getConsent(): ConsentState {
   if (typeof window === "undefined") return "pending";
-  if (!isConsentRequiredRegion()) return "granted";
   const consent = getGranularConsent();
   if (!consent.timestamp) return "pending";
   return consent.analytics || consent.advertising ? "granted" : "denied";
@@ -70,39 +56,38 @@ export function getConsent(): ConsentState {
 
 export function getGranularConsent(): GranularConsent {
   if (typeof window === "undefined") return DEFAULT_CONSENT;
-  const stored = localStorage.getItem(CONSENT_KEY);
-  if (!stored) return DEFAULT_CONSENT;
+  if (sessionConsent) return sessionConsent;
   try {
+    const stored = localStorage.getItem(CONSENT_KEY);
+    if (!stored) return DEFAULT_CONSENT;
+    if (stored === "denied") {
+      return { analytics: false, advertising: false, timestamp: 1 };
+    }
     const parsed = JSON.parse(stored);
     if (typeof parsed === "object" && parsed !== null) {
       // GDPR migration: consent stored before the "advertising" category
       // existed was never informed about ad purposes, so it cannot cover
       // them. Treat it as absent — the banner will ask again.
-      if (!("advertising" in parsed)) return DEFAULT_CONSENT;
+      if (
+        typeof parsed.analytics !== "boolean" ||
+        typeof parsed.advertising !== "boolean" ||
+        typeof parsed.timestamp !== "number" ||
+        !Number.isFinite(parsed.timestamp) ||
+        parsed.timestamp <= 0
+      ) return DEFAULT_CONSENT;
       return {
-        analytics: Boolean(parsed.analytics),
-        advertising: Boolean(parsed.advertising),
-        timestamp: Number(parsed.timestamp) || 0,
+        analytics: parsed.analytics,
+        advertising: parsed.advertising,
+        timestamp: parsed.timestamp,
       };
     }
   } catch {
-    // Invalid JSON, return default
-  }
-  if (stored === "granted") {
-    // Legacy all-accepted string from before granular consent: same GDPR
-    // reasoning, ask again for the new advertising purpose.
-    return DEFAULT_CONSENT;
-  }
-  if (stored === "denied") {
-    return { analytics: false, advertising: false, timestamp: Date.now() };
+    // Malformed or inaccessible storage must never grant consent.
   }
   return DEFAULT_CONSENT;
 }
 
 export function hasConsent(category: ConsentCategory): boolean {
-  // Outside consent-required regions (EEA/UK/CH) no opt-in is needed, so
-  // ads and analytics serve without the banner.
-  if (!isConsentRequiredRegion()) return true;
   const consent = getGranularConsent();
   return consent[category] === true;
 }
@@ -110,8 +95,14 @@ export function hasConsent(category: ConsentCategory): boolean {
 export function setConsent(state: ConsentState): void {
   if (typeof window === "undefined") return;
   if (state === "pending") {
-    localStorage.removeItem(CONSENT_KEY);
-    window.dispatchEvent(new Event("consentChanged"));
+    sessionConsent = DEFAULT_CONSENT;
+    try {
+      localStorage.removeItem(CONSENT_KEY);
+      sessionConsent = undefined;
+    } catch {
+      // Keep the pending choice in memory when browser storage is blocked.
+    }
+    notifyConsentChange();
     return;
   }
   const granted = state === "granted";
@@ -123,10 +114,41 @@ export function setConsent(state: ConsentState): void {
 
 export function setGranularConsent(consent: Omit<GranularConsent, "timestamp">): void {
   if (typeof window === "undefined") return;
-  const storedConsent = { ...consent, timestamp: Date.now() };
-  localStorage.setItem(CONSENT_KEY, JSON.stringify(storedConsent));
-  updateAnalyticsConsent(storedConsent.analytics);
+  const storedConsent = {
+    analytics: consent.analytics === true,
+    advertising: consent.advertising === true,
+    timestamp: Date.now(),
+  };
+  sessionConsent = storedConsent;
+  try {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify(storedConsent));
+    sessionConsent = undefined;
+  } catch {
+    // A quota failure must not leave an older grant to be read after reload.
+    try {
+      localStorage.removeItem(CONSENT_KEY);
+    } catch {
+      // Storage may be completely unavailable; use the in-memory choice.
+    }
+  }
+  notifyConsentChange();
+}
+
+function notifyConsentChange(): void {
+  const consent = getGranularConsent();
+  updateAnalyticsConsent(consent.analytics);
+  // Unmounting next/script does not stop an already executed third-party script.
+  const mustReload =
+    (!consent.analytics && document.getElementById("ga4-script")) ||
+    (!consent.advertising && document.getElementById("adsense"));
   window.dispatchEvent(new Event("consentChanged"));
+  if (mustReload) window.location.reload();
+}
+
+export function syncConsentFromStorage(event: StorageEvent): void {
+  if (event.key !== CONSENT_KEY && event.key !== null) return;
+  sessionConsent = undefined;
+  notifyConsentChange();
 }
 
 export function getConsentCategories(): ConsentCategory[] {
@@ -137,12 +159,12 @@ export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; desc
   analytics: {
     name: "Analytics",
     description: "Help us understand how visitors interact with our website.",
-    cookies: ["_ga", "_gid", "_gat", "_utma", "_utmb", "_utmc"],
+    cookies: ["_ga", "_ga_*"],
   },
   advertising: {
     name: "Advertising",
     description:
-      "Enables personalized ads through Google AdSense. Denying this keeps the site free of ad scripts and ad cookies.",
+      "Allows Google AdSense to load. Rejecting stops future ad loading; withdrawing permission may reload the page. Google may require a separate certified consent message.",
     cookies: ["__gads", "__gpi", "IDE", "test_cookie"],
   },
 };
@@ -160,7 +182,7 @@ export function getConsentCategoryCopy(
       : {
           name: "Publicidad",
           description:
-            "Activa anuncios personalizados mediante Google AdSense. Si la rechazas, no se cargarán scripts ni cookies publicitarias.",
+            "Permite cargar Google AdSense. Rechazar impide nuevas cargas; retirar el permiso puede recargar la página. Google puede requerir un mensaje de consentimiento certificado adicional.",
         };
   }
 
@@ -175,7 +197,7 @@ export function getConsentUiCopy(lang: "en" | "es"): ConsentUiCopy {
     return {
       title: "Valoramos tu privacidad",
       description:
-        "Elige si permites analítica y anuncios personalizados. El almacenamiento del idioma y del tema es esencial y siempre está activo.",
+        "Elige si permites analítica y publicidad. El almacenamiento del idioma y del tema es esencial y siempre está activo.",
       settingsDescription:
         "Administra tus preferencias de analítica y publicidad. El almacenamiento del idioma y del tema es esencial.",
       learnMore: "Más información en nuestra Política de privacidad",
@@ -193,7 +215,7 @@ export function getConsentUiCopy(lang: "en" | "es"): ConsentUiCopy {
   return {
     title: "We value your privacy",
     description:
-      "Choose whether to allow analytics and personalized ads. Language and theme storage are essential and always on.",
+      "Choose whether to allow analytics and advertising. Language and theme storage are essential and always on.",
     settingsDescription:
       "Manage your analytics and advertising consent. Language and theme storage are essential.",
     learnMore: "Learn more in our Privacy Policy",

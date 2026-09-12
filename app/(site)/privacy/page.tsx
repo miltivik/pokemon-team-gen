@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
                     Privacy Policy
                 </h1>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
-                    Last updated: July 17, 2026
+                    Last updated: September 12, 2026
                 </p>
 
                 <div className="prose prose-zinc dark:prose-invert max-w-none space-y-6">
@@ -27,8 +27,9 @@ export default function PrivacyPolicyPage() {
                             We collect minimal information to provide and improve our Service:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300">
-                            <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our Service, including pages visited, time spent on pages, and features used. This data is collected through analytics tools and is used solely to improve user experience.</li>
-                            <li><strong>Essential Local Storage Data:</strong> Your saved Pokémon teams, language, and theme are stored locally in your browser so the Service can remember them. This data never leaves your device and is not transmitted to our servers.</li>
+                            <li><strong>Usage Data:</strong> If you allow analytics, Google Analytics 4 collects information about pages visited and features used to help us improve the Service.</li>
+                            <li><strong>Browser Storage:</strong> Saved teams and settings are stored in your browser. Some settings, such as your language, use cookies that are also sent to our servers. Your cookie choices are stored locally under <code>ptb_cookie_consent</code>.</li>
+                            <li><strong>Technical Data:</strong> Our hosting and security providers process connection information, including IP addresses and request details, to deliver and protect the Service.</li>
                             <li><strong>Cookies and Similar Technologies:</strong> We use cookies and similar tracking technologies for analytics and advertising purposes. See Section 5 for more details.</li>
                         </ul>
                     </section>
@@ -50,10 +51,16 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">4. Google AdSense</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                            We use Google AdSense to display advertisements on our Service. Google AdSense uses cookies to serve ads based on your prior visits to our website or other websites. Google&apos;s use of advertising cookies enables it and its partners to serve ads to you based on your visit to our Service and/or other sites on the Internet.
+                            If you allow advertising, our Service can load Google AdSense. Google and its advertising partners may place and read cookies, use web beacons, and process IP addresses and other identifiers to deliver and measure ads and prevent fraud. Where permitted and with any required consent, advertising cookies may also be used to personalize ads based on visits to this and other websites.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
-                            Where required, Google Privacy &amp; messaging manages your advertising consent choices. Advertising cookies are governed by the choice you make through Google&apos;s consent message.
+                            Our local advertising choice controls whether we load AdSense; it is not a certified consent management platform (CMP). Personalized ads in the European Economic Area, the United Kingdom, and Switzerland require a separate Google-certified CMP. Any additional consent message shown by Google or its partners explains the purposes and partners it covers.
+                        </p>
+                        <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
+                            Learn more about{" "}
+                            <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+                                how Google uses information from sites and apps that use its services
+                            </a>.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
                             You may opt out of personalized advertising by visiting{" "}
@@ -69,10 +76,10 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">5. Cookie Consent</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                            Our local cookie banner controls analytics only. Language and theme storage is essential and remains active.
+                            Our local cookie banner controls both analytics and advertising. Both are off until you explicitly allow them, regardless of your location. Essential storage for language, theme, and your cookie choices remains available.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
-                            Choosing &quot;Reject Optional&quot; prevents Google Analytics 4 from loading, but it does not replace your separate Google advertising choice. You can change your analytics choice at any time by clearing your browser&apos;s localStorage for poketeambuilder.com and refreshing the page.
+                            Choose &quot;Reject Optional&quot; to decline both categories, or use the switches and &quot;Save Choices&quot; to choose them separately. You can change or withdraw your choices at any time using &quot;Cookie Settings&quot; in the footer. If a disabled service has already loaded, the page reloads to stop its scripts. Withdrawal stops future loading but does not undo data already sent or automatically remove existing cookies; you can remove those through your browser settings. If browser storage is unavailable, choices may only last for the current page.
                         </p>
                     </section>
 
@@ -83,8 +90,8 @@ export default function PrivacyPolicyPage() {
                         </p>
                         <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300">
                             <li><strong>Essential Cookies:</strong> Required for the basic functionality of the website, such as remembering your language preference and theme choice.</li>
-                            <li><strong>Analytics Cookies:</strong> Help us understand how visitors interact with our Service by collecting and reporting information anonymously.</li>
-                            <li><strong>Advertising Cookies:</strong> Used by Google AdSense subject to the choice managed by Google Privacy &amp; messaging where required.</li>
+                            <li><strong>Analytics Cookies:</strong> Google Analytics 4 may use cookies such as <code>_ga</code> and <code>_ga_*</code> when you allow analytics. These use identifiers to measure usage; reports are aggregated, but collection is not described as anonymous.</li>
+                            <li><strong>Advertising Cookies:</strong> Google AdSense and its partners may use cookies such as <code>__gads</code>, <code>__gpi</code>, and <code>IDE</code> when advertising is allowed, subject to any additional consent requirements.</li>
                         </ul>
                     </section>
 
@@ -96,6 +103,7 @@ export default function PrivacyPolicyPage() {
                         <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300">
                             <li><strong>Smogon / Pokémon Showdown:</strong> We use publicly available competitive Pokémon data to generate teams and provide guides.</li>
                             <li><strong>Google AdSense:</strong> For serving advertisements. Governed by Google&apos;s Privacy Policy.</li>
+                            <li><strong>Google Analytics 4:</strong> For measuring site usage when you allow analytics. See the Google data-use link above.</li>
                             <li><strong>Ko-fi:</strong> For voluntary donations. Governed by Ko-fi&apos;s privacy policy.</li>
                         </ul>
                     </section>

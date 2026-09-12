@@ -954,10 +954,12 @@ async function checkAdsenseReadiness() {
     /addEventListener\("consentChanged"/,
     "Web Vitals must activate when analytics consent changes after mount"
   );
-  assert.match(privacy, /Google Privacy\s*&amp;\s*messaging|Google Privacy and messaging/);
-  assert.match(privacy, /Last updated: July 17, 2026/);
-  assert.match(privacy, /local cookie banner controls analytics only/i);
-  assert.doesNotMatch(privacy, /will not load analytics or advertising scripts/i);
+  assert.match(privacy, /Google-certified CMP/, "privacy must distinguish local choices from certified consent");
+  assert.match(privacy, /Last updated: September 12, 2026/);
+  assert.match(privacy, /local cookie banner controls both analytics and advertising/i);
+  assert.match(privacy, /https:\/\/policies.google.com\/technologies\/partner-sites/);
+  assert.match(privacy, /Cookie Settings/, "privacy must explain how to withdraw consent");
+  assert.doesNotMatch(privacy, /local cookie banner controls analytics only/i);
   assert.doesNotMatch(design + plan, /\bpreferences\b/i);
   assert.doesNotMatch(envExample, /Ezoic|Combina ambas redes/i);
 }

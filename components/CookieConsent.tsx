@@ -8,7 +8,6 @@ import {
   getConsentCategories,
   getConsentUiCopy,
   getGranularConsent,
-  isConsentRequiredRegion,
   setConsent,
   setGranularConsent,
   type ConsentCategory,
@@ -42,21 +41,18 @@ export function CookieConsent() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Consent is browser-only state read after hydration.
     setConsentState(stored);
     const isPending = stored.timestamp === 0;
-    setVisible(isPending && isConsentRequiredRegion());
+    setVisible(isPending);
   }, []);
 
   useEffect(() => {
     const handleConsentChange = () => {
-      setConsentState(getGranularConsent());
+      const current = getGranularConsent();
+      setConsentState(current);
+      setVisible(current.timestamp === 0);
     };
     window.addEventListener("consentChanged", handleConsentChange);
     return () => window.removeEventListener("consentChanged", handleConsentChange);
   }, []);
-
-  const handleAcceptAll = () => {
-    setConsent("granted");
-    setVisible(false);
-  };
 
   const handleRejectAll = () => {
     setConsent("denied");
@@ -156,10 +152,10 @@ export function CookieConsent() {
                   {copy.reject}
                 </button>
                 <button
-                  onClick={handleAcceptAll}
+                  onClick={() => handleSaveSettings(consent)}
                   className="min-h-11 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
                 >
-                  {copy.accept}
+                  {copy.save}
                 </button>
               </div>
             </>
