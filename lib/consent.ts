@@ -1,6 +1,6 @@
 export const CONSENT_KEY = "ptb_cookie_consent";
 
-export type ConsentCategory = "analytics" | "advertising";
+export type ConsentCategory = "analytics";
 
 export interface ConsentCategoryCopy {
   name: string;
@@ -19,6 +19,8 @@ export interface ConsentUiCopy {
   back: string;
   save: string;
   cookies: string;
+  advertisingManagedByGoogle: string;
+  manageGoogleAdvertising: string;
   enableCategory: (name: string) => string;
 }
 
@@ -26,13 +28,11 @@ export type ConsentState = "granted" | "denied" | "pending";
 
 export interface GranularConsent {
   analytics: boolean;
-  advertising: boolean;
   timestamp: number;
 }
 
 const DEFAULT_CONSENT: GranularConsent = {
   analytics: false,
-  advertising: false,
   timestamp: 0,
 };
 
@@ -51,7 +51,7 @@ export function getConsent(): ConsentState {
   if (typeof window === "undefined") return "pending";
   const consent = getGranularConsent();
   if (!consent.timestamp) return "pending";
-  return consent.analytics || consent.advertising ? "granted" : "denied";
+  return consent.analytics ? "granted" : "denied";
 }
 
 export function getGranularConsent(): GranularConsent {
@@ -60,24 +60,18 @@ export function getGranularConsent(): GranularConsent {
   try {
     const stored = localStorage.getItem(CONSENT_KEY);
     if (!stored) return DEFAULT_CONSENT;
-    if (stored === "denied") {
-      return { analytics: false, advertising: false, timestamp: 1 };
-    }
+    if (stored === "denied") return { analytics: false, timestamp: 1 };
+    if (stored === "granted") return DEFAULT_CONSENT;
     const parsed = JSON.parse(stored);
     if (typeof parsed === "object" && parsed !== null) {
-      // GDPR migration: consent stored before the "advertising" category
-      // existed was never informed about ad purposes, so it cannot cover
-      // them. Treat it as absent — the banner will ask again.
       if (
         typeof parsed.analytics !== "boolean" ||
-        typeof parsed.advertising !== "boolean" ||
         typeof parsed.timestamp !== "number" ||
         !Number.isFinite(parsed.timestamp) ||
         parsed.timestamp <= 0
       ) return DEFAULT_CONSENT;
       return {
         analytics: parsed.analytics,
-        advertising: parsed.advertising,
         timestamp: parsed.timestamp,
       };
     }
@@ -106,17 +100,13 @@ export function setConsent(state: ConsentState): void {
     return;
   }
   const granted = state === "granted";
-  setGranularConsent({
-    analytics: granted,
-    advertising: granted,
-  });
+  setGranularConsent({ analytics: granted });
 }
 
 export function setGranularConsent(consent: Omit<GranularConsent, "timestamp">): void {
   if (typeof window === "undefined") return;
   const storedConsent = {
     analytics: consent.analytics === true,
-    advertising: consent.advertising === true,
     timestamp: Date.now(),
   };
   sessionConsent = storedConsent;
@@ -139,8 +129,7 @@ function notifyConsentChange(): void {
   updateAnalyticsConsent(consent.analytics);
   // Unmounting next/script does not stop an already executed third-party script.
   const mustReload =
-    (!consent.analytics && document.getElementById("ga4-script")) ||
-    (!consent.advertising && document.getElementById("adsense"));
+    !consent.analytics && document.getElementById("ga4-script");
   window.dispatchEvent(new Event("consentChanged"));
   if (mustReload) window.location.reload();
 }
@@ -151,8 +140,25 @@ export function syncConsentFromStorage(event: StorageEvent): void {
   notifyConsentChange();
 }
 
+export function openGoogleAdvertisingSettings(): boolean {
+  if (typeof window === "undefined") return false;
+
+  const googlefc = (
+    window as Window & {
+      googlefc?: { showRevocationMessage?: () => void };
+    }
+  ).googlefc;
+
+  if (typeof googlefc?.showRevocationMessage === "function") {
+    googlefc.showRevocationMessage();
+    return true;
+  }
+
+  return false;
+}
+
 export function getConsentCategories(): ConsentCategory[] {
-  return ["analytics", "advertising"];
+  return ["analytics"];
 }
 
 export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; description: string; cookies: string[] }> = {
@@ -161,12 +167,6 @@ export const CONSENT_CATEGORY_INFO: Record<ConsentCategory, { name: string; desc
     description: "Help us understand how visitors interact with our website.",
     cookies: ["_ga", "_ga_*"],
   },
-  advertising: {
-    name: "Advertising",
-    description:
-      "Allows Google AdSense to load. Rejecting stops future ad loading; withdrawing permission may reload the page. Google may require a separate certified consent message.",
-    cookies: ["__gads", "__gpi", "IDE", "test_cookie"],
-  },
 };
 
 export function getConsentCategoryCopy(
@@ -174,16 +174,10 @@ export function getConsentCategoryCopy(
   lang: "en" | "es"
 ): ConsentCategoryCopy {
   if (lang === "es") {
-    return category === "analytics"
-      ? {
-          name: "Analítica",
-          description: "Ayúdanos a entender cómo interactúan los visitantes con el sitio web.",
-        }
-      : {
-          name: "Publicidad",
-          description:
-            "Permite cargar Google AdSense. Rechazar impide nuevas cargas; retirar el permiso puede recargar la página. Google puede requerir un mensaje de consentimiento certificado adicional.",
-        };
+    return {
+      name: "Analítica",
+      description: "Ayúdanos a entender cómo interactúan los visitantes con el sitio web.",
+    };
   }
 
   return {
@@ -197,17 +191,20 @@ export function getConsentUiCopy(lang: "en" | "es"): ConsentUiCopy {
     return {
       title: "Valoramos tu privacidad",
       description:
-        "Elige si permites analítica y publicidad. El almacenamiento del idioma y del tema es esencial y siempre está activo.",
+        "Elige si permites analítica. Google gestiona las preferencias de publicidad mediante su propio mensaje de privacidad. El almacenamiento del idioma y del tema es esencial y siempre está activo.",
       settingsDescription:
-        "Administra tus preferencias de analítica y publicidad. El almacenamiento del idioma y del tema es esencial.",
+        "Administra tu consentimiento de analítica. Google gestiona las preferencias de publicidad mediante su propio mensaje de privacidad.",
       learnMore: "Más información en nuestra Política de privacidad",
       customize: "Personalizar ajustes",
-      reject: "Rechazar opcionales",
-      accept: "Aceptar opcionales",
+      reject: "Rechazar analítica",
+      accept: "Aceptar analítica",
       settings: "Configuración de cookies",
       back: "Volver",
       save: "Guardar preferencias",
       cookies: "Cookies",
+      advertisingManagedByGoogle:
+        "Las preferencias de publicidad de Google AdSense se gestionan mediante el mensaje de privacidad de Google.",
+      manageGoogleAdvertising: "Gestionar preferencias de publicidad de Google",
       enableCategory: (name) => `Activar ${name}`,
     };
   }
@@ -215,17 +212,20 @@ export function getConsentUiCopy(lang: "en" | "es"): ConsentUiCopy {
   return {
     title: "We value your privacy",
     description:
-      "Choose whether to allow analytics and advertising. Language and theme storage are essential and always on.",
+      "Choose whether to allow analytics. Google manages advertising choices through its own privacy message. Language and theme storage are essential and always on.",
     settingsDescription:
-      "Manage your analytics and advertising consent. Language and theme storage are essential.",
+      "Manage your analytics consent. Google manages advertising choices through its own privacy message.",
     learnMore: "Learn more in our Privacy Policy",
     customize: "Customize Settings",
-    reject: "Reject Optional",
-    accept: "Accept Optional",
+    reject: "Reject Analytics",
+    accept: "Accept Analytics",
     settings: "Cookie Settings",
     back: "Back",
     save: "Save Choices",
     cookies: "Cookies",
+    advertisingManagedByGoogle:
+      "Google AdSense advertising choices are managed through Google's Privacy & Messaging message.",
+    manageGoogleAdvertising: "Manage Google advertising choices",
     enableCategory: (name) => `Enable ${name}`,
   };
 }

@@ -885,6 +885,7 @@ async function checkCachePolicy() {
 
 async function checkAdsenseReadiness() {
   const scripts = fs.readFileSync(path.join(root, "components/ConsentAwareScripts.tsx"), "utf8");
+  const shell = fs.readFileSync(path.join(root, "components/SiteShell.tsx"), "utf8");
   const ads = fs.readFileSync(path.join(root, "components/monetization/Ads.tsx"), "utf8");
   const consent = fs.readFileSync(path.join(root, "lib/consent.ts"), "utf8");
   const banner = fs.readFileSync(path.join(root, "components/CookieConsent.tsx"), "utf8");
@@ -896,17 +897,18 @@ async function checkAdsenseReadiness() {
   const design = fs.readFileSync(path.join(root, "docs/superpowers/specs/2026-07-17-adsense-readiness-design.md"), "utf8");
   const plan = fs.readFileSync(path.join(root, "docs/superpowers/plans/2026-07-17-adsense-readiness.md"), "utf8");
 
-  assert.match(scripts, /<AdSenseLoader\s*\/>/, "AdSense must load so Google CMP can render");
+  assert.match(shell, /id="adsense"[\s\S]*?adsbygoogle\.js\?client=/, "AdSense must load in document head so Google CMP can render");
   assert.doesNotMatch(scripts, /Infolinks|Ezoic/, "only AdSense may own advertising runtime");
-  assert.match(scripts, /useCategoryConsent\(["']advertising["']\)/, "AdSense must respect advertising consent");
-  assert.match(ads, /useCategoryConsent\(["']advertising["']\)/, "manual ad slots must respect advertising consent");
+  assert.doesNotMatch(scripts, /useCategoryConsent\(["']advertising["']\)/, "local consent must not block Google CMP");
+  assert.doesNotMatch(ads, /useCategoryConsent\(["']advertising["']\)/, "Google CMP must own ad consent");
   assert.match(
     consent,
-    /export type ConsentCategory = ["']analytics["']\s*\|\s*["']advertising["']/,
-    "local consent must expose analytics and advertising categories"
+    /export type ConsentCategory = ["']analytics["'];/,
+    "local consent must expose analytics only"
   );
-  assert.match(consent, /advertising:\s*boolean/, "advertising consent must be stored separately");
   assert.match(banner + settings, /getConsentCategories\(\)/, "cookie UI must render configured consent categories");
+  assert.match(settings, /openGoogleAdvertisingSettings/, "cookie settings must expose Google ad preferences");
+  assert.doesNotMatch(consent, /advertising:\s*boolean/, "local consent must not store advertising choices");
   assert.doesNotMatch(consent, /["']preferences["']\s*\||preferences:\s*boolean|preferences:\s*(true|false)/);
   assert.doesNotMatch(banner + settings, /["']preferences["']|preference storage/i);
   assert.match(
@@ -954,12 +956,12 @@ async function checkAdsenseReadiness() {
     /addEventListener\("consentChanged"/,
     "Web Vitals must activate when analytics consent changes after mount"
   );
-  assert.match(privacy, /Google-certified CMP/, "privacy must distinguish local choices from certified consent");
+  assert.match(privacy, /Google Privacy\s*&amp;\s*Messaging/, "privacy must identify Google's consent service");
   assert.match(privacy, /Last updated: September 12, 2026/);
-  assert.match(privacy, /local cookie banner controls both analytics and advertising/i);
+  assert.match(privacy, /local cookie banner controls Analytics only/i);
   assert.match(privacy, /https:\/\/policies.google.com\/technologies\/partner-sites/);
   assert.match(privacy, /Cookie Settings/, "privacy must explain how to withdraw consent");
-  assert.doesNotMatch(privacy, /local cookie banner controls analytics only/i);
+  assert.doesNotMatch(privacy, /local cookie banner controls both analytics and advertising/i);
   assert.doesNotMatch(design + plan, /\bpreferences\b/i);
   assert.doesNotMatch(envExample, /Ezoic|Combina ambas redes/i);
 }

@@ -6,6 +6,7 @@ import {
   getConsentCategories,
   getConsentUiCopy,
   getGranularConsent,
+  openGoogleAdvertisingSettings,
   setGranularConsent,
   CONSENT_CATEGORY_INFO,
   type ConsentCategory,
@@ -29,7 +30,6 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
   const copy = getConsentUiCopy(lang);
   const [consent, setConsentState] = useState<GranularConsent>({
     analytics: false,
-    advertising: false,
     timestamp: 0,
   });
   const [saved, setSaved] = useState(false);
@@ -51,6 +51,12 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
     setGranularConsent(consent);
     setSaved(true);
     if (onClose) onClose();
+  };
+
+  const handleGoogleAdvertisingSettings = () => {
+    if (!openGoogleAdvertisingSettings()) {
+      window.open("https://adssettings.google.com", "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
@@ -87,6 +93,17 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
             </div>
           );
         })}
+      </div>
+
+      <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900 dark:border-blue-900/60 dark:bg-blue-950/30 dark:text-blue-100">
+        <p>{copy.advertisingManagedByGoogle}</p>
+        <button
+          type="button"
+          onClick={handleGoogleAdvertisingSettings}
+          className="mt-2 font-medium underline underline-offset-2 hover:no-underline"
+        >
+          {copy.manageGoogleAdvertising}
+        </button>
       </div>
 
       {saved && (

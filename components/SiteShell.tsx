@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-head-element -- AdSense requires its tag in the document head. */
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./Providers";
 import { ConsentAwareScripts } from "./ConsentAwareScripts";
@@ -7,6 +9,7 @@ import { WebVitalsTracker } from "./WebVitalsTracker";
 import { KoFiButton } from "./monetization/Ads";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
+import { ADSENSE_PUBLISHER_ID } from "@/lib/adsense";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +30,14 @@ interface SiteShellProps {
 export function SiteShell({ lang, jsonLd, children }: SiteShellProps) {
   return (
     <html lang={lang} suppressHydrationWarning>
+      <head>
+        <script
+          id="adsense"
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
+          crossOrigin="anonymous"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50 dark:bg-black`}
       >

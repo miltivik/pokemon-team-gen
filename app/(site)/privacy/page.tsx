@@ -51,10 +51,10 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">4. Google AdSense</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                            If you allow advertising, our Service can load Google AdSense. Google and its advertising partners may place and read cookies, use web beacons, and process IP addresses and other identifiers to deliver and measure ads and prevent fraud. Where permitted and with any required consent, advertising cookies may also be used to personalize ads based on visits to this and other websites.
+                            Our Service loads the Google AdSense tag so Google can deliver ads and its Privacy &amp; Messaging consent messages. Google and its advertising partners may place and read cookies, use web beacons, and process IP addresses and other identifiers to deliver and measure ads and prevent fraud. Where permitted and with any required consent, advertising cookies may also be used to personalize ads based on visits to this and other websites.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
-                            Our local advertising choice controls whether we load AdSense; it is not a certified consent management platform (CMP). Personalized ads in the European Economic Area, the United Kingdom, and Switzerland require a separate Google-certified CMP. Any additional consent message shown by Google or its partners explains the purposes and partners it covers.
+                            Google Privacy &amp; Messaging manages advertising consent. Its European message uses the IAB Transparency and Consent Framework for users in the European Economic Area, the United Kingdom, and Switzerland, and its U.S. state message uses the IAB Global Privacy Platform where applicable. The local Cookie Settings panel does not replace these Google messages or their consent signals.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
                             Learn more about{" "}
@@ -76,10 +76,10 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">5. Cookie Consent</h2>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                            Our local cookie banner controls both analytics and advertising. Both are off until you explicitly allow them, regardless of your location. Essential storage for language, theme, and your cookie choices remains available.
+                            Our local cookie banner controls Analytics only. Analytics is off until you explicitly allow it. AdSense may load its Google Privacy &amp; Messaging consent mechanism independently so Google can show the appropriate European or U.S. state message and apply the user&apos;s advertising choice. Essential storage for language, theme, and your cookie choices remains available.
                         </p>
                         <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mt-3">
-                            Choose &quot;Reject Optional&quot; to decline both categories, or use the switches and &quot;Save Choices&quot; to choose them separately. You can change or withdraw your choices at any time using &quot;Cookie Settings&quot; in the footer. If a disabled service has already loaded, the page reloads to stop its scripts. Withdrawal stops future loading but does not undo data already sent or automatically remove existing cookies; you can remove those through your browser settings. If browser storage is unavailable, choices may only last for the current page.
+                            Choose &quot;Reject Optional&quot; or &quot;Accept Analytics&quot; for the local analytics setting, or use &quot;Cookie Settings&quot; in the footer to change it later. Use the Google Privacy &amp; Messaging controls shown by AdSense to manage or withdraw advertising consent. The footer also provides a link to reopen Google&apos;s advertising choices when that API is available. Withdrawing consent does not undo data already sent or automatically remove existing cookies; you can remove those through your browser settings.
                         </p>
                     </section>
 

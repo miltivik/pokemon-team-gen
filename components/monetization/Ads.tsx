@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { ADSENSE_PUBLISHER_ID, ADSENSE_SLOTS } from "@/lib/adsense";
-import { useCategoryConsent } from "@/components/ConsentAwareScripts";
 
 /**
  * Configuración de monetización
@@ -21,7 +20,8 @@ const CONFIG = {
 /**
  * Componente para cargar scripts de monetización.
  * @deprecated La carga de scripts de terceros ahora se maneja mediante
- * {@link ConsentAwareScripts} en app/layout.tsx, que respeta el consentimiento de cookies.
+ * {@link ConsentAwareScripts} en app/layout.tsx. Google Privacy & Messaging
+ * controla el consentimiento publicitario de AdSense.
  */
 // Extender el tipo Window para adsbygoogle
 declare global {
@@ -88,14 +88,13 @@ function AdSlot({
   fullWidthResponsive,
 }: AdSlotProps) {
   const mounted = useDeferredAdMount();
-  const hasAdvertising = useCategoryConsent("advertising");
   const hasConfiguredSlot = slot.trim().length > 0;
   const pushedRef = useRef(false);
   const adRef = useRef<HTMLModElement | null>(null);
   const [isUnfilled, setIsUnfilled] = useState(false);
 
   useEffect(() => {
-    if (!hasAdvertising || !hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
+    if (!hasConfiguredSlot || !mounted || pushedRef.current || !CONFIG.adsense.publisherId || !adRef.current) {
       return;
     }
 
@@ -105,11 +104,11 @@ function AdSlot({
     } catch (error) {
       console.error("AdSense error:", error);
     }
-  }, [hasAdvertising, hasConfiguredSlot, mounted]);
+  }, [hasConfiguredSlot, mounted]);
 
   useEffect(() => {
     const adElement = adRef.current;
-    if (!hasAdvertising || !hasConfiguredSlot || !mounted || !adElement || !CONFIG.adsense.publisherId) {
+    if (!hasConfiguredSlot || !mounted || !adElement || !CONFIG.adsense.publisherId) {
       return;
     }
 
@@ -129,9 +128,9 @@ function AdSlot({
     return () => {
       observer.disconnect();
     };
-  }, [hasAdvertising, hasConfiguredSlot, mounted, placement, slot]);
+  }, [hasConfiguredSlot, mounted, placement, slot]);
 
-  if (!hasConfiguredSlot || !hasAdvertising) return null;
+  if (!hasConfiguredSlot) return null;
 
   return (
     <div

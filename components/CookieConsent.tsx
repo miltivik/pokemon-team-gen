@@ -32,7 +32,6 @@ export function CookieConsent() {
   const [showSettings, setShowSettings] = useState(false);
   const [consent, setConsentState] = useState<GranularConsent>({
     analytics: false,
-    advertising: false,
     timestamp: 0,
   });
 
@@ -56,6 +55,11 @@ export function CookieConsent() {
 
   const handleRejectAll = () => {
     setConsent("denied");
+    setVisible(false);
+  };
+
+  const handleAcceptAnalytics = () => {
+    setConsent("granted");
     setVisible(false);
   };
 
@@ -152,10 +156,10 @@ export function CookieConsent() {
                   {copy.reject}
                 </button>
                 <button
-                  onClick={() => handleSaveSettings(consent)}
+                  onClick={handleAcceptAnalytics}
                   className="min-h-11 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
                 >
-                  {copy.save}
+                  {copy.accept}
                 </button>
               </div>
             </>

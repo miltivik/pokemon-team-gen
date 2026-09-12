@@ -66,41 +66,27 @@ function consentFixture() {
 function checkConsent() {
   const fixture = consentFixture();
   const { api, values, scripts, context } = fixture;
-  for (const cookie of ["", "ptb_region=eu", "ptb_region=other"]) {
-    context.document.cookie = cookie;
-    assert.equal(api.getConsent(), "pending");
-    assert.equal(api.hasConsent("advertising"), false, "location must not grant advertising");
-    assert.equal(api.hasConsent("analytics"), false, "location must not grant analytics");
-  }
-
   for (const stored of [
-    "granted", "invalid json", "null", "[]",
-    JSON.stringify({ analytics: true, timestamp: 1 }),
-    JSON.stringify({ analytics: true, advertising: "false", timestamp: 1 }),
-    JSON.stringify({ analytics: true, advertising: true, timestamp: 0 }),
-    JSON.stringify({ analytics: true, advertising: true, timestamp: "1" }),
+    "granted", "denied", "invalid json", "null", "[]",
+    JSON.stringify({ analytics: true }),
+    JSON.stringify({ analytics: true, timestamp: 0 }),
+    JSON.stringify({ analytics: true, timestamp: "1" }),
   ]) {
     values.set(api.CONSENT_KEY, stored);
-    assert.equal(api.hasConsent("advertising"), false, "malformed/legacy choices must fail closed");
-    assert.equal(api.hasConsent("analytics"), false);
+    assert.equal(api.hasConsent("analytics"), false, "malformed/legacy choices must fail closed");
   }
+
+  values.set(api.CONSENT_KEY, JSON.stringify({ analytics: true, advertising: false, timestamp: 1 }));
+  assert.equal(api.hasConsent("analytics"), true, "old valid analytics choice should migrate");
   values.set(api.CONSENT_KEY, "denied");
   assert.equal(api.getConsent(), "denied", "legacy denial remains a denial");
 
-  api.setGranularConsent({ analytics: true, advertising: false });
+  api.setGranularConsent({ analytics: true });
   assert.equal(api.hasConsent("analytics"), true);
-  assert.equal(api.hasConsent("advertising"), false);
   assert.equal(fixture.reloads(), 0, "a first choice should not reload");
-  api.setConsent("granted");
-  assert.equal(api.hasConsent("advertising"), true);
-  scripts.add("adsense");
-  api.setGranularConsent({ analytics: true, advertising: false });
-  assert.equal(fixture.reloads(), 1, "revoking a loaded ad runtime must reload");
-  assert.equal(JSON.parse(values.get(api.CONSENT_KEY)).advertising, false, "save denial before reload");
-  scripts.clear();
   scripts.add("ga4-script");
   api.setConsent("denied");
-  assert.equal(fixture.reloads(), 2, "revoking loaded GA must reload");
+  assert.equal(fixture.reloads(), 1, "revoking loaded GA must reload");
   assert.equal(fixture.signals.at(-1)[2].analytics_storage, "denied");
 
   const beforeSync = fixture.reloads();
@@ -111,16 +97,14 @@ function checkConsent() {
   values.clear();
   api.syncConsentFromStorage({ key: null });
   assert.equal(api.getConsent(), "pending", "clearing storage removes permission");
-  scripts.clear();
-  api.setConsent("granted");
   api.setConsent("pending");
   assert.equal(api.hasConsent("analytics"), false);
 
   const blocked = consentFixture();
   blocked.storage.getItem = () => { throw new Error("storage blocked"); };
   blocked.storage.setItem = () => { throw new Error("storage blocked"); };
-  assert.equal(blocked.api.hasConsent("advertising"), false);
-  blocked.api.setGranularConsent({ analytics: true, advertising: false });
+  assert.equal(blocked.api.hasConsent("analytics"), false);
+  blocked.api.setGranularConsent({ analytics: true });
   assert.equal(blocked.api.hasConsent("analytics"), true, "explicit choices work in memory");
   blocked.api.setConsent("denied");
   assert.equal(blocked.api.hasConsent("analytics"), false);
@@ -128,25 +112,31 @@ function checkConsent() {
   const quota = consentFixture();
   quota.api.setConsent("granted");
   quota.storage.setItem = () => { throw new Error("quota exceeded"); };
-  quota.scripts.add("adsense");
+  quota.scripts.add("ga4-script");
   quota.api.setConsent("denied");
   assert.equal(quota.values.has(quota.api.CONSENT_KEY), false, "failed writes must clear stale grants");
-  assert.equal(quota.api.hasConsent("advertising"), false);
+  assert.equal(quota.api.hasConsent("analytics"), false);
   assert.equal(quota.reloads(), 1);
 
   delete context.window;
   assert.equal(api.getConsent(), "pending");
-  assert.equal(api.hasConsent("advertising"), false, "SSR must not grant consent");
+  assert.equal(api.hasConsent("analytics"), false, "SSR must not grant consent");
   assert.doesNotThrow(() => api.setConsent("granted"));
 
+  const scriptsSource = fs.readFileSync(path.join(rootDir, "components/ConsentAwareScripts.tsx"), "utf8");
+  assert.doesNotMatch(scriptsSource, /useCategoryConsent\(["']advertising["']\)/, "local consent must not block Google CMP");
+  const shell = fs.readFileSync(path.join(rootDir, "components/SiteShell.tsx"), "utf8");
+  assert.match(shell, /id="adsense"[\s\S]*?adsbygoogle\.js\?client=/, "AdSense must load in the document head so Google CMP can render");
   const ads = fs.readFileSync(path.join(rootDir, "components/monetization/Ads.tsx"), "utf8");
-  assert.match(ads, /\[hasAdvertising, hasConfiguredSlot, mounted\]/, "late consent must trigger ad initialization");
+  assert.doesNotMatch(ads, /useCategoryConsent\(["']advertising["']\)/, "Google CMP must own ad consent");
   const teamPage = fs.readFileSync(path.join(rootDir, "app/(site)/equipo/equipo-page-client.tsx"), "utf8");
   const skeleton = teamPage.split("function EquipoPageSkeleton()")[1].split("export function EquipoPageClient")[0];
   assert.doesNotMatch(skeleton, /<Ad(?:Hero|Banner|Inline)\b/, "loading screens must not request ads");
   const banner = fs.readFileSync(path.join(rootDir, "components/CookieConsent.tsx"), "utf8");
-  assert.match(banner, /onClick=\{\(\) => handleSaveSettings\(consent\)\}/, "save must respect the displayed switches");
+  assert.match(banner, /onClick=\{handleAcceptAnalytics\}/, "analytics must have an explicit accept action");
   assert.doesNotMatch(banner, /isConsentRequiredRegion/, "every new visitor must be asked");
+  const settings = fs.readFileSync(path.join(rootDir, "components/CookieSettings.tsx"), "utf8");
+  assert.match(settings, /openGoogleAdvertisingSettings/, "cookie settings must expose Google ad preferences");
 }
 
 run();
